@@ -356,7 +356,7 @@ canvas {
  top: 6px;
  width: 82px;
  height: 23px;
- visibility: visible; 
+ visibility: visible;
  border-width: 2px;
  border-style: outset;
  opacity: 1;
@@ -430,6 +430,6 @@ canvas {
 
 @media(max-width: 980px) {
   .class_body_text {
-  font-size: 3em;
+    font-size: 3em;
+  }
 }
-} 
