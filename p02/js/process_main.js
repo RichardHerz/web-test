@@ -20,8 +20,8 @@
     updateProcessUnits(resetFlag);
     updateDisplay(resetFlag);
 
-    $.post("../webAppCurrentCount.lc",{webAppNumber: "7"}) .done(function(data) {
-      document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>"; } );
+    // $.post("../webAppCurrentCount.lc",{webAppNumber: "7"}) .done(function(data) {
+    //   document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>"; } );
 
   } // END OF function openThisLab
 

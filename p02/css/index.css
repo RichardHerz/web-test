@@ -37,6 +37,10 @@ canvas {
  text-align: left;
 }
 
+::-ms-tooltip {
+  display: none;
+}
+
 #div_simulation_frame_1174 {
  display: block;
  /*position: absolute;*/
@@ -44,7 +48,8 @@ canvas {
  /*left: 7px;
  top: 52px;*/
  width: 801px;
- height: 830px;
+ /*height: 830px;*/
+ height: 790px;
  visibility: visible;
  border-width: 1px;
  border-style: outset;
@@ -257,10 +262,6 @@ canvas {
  font-size: 16px;
 }
 
-::-ms-tooltip {
-  display: none;
-}
-
 #range_setCmax_slider_1200 {
  left: 26px;
  /*top: 223px;*/
@@ -287,7 +288,8 @@ canvas {
 #field_enterKads_label_1202 {
  position: absolute;
  left: 21px;
- top: 479px;
+ /*top: 479px;*/
+ top: 439px;
  width: 198px;
  height: 25px;
  border-width: 2px;
@@ -301,7 +303,8 @@ canvas {
 #input_field_enterKflow_1203 {
  position: absolute;
  left: 225px;
- top: 426px;
+ /*top: 426px;*/
+  top: 386px;
  width: 68px;
  height: 21px;
  visibility: visible;
@@ -312,7 +315,8 @@ canvas {
 #input_field_enterKads_1204 {
  position: absolute;
  left: 225px;
- top: 493px;
+ /*top: 493px;*/
+ top: 453px;
  width: 68px;
  height: 21px;
  visibility: visible;
@@ -323,7 +327,8 @@ canvas {
 #field_enterKdiff_label_1205 {
  position: absolute;
  left: 21px;
- top: 446px;
+ /*top: 446px;*/
+  top: 406px;
  width: 198px;
  height: 25px;
  border-width: 2px;
@@ -337,7 +342,8 @@ canvas {
 #input_field_enterKdiff_1206 {
  position: absolute;
  left: 225px;
- top: 460px;
+ /*top: 460px;*/
+  top: 420px;
  width: 68px;
  height: 21px;
  visibility: visible;
@@ -348,7 +354,8 @@ canvas {
 #field_enterThieleMod_label_1207 {
  position: absolute;
  left: 21px;
- top: 513px;
+ /*top: 513px;*/
+  top: 473px;
  width: 198px;
  height: 25px;
  border-width: 2px;
@@ -362,7 +369,8 @@ canvas {
 #field_enterAlpha_label_1208 {
  position: absolute;
  left: 21px;
- top: 575px;
+ /*top: 575px;*/
+  top: 535px;
  width: 198px;
  height: 25px;
  border-width: 2px;
@@ -376,7 +384,8 @@ canvas {
 #input_field_enterThieleMod_1209 {
  position: absolute;
  left: 225px;
- top: 526px;
+ /*top: 526px;*/
+  top: 486px;
  width: 68px;
  height: 21px;
  visibility: visible;
@@ -387,7 +396,8 @@ canvas {
 #input_field_enterAlpha_1210 {
  position: absolute;
  left: 225px;
- top: 589px;
+ /*top: 589px;*/
+  top: 549px;
  width: 68px;
  height: 21px;
  visibility: visible;
@@ -398,7 +408,8 @@ canvas {
 #field_enterBscale_label_1211 {
  position: absolute;
  left: 21px;
- top: 608px;
+ /*top: 608px;*/
+  top: 568px;
  width: 198px;
  height: 25px;
  border-width: 2px;
@@ -412,7 +423,8 @@ canvas {
 #input_field_enterBscale_1212 {
  position: absolute;
  left: 225px;
- top: 622px;
+ /*top: 622px;*/
+  top: 582px;
  width: 68px;
  height: 21px;
  visibility: visible;
@@ -424,7 +436,8 @@ canvas {
  display: block;
  position: absolute;
  left: 32px;
- top: 263px;
+ /*top: 263px;*/
+  top: 223px;
  width: 177px;
  height: 85px;
  visibility: visible;
@@ -489,7 +502,8 @@ canvas {
 #field_enterCyclePeriod_label_1217 {
  position: absolute;
  left: 59px;
- top: 338px;
+ /*top: 338px;*/
+  top: 298px;
  width: 198px;
  height: 25px;
  border-width: 2px;
@@ -503,7 +517,8 @@ canvas {
 #input_field_enterDuty_1218 {
  position: absolute;
  left: 264px;
- top: 387px;
+ /*top: 387px;*/
+  top: 347px;
  width: 68px;
  height: 21px;
  visibility: visible;
@@ -514,7 +529,8 @@ canvas {
 #field_enterDuty_label_1219 {
  position: absolute;
  left: 59px;
- top: 371px;
+ /*top: 371px;*/
+  top: 331px;
  width: 198px;
  height: 25px;
  border-width: 2px;
@@ -528,7 +544,8 @@ canvas {
 #input_field_enterCyclePeriod_1220 {
  position: absolute;
  left: 264px;
- top: 353px;
+ /*top: 353px;*/
+  top: 313px;
  width: 68px;
  height: 21px;
  visibility: visible;
@@ -539,7 +556,8 @@ canvas {
 #field_Krxn_label_1222 {
  position: absolute;
  left: 86px;
- top: 546px;
+ /*top: 546px;*/
+  top: 506px;
  width: 75px;
  height: 21px;
  border-width: 2px;
@@ -553,7 +571,8 @@ canvas {
 #field_Krxn_1223 {
  position: absolute;
  left: 147px;
- top: 553px;
+ /*top: 553px;*/
+  top: 513px;
  width: 68px;
  height: 21px;
  border-width: 2px;
@@ -567,7 +586,8 @@ canvas {
 #field_profile_label_gas_1226 {
  position: absolute;
  left: 709px;
- top: 299px;
+ /*top: 299px;*/
+  top: 259px;
  width: 112px;
  height: 120px;
  border-width: 2px;
@@ -581,7 +601,8 @@ canvas {
 #field_profile_label_surface_1227 {
  position: absolute;
  left: 709px;
- top: 426px;
+ /*top: 426px;*/
+  top: 386px;
  width: 112px;
  height: 120px;
  border-width: 2px;
@@ -595,7 +616,8 @@ canvas {
 #field_aveRate_label_1236 {
  position: absolute;
  left: 78px;
- top: 770px;
+ /*top: 770px;*/
+  top: 730px;
  width: 332px;
  height: 25px;
  border-width: 2px;
@@ -609,7 +631,8 @@ canvas {
 #field_aveRate_1237 {
  position: absolute;
  left: 415px;
- top: 770px;
+ /*top: 770px;*/
+  top: 730px;
  width: 87px;
  height: 21px;
  border-width: 2px;
@@ -623,7 +646,8 @@ canvas {
 #field_aveConversion_1238 {
  position: absolute;
  left: 714px;
- top: 770px;
+ /*top: 770px;*/
+  top: 730px;
  width: 75px;
  height: 21px;
  border-width: 2px;
@@ -637,7 +661,8 @@ canvas {
 #field_aveConverion_label_1239 {
  position: absolute;
  left: 531px;
- top: 770px;
+ /*top: 770px;*/
+  top: 730px;
  width: 198px;
  height: 25px;
  border-width: 2px;
@@ -651,7 +676,8 @@ canvas {
 #field_spaceTimeTop_label_1240 {
  position: absolute;
  left: 190px;
- top: 678px;
+ /*top: 678px;*/
+  top: 638px;
  width: 240px;
  height: 25px;
  border-width: 2px;
@@ -665,7 +691,8 @@ canvas {
 #field_spaceTimeMiddle_label_1241 {
  position: absolute;
  left: 160px;
- top: 710px;
+ /*top: 710px;*/
+  top: 670px;
  width: 240px;
  height: 25px;
  border-width: 2px;
@@ -679,7 +706,8 @@ canvas {
 #field_spaceTimeBtm_label_1242 {
  position: absolute;
  left: 236px;
- top: 745px;
+ /*top: 745px;*/
+  top: 705px;
  width: 198px;
  height: 25px;
  border-width: 2px;
@@ -693,7 +721,8 @@ canvas {
 #field_Label_Field {
  position: absolute;
  left: 6px;
- top: 136px;
+ /*top: 136px;*/
+  top: 96px;
  width: 558px;
  height: 21px;
  border-width: 2px;
@@ -707,7 +736,8 @@ canvas {
 #image_reactor_image {
  position: absolute;
  left: 362px;
- top: 300px;
+ /*top: 300px;*/
+  top: 260px;
  width: 37px;
  height: 275px;
  visibility: visible;
@@ -719,7 +749,8 @@ canvas {
 #canvas_CANVAS_rate {
  position: absolute;
  left: 380px;
- top: 700px;
+ /*top: 700px;*/
+  top: 660px;
  width: 414px;
  height: 80px;
  visibility: visible;
