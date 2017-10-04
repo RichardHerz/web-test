@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+  <!-- load style sheets for this lab  -->
+  <link rel="stylesheet" href="css/index.css">
+  <title>web-test p01</title>
+</head>
+<body>
+
+  <div class="class_body_text">
+    <h3>web-test p01</h3>
+      <p>
+      Below is a prototype of a simulation that takes up much of the page width.
+      It is in a class "class_simulation_frame" and
+      it's own id. In the css file, the class specification can specify general
+      characteristics of all simulations, then the id specification can set
+      properties specific to this simulation
+    </p>
+  </div>
+
+<div class="class_simulation_frame" id="div_simulation_frame">
+   <div id="div_OUTER_group">
+      <input type="button" id="button_get_num_controls" value="get num controls" onchange="fGetNumCon()"></input>
+      <div id="div_INNER_group_02">
+         <input type="button" id="button_list_groups" value="list groups" onchange="fBtnListGrps()"></input>
+         <p id="field_locked_field" onchange="fLockedFld()">
+                  locked field
+         </p>
+         <input type="button" id="button_blank" value="blank" onchange="fBtnBlank()"></input>
+      </div> <!-- end of div div_INNER_group_02 -->
+      <input type="button" id="button_Button01-1" value="Button01-1" onchange="fBtn01()"></input>
+      <div id="div_EMPTY_group">
+      </div> <!-- end of div div_EMPTY_group -->
+   </div> <!-- end of div div_OUTER_group -->
+   <div id="div_RADIO_group">
+      <label id="radio_Radio2_LABEL" name="radio_of_group_RADIO_group">
+            <input type="radio" id="radio_Radio2" name="radio_of_group_RADIO_group" onchange="fRadio2()">
+            <span id="radio_Radio2_SPAN"></span>
+      </label>
+      <label id="radio_Radio1_LABEL" name="radio_of_group_RADIO_group">
+            <input type="radio" id="radio_Radio1" name="radio_of_group_RADIO_group" checked onchange="fRadio1()">
+            <span id="radio_Radio1_SPAN"></span>
+      </label>
+   </div> <!-- end of div div_RADIO_group -->
+   <label id="checkbox_Check1_LABEL">
+      <input type="checkbox" id="checkbox_Check1" onchange="fCheck1()">
+      <span id="checkbox_Check1_SPAN"></span>
+   </label>
+   <img id="image_robo_99_png" src="images/robo 99.png" onchange="fImage()">
+   <input id="input_field_unlocked_field_1" value="unlocked field" onchange="fUnlockedFldTOP()">
+
+   </input>
+   <input type="range" id="range_slider_horiz" min="1" max="100" step="0.99" value="75" onchange="fHorizSlider()">
+   </input>
+   <select id="select_Option_Menu" value="Choice 1" onchange="fMenuTOP()">
+      <option value="Choice 1">Choice 1</option>
+      <option value="Choice 2">Choice 2</option>
+      <option value="Choice 3">Choice 3</option>
+   </select>
+   <select id="select_Pulldown_Menu" value="Pulldown Menu" onchange="fMenuBTM()">
+      <option value="Choice 1">Choice 1</option>
+      <option value="Choice 2">Choice 2</option>
+      <option value="Choice 3">Choice 3</option>
+   </select>
+   <input type="range" id="range_slider_vert" min="1" max="100" step="0.99" value="75" onchange="fVertSlider()">
+   </input>
+   <input id="input_field_unlocked_field_2" value="unlocked field" onchange="fUnlockedFldBTM()">
+
+   </input>
+</div> <!-- end of div div_simulation_frame -->
+
+<div class="class_body_text">
+    <p>
+    Now I want to look at a bigger simulation frame. Looks like the biggest you
+    can have to fit in an iPhone 5s browser is approx. max width 958 and
+    margin 2. Want position relative for all simulation frames. And want to
+    make controls larger than the default size in LiveCode lcCardLayoutToWeb.
+    </p>
+</div>
+
+<div id="div_simulation_frame_BIG">
+   <input type="button" id="button_Button_BIG_1" value="Button BIG 1"></input>
+   <input type="button" id="button_Button_BIG_3" value="Button BIG 3"></input>
+   <input type="button" id="button_Button_BIG_2" value="Button BIG 2"></input>
+   <p id="field_Field_BIG">
+      <br>
+      <br>The outer group of this layout is the largest you will be able to fit in the width of an iPhone browser, width = 958, with a css margin of 2px.
+      <br>
+      <br>The css pixel width of an iPhone 5s is 980, whereas the physical pixel width is 640.
+      <br>
+      <br>The outer group of a simulations (div) should have its css position changed to relative.
+      <br>
+      <br>Buttons and other controls should be made larger than the default in LiveCode in order to manipulate more easily in web browsers.
+      <br>
+      <br>
+   </p>
+</div> <!-- end of div div_simulation_frame_BIG -->
+
+<div class="class_body_text">
+  <p>
+  Next we want to experiment with smaller simulations.
+  </p>
+  <p>
+    We want to see if we can put text to one side or the other, or even
+    wrap text continuously around the simulation frame.
+  </p>
+
+<p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Fusce luctus vestibulum augue ut aliquet. Mauris ante ligula, facilisis sed ornare eu, lobortis in odio. Praesent convallis urna a lacus interdum ut hendrerit risus congue. Nunc sagittis dictum nisi, sed ullamcorper ipsum dignissim ac.
+In at libero sed nunc venenatis imperdiet sed ornare turpis. Donec vitae dui eget tellus gravida venenatis. Integer fringilla congue eros non fermentum. Sed dapibus pulvinar nibh tempor porta. Cras ac leo purus.
+
+<div class="class_simulation_frame" id="div_small_sim_frame">
+   <input type="range" id="range_Scrollbar" min="1" max="100" step="0.99" value="1">
+   </input>
+   <input id="input_field_Field" value="">
+
+   </input>
+   <input type="button" id="button_Button" value="Button"></input>
+</div> <!-- end of div div_small_sim_frame -->
+
+Mauris quis diam velit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Fusce luctus vestibulum augue ut aliquet. Mauris ante ligula, facilisis sed ornare eu, lobortis in odio. Praesent convallis urna a lacus interdum ut hendrerit risus congue. Nunc sagittis dictum nisi, sed ullamcorper ipsum dignissim ac.
+In at libero sed nunc venenatis imperdiet sed ornare turpis. Donec vitae dui eget tellus gravida venenatis. Integer fringilla congue eros non fermentum. Sed dapibus pulvinar nibh tempor porta. Cras ac leo purus. Mauris quis diam velit.
+
+ </p>
+
+</div>
+
+<div class="class_body_text">
+  <p>
+  <b> LOOKS LIKE GET A SPACE BETWEEN LINES BEFORE THE SMALL SIM FRAME DIV
+  and the text after it in HTML which flows around it.</b>
+  This doesn't happen with an img, for example, but does with a div.
+  Setting top margin of the div to zero doesn't help. Settig div top margin
+  to negative just move div up and doesn't affect text space. Doesn't matter
+  if there is a sentence break there and no p breaks...
+  </p>
+
+<p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Fusce luctus vestibulum augue ut aliquet. Mauris ante ligula, facilisis sed ornare eu, lobortis in odio. Praesent convallis urna a lacus interdum ut hendrerit risus congue. Nunc sagittis dictum nisi, sed ullamcorper ipsum dignissim ac.
+In at libero sed nunc venenatis imperdiet sed ornare turpis. Donec vitae dui eget tellus gravida venenatis. Integer fringilla congue eros non fermentum. Sed dapibus pulvinar nibh tempor porta. Cras ac leo purus. Mauris quis diam velit
+
+<div class="class_simulation_frame" id="div_small_sim_frame_2">
+   <input type="range" id="range_Scrollbar" min="1" max="100" step="0.99" value="1">
+   </input>
+   <input id="input_field_Field" value="">
+
+   </input>
+   <input type="button" id="button_Button" value="Button"></input>
+</div> <!-- end of div div_small_sim_frame -->
+
+lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi lorem egestas odio, vitae scelerisque enim ligula venenatis dolor. Maecenas nisl est, ultrices nec congue eget, auctor vitae massa. Fusce luctus vestibulum augue ut aliquet. Mauris ante ligula, facilisis sed ornare eu, lobortis in odio. Praesent convallis urna a lacus interdum ut hendrerit risus congue. Nunc sagittis dictum nisi, sed ullamcorper ipsum dignissim ac.
+In at libero sed nunc venenatis imperdiet sed ornare turpis. Donec vitae dui eget tellus gravida venenatis. Integer fringilla congue eros non fermentum. Sed dapibus pulvinar nibh tempor porta. Cras ac leo purus. Mauris quis diam velit.
+
+ </p>
+
+</div>
+
+</body>
+</html>
