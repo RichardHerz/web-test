@@ -54,7 +54,7 @@ canvas {
  position: relative;
  /*left: 7px;
  top: 52px;*/
- width: 801px;
+ width: 958px;
  /*height: 830px;*/
  height: 790px;
  visibility: visible;
@@ -66,9 +66,9 @@ canvas {
 
 #field_run_counter {
  position: absolute;
- left: 680px;
+ left: 813px;
  top: -10px;
- width: 120px;
+ width: 144px;
  height: 20px;
  border-width: 2px;
  visibility: visible;
@@ -80,10 +80,10 @@ canvas {
 
 #field_Field_1_1176 {
  position: absolute;
- left: 6px;
+ left: 7px;
  /*top: -10px;*/
  top: 0px;
- width: 780px;
+ width: 933px;
  height: 73px;
  border-width: 2px;
  visibility: visible;
@@ -95,10 +95,10 @@ canvas {
 
 #field_Field_1a_1176a {
  position: absolute;
- left: 300px;
+ left: 359px;
  /*top: 70px;*/
  top: 30px;
- width: 502px;
+ width: 600px;
  height: 64px;
  border-width: 2px;
  visibility: visible;
@@ -111,10 +111,10 @@ canvas {
 #div_RADIO_group_Model {
  display: block;
  position: absolute;
- left: 32px;
+ left: 38px;
  /*top: 81px;*/
   top: 41px;
- width: 205px;
+ width: 245px;
  height: 62px;
  visibility: visible;
  border-width: 1px;
@@ -124,37 +124,37 @@ canvas {
 }
 
 #radio_Model_1_LABEL {
- width: 193px;
+ width: 231px;
  height: 28px;
- left: 6px;
+ left: 7px;
  top: 6px;
 }
 
 #radio_Model_1_SPAN {
- margin-left: 22px;
+ margin-left: 26px;
  line-height: 22px;
  font-size: 14px;
 }
 
 #radio_Model_2_LABEL {
- width: 191px;
+ width: 228px;
  height: 24px;
- left: 6px;
+ left: 7px;
  top: 32px;
 }
 
 #radio_Model_2_SPAN {
- margin-left: 22px;
+ margin-left: 26px;
  line-height: 22px;
  font-size: 14px;
 }
 
 #button_resetButton_1177 {
  position: absolute;
- left: 95px;
+ left: 114px;
  /*top: 174px;*/
   top: 134px;
- width: 72px;
+ width: 86px;
  height: 23px;
  visibility: visible;
  border-width: 2px;
@@ -164,10 +164,10 @@ canvas {
 
 #button_runButton_1178 {
  position: absolute;
- left: 19px;
+ left: 23px;
  /*top: 175px;*/
   top: 135px;
- width: 72px;
+ width: 86px;
  height: 23px;
  visibility: visible;
  border-width: 2px;
@@ -178,10 +178,10 @@ canvas {
 #div_plotCanvasInlet_1195 {
  display: block;
  position: absolute;
- left: 355px;
+ left: 425px;
  /*top: 181px;*/
  top: 141px;
- width: 440px;
+ width: 526px;
  height: 120px;
  visibility: visible;
  border-width: 2px;
@@ -194,10 +194,10 @@ canvas {
 #div_plotCanvasOutlet_1196 {
  display: block;
  position: absolute;
- left: 355px;
+ left: 425px;
  /*top: 575px;*/
  top: 535px;
- width: 440px;
+ width: 526px;
  height: 120px;
  visibility: visible;
  border-width: 2px;
@@ -210,10 +210,10 @@ canvas {
 #div_plotCanvasSurface_1189 {
  display: block;
  position: absolute;
- left: 401px;
+ left: 480px;
  /*top: 442px;*/
  top: 402px;
- width: 300px;
+ width: 359px;
  height: 120px;
  visibility: visible;
  border-width: 2px;
@@ -226,10 +226,10 @@ canvas {
 #div_plotCanvasGas_1192 {
  display: block;
  position: absolute;
- left: 401px;
+ left: 480px;
  /*top: 313px;*/
   top: 273px;
- width: 300px;
+ width: 359px;
  height: 120px;
  visibility: visible;
  border-width: 2px;
@@ -241,10 +241,10 @@ canvas {
 
 #field_setCmax_label_1198 {
  position: absolute;
- left: 21px;
+ left: 25px;
  /*top: 193px;*/
  top: 153px;
- width: 181px;
+ width: 216px;
  height: 23px;
  border-width: 2px;
  visibility: visible;
@@ -256,10 +256,10 @@ canvas {
 
 #field_setCmax_value_1199 {
  position: absolute;
- left: 205px;
+ left: 245px;
  /*top: 193px;*/
  top: 153px;
- width: 68px;
+ width: 81px;
  height: 21px;
  border-width: 2px;
  visibility: visible;
@@ -270,19 +270,19 @@ canvas {
 }
 
 #range_setCmax_slider_1200 {
- left: 26px;
+ left: 31px;
  /*top: 223px;*/
  top: 183px;
- width: 249px;
+ width: 298px;
  height: 24px;
 }
 
 #field_enterKflow_label_1201 {
  position: absolute;
- left: 21px;
+ left: 25px;
  /*top: 413px;*/
  top: 373px;
- width: 198px;
+ width: 237px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -294,10 +294,10 @@ canvas {
 
 #field_enterKads_label_1202 {
  position: absolute;
- left: 21px;
+ left: 25px;
  /*top: 479px;*/
  top: 439px;
- width: 198px;
+ width: 237px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -309,10 +309,10 @@ canvas {
 
 #input_field_enterKflow_1203 {
  position: absolute;
- left: 225px;
+ left: 269px;
  /*top: 426px;*/
   top: 386px;
- width: 68px;
+ width: 81px;
  height: 21px;
  visibility: visible;
  opacity: 1;
@@ -321,10 +321,10 @@ canvas {
 
 #input_field_enterKads_1204 {
  position: absolute;
- left: 225px;
+ left: 269px;
  /*top: 493px;*/
  top: 453px;
- width: 68px;
+ width: 81px;
  height: 21px;
  visibility: visible;
  opacity: 1;
@@ -333,10 +333,10 @@ canvas {
 
 #field_enterKdiff_label_1205 {
  position: absolute;
- left: 21px;
+ left: 25px;
  /*top: 446px;*/
   top: 406px;
- width: 198px;
+ width: 237px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -348,10 +348,10 @@ canvas {
 
 #input_field_enterKdiff_1206 {
  position: absolute;
- left: 225px;
+ left: 269px;
  /*top: 460px;*/
   top: 420px;
- width: 68px;
+ width: 81px;
  height: 21px;
  visibility: visible;
  opacity: 1;
@@ -360,10 +360,10 @@ canvas {
 
 #field_enterThieleMod_label_1207 {
  position: absolute;
- left: 21px;
+ left: 25px;
  /*top: 513px;*/
   top: 473px;
- width: 198px;
+ width: 237px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -375,10 +375,10 @@ canvas {
 
 #field_enterAlpha_label_1208 {
  position: absolute;
- left: 21px;
+ left: 25px;
  /*top: 575px;*/
   top: 535px;
- width: 198px;
+ width: 237px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -390,10 +390,10 @@ canvas {
 
 #input_field_enterThieleMod_1209 {
  position: absolute;
- left: 225px;
+ left: 269px;
  /*top: 526px;*/
   top: 486px;
- width: 68px;
+ width: 81px;
  height: 21px;
  visibility: visible;
  opacity: 1;
@@ -402,10 +402,10 @@ canvas {
 
 #input_field_enterAlpha_1210 {
  position: absolute;
- left: 225px;
+ left: 269px;
  /*top: 589px;*/
   top: 549px;
- width: 68px;
+ width: 81px;
  height: 21px;
  visibility: visible;
  opacity: 1;
@@ -414,10 +414,10 @@ canvas {
 
 #field_enterBscale_label_1211 {
  position: absolute;
- left: 21px;
+ left: 25px;
  /*top: 608px;*/
   top: 568px;
- width: 198px;
+ width: 237px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -429,10 +429,10 @@ canvas {
 
 #input_field_enterBscale_1212 {
  position: absolute;
- left: 225px;
+ left: 269px;
  /*top: 622px;*/
   top: 582px;
- width: 68px;
+ width: 81px;
  height: 21px;
  visibility: visible;
  opacity: 1;
@@ -442,10 +442,10 @@ canvas {
 #div_RADIO_group_1213 {
  display: block;
  position: absolute;
- left: 32px;
+ left: 38px;
  /*top: 263px;*/
   top: 223px;
- width: 177px;
+ width: 212px;
  height: 85px;
  visibility: visible;
  border-width: 1px;
@@ -455,63 +455,63 @@ canvas {
 }
 
 #radio_Sine_1214_LABEL {
- width: 124px;
+ width: 148px;
  height: 21px;
- left: 6px;
+ left: 7px;
  top: 32px;
 }
 
 #radio_Sine_1214_SPAN {
- margin-left: 22px;
+ margin-left: 26px;
  line-height: 22px;
  font-size: 16px;
 }
 
 #radio_Constant_1215_LABEL {
- width: 126px;
+ width: 151px;
  height: 27px;
- left: 6px;
+ left: 7px;
  top: 6px;
 }
 
 #radio_Constant_1215_SPAN {
- margin-left: 22px;
+ margin-left: 26px;
  line-height: 22px;
  font-size: 16px;
 }
 
 #radio_Square_1216_LABEL {
- width: 128px;
+ width: 153px;
  height: 23px;
- left: 6px;
+ left: 7px;
  top: 56px;
 }
 
 #radio_Square_1216_SPAN {
- margin-left: 22px;
+ margin-left: 26px;
  line-height: 22px;
  font-size: 16px;
 }
 
 #checkbox_on_1231_LABEL {
- width: 66px;
+ width: 79px;
  height: 23px;
- left: 105px;
+ left: 126px;
  top: 7px;
 }
 
 #checkbox_on_1231_SPAN {
- margin-left: 22px;
+ margin-left: 26px;
  line-height: 18px;
  font-size: 16px;
 }
 
 #field_enterCyclePeriod_label_1217 {
  position: absolute;
- left: 59px;
+ left: 71px;
  /*top: 338px;*/
   top: 298px;
- width: 198px;
+ width: 237px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -523,10 +523,10 @@ canvas {
 
 #input_field_enterDuty_1218 {
  position: absolute;
- left: 264px;
+ left: 316px;
  /*top: 387px;*/
   top: 347px;
- width: 68px;
+ width: 81px;
  height: 21px;
  visibility: visible;
  opacity: 1;
@@ -535,10 +535,10 @@ canvas {
 
 #field_enterDuty_label_1219 {
  position: absolute;
- left: 59px;
+ left: 71px;
  /*top: 371px;*/
   top: 331px;
- width: 198px;
+ width: 237px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -550,10 +550,10 @@ canvas {
 
 #input_field_enterCyclePeriod_1220 {
  position: absolute;
- left: 264px;
+ left: 316px;
  /*top: 353px;*/
   top: 313px;
- width: 68px;
+ width: 81px;
  height: 21px;
  visibility: visible;
  opacity: 1;
@@ -562,10 +562,10 @@ canvas {
 
 #field_Krxn_label_1222 {
  position: absolute;
- left: 86px;
+ left: 103px;
  /*top: 546px;*/
   top: 506px;
- width: 75px;
+ width: 90px;
  height: 21px;
  border-width: 2px;
  visibility: visible;
@@ -577,10 +577,10 @@ canvas {
 
 #field_Krxn_1223 {
  position: absolute;
- left: 147px;
+ left: 176px;
  /*top: 553px;*/
   top: 513px;
- width: 68px;
+ width: 81px;
  height: 21px;
  border-width: 2px;
  visibility: visible;
@@ -592,10 +592,10 @@ canvas {
 
 #field_profile_label_gas_1226 {
  position: absolute;
- left: 709px;
+ left: 848px;
  /*top: 299px;*/
   top: 259px;
- width: 112px;
+ width: 134px;
  height: 120px;
  border-width: 2px;
  visibility: visible;
@@ -607,10 +607,10 @@ canvas {
 
 #field_profile_label_surface_1227 {
  position: absolute;
- left: 709px;
+ left: 848px;
  /*top: 426px;*/
   top: 386px;
- width: 112px;
+ width: 134px;
  height: 120px;
  border-width: 2px;
  visibility: visible;
@@ -622,10 +622,10 @@ canvas {
 
 #field_aveRate_label_1236 {
  position: absolute;
- left: 78px;
+ left: 93px;
  /*top: 770px;*/
   top: 730px;
- width: 332px;
+ width: 397px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -637,10 +637,10 @@ canvas {
 
 #field_aveRate_1237 {
  position: absolute;
- left: 415px;
+ left: 496px;
  /*top: 770px;*/
   top: 730px;
- width: 87px;
+ width: 104px;
  height: 21px;
  border-width: 2px;
  visibility: visible;
@@ -652,10 +652,10 @@ canvas {
 
 #field_aveConversion_1238 {
  position: absolute;
- left: 714px;
+ left: 854px;
  /*top: 770px;*/
   top: 730px;
- width: 75px;
+ width: 90px;
  height: 21px;
  border-width: 2px;
  visibility: visible;
@@ -667,10 +667,10 @@ canvas {
 
 #field_aveConverion_label_1239 {
  position: absolute;
- left: 531px;
+ left: 635px;
  /*top: 770px;*/
   top: 730px;
- width: 198px;
+ width: 237px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -682,10 +682,10 @@ canvas {
 
 #field_spaceTimeTop_label_1240 {
  position: absolute;
- left: 190px;
+ left: 227px;
  /*top: 678px;*/
   top: 638px;
- width: 240px;
+ width: 287px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -697,10 +697,10 @@ canvas {
 
 #field_spaceTimeMiddle_label_1241 {
  position: absolute;
- left: 160px;
+ left: 191px;
  /*top: 710px;*/
   top: 670px;
- width: 240px;
+ width: 287px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -712,10 +712,10 @@ canvas {
 
 #field_spaceTimeBtm_label_1242 {
  position: absolute;
- left: 236px;
+ left: 282px;
  /*top: 745px;*/
   top: 705px;
- width: 198px;
+ width: 237px;
  height: 25px;
  border-width: 2px;
  visibility: visible;
@@ -727,10 +727,10 @@ canvas {
 
 #field_Label_Field {
  position: absolute;
- left: 6px;
+ left: 7px;
  /*top: 136px;*/
   top: 96px;
- width: 558px;
+ width: 667px;
  height: 21px;
  border-width: 2px;
  visibility: visible;
@@ -742,10 +742,10 @@ canvas {
 
 #image_reactor_image {
  position: absolute;
- left: 362px;
+ left: 433px;
  /*top: 300px;*/
   top: 260px;
- width: 37px;
+ width: 44px;
  height: 275px;
  visibility: visible;
  border-style: none;
@@ -755,10 +755,10 @@ canvas {
 
 #canvas_CANVAS_rate {
  position: absolute;
- left: 380px;
+ left: 454px;
  /*top: 700px;*/
   top: 660px;
- width: 414px;
+ width: 495px;
  height: 80px;
  visibility: visible;
  border-width: 0px;
