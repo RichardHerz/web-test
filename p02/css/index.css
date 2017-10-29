@@ -769,6 +769,6 @@ canvas {
 
 @media(max-width: 980px) {
   .class_body_text {
-    font-size: 3em;
+    font-size: 1em;
   }
 }
