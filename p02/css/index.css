@@ -682,7 +682,7 @@ canvas {
 
 #field_spaceTimeTop_label_1240 {
  position: absolute;
- left: 227px;
+ left: 240px; /* 227px */
  /*top: 678px;*/
   top: 638px;
  width: 287px;
@@ -697,7 +697,7 @@ canvas {
 
 #field_spaceTimeMiddle_label_1241 {
  position: absolute;
- left: 191px;
+ left: 214px; /* 191px */
  /*top: 710px;*/
   top: 670px;
  width: 287px;
@@ -755,10 +755,10 @@ canvas {
 
 #canvas_CANVAS_rate {
  position: absolute;
- left: 454px;
+ left: 450px; /* 454px */
  /*top: 700px;*/
   top: 660px;
- width: 495px;
+ width: 499px; /* 495px */
  height: 80px;
  visibility: visible;
  border-width: 0px;
