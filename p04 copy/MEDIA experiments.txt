@@ -1,0 +1,86 @@
+20161006 
+With new web app 1, web_app_1 20161005b.zip, trying to figure out why don't get @media rearrangement on iphone
+If go back to version made with Macaw, web_app_1 20160615b.zip, then DO get @media rearrangement on iphone 
+If go back to 1st version made with lcCardLayoutToWeb, web_app_1 20160921a.zip, then NO @media rearrangement on iphone 
+WHAT IS CAUSE?
+=======================================================
+USE THIS!
+
+@media (orientation: portrait) {
+
+  #div_simulation_3_frame_1154 {
+    width: 620px;
+    height: 940px;
+  }
+
+ #field_Field_1_1156 {
+   width: 600px;
+   height: 179px;
+  }
+
+  #div_controller_1162 {
+    left: 10px;
+    top: 602px;
+  }
+
+}
+
+=======================================================
+Experiments with web app 1 - iphone, chrome 
+BASE CASE:
+  <!-- load style sheets for this lab  -->
+  <link rel="stylesheet" href="css/index.css"> 
+-------
+include <link rel="stylesheet" href="css/index-grid.css">
+has no effect
+no effect on @media rearrangement
+-------
+include <link rel="stylesheet" href="css/standardize.css"> 
+shifts text up to be misaligned in all locked field <p> and labels for inputs 
+no effect on @media rearrangement
+-------
+deactivating the simulation frame div had no effect other than getting rid of the border and shifting all up to overlap first field with Back button - no effect on @media rearrangement
+
+=======================================================
+Experiments with web app 3 - iphone, chrome 
+BASE CASE:
+  <!-- load style sheets for this lab  -->
+  <link rel="stylesheet" href="css/standardize.css">
+  <link rel="stylesheet" href="css/index-grid.css">
+  <link rel="stylesheet" href="css/index.css"> 
+-------
+delete   <link rel="stylesheet" href="css/index-grid.css"> 
+no apparent changes
+still get @media rearrangement
+NOTE: this file only contains class specs starting with ".fluid-", e.g., 
+.fluid-span-1 {
+  width: 6.5%;
+}
+------
+delete   <link rel="stylesheet" href="css/standardize.css">  
+still get @media rearrangement 
+top field drops down and overlaps some input labels
+input fields get taller and have rounded corners
+input field label fields appear to drop down from alignment of input fields
+radio buttons are round (vs. square in base case)
+------
+NOTE "clearfix" in html in some class specs of body, some divs (reactor, controller, NOT plotCanvas, reactionParams, operatingParams) and radio labels 
+clear fix is in standardize.css at
+.clearfix:before, .clearfix:after { content: ""; display: table; }
+.clearfix:after { clear: both; }
+.clearfix { *zoom: 1; }
+NOTE: "clearfix" has something to do with "floated" elements within a container box - in web app 3, css written by Macaw has "float" specs for some elements as in 
+
+.image_reactorimage-1 {
+
+.radio-label-1 { 
+
+.radio-label-2 { 
+
+.radio_controllerauto-1,
+.radio_controllermanual-1 {
+
+.radio_autolabel-1,
+.radio_manuallabel-1 {
+
+------
