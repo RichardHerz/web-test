@@ -45,9 +45,9 @@ canvas {
 #div_simFrame {
  display: block;
  position: absolute;
- left: 51px;
+ left: 10px;
  top: 143px;
- width: 775px;
+ width: 970px;
  height: 434px;
  visibility: visible;
  border-width: 2px;
@@ -58,7 +58,7 @@ canvas {
 
 #button_Button_1 {
  position: absolute;
- left: 6px;
+ left: 10px;
  top: 8px;
  width: 82px;
  height: 23px;
@@ -70,9 +70,9 @@ canvas {
 
 #button_Button_2 {
  position: absolute;
- left: 687px;
+ left: 510px;
  top: 6px;
- width: 82px;
+ width: 80px;
  height: 23px;
  visibility: visible;
  border-width: 2px;
@@ -82,7 +82,7 @@ canvas {
 
 @media(max-width: 640px){
   #button_Button_2 {
-   left: 255px;
+   left: 250px;
    top: 183px;
   }
 }
