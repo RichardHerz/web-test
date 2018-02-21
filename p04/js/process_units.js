@@ -257,7 +257,7 @@ var unit_2 = {
   display : function() {
 
     // document.getElementById("demo01").innerHTML = "unit_1.rate = " + this.rate;
-    var el = document.querySelector("#reactorContents");
+    var el = document.querySelector("#div_PLOTDIV_reactorContents");
     // reactant is blue, product is red, this.conc is reactant conc
     // xxx assume here max conc is 400 but should make it a variable
     var concB = Math.round((this.conc)/400 * 255);
