@@ -4,79 +4,111 @@ sup {
 
 #div_controller {
   position: absolute;
+  display: block;
   top: 273px;
   left: 400px;
-  z-index: 20;
-  width: 427px;
-  height: 415px;
-}
+  width: 500px;
+  height: 500px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  LCvScrollbar: false;
+ }
 
 #div_operatingParams {
   position: absolute;
+  display: block;
   top: 273px;
   left: 20px;
-  z-index: 31;
-  width: 21.3489583333%;
-  height: 151px;
-}
+  width: 300px;
+  height: 180px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  LCvScrollbar: false;
+ }
 
 #div_reactionParams {
   position: absolute;
+  display: block;
   top: 698px;
   left: 20px;
-  z-index: 38;
-  width: 22.3489583333%;
-  height: 89px;
-}
+  width: 300px;
+  height: 180px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  LCvScrollbar: false;
+ }
 
 #div_reactor {
   position: absolute;
+  display: block;
   top: 462px;
   left: 20px;
-  z-index: 41;
-  width: 23.3333333333%;
-  height: 202px;
-}
+  width: 300px;
+  height: 230px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  LCvScrollbar: false;
+ }
 
 #div_PLOTDIV_reactorContents {
   position: absolute;
+  display: block;
   top: 84px;
   left: 93px;
-  z-index: 40;
   width: 106px;
   height: 67px;
   background-color: rgb(222, 222, 222);
-}
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  opacity: 1;
+  LCvScrollbar: false;
+ }
 
 #div_PLOTDIV_plotData {
   position: absolute;
+  display: block;
   top: 0;
   left: 0;
-  z-index: 4;
   width: 430px;
   height: 248px;
   background-color: rgb(255, 255, 255);
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  opacity: 1;
+  LCvScrollbar: false;
 }
 
 #div_topPageText {
   position: absolute;
+  display: block;
   top: 10px;
   left: 20px;
   width: 797px;
   height: 137px;
-  min-height: 74px;
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  LCvScrollbar: false;
+ }
 
 #button_copyDataButton {
   display: block;
   position: absolute;
   top: 258px;
   left: 326px;
-  z-index: 19;
   width: 104px;
   height: 24px;
   border-top-left-radius: 3px;
@@ -96,7 +128,6 @@ sup {
   top: 67px;
   left: 0;
   width: 200px;
-  z-index: 37;
   font-size: 1em;
   font-weight: 400;
   line-height: 1.38;
@@ -107,8 +138,7 @@ sup {
   display: block;
   position: absolute;
   top: 67px;
-  left: 184px;
-  z-index: 36;
+  left: 200px;
   width: 72px;
   height: 22px;
 }
@@ -118,7 +148,6 @@ sup {
   top: 34px;
   left: 0;
   width: 200px;
-  z-index: 35;
   font-size: 1em;
   font-weight: 400;
   line-height: 1.38;
@@ -129,8 +158,7 @@ sup {
   display: block;
   position: absolute;
   top: 34px;
-  left: 184px;
-  z-index: 34;
+  left: 200px;
   width: 72px;
   height: 22px;
 }
@@ -139,7 +167,6 @@ sup {
   position: absolute;
   top: 55px;
   left: 0;
-  z-index: 26;
   width: 181px;
   font-size: 1em;
   font-weight: 400;
@@ -151,8 +178,7 @@ sup {
   display: block;
   position: absolute;
   top: 55px;
-  left: 184px;
-  z-index: 25;
+  left: 200px;
   width: 72px;
   height: 22px;
 }
@@ -161,7 +187,6 @@ sup {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 22;
   width: 181px;
   font-size: 1em;
   font-weight: 400;
@@ -173,8 +198,7 @@ sup {
   display: block;
   position: absolute;
   top: 0;
-  left: 184px;
-  z-index: 21;
+  left: 200px;
   width: 72px;
   height: 22px;
 }
@@ -183,7 +207,6 @@ sup {
   position: absolute;
   top: 27px;
   left: 0;
-  z-index: 24;
   width: 181px;
   font-size: 1em;
   font-weight: 400;
@@ -195,8 +218,7 @@ sup {
   display: block;
   position: absolute;
   top: 27px;
-  left: 184px;
-  z-index: 23;
+  left: 200px;
   width: 72px;
   height: 22px;
 }
@@ -205,7 +227,6 @@ sup {
   position: absolute;
   top: 306px;
   left: 20px;
-  z-index: 6;
   font-size: 1em;
   font-weight: 400;
   line-height: 1.38;
@@ -217,7 +238,6 @@ sup {
   position: absolute;
   top: 306px;
   left: 217px;
-  z-index: 7;
   width: 72px;
   height: 22px;
 }
@@ -226,7 +246,6 @@ sup {
   position: absolute;
   top: 420px;
   left: 20px;
-  z-index: 11;
   font-size: 1em;
   font-weight: 400;
   line-height: 1.38;
@@ -238,7 +257,6 @@ sup {
   position: absolute;
   top: 388px;
   left: 175px;
-  z-index: 12;
   width: 72px;
   height: 22px;
 }
@@ -247,7 +265,6 @@ sup {
   position: absolute;
   top: 101px;
   left: 0px;
-  z-index: 28;
   width: 200px;
   font-size: 1em;
   font-weight: 400;
@@ -259,8 +276,7 @@ sup {
   display: block;
   position: absolute;
   top: 101px;
-  left: 184px;
-  z-index: 27;
+  left: 200px;
   width: 72px;
   height: 22px;
 }
@@ -269,8 +285,7 @@ sup {
   position: absolute;
   top: 129px;
   left: 0px;
-  z-index: 30;
-  width: 181px;
+  width: 200px;
   font-size: 1em;
   font-weight: 400;
   line-height: 1.38;
@@ -281,8 +296,8 @@ sup {
   display: block;
   position: absolute;
   top: 140px;
-  left: 184px;
-  width: 82px;
+  left: 200px;
+  width: 72px;
   height: 22px;
 }
 
@@ -290,7 +305,6 @@ sup {
   position: absolute;
   top: 335px;
   left: 21px;
-  z-index: 10;
   font-size: 1em;
   font-weight: 400;
   line-height: 1.38;
@@ -302,7 +316,6 @@ sup {
   position: absolute;
   top: 335px;
   left: 217px;
-  z-index: 9;
   width: 72px;
   height: 22px;
 }
@@ -311,7 +324,6 @@ sup {
   position: absolute;
   top: 278px;
   left: 21px;
-  z-index: 6;
   font-size: 1em;
   font-weight: 400;
   line-height: 1.38;
@@ -323,7 +335,6 @@ sup {
   position: absolute;
   top: 278px;
   left: 217px;
-  z-index: 5;
   width: 72px;
   height: 22px;
 }
@@ -332,7 +343,6 @@ sup {
   display: block;
   position: relative;
   float: left;
-  z-index: 39;
   width: 280px;
   height: auto;
   overflow: hidden;
@@ -343,7 +353,6 @@ sup {
   position: absolute;
   top: 239px;
   left: 20px;
-  z-index: 2;
   width: 70px;
   height: 24px;
   border-top-left-radius: 3px;
@@ -363,7 +372,6 @@ sup {
   position: absolute;
   top: 239px;
   left: 100px;
-  z-index: 3;
   width: 70px;
   height: 24px;
   border-top-left-radius: 3px;
@@ -382,7 +390,6 @@ sup {
   position: absolute;
   top: 0;
   left: 20px;
-  z-index: 33;
   width: 183px;
   font-size: 1em;
   font-weight: 400;
@@ -394,8 +401,7 @@ sup {
   display: block;
   position: absolute;
   top: 0;
-  left: 184px;
-  z-index: 32;
+  left: 200px;
   width: 72px;
   height: 22px;
 }
@@ -403,19 +409,19 @@ sup {
 #div_RADIO_group_Controller {
   display: block;
   position: absolute;
-  left: 0px;
-  top: 270px;
-  width: 300px;
-  height: 200px;
+  left: 4px;
+  top: 254px;
+  width: 312px;
+  height: 242px;
   visibility: visible;
   border-width: 1px;
   border-style: dotted;
-  border-color: DodgerBlue;
-  opacity: 1;
+  border-color: red;
   LCvScrollbar: false;
- }
+}
 
 #radio_controllerAUTO_LABEL {
+  display: block;
   position: absolute;
   width: 231px;
   height: 28px;
@@ -424,31 +430,22 @@ sup {
  }
 
 #radio_controllerAUTO_SPAN {
-  position: absolute;
-  width: 231px;
-  height: 28px;
-  left: 0px;
-  top: 0px;
-  margin-left: 26px;
+  margin-left: 20px;
   line-height: 22px;
   font-size: 14px;
  }
 
-#radio_controllerMANUAL_LABEL {
+#radio_controllerMANUAL_LABEL{
+  display: block;
   position: absolute;
   width: 231px;
   height: 28px;
   left: 0px;
-  top: 60px;
+  top: 140px;
  }
 
 #radio_controllerMANUAL_SPAN {
-  position: absolute;
-  width: 231px;
-  height: 28px;
-  left: 0px;
-  top: 60px;
-  margin-left: 26px;
+  margin-left: 20px;
   line-height: 22px;
   font-size: 14px;
  }
