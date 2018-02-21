@@ -1,144 +1,176 @@
-// by Richard K. Herz of www.ReactorLab.net
-// 2015
 
-// this file contains the main simulation functions
-// see file process_units.js for definitions of the process units
+/*
+  Design, text, images and code by Richard K. Herz, 2017-2018
+  Copyrights held by Richard K. Herz
+  Licensed for use under the GNU General Public License v3.0
+  https://www.gnu.org/licenses/gpl-3.0.en.html
+*/
 
-var resetFlag // after openThisLab value is set by function resetThisLab and button in UI
-var gRunner = false; // controlled by function runThisLab and RUN/PAUSE button
+// uses object simParams from file process_units.js
 
-// ------------------- GENERAL FUNCTIONS ----------------------
+// this file contains common simulation functions
+// see file process_units.js for simulation parameter values and
+// definitions of the process units
 
-	// DISPLAY INITIAL STATE ON OPEN WINDOW
-	window.onload = openThisLab;
+  // DISPLAY INITIAL STATE ON OPEN WINDOW
+  window.onload = openThisLab; // can NOT use = openThisLab();
 
-	function openThisLab(){
-		resetFlag = 1; // 0 for no reset, 1 for reset lab
-		updateProcessUnits(resetFlag);
-		updateDisplay(resetFlag);
-		resetFlag = 0; // 0 for no reset, 1 for reset lab
-	} // END OF function openThisLab
+  function openThisLab() {
+    var resetFlag = 1; // 0 for no reset, 1 for reset lab
+    updateProcessUnits(resetFlag);
+    updateDisplay(resetFlag);
+    simParams.updateRunCount();
+  } // END OF function openThisLab
 
-	function runSimulation(){
+  function runSimulation() {
 
-		// CALLED BY function runThisLab ON CLICK OF RUN-PAUSE BUTTON
+    // CALLED BY function runThisLab ON CLICK OF RUN-PAUSE BUTTON
 
-		// HERE, THE INTEGRATION TIME STEP SIZE MUST BE CONSTANT WITHIN ONE DISPLAY
-		// INTERVAL TO MAINTAIN CORRESPONDENCE BETWEEN SIM TIME AND REAL TIME
-		// FOR A DIFFERENT CASE WHERE THE INTEGRATION TIME STEP SIZE CAN VARY
-		// BETWEEN updateProcessUnits YOU NEED
-		// THE MORE COMPLEX TIMING METHOD USED IN dynamic-process-v2.livecode
+    // HERE, THE INTEGRATION TIME STEP SIZE MUST BE CONSTANT WITHIN ONE DISPLAY
+    // INTERVAL TO MAINTAIN CORRESPONDENCE BETWEEN SIM TIME AND REAL TIME
+    // FOR A DIFFERENT CASE WHERE THE INTEGRATION TIME STEP SIZE CAN VARY
+    // BETWEEN updateProcessUnits YOU NEED
+    // THE MORE COMPLEX TIMING METHOD USED IN dynamic-process-v2.livecode
 
-		var updateDisplayTimingMs = 250; // milliseconds between calls to updateDisplay
- 		var startDate = new Date(); // need this here
- 		var startMs;
- 		var currentMs;
-		var elapsedMs;
- 		var updateMs;
+    var resetFlag = 0; // 0 for no reset, 1 for reset lab
+    // updateDisplayTimingMs is real time milliseconds between display updates
+    var updateDisplayTimingMs = simParams.updateDisplayTimingMs;
+    var startDate = new Date(); // need this here
+    var startMs;
+    var currentMs;
+    var elapsedMs;
+    // updateMs is computed below in function updateProcess to be real time
+    // between finish last display update and start next update process
+    var updateMs = 0; // initialize as zero for first call immediately below
 
-		// first call to updateProcess, which then calls itself
-		// use setTimeout - updateProcess by itself does not work
- 		setTimeout(updateProcess, 0);
+    // first call to updateProcess, which then calls itself
+    // use setTimeout, since updateProcess by itself does not work
+    setTimeout(updateProcess, updateMs);
 
-		function updateProcess(){
+    function updateProcess() {
 
-			if (!gRunner) {
-				// exit if gRunner is not true
-				// gRunner can become not true by click of RUN-PAUSE or RESET buttons
-				return;
-			}
+      var runningFlag = simParams.runningFlag;
+      if (!runningFlag) {
+        // exit if runningFlag is not true
+        // runningFlag can become not true by click of RUN-PAUSE or RESET buttons
+        return;
+      }
 
-			// get time at start of repeating updateProcessUnits
-			startDate = new Date(); // need this here
-			startMs = startDate.getTime();
+      // get time at start of repeating updateProcessUnits
+      startDate = new Date(); // need this here
+      startMs = startDate.getTime();
 
-			// repeating updateProcessUnits must finish before
-			// latest real time at which updateDisplay must occur in order
-			// to maintain correspondence between sim time and real time
+      // repeating updateProcessUnits must finish before
+      // latest real time at which updateDisplay must occur in order
+      // to maintain correspondence between sim time and real time
+      //
+      var i;
+      for (i = 0; i < simParams.simStepRepeats; i += 1) {
+        updateProcessUnits(resetFlag);
+      }
 
-			// use stepRepeats = sim time interval of display / step size dt
-			var stepRepeats = 40;
-			for (k = 0; k < stepRepeats; k++){
-				updateProcessUnits(resetFlag);
-			}
+      // update simTime = simulation time elapsed
+      simParams.updateSimTime();
 
-			// get time at end of repeating updateProcessUnits and call
-			// to updateDisplay from updateDisplay function return value
-			currentMs = updateDisplay(resetFlag);
+      // get time at end of repeating updateProcessUnits and call
+      // to updateDisplay from updateDisplay function return value
+      currentMs = updateDisplay(resetFlag);
 
-			// adjust wait until next updateProcess
-			// for time taken to do updateProcessUnits and updateDisplay
-			elapsedMs = currentMs - startMs;
-			updateMs = updateDisplayTimingMs - elapsedMs;
+      // Adjust wait until next updateProcess to allow for time taken
+      // to do updateProcessUnits and updateDisplay.
+      // In order to respond to user input, do not need updateMs > 0.
+      // BUT DO NEED updateMs > 0 to keep sync between sim time and real time.
+      elapsedMs = currentMs - startMs;
+      updateMs = updateDisplayTimingMs - elapsedMs;
 
-			// END updateProcess WITH CALL TO ITSELF AFTER WAIT
-			setTimeout(updateProcess, updateMs);
+      // // DISPLAY TIMING DATA DURING DEVELOPMENT - PERCENT TIME IDLE
+      // var tIdleTime = 100*(1-elapsedMs/updateMs);
+      // tIdleTime = Number(tIdleTime).toPrecision(2);
+      // document.getElementById("dev01").innerHTML = "% idle = " + tIdleTime + "&nbsp;&nbsp;";
+      // document.getElementById("dev01").innerHTML = "elapsedMs = " + elapsedMs + "&nbsp;&nbsp;";
 
-		} // END OF function updateProcess (inside function runSimulation)
+      // END updateProcess WITH CALL TO ITSELF AFTER updateMs WAIT
+      setTimeout(updateProcess, updateMs);  // updateMs
 
-	} // END OF function runSimulation
+    } // END OF function updateProcess (inside function runSimulation)
 
-	function updateProcessUnits(resetFlag){
-		// DO COMPUTATIONS TO UPDATE STATE OF PROCESS
-		// step all units but do not display
+  } // END OF function runSimulation
 
-		// FIRST, have all units update their input connection values
+  function updateProcessUnits(resetFlag) {
+    // DO COMPUTATIONS TO UPDATE STATE OF PROCESS
+    // step all units but do not display
 
-		for (i = 1; i <= numUnits; i++) {
-			// construct unit name
-			unitName = unitNameBase + i.toString();
-			eval(unitName +'.updateInputs();');
-		}
+    var unitList = simParams.processUnits;
+    var tmpFunc = new Function();
 
-		// SECOND, have all units update their state
+    // FIRST, have all units update their input connection values
+    unitList.forEach(fUpdateInputs);
+    function fUpdateInputs(unitName) {
+      tmpFunc = new Function(unitName + ".updateInputs();");
+      tmpFunc();
+    }
 
-		// WARNING: DO NOT CHANGE dt BETWEEN display updates
-		var dt = 0.1;
+    // SECOND, have all units update their state
+    unitList.forEach(fUpdateState);
+    function fUpdateState(unitName) {
 
-		for (i = 1; i <= numUnits; i++) {
-			// construct unit name
-			unitName = unitNameBase + i.toString();
-			if (resetFlag){
-				eval(unitName +'.reset();');
-			}
-			eval(unitName + '.dt = dt;'); // units use this dt, not their default dt
-			eval(unitName +'.updateState();');
-		}
+      if (resetFlag) {
+        tmpFunc = new Function(unitName + ".reset();");
+        tmpFunc();
+      }
 
-	} // END OF updateProcessUnits
+      tmpFunc = new Function(unitName + ".updateState();");
+      tmpFunc();
+    }
 
-	function updateDisplay(resetFlag){
+  } // END OF updateProcessUnits
 
-		// display all units but do not step
+  function updateDisplay(resetFlag) {
 
-		for (i = 1; i <= numUnits; i++) {
-			// construct unit name
-			unitName = unitNameBase + i.toString();
-			if (resetFlag){
-				eval(unitName +'.reset();');
-			}
-			eval(unitName + '.display();');
-		}
+    var unitList = simParams.processUnits;
+    // display all units but do not step
+    unitList.forEach(fDisplay);
+    function fDisplay(unitName) {
+      if (resetFlag) {
+        var tmpFunc = new Function(unitName + ".reset();");
+        tmpFunc();
+      }
+        var tmpFunc = new Function(unitName + ".display();");
+        tmpFunc();
+    }
 
-		// get and plot the data
-		var data = getPlotData(resetFlag);
-		plotPlotData(data);
+    // GET AND PLOT ALL PLOTS defined in plotsObj in process_plot_info
+    // plots are specified in object plotsObj in file process_plot_info.js
+    var npl = Object.keys(plotsObj).length; // number of plots
+    var p; // used as index
+    var data;
+    for (p = 0; p < npl; p += 1) {
+      data = getPlotData(p);
+      plotPlotData(data,p);
+    }
 
-		// RETURN REAL TIME OF THIS DISPLAY UPDATE (milliseconds)
-		var thisDate = new Date();
-		var thisMs = thisDate.getTime();
- 		return thisMs
+    // // NEW - plot space-time plots, if any - NEW
+    // plotSpaceTimePlot();
 
-	}  // END OF function updateDisplay
+    // RETURN REAL TIME OF THIS DISPLAY UPDATE (milliseconds)
+    var thisDate = new Date();
+    var thisMs = thisDate.getTime();
+    return thisMs;
 
-	function updateUIparams(){
-		// Update all user-entered inputs from UI to ALL units.
-		// Alternative: in HTML input tag onchange, send unit_#.updateUIparams()
-		// to specific unit # involved in that input
-		for (i = 1; i <= numUnits; i++) {
-			// construct unit name
-			unitName = unitNameBase + i.toString();
-			// update user-entered inputs to each unit
-			eval(unitName +'.updateUIparams();');
-		}
-	}  // END OF function updateUIparams
+  }  // END OF function updateDisplay
+
+  function updateUIparams() {
+    // Update user-entered inputs from UI to ALL units.
+    // Could be called from onclick or onchange in HTML element, if desired.
+    // Alternative: in HTML input tag onchange, send unitName.updateUIparams()
+    // to method updateUIparams of specific unit involved in that input.
+
+    var unitList = simParams.processUnits;
+
+    unitList.forEach(fUpdateUIparams);
+    function fUpdateUIparams(unitName) {
+      var tmpFunc = new Function(unitName + ".updateUIparams();");
+      tmpFunc();
+    }
+
+  }  // END OF function updateUIparams

@@ -2,16 +2,7 @@ sup {
     font-size: smaller;
 }
 
-body {
-  background-color: rgb(255, 255, 255);
-  font-family: Helvetica;
-  font-size: 0.9em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
-
-.backbutton-1 {
+#backbutton {
   display: block;
   position: absolute;
   top: 14px;
@@ -24,7 +15,7 @@ body {
   color: rgb(32, 25, 239);
 }
 
-.container_controller-1 {
+#div_controller {
   position: absolute;
   top: 273px;
   left: 427px;
@@ -33,7 +24,7 @@ body {
   height: 415px;
 }
 
-.container_operatingparams-1 {
+#div_operatingParams {
   position: absolute;
   top: 273px;
   left: 120px;
@@ -42,7 +33,7 @@ body {
   height: 151px;
 }
 
-.container_reactionparams-1 {
+#div_reactionParams {
   position: absolute;
   top: 698px;
   left: 120px;
@@ -51,7 +42,7 @@ body {
   height: 89px;
 }
 
-.container_reactor-1 {
+#div_reactor {
   position: absolute;
   top: 462px;
   left: 120px;
@@ -60,7 +51,40 @@ body {
   height: 202px;
 }
 
-.copydatabutton-1 {
+#div_PLOTDIV_reactorContents {
+  position: absolute;
+  top: 84px;
+  left: 93px;
+  z-index: 40;
+  width: 106px;
+  height: 67px;
+  background-color: rgb(222, 222, 222);
+}
+
+#div_PLOTDIV_plotData {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  width: 430px;
+  height: 248px;
+  background-color: rgb(255, 255, 255);
+}
+
+#div_topPageText {
+  position: absolute;
+  top: 46px;
+  left: 120px;
+  width: 797px;
+  height: 137px;
+  min-height: 74px;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+#button_copyDataButton {
   display: block;
   position: absolute;
   top: 258px;
@@ -80,17 +104,19 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.element_reactorcontents-1 {
+#field_enterdelHLABEL {
   position: absolute;
-  top: 84px;
-  left: 93px;
-  z-index: 40;
-  width: 106px;
-  height: 67px;
-  background-color: rgb(222, 222, 222);
+  top: 67px;
+  left: 0;
+  width: 200px;
+  z-index: 37;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
 }
 
-.enterdelh-1 {
+#input_field_enterdelH {
   display: block;
   position: absolute;
   top: 67px;
@@ -122,7 +148,19 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.enterea-1 {
+#field_enterEaLABEL {
+  position: absolute;
+  top: 34px;
+  left: 0;
+  width: 200px;
+  z-index: 35;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+#input_field_enterEa {
   display: block;
   position: absolute;
   top: 34px;
@@ -154,7 +192,19 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.enterfeedconc-1 {
+#field_enterFeedConcLABEL {
+  position: absolute;
+  top: 55px;
+  left: 0;
+  z-index: 26;
+  width: 181px;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+#input_field_enterFeedConc {
   display: block;
   position: absolute;
   top: 55px;
@@ -186,7 +236,20 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.enterfeedflowrate-1 {
+
+#field_enterFeedFlowRateLABEL{
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 22;
+  width: 181px;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+#input_field_enterFeedFlowRate {
   display: block;
   position: absolute;
   top: 0;
@@ -218,7 +281,19 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.enterfeedttemp-1 {
+#field_enterFeedTTempLABEL {
+  position: absolute;
+  top: 27px;
+  left: 0;
+  z-index: 24;
+  width: 181px;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+#input_field_enterFeedTTemp {
   display: block;
   position: absolute;
   top: 27px;
@@ -250,7 +325,18 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.entergain-1 {
+.#field_enterGainLABEL {
+  position: absolute;
+  top: 306px;
+  left: 21px;
+  z-index: 8;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+#input_field_enterGain {
   display: block;
   position: absolute;
   top: 306px;
@@ -282,7 +368,18 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.enterjacketfeedttemp-1 {
+#field_enterJacketFeedTTempLABEL {
+  position: absolute;
+  top: 387px;
+  left: 20px;
+  z-index: 11;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+#input_field_enterJacketFeedTTemp {
   display: block;
   position: absolute;
   top: 388px;
@@ -314,7 +411,19 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.enterjacketflowrate-1 {
+#field_enterJacketFlowRateLABEL {
+  position: absolute;
+  top: 101px;
+  left: 0;
+  z-index: 28;
+  width: 181px;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+#input_field_enterJacketFlowRate {
   display: block;
   position: absolute;
   top: 101px;
@@ -346,7 +455,19 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.enterjacketua-1 {
+#field_enterJacketUALABEL {
+  position: absolute;
+  top: 129px;
+  left: 0;
+  z-index: 30;
+  width: 181px;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+#input_field_enterjacketUA {
   display: block;
   position: absolute;
   top: 129px;
@@ -378,39 +499,18 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.enterk300-1 {
-  display: block;
+#field_enterResetTimeLABEL {
   position: absolute;
-  top: 0;
-  left: 184px;
-  z-index: 32;
-  width: 72px;
-  height: 22px;
-  padding-top: 2px;
-  padding-right: 2px;
-  padding-bottom: 2px;
-  padding-left: 2px;
-  border-top-width: 2px;
-  border-right-width: 2px;
-  border-bottom-width: 2px;
-  border-left-width: 2px;
-  border-top-color: rgb(0, 0, 0);
-  border-right-color: rgb(0, 0, 0);
-  border-bottom-color: rgb(0, 0, 0);
-  border-left-color: rgb(0, 0, 0);
-  border-top-style: solid;
-  border-right-style: solid;
-  border-bottom-style: solid;
-  border-left-style: solid;
-  background-color: rgb(242, 242, 242);
-  font-size: 0.813em;
+  top: 335px;
+  left: 21px;
+  z-index: 10;
+  font-size: 1em;
   font-weight: 400;
   line-height: 1.38;
-  text-align: right;
   color: rgb(0, 0, 0);
 }
 
-.enterresettime-1 {
+#input_field_enterResetTime {
   display: block;
   position: absolute;
   top: 335px;
@@ -442,7 +542,18 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.entersetpoint-1 {
+#field_enterSetpointLABEL {
+  position: absolute;
+  top: 278px;
+  left: 21px;
+  z-index: 6;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+#input_field_enterSetpoint {
   display: block;
   position: absolute;
   top: 278px;
@@ -484,16 +595,6 @@ body {
   overflow: hidden;
 }
 
-.plotcanvas-1 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 4;
-  width: 430px;
-  height: 248px;
-  background-color: rgb(255, 255, 255);
-}
-
 .radio-label-1 {
   display: block;
   position: relative;
@@ -515,42 +616,7 @@ body {
   margin-top: 87px;
 }
 
-.radio_controllerauto-1,
-.radio_controllermanual-1 {
-  display: block;
-  float: left;
-  margin-top: 3px;
-}
-
-.radio_autolabel-1,
-.radio_manuallabel-1 {
-  display: block;
-  float: left;
-  margin-left: 6px;
-  line-height: 1.38;
-}
-
-.reset-1 {
-  display: block;
-  position: absolute;
-  top: 239px;
-  left: 201px;
-  z-index: 3;
-  width: 70px;
-  height: 24px;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-  background-color: rgb(222, 222, 222);
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  text-align: center;
-  color: rgb(0, 0, 0);
-}
-
-.run-1 {
+#button_runButton {
   display: block;
   position: absolute;
   top: 239px;
@@ -570,126 +636,27 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.copydatabutton-1:hover,
-.reset-1:hover,
-.run-1:hover {
-  background-color: rgb(232, 228, 250);
-}
-
-/* active only works when located below hover !! ?? */
-.copydatabutton-1:active,
-.reset-1:active,
-.run-1:active {
-  background-color: rgb(177, 150, 254);
-}
-
-.text_enterdelhlabel-1 {
+#button_resetButton {
+  display: block;
   position: absolute;
-  top: 67px;
-  left: 0;
-  width: 200px;
-  z-index: 37;
+  top: 239px;
+  left: 201px;
+  z-index: 3;
+  width: 70px;
+  height: 24px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  background-color: rgb(222, 222, 222);
   font-size: 1em;
   font-weight: 400;
   line-height: 1.38;
+  text-align: center;
   color: rgb(0, 0, 0);
 }
 
-.text_enterealabel-1 {
-  position: absolute;
-  top: 34px;
-  left: 0;
-  width: 200px;
-  z-index: 35;
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
-
-.text_enterfeedconclabel-1 {
-  position: absolute;
-  top: 55px;
-  left: 0;
-  z-index: 26;
-  width: 181px;
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
-
-.text_enterfeedflowrate-1 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 22;
-  width: 181px;
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
-
-.text_enterfeedttemplabel-1 {
-  position: absolute;
-  top: 27px;
-  left: 0;
-  z-index: 24;
-  width: 181px;
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
-
-.text_entergainlabel-1 {
-  position: absolute;
-  top: 306px;
-  left: 21px;
-  z-index: 8;
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
-
-.text_enterjacketfeedttemplabel-1 {
-  position: absolute;
-  top: 387px;
-  left: 20px;
-  z-index: 11;
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
-
-.text_enterjacketflowratelabel-1 {
-  position: absolute;
-  top: 101px;
-  left: 0;
-  z-index: 28;
-  width: 181px;
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
-
-.text_enterjacketua-1 {
-  position: absolute;
-  top: 129px;
-  left: 0;
-  z-index: 30;
-  width: 181px;
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
-
-.text_enterk300label-1 {
+#field_enterk300LABEL {
   position: absolute;
   top: 0;
   left: 0;
@@ -701,174 +668,84 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.text_enterresettimelabel-1 {
+#input_field_enterk300 {
+  display: block;
   position: absolute;
-  top: 335px;
-  left: 21px;
-  z-index: 10;
-  font-size: 1em;
+  top: 0;
+  left: 184px;
+  z-index: 32;
+  width: 72px;
+  height: 22px;
+  padding-top: 2px;
+  padding-right: 2px;
+  padding-bottom: 2px;
+  padding-left: 2px;
+  border-top-width: 2px;
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+  border-top-color: rgb(0, 0, 0);
+  border-right-color: rgb(0, 0, 0);
+  border-bottom-color: rgb(0, 0, 0);
+  border-left-color: rgb(0, 0, 0);
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  background-color: rgb(242, 242, 242);
+  font-size: 0.813em;
   font-weight: 400;
   line-height: 1.38;
+  text-align: right;
   color: rgb(0, 0, 0);
 }
 
-.text_entersetpointlabel-1 {
+#div_RADIO_group_Controller {
+  display: block;
   position: absolute;
-  top: 278px;
-  left: 21px;
-  z-index: 6;
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
-
-.text_toppagetext-1 {
-  position: absolute;
-  top: 46px;
-  left: 120px;
-  width: 797px;
-  height: 137px;
-  min-height: 74px;
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
-}
-
-.text_enterdelhlabel em,
-.text_enterealabel em,
-.text_entergainlabel em,
-.text_enterjacketfeedttemplabel em,
-.text_enterk300label em,
-.text_enterresettimelabel em,
-.text_entersetpointlabel em {
-  border-top-width: 0;
-  border-right-width: 0;
-  border-bottom-width: 0;
-  border-left-width: 0;
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  border-left-color: transparent;
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-  background-color: transparent;
-  font-family: inherit;
-  font-style: inherit;
-  font-size: inherit;
-  font-weight: 700;
-  text-transform: inherit;
-  text-decoration: inherit;
-  letter-spacing: inherit;
-  word-spacing: inherit;
-  color: inherit;
+  left: 38px;
+  top: 41px;
+  width: 245px;
+  height: 62px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
   opacity: 1;
-  word-break: normal;
-  word-wrap: normal;
-  white-space: normal;
-}
+  LCvScrollbar: false;
+ }
 
-.text_toppagetext a {
-  border-top-width: 0;
-  border-right-width: 0;
-  border-bottom-width: 0;
-  border-left-width: 0;
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  border-left-color: transparent;
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-  background-color: transparent;
-  font-family: inherit;
-  font-style: normal;
-  font-weight: inherit;
-  text-transform: inherit;
-  text-decoration: inherit;
-  letter-spacing: inherit;
-  word-spacing: inherit;
-  color: #000000;
-  opacity: 1;
-  word-break: normal;
-  word-wrap: normal;
-  white-space: normal;
-}
+ #radio_controllerAUTO_LABEL {
+  width: 231px;
+  height: 28px;
+  left: 7px;
+  top: 6px;
+ }
 
-.text_enterfeedconclabel em,
-.text_enterfeedflowrate em,
-.text_enterfeedttemplabel em,
-.text_enterjacketflowratelabel em,
-.text_enterjacketua em,
-.text_toppagetext span {
-  border-top-width: 0;
-  border-right-width: 0;
-  border-bottom-width: 0;
-  border-left-width: 0;
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  border-left-color: transparent;
-  border-top-style: none;
-  border-right-style: none;
-  border-bottom-style: none;
-  border-left-style: none;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-  background-color: transparent;
-  font-family: inherit;
-  font-style: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  text-transform: inherit;
-  text-decoration: inherit;
-  letter-spacing: inherit;
-  word-spacing: inherit;
-  color: inherit;
-  opacity: 1;
-  word-break: normal;
-  word-wrap: normal;
-  white-space: normal;
-}
+ #radio_controllerAUTO_SPAN {
+  margin-left: 26px;
+  line-height: 22px;
+  font-size: 14px;
+ }
+
+ #radio_controllerMANUAL_LABEL {
+  width: 231px;
+  height: 28px;
+  left: 7px;
+  top: 6px;
+ }
+
+ #radio_controllerMANUAL_SPAN {
+  margin-left: 26px;
+  line-height: 22px;
+  font-size: 14px;
+ }
 
 @media(max-width: 640px) {
-  .container_controller-1 {
+
+  /* #div_controller {
     top: 802px;
     left: 97px;
-  }
-
-  .image_reactorimage-1 {
-    position: relative;
-    z-index: 39;
-    height: auto;
-  }
-
-  .radio-label-1 {
-    position: relative;
-    z-index: 18;
-  }
-
-  .radio-label-2 {
-    position: relative;
-    z-index: 15;
-  }
-
-  .text_toppagetext-1 {
-    width: 456px;
-    height: 177px;
-  }
+  } */
+  
 }

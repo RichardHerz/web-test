@@ -1,123 +1,45 @@
-/*
-  Design, text, images and code by Richard K. Herz, 2017-2018
-  Copyrights held by Richard K. Herz
-  Licensed for use under the GNU General Public License v3.0
-  https://www.gnu.org/licenses/gpl-3.0.en.html
-*/
+// by Richard K. Herz of www.ReactorLab.net
+// 2015
 
-// This file defines an object that holds simulation parameter values and
-// defines objects that represent process units
-// For functions that use these objects, see files
-// process_main.js and process_plotter.js.
+// this file contains definitions of the process units
+// see file process_main.js for the main simulation scripts
 
-// ----- ARRAYS TO HOLD WORKING DATA -----------
+// numUnits value needs to agree with number units defined below
+var numUnits = 5;
 
-var tempArray = []; // for shifting data in strip chart plots
-// var spaceData = []; // for shifting data in space-time plots
+// essentially irreversible reaction in cstr with heat transfer
+// units will be:
+// (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
+// IF CHANGE THIS LIST EDIT EVERYWHERE BELOW
+// controlled variable is reactor T, manipulated variable is jacket inlet T
 
-// ----- SEE process_plot_info.js FOR INITIALIZATION OF ---------------
-// ----- OTHER DATA ARRAYS --------------------------------------------
+var unitNameBase = 'unit_';
+var unitName;
 
-// ----- OBJECT TO CONTAIN & SET SIMULATION & PLOT PARAMETERS ---------
+var gMinSetValue = 1.0203040504030201e-230; // special value not 0 (-230 for all digits to display)
 
-var simParams = {
+// ----------------- PROCESS UNIT OBJECT DEFINITIONS ----------------------
 
-  runningFlag : false, // set runningFlag to false initially
-  runButtonID : "runButton", // for functions to run, reset, copy data
-  // URLs for methods updateRunCount and updateCurrentRunCountDisplay below
-  runLoggerURL : "../webAppRunLog.lc",
-  runCurrrentRunCountURL : "../webAppCurrentCount.lc",
-  // warning: this.runCounterFieldID does NOT work below in logger URL methods
-  // need literal field ID string in methods below
-  runCounterFieldID : "field_run_counter", // not used, see 2 lines above
-
-  // all units use simParams.simTimeStep, getting it at each step in unit updateInputs()
-  // see method simParams.changeSimTimeStep() below to change simTimeStep value
-  // WARNING: DO NOT CHANGE simTimeStep BETWEEN display updates
-
-  simStepRepeats : 40, // integer number of unit updates between display updates
-  simTimeStep : 0.1, // time step value, simulation time, of main repeat
-
-  // individual units may do more steps in one unit updateState()
-  // see individual units for any unitTimeStep and unitStepRepeats
-
-  updateDisplayTimingMs : 50, // real time milliseconds between display updates
-
-  simTime : 0, // (s), time, initialize simulation time, also see resetSimTime
-
-  // LIST ACTIVE PROCESS UNITS
-  // processUnits array is the list of names of active process units
-  // the order of units in the list is not important
-
-  processUnits : [
-    "unit_1", "unit_2", "unit_3", "unit_4", "unit_5"
-  ],
-
-  // NOT ACTIVE YET
-  updateRunCount : function() {
-    // // need literal "field_run_counter" below - this.runCounterFieldID does NOT work
-    // $.post(this.runLoggerURL,{webAppNumber: "2, rxn-diff"}) .done(function(data) {
-    //   document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>"; } );
-  },
-
-  // NOT ACTIVE YET
-  updateCurrentRunCountDisplay : function() {
-    // // need literal "field_run_counter" below - this.runCounterFieldID does NOT work
-    // $.post(this.runCurrrentRunCountURL) .done(function(data) {
-    //   document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>"; } );
-  },
-
-  resetSimTime : function() {
-    this.simTime = 0;
-  },
-
-  updateSimTime : function() {
-    this.simTime = this.simTime + this.simTimeStep;
-  },
-
-  // runningFlag value can change by click of RUN-PAUSE or RESET buttons
-  // calling functions toggleRunningFlag and stopRunningFlag
-  toggleRunningFlag : function() {
-    this.runningFlag = !this.runningFlag;
-  },
-
-  stopRunningFlag : function() {
-    this.runningFlag = false;
-  },
-
-  changeSimTimeStep : function(factor) {
-    // WARNING: do not change simTimeStep except immediately before or after a
-    // display update in order to maintain sync between sim time and real time
-    this.simTimeStep = factor * this.simTimeStep;
-  }
-
-}; // END var simParams
-
-// ------------ PROCESS UNIT OBJECT DEFINITIONS ----------------------
-
-// EACH PROCESS UNIT DEFINITION MUST CONTAIN AT LEAST THESE 5 FUNCTIONS:
+// EACH PROCESS UNIT DEFINITION MUST CONTAIN AT LEAST THESE FOUR FUNCTIONS:
 //   reset, updateUIparams, updateInputs, updateState, display
-// WARNING: THESE FUNCTION DEFINITIONS MAY BE EMPTY BUT MUST BE PRESENT
-
-// -------------------------------------------------------------------
+// THESE FUNCTION DEFINITIONS MAY BE EMPTY BUT MUST BE PRESENT
 
 // unit_1 - reactor feed - OBJECT DEFINITION
 var unit_1 = {
   //
   // unit_1 IS REACTOR FEED
   //
-  // USES OBJECT simParams
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
+  // SEE FUNCTION updateInputs below in this unit
+  //   none
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
   //   unit_2 USES unit_1.rate
   //   unit_2 USES unit_1.conc
   //   unit_2 USES unit_1.TTemp
-  //   (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
-  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
-  //   none
-  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
+  // (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
 
   // variables defined here are available to all functions inside this unit
-
+  dt        : 0.1, // (s), default time step size, dt changed by process_main.js
   initialRate	: 0, // (m3/s), feed flow rate
   rate      : this.initialRate, // (m3/s), feed flow rate
 
@@ -127,7 +49,7 @@ var unit_1 = {
   initialTTemp	: 300, // (K), TTemp = temperature
   TTemp     : this.initialTTemp,
 
-  reset : function(){
+  reset		: function(){
     // On 1st load or reload page, the html file fills the fields with html file
     // values and calls reset, which needs updateUIparams to get values in fields.
     // On click reset button but not reload page, unless do something else here,
@@ -169,20 +91,19 @@ var unit_2 = {
   //
   // unit_2 IS REACTOR
   //
-  // USES OBJECT simParams
-  // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //   unit_5 USES unit_2.TTemp
-  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
+  // SEE FUNCTION updateInputs below in this unit
   //   unit_2 USES unit_1.rate // flow rate
   //   unit_2 USES unit_1.conc
   //   unit_2 USES unit_1.TTemp // TTemp = temperature
   //   unit_2 USES unit_4.TTemp
   //   unit_2 USES unit_4.UA
-  //   (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
-  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
+  // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
+  //   unit_5 USES unit_2.TTemp
+  // (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
 
   // variables defined here are available to all functions inside this unit
-
+  dt				: 0.1, // (s), default time step size, dt changed by process_main.js
   initialTTemp 	: 300, // (K), TTemp = temperature in Kelvin
   TTemp     : this.initialTTemp, // (K), TTemp = temperature in Kelvin
   initialConc   : 0, // (mol/m3), reactant concentration
@@ -203,7 +124,7 @@ var unit_2 = {
   TTemp4    : 0, // will get TTemp4 from unit 4 in updateInputs
   UA        : 0, // will get UA from unit 4 in updateInputs
 
-  reset : function(){
+  reset		: function(){
     // On 1st load or reload page, the html file fills the fields with html file
     // values and calls reset, which needs updateUIparams to get values in fields.
     // On click reset button but not reload page, unless do something else here,
@@ -241,23 +162,22 @@ var unit_2 = {
     var invTau = this.flowRate / this.vol; // inverse of space time = space velocity
 
     var dCdt = invTau * (this.concIn - this.conc) + rate;
-    var dC = simParams.simTimeStep * dCdt;
+    var dC = this.dt * dCdt;
     // update conc
     this.conc = this.conc + dC;
     if (this.conc < 0){this.conc = 0;}
 
     var dTdt = invTau*(this.TTemp1 - this.TTemp) + rate*this.delH/(this.rho*this.Cp) +
                (this.TTemp4 - this.TTemp) * this.UA /(this.vol*this.rho*this.Cp);
-    var dTTemp = simParams.simTimeStep * dTdt;
+    var dTTemp = this.dt * dTdt;
     // update TTemp
     this.TTemp = this.TTemp + dTTemp;
 
   }, // end updateState method
 
-  display : function() {
-
+  display		: function(){
     // document.getElementById("demo01").innerHTML = "unit_1.rate = " + this.rate;
-    var el = document.querySelector("#reactorContents");
+    var el = document.querySelector("#div_PLOTDIV_reactorContents");
     // reactant is blue, product is red, this.conc is reactant conc
     // xxx assume here max conc is 400 but should make it a variable
     var concB = Math.round((this.conc)/400 * 255);
@@ -266,50 +186,6 @@ var unit_2 = {
     // alert("concColor = " + concColor); // check results
     // "background-color" in index.css did not work
     el.style.backgroundColor = concColor;
-
-    // HANDLE STRIP CHART DATA
-
-    var v = 0; // used as index
-    var p = 0; // used as index
-    var numStripPoints = plotsObj[0]['numberPoints'];
-
-    // XXX see if can make actions below for strip chart into general function
-
-    // handle reactant conc
-    v = 0;
-    tempArray = stripData[v]; // work on one plot variable at a time
-    // delete first and oldest element which is an [x,y] pair array
-    tempArray.shift();
-    // add the new [x.y] pair array at end
-    tempArray.push( [ 0, this.conc ] );
-    // update the variable being processed
-    stripData[v] = tempArray;
-
-    // handle reactor T
-    v = 1;
-    tempArray = stripData[v]; // work on one plot variable at a time
-    // delete first and oldest element which is an [x,y] pair array
-    tempArray.shift();
-    // add the new [x.y] pair array at end
-    tempArray.push( [ 0, this.TTemp ] );
-    // update the variable being processed
-    stripData[v] = tempArray;
-
-    // re-number the x-axis values to equal time values
-    // so they stay the same after updating y-axis values
-    var timeStep = simParams.simTimeStep * simParams.simStepRepeats;
-    for (v = 0; v < 2; v += 1) {
-      // only need to do for vars 0 and 1 in this display method
-      // to do all vars, for (v = 0; v < numStripVariables; v += 1)
-      for (p = 0; p <= numStripPoints; p += 1) { // note = in p <= numStripPoints
-        // note want p <= numStripPoints so get # 0 to  # numStripPoints of points
-        // want next line for newest data at max time
-        stripData[v][p][0] = p * timeStep;
-        // want next line for newest data at zero time
-        // stripData[v][p][0] = (numStripPoints - p) * timeStep;
-      }
-    }
-
   } // end display method
 
 }; // END var unit_2
@@ -319,17 +195,16 @@ var unit_3 = {
   //
   // unit_3 IS FEED TO HEAT TRANSFER JACKET
   //
-  // USES OBJECT simParams
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
+  // SEE FUNCTION updateInputs below in this unit
+  //   unit_3 USES unit_5.command
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
   //   unit_4 USES unit_3.rate
   //   unit_4 USES unit_3.TTemp // TTemp = temperature
-  //   (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
-  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
-  //   unit_3 USES unit_5.command
-  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
+  // (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
 
   // variables defined here are available to all functions inside this unit
-
+  dt        : 0.1, // (s), default time step size, dt changed by process_main.js
   initialRate	: 1, // (m3/s), heat transfer liquid flow rate
   rate      : this.initialRate,
 
@@ -338,7 +213,7 @@ var unit_3 = {
 
   command : 0, // get command from unit 5 in updateInputs
 
-  reset : function(){
+  reset		: function(){
     // On 1st load or reload page, the html file fills the fields with html file
     // values and calls reset, which needs updateUIparams to get values in fields.
     // On click reset button but not reload page, unless do something else here,
@@ -370,40 +245,8 @@ var unit_3 = {
 
   }, // end updateState method
 
-  display : function(){
+  display		: function(){
     // document.getElementById("demo01").innerHTML = "unit_1.rate = " + this.rate;
-
-    // HANDLE STRIP CHART DATA
-
-    var v = 0; // used as index
-    var p = 0; // used as index
-    var numStripPoints = plotsObj[0]['numberPoints'];
-
-    // XXX see if can make actions below for strip chart into general function
-
-    // handle jacket inlet T
-    v = 2;
-    tempArray = stripData[v]; // work on one plot variable at a time
-    // delete first and oldest element which is an [x,y] pair array
-    tempArray.shift();
-    // add the new [x.y] pair array at end
-    tempArray.push( [ 0, this.TTemp ] );
-    // update the variable being processed
-    stripData[v] = tempArray;
-
-    // re-number the x-axis values to equal time values
-    // so they stay the same after updating y-axis values
-    var timeStep = simParams.simTimeStep * simParams.simStepRepeats;
-    v = 2; // just one var in this display method, so don't need repeat
-    // to do all vars, for (v = 0; v < numStripVariables; v += 1)
-    for (p = 0; p <= numStripPoints; p += 1) { // note = in p <= numStripPoints
-      // note want p <= numStripPoints so get # 0 to  # numStripPoints of points
-      // want next line for newest data at max time
-      stripData[v][p][0] = p * timeStep;
-      // want next line for newest data at zero time
-      // stripData[v][p][0] = (numStripPoints - p) * timeStep;
-    }
-
   } // end display method
 
 }; // END var unit_3
@@ -413,18 +256,17 @@ var unit_4 = {
   //
   // unit_4 IS HEAT TRANSFER JACKET
   //
-  // USES OBJECT simParams
-  // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //   unit_2 USES unit_4.TTemp // TTemp = temperature
-  //   (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
-  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
+  // SEE FUNCTION updateInputs below in this unit
   //   unit_4 USES unit_2.TTemp
   //   unit_4 USES unit_3.rate // flow rate
   //   unit_4 USES unit_3.TTemp
-  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
+  // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
+  //   unit_2 USES unit_4.TTemp // TTemp = temperature
+  // (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
 
   // variables defined here are available to all functions inside this unit
-
+  dt        : 0.1, // (s), default time step size, dt changed by process_main.js
   vol       : 0.02, // (m3), heat transfer jacket volume
   rho       : 1000, // (kg/m3), heat transfer liquid density
   Cp        : 2.0, // (kJ/kg/K), heat transfer liquid heat capacity
@@ -436,7 +278,7 @@ var unit_4 = {
   TTemp2    : 0, // will get TTemp2 from unit 2 in updateInputs
   TTemp3    : 0, // will get TTemp3 from unit 3 in updateInputs
 
-  reset : function(){
+  reset		: function(){
     // On 1st load or reload page, the html file fills the fields with html file
     // values and calls reset, which needs updateUIparams to get values in fields.
     // On click reset button but not reload page, unless do something else here,
@@ -468,7 +310,7 @@ var unit_4 = {
 
     var dTdt = invTau*(this.TTemp3 - this.TTemp) +
                (this.TTemp2- this.TTemp) * this.UA/(this.vol*this.rho*this.Cp);
-    var dTTemp = simParams.simTimeStep * dTdt;
+    var dTTemp = this.dt * dTdt;
     // update TTemp
     this.TTemp = this.TTemp + dTTemp;
 
@@ -476,38 +318,6 @@ var unit_4 = {
 
   display		: function(){
     // document.getElementById("demo01").innerHTML = "unit_1.rate = " + this.rate;
-
-    // HANDLE STRIP CHART DATA
-
-    var v = 0; // used as index
-    var p = 0; // used as index
-    var numStripPoints = plotsObj[0]['numberPoints'];
-
-    // XXX see if can make actions below for strip chart into general function
-
-    // handle jacket T
-    v = 3;
-    tempArray = stripData[v]; // work on one plot variable at a time
-    // delete first and oldest element which is an [x,y] pair array
-    tempArray.shift();
-    // add the new [x.y] pair array at end
-    tempArray.push( [ 0, this.TTemp ] );
-    // update the variable being processed
-    stripData[v] = tempArray;
-
-    // re-number the x-axis values to equal time values
-    // so they stay the same after updating y-axis values
-    var timeStep = simParams.simTimeStep * simParams.simStepRepeats;
-    v = 3; // just one var in this display method, so don't need repeat
-    // to do all vars, for (v = 0; v < numStripVariables; v += 1)
-    for (p = 0; p <= numStripPoints; p += 1) { // note = in p <= numStripPoints
-      // note want p <= numStripPoints so get # 0 to  # numStripPoints of points
-      // want next line for newest data at max time
-      stripData[v][p][0] = p * timeStep;
-      // want next line for newest data at zero time
-      // stripData[v][p][0] = (numStripPoints - p) * timeStep;
-    }
-
   } // end display method
 
 }; // END var unit_4
@@ -517,30 +327,29 @@ var unit_5 = {
   //
   // unit_5 IS REACTOR TEMPERATURE CONTORLLER
   //
-  // USES OBJECT simParams
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
+  // SEE FUNCTION updateInputs below in this unit
+  //   unit_5 USES unit_2.TTemp - controlled variable
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
   //   unit_3 USES unit_5.command - manipulated variable
-  //   (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
-  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
-  //   unit_5 USES unit_2.TTemp - controlled variable
-  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
+  // (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
 
   // variables defined here are available to all functions inside this unit
-
-  setPoint		: 330, // (K) desired reactor temperature
-  gain				: 100, // controller gain
-  resetTime   : 3, // integral mode reset time
+  dt  :	0.1, // (s), default time step size, dt changed by process_main.js
+  setPoint		:	330, // (K) desired reactor temperature
+  gain				:	100, // controller gain
+  resetTime   :	3, // integral mode reset time
   manualBias  : 300, // (K), command at zero error
-  initialCommand  : 300, // controller command signal (coef for unit_2)
+  initialCommand  :	300, // controller command signal (coef for unit_2)
   command         : this.initialCommand,
-  errorIntegral   : 0, // integral error
+  errorIntegral   :	0, // integral error
 
   mode        : "manual", // auto or manual, see changeMode() below
   manualCommand : 348,
 
   TTemp2  : 0, // will get TTemp2 from unit 2 in updateInputs
 
-  reset : function(){
+  reset		: function(){
     // On 1st load or reload page, the html file fills the fields with html file
     // values and calls reset, which needs updateUIparams to get values in fields.
     // On click reset button but not reload page, unless do something else here,
@@ -608,7 +417,7 @@ var unit_5 = {
     } else {
       // not at limit, OK to update integral of error
       // update errorIntegral only after it is used above to update this.command
-      this.errorIntegral = this.errorIntegral + error * simParams.simTimeStep; // update integral of error
+      this.errorIntegral = this.errorIntegral + error * this.dt; // update integral of error
     }
 
     if (this.mode == "manual"){
@@ -622,7 +431,7 @@ var unit_5 = {
 
   }, // end updateState method
 
-  display : function(){
+  display		: function(){
     // document.getElementById("demo05").innerHTML = "unit_5.command = " + this.command;
   } // end display METHOD
 
