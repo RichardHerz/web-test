@@ -23,7 +23,7 @@ var tempArray = []; // for shifting data in strip chart plots
 var simParams = {
 
   runningFlag : false, // set runningFlag to false initially
-  runButtonID : "runButton", // for functions to run, reset, copy data
+  runButtonID : "button_runButton", // for functions to run, reset, copy data
   // URLs for methods updateRunCount and updateCurrentRunCountDisplay below
   runLoggerURL : "../webAppRunLog.lc",
   runCurrrentRunCountURL : "../webAppCurrentCount.lc",
@@ -139,9 +139,9 @@ var unit_1 = {
 
   updateUIparams : function(){
     // (1) enterFeedConc, enterFeedTTemp, enterFeedFlowRate
-    this.conc = Number(enterFeedConc.value);
-    this.TTemp = Number(enterFeedTTemp.value);
-    this.rate = Number(enterFeedFlowRate.value);
+    this.conc = Number(input_field_enterFeedConc.value);
+    this.TTemp = Number(input_field_enterFeedTTemp.value);
+    this.rate = Number(input_field_enterFeedFlowRate.value);
   },
 
   updateInputs : function(){
@@ -215,9 +215,9 @@ var unit_2 = {
   },  // << COMMAS ARE REQUIRED AT END OF EACH OBJECT PROPERTY & FUNCTION EXCEPT LAST ONE (NO ;)
 
   updateUIparams : function(){
-    this.k300 = Number(enterk300.value);
-    this.Ea = Number(enterEa.value);
-    this.delH = Number(enterdelH.value);
+    this.k300 = Number(input_field_enterk300.value);
+    this.Ea = Number(input_field_enterEa.value);
+    this.delH = Number(input_field_enterdelH.value);
   },
 
   updateInputs : function(){
@@ -350,7 +350,7 @@ var unit_3 = {
   },  // << COMMAS ARE REQUIRED AT END OF EACH OBJECT PROPERTY & FUNCTION EXCEPT LAST ONE (NO ;)
 
   updateUIparams : function(){
-    this.rate = Number(enterJacketFlowRate.value);
+    this.rate = Number(input_field_enterJacketFlowRate.value);
   },
 
   updateInputs : function(){
@@ -447,7 +447,7 @@ var unit_4 = {
   },  // << COMMAS ARE REQUIRED AT END OF EACH OBJECT PROPERTY & FUNCTION EXCEPT LAST ONE (NO ;)
 
   updateUIparams : function(){
-    this.UA = Number(enterJacketUA.value); // (kJ/s/K), heat transfer area * coefficient
+    this.UA = Number(input_field_enterJacketUA.value); // (kJ/s/K), heat transfer area * coefficient
   },
 
   updateInputs : function(){
@@ -572,14 +572,14 @@ var unit_5 = {
   }, // end changeMode function
 
   updateUIparams : function(){
-    this.resetTime = Number(enterResetTime.value);
-    this.gain = Number(enterGain.value);
-    this.setPoint = Number(enterSetpoint.value);
+    this.resetTime = Number(input_field_enterResetTime.value);
+    this.gain = Number(input_field_enterGain.value);
+    this.setPoint = Number(input_field_enterSetpoint.value);
     // at least for input below, value returned is not a number, probably text
     // so convert this and others to numbers
     // noticed problem in process_units copyData function, .toFixed(2) didn't work
     // MAYBE RELATED TO HOW INPUT DEFINED IN HTML???
-    this.manualCommand = Number(enterJacketFeedTTemp.value);
+    this.manualCommand = Number(input_field_enterJacketFeedTTemp.value);
   },
 
   updateInputs : function(){

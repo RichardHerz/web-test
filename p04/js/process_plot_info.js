@@ -35,7 +35,7 @@ var plotsObj = new Object();
   plotsObj[0] = new Object();
   plotsObj[0]['name'] = 'reactor conditions';
   plotsObj[0]['type'] = 'strip';
-  plotsObj[0]['canvas'] = '#plotCanvas';
+  plotsObj[0]['canvas'] = '#div_PLOTDIV_plotData';
   plotsObj[0]['numberPoints'] = numStripPts;
   // plot has numberPoints + 1 pts!
   plotsObj[0]['xAxisLabel'] = '< recent time | earlier time (s) >';
