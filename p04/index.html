@@ -33,9 +33,15 @@
 
 <body>
 
-  <div id="div_reactor">
-    <img id="reactorImage" class="image_reactorimage image_reactorimage-1" src="images/reactor.png">
-    <div id="div_PLOTDIV_reactorContents"></div>
+  <div id="div_topPageText">
+    <p><a href="../index.html">Back to Web test</a></p>
+    <p>Web app experiment 3 - HTML5</p>
+    <p>A 1st-order, essentially irreversible reaction in a continuous stirred tank reactor (CSTR).
+    The controller varies the jacket inlet T to control reactor T.
+    Reactor volume = 0.1 m<sup>3</sup>, jacket volume = 0.02 m<sup>3</sup>, density = 1000 kg/m<sup>3</sup>, heat capacity = 2.0 kJ/kg/K.
+    <font color="blue">Click the Run button to start. Hit the enter key or click out of field after changing inputs.</font>
+    </p><p>
+    At default values in manual mode with <b>constant inputs</b>, the system <b>oscillates</b>. Then put into Auto Control.</p>
   </div>
 
   <!-- units: (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
@@ -48,6 +54,14 @@
   Alternatives: in input tag onchange, invoke either updateUIparams() in main.js or
   invoke specific unit_#.updateUIparams() for relevant unit #
   -->
+
+  <div id="div_reactor">
+    <img id="reactorImage" class="image_reactorimage image_reactorimage-1" src="images/reactor.png">
+    <div id="div_PLOTDIV_reactorContents"></div>
+  </div>
+
+  <input type="button" id="button_resetButton" onclick="resetThisLab()" value="Reset"></input>
+  <input type="button" id="button_runButton" onclick="runThisLab()" value="Run"></input>
 
   <div id="div_reactionParams">
 
@@ -66,7 +80,7 @@
   <div id="div_operatingParams">
 
     <p id="field_enterJacketUALABEL">Enter jacket UA (kJ/s/K)</p>
-    <input id="input_field_enterJacketUA" value=20 onchange="unit_4.updateUIparams()"></input>
+    <input id="input_field_enterjacketUA" value=20 onchange="unit_4.updateUIparams()"></input>
 
     <p id="field_enterJacketFlowRateLABEL" >Enter jacket flow rate (m<sup>3</sup>/s)</p>
     <input id="input_field_enterJacketFlowRate" value=0.05 onchange="unit_3.updateUIparams()"></input>
@@ -86,8 +100,6 @@
 
     <div id="div_PLOTDIV_plotData"></div>
 
-    <input type="button" id="button_resetButton" onclick="resetThisLab()" value="Reset"></input>
-    <input type="button" id="button_runButton" onclick="runThisLab()" value="Run"></input>
     <input type="button" id="button_copyDataButton" onclick="copyData()" value="Copy data"></input>
 
     <!-- <p> id="field_enterJacketFeedTTempLABEL" MAY HAVE css visibility:hidden on open page; changed by unit_5.changeMode -->
@@ -112,25 +124,12 @@
       </label>
 
       <label id="radio_controllerMANUAL_LABEL" name="radio_of_group_RADIO_Controller">
-        <input type="radio" id="radio_controllerMANUAL_LABEL" name="radio_of_group_RADIO_Controller" onchange="unit_5.changeMode()"></input>
+        <input type="radio" id="radio_controllerMANUAL_LABEL" checked name="radio_of_group_RADIO_Controller" onchange="unit_5.changeMode()"></input>
         <span id="radio_controllerMANUAL_SPAN">Manual Control</span>
       </label>
 
     </div>
 
-  </div>
-
-  <p><a href="../index.html" id="backButton">Back to Web test</a> </p>
-
-  <div id="div_topPageText">
-      <p>Web app experiment 3 - HTML5</p>
-      <p>&nbsp;</p>
-      <p>A 1st-order, essentially irreversible reaction in a continuous stirred tank reactor (CSTR).
-        The controller varies the jacket inlet T to control reactor T.
-        Reactor volume = 0.1 m<sup>3</sup>, jacket volume = 0.02 m<sup>3</sup>, density = 1000 kg/m<sup>3</sup>, heat capacity = 2.0 kJ/kg/K.
-        <font color="blue">Click the Run button to start. Hit the enter key or click out of field after changing inputs.</font>
-      </p><p>&nbsp;<p></p><p>
-        At default values in manual mode with <b>constant inputs</b>, the system <b>oscillates</b>. Then put into Auto Control.</p>
   </div>
 
 </body>

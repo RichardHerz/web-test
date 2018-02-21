@@ -447,7 +447,7 @@ var unit_4 = {
   },  // << COMMAS ARE REQUIRED AT END OF EACH OBJECT PROPERTY & FUNCTION EXCEPT LAST ONE (NO ;)
 
   updateUIparams : function(){
-    this.UA = Number(input_field_enterJacketUA.value); // (kJ/s/K), heat transfer area * coefficient
+    this.UA = Number(input_field_enterjacketUA.value); // (kJ/s/K), heat transfer area * coefficient
   },
 
   updateInputs : function(){
