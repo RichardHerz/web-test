@@ -2,12 +2,24 @@ sup {
     font-size: smaller;
 }
 
+#div_simFrame {
+  position:absolute;
+  display: block;
+  width: 900px;
+  height: 700px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  LCvScrollbar: false;
+}
+
 #div_controller {
   position: absolute;
   display: block;
-  top: 273px;
+  top: 44px;
   left: 400px;
-  width: 500px;
+  width: 450px;
   height: 500px;
   visibility: visible;
   border-width: 1px;
@@ -19,7 +31,7 @@ sup {
 #div_operatingParams {
   position: absolute;
   display: block;
-  top: 273px;
+  top: 44px;
   left: 20px;
   width: 300px;
   height: 180px;
@@ -33,7 +45,7 @@ sup {
 #div_reactionParams {
   position: absolute;
   display: block;
-  top: 698px;
+  top: 469px;
   left: 20px;
   width: 300px;
   height: 180px;
@@ -47,7 +59,7 @@ sup {
 #div_reactor {
   position: absolute;
   display: block;
-  top: 462px;
+  top: 233px;
   left: 20px;
   width: 300px;
   height: 230px;
@@ -90,19 +102,43 @@ sup {
   LCvScrollbar: false;
 }
 
-#div_topPageText {
-  position: absolute;
+#button_runButton {
   display: block;
+  position: absolute;
   top: 10px;
   left: 20px;
-  width: 797px;
-  height: 137px;
-  visibility: visible;
-  border-width: 1px;
-  border-style: dotted;
-  border-color: DodgerBlue;
-  LCvScrollbar: false;
- }
+  width: 70px;
+  height: 24px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  background-color: rgb(222, 222, 222);
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  text-align: center;
+  color: rgb(0, 0, 0);
+}
+
+#button_resetButton {
+  display: block;
+  position: absolute;
+  top: 10px;
+  left: 100px;
+  width: 70px;
+  height: 24px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  background-color: rgb(222, 222, 222);
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  text-align: center;
+  color: rgb(0, 0, 0);
+}
 
 #button_copyDataButton {
   display: block;
@@ -337,53 +373,6 @@ sup {
   left: 217px;
   width: 72px;
   height: 22px;
-}
-
-.image_reactorimage-1 {
-  display: block;
-  position: relative;
-  float: left;
-  width: 280px;
-  height: auto;
-  overflow: hidden;
-}
-
-#button_runButton {
-  display: block;
-  position: absolute;
-  top: 239px;
-  left: 20px;
-  width: 70px;
-  height: 24px;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-  background-color: rgb(222, 222, 222);
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  text-align: center;
-  color: rgb(0, 0, 0);
-}
-
-#button_resetButton {
-  display: block;
-  position: absolute;
-  top: 239px;
-  left: 100px;
-  width: 70px;
-  height: 24px;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-  background-color: rgb(222, 222, 222);
-  font-size: 1em;
-  font-weight: 400;
-  line-height: 1.38;
-  text-align: center;
-  color: rgb(0, 0, 0);
 }
 
 #field_enterk300LABEL {

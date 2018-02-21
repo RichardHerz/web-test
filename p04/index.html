@@ -32,17 +32,16 @@
 </head>
 
 <body>
-
-  <div id="div_topPageText">
-    <p><a href="../index.html">Back to Web test</a></p>
-    <p>Web app experiment 3 - HTML5</p>
-    <p>A 1st-order, essentially irreversible reaction in a continuous stirred tank reactor (CSTR).
-    The controller varies the jacket inlet T to control reactor T.
-    Reactor volume = 0.1 m<sup>3</sup>, jacket volume = 0.02 m<sup>3</sup>, density = 1000 kg/m<sup>3</sup>, heat capacity = 2.0 kJ/kg/K.
-    <font color="blue">Click the Run button to start. Hit the enter key or click out of field after changing inputs.</font>
-    </p><p>
-    At default values in manual mode with <b>constant inputs</b>, the system <b>oscillates</b>. Then put into Auto Control.</p>
-  </div>
+  
+  <!-- <p><a href="../index.html">Back to Web test</a></p>
+  <p>Web app experiment 3 - HTML5</p>
+  <p>A 1st-order, essentially irreversible reaction in a continuous stirred tank reactor (CSTR).
+  The controller varies the jacket inlet T to control reactor T.
+  Reactor volume = 0.1 m<sup>3</sup>, jacket volume = 0.02 m<sup>3</sup>, density = 1000 kg/m<sup>3</sup>, heat capacity = 2.0 kJ/kg/K.
+  <font color="blue">Click the Run button to start. Hit the enter key or click out of field after changing inputs.</font>
+  </p><p>
+  At default values in manual mode with <b>constant inputs</b>, the system <b>oscillates</b>.
+  Then put into Auto Control.</p> -->
 
   <!-- units: (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
   Values set by inputs below:
@@ -55,82 +54,86 @@
   invoke specific unit_#.updateUIparams() for relevant unit #
   -->
 
-  <div id="div_reactor">
-    <img id="reactorImage" class="image_reactorimage image_reactorimage-1" src="images/reactor.png">
-    <div id="div_PLOTDIV_reactorContents"></div>
-  </div>
+  <div id="div_simFrame">
 
-  <input type="button" id="button_resetButton" onclick="resetThisLab()" value="Reset"></input>
-  <input type="button" id="button_runButton" onclick="runThisLab()" value="Run"></input>
+    <div id="div_reactor">
+      <img id="reactorImage" class="image_reactorimage image_reactorimage-1" src="images/reactor.png">
+      <div id="div_PLOTDIV_reactorContents"></div>
+    </div>
 
-  <div id="div_reactionParams">
+    <input type="button" id="button_resetButton" onclick="resetThisLab()" value="Reset"></input>
+    <input type="button" id="button_runButton" onclick="runThisLab()" value="Run"></input>
 
-    <p id="field_enterdelHLABEL">Enter reaction ∆H (kJ/mol)</p>
-    <input id="input_field_enterdelH" value=-250 onchange="unit_2.updateUIparams()">
+    <div id="div_reactionParams">
+
+      <p id="field_enterdelHLABEL">Enter reaction ∆H (kJ/mol)</p>
+      <input id="input_field_enterdelH" value=-250 onchange="unit_2.updateUIparams()">
 
 
-    <p id="field_enterEaLABEL">Enter reaction ∆Ea (kJ/mol)</p>
-    <input id="input_field_enterEa" value=200 onchange="unit_2.updateUIparams()">
+      <p id="field_enterEaLABEL">Enter reaction ∆Ea (kJ/mol)</p>
+      <input id="input_field_enterEa" value=200 onchange="unit_2.updateUIparams()">
 
-    <p class="field_enterk300LABEL">Enter reaction k300 (1/s)</p>
-    <input id="input_field_enterk300" value=5e-6 onchange="unit_2.updateUIparams()"></input>
-
-  </div>
-
-  <div id="div_operatingParams">
-
-    <p id="field_enterJacketUALABEL">Enter jacket UA (kJ/s/K)</p>
-    <input id="input_field_enterjacketUA" value=20 onchange="unit_4.updateUIparams()"></input>
-
-    <p id="field_enterJacketFlowRateLABEL" >Enter jacket flow rate (m<sup>3</sup>/s)</p>
-    <input id="input_field_enterJacketFlowRate" value=0.05 onchange="unit_3.updateUIparams()"></input>
-
-    <p id="field_enterFeedConcLABEL">Enter feed conc. (mol/m<sup>3</sup>)</p>
-    <input id="input_field_enterFeedConc" value=400 onchange="unit_1.updateUIparams()"></input>
-
-    <p id="field_enterFeedTTempLABEL">Enter feed T (K)</p>
-    <input id="input_field_enterFeedTTemp" value=300 onchange="unit_1.updateUIparams()"></input>
-
-    <p id="field_enterFeedFlowRateLABEL">Enter feed flow rate (m<sup>3</sup>/s)</p>
-    <input id="input_field_enterFeedFlowRate" value=0.005 onchange="unit_1.updateUIparams()"></input>
-
-  </div>
-
-  <div id="div_controller">
-
-    <div id="div_PLOTDIV_plotData"></div>
-
-    <input type="button" id="button_copyDataButton" onclick="copyData()" value="Copy data"></input>
-
-    <!-- <p> id="field_enterJacketFeedTTempLABEL" MAY HAVE css visibility:hidden on open page; changed by unit_5.changeMode -->
-    <p id="field_enterJacketFeedTTempLABEL">Enter jacket inlet T (K)</p>
-    <!-- input id="input_field_enterJacketFeedTTemp" MAY BE type="hidden" on open page; changed by unit_5.changeMode -->
-    <input id="input_field_enterJacketFeedTTemp" value=348 onchange="unit_5.updateUIparams()"></input>
-
-    <p id="field_enterResetTimeLABEL">Enter reset time (&gt; 0 s)</p>
-    <input id="input_field_enterResetTime" value=30 onchange="unit_5.updateUIparams()"></input>
-
-    <p id="field_enterGainLABEL">Enter controller gain</p>
-    <input id="input_field_enterGain" value=2 onchange="unit_5.updateUIparams()"><input>
-
-    <p id="field_enterSetpointLABEL">Enter reactor T set point (K)</p>
-    <input id="input_field_enterSetpoint" value=340 onchange="unit_5.updateUIparams()"></input>
-
-    <div id="div_RADIO_group_Controller">
-
-      <label id="radio_controllerAUTO_LABEL" name="radio_of_group_RADIO_Controller">
-        <input type="radio" id="radio_controllerAUTO" name="radio_of_group_RADIO_Controller" onchange="unit_5.changeMode()">
-        <span id="radio_controllerAUTO_SPAN">Auto Control</span>
-      </label>
-
-      <label id="radio_controllerMANUAL_LABEL" name="radio_of_group_RADIO_Controller">
-        <input type="radio" id="radio_controllerMANUAL" checked name="radio_of_group_RADIO_Controller" onchange="unit_5.changeMode()">
-        <span id="radio_controllerMANUAL_SPAN">Manual Control</span>
-      </label>
+      <p class="field_enterk300LABEL">Enter reaction k300 (1/s)</p>
+      <input id="input_field_enterk300" value=5e-6 onchange="unit_2.updateUIparams()"></input>
 
     </div>
 
-  </div>
+    <div id="div_operatingParams">
+
+      <p id="field_enterJacketUALABEL">Enter jacket UA (kJ/s/K)</p>
+      <input id="input_field_enterjacketUA" value=20 onchange="unit_4.updateUIparams()"></input>
+
+      <p id="field_enterJacketFlowRateLABEL" >Enter jacket flow rate (m<sup>3</sup>/s)</p>
+      <input id="input_field_enterJacketFlowRate" value=0.05 onchange="unit_3.updateUIparams()"></input>
+
+      <p id="field_enterFeedConcLABEL">Enter feed conc. (mol/m<sup>3</sup>)</p>
+      <input id="input_field_enterFeedConc" value=400 onchange="unit_1.updateUIparams()"></input>
+
+      <p id="field_enterFeedTTempLABEL">Enter feed T (K)</p>
+      <input id="input_field_enterFeedTTemp" value=300 onchange="unit_1.updateUIparams()"></input>
+
+      <p id="field_enterFeedFlowRateLABEL">Enter feed flow rate (m<sup>3</sup>/s)</p>
+      <input id="input_field_enterFeedFlowRate" value=0.005 onchange="unit_1.updateUIparams()"></input>
+
+    </div>
+
+    <div id="div_controller">
+
+      <div id="div_PLOTDIV_plotData"></div>
+
+      <input type="button" id="button_copyDataButton" onclick="copyData()" value="Copy data"></input>
+
+      <!-- <p> id="field_enterJacketFeedTTempLABEL" MAY HAVE css visibility:hidden on open page; changed by unit_5.changeMode -->
+      <p id="field_enterJacketFeedTTempLABEL">Enter jacket inlet T (K)</p>
+      <!-- input id="input_field_enterJacketFeedTTemp" MAY BE type="hidden" on open page; changed by unit_5.changeMode -->
+      <input id="input_field_enterJacketFeedTTemp" value=348 onchange="unit_5.updateUIparams()"></input>
+
+      <p id="field_enterResetTimeLABEL">Enter reset time (&gt; 0 s)</p>
+      <input id="input_field_enterResetTime" value=30 onchange="unit_5.updateUIparams()"></input>
+
+      <p id="field_enterGainLABEL">Enter controller gain</p>
+      <input id="input_field_enterGain" value=2 onchange="unit_5.updateUIparams()"><input>
+
+      <p id="field_enterSetpointLABEL">Enter reactor T set point (K)</p>
+      <input id="input_field_enterSetpoint" value=340 onchange="unit_5.updateUIparams()"></input>
+
+      <div id="div_RADIO_group_Controller">
+
+        <label id="radio_controllerAUTO_LABEL" name="radio_of_group_RADIO_Controller">
+          <input type="radio" id="radio_controllerAUTO" name="radio_of_group_RADIO_Controller" onchange="unit_5.changeMode()">
+          <span id="radio_controllerAUTO_SPAN">Auto Control</span>
+        </label>
+
+        <label id="radio_controllerMANUAL_LABEL" name="radio_of_group_RADIO_Controller">
+          <input type="radio" id="radio_controllerMANUAL" checked name="radio_of_group_RADIO_Controller" onchange="unit_5.changeMode()">
+          <span id="radio_controllerMANUAL_SPAN">Manual Control</span>
+        </label>
+
+      </div> <!-- end "div_RADIO_group_Controller" -->
+
+    </div> <!-- end "div_controller" -->
+
+  </div> <!-- end "div_simFrame" -->
 
 </body>
 </html>
