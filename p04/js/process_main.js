@@ -28,7 +28,7 @@ var viewport_meta = document.getElementById('viewport-meta');
 // Define our viewport meta values
 var viewports = {
 		default: viewport_meta.getAttribute('content'),
-		landscape: 'initial-scale=0.66'
+		landscape: 'initial-scale=1.0'
 	};
 
 // Change the viewport value based on screen.width
