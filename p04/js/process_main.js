@@ -20,10 +20,6 @@
     updateProcessUnits(resetFlag);
     updateDisplay(resetFlag);
     simParams.updateRunCount();
-
-    // Set the correct viewport value on page load
-    viewport_set();
-    
   } // END OF function openThisLab
 
   // Store the meta element
