@@ -46,7 +46,7 @@ viewport_set();
 window.onresize = function() {
 	// viewport_set();
   // viewport_meta.setAttribute( 'content', 'initial-scale=1.0' );
-  viewport_meta.setAttribute( 'content', 'initial-scale=0.25' );
+  viewport_meta.setAttribute( 'content', 'initial-scale=0.5' );
 }
 
   function runSimulation() {
