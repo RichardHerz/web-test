@@ -33,7 +33,7 @@ var viewports = {
 
 // Change the viewport value based on screen.width
 var viewport_set = function() {
-		if ( screen.width > 768 )
+		if ( screen.width > 640 )
 			viewport_meta.setAttribute( 'content', viewports.landscape );
 		else
 			viewport_meta.setAttribute( 'content', viewports.default );
