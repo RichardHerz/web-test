@@ -44,8 +44,9 @@ viewport_set();
 
 // Set the correct viewport after device orientation change or resize
 window.onresize = function() {
-	// viewport_set();
-  viewport_meta.setAttribute( 'content', 'initial-scale=1.0' );
+	// viewport_set(); 
+  // viewport_meta.setAttribute( 'content', 'initial-scale=1.0' );
+  viewport_meta.setAttribute( 'content', 'width=device-width' );
 }
 
   function runSimulation() {
