@@ -149,7 +149,7 @@ canvas {
 
 #button_runButton:active,
 #button_resetButton:active,
-#button_copyDataButton:hover {
+#button_copyDataButton:active {
   background-color: rgb(255,0,0);
 }
 
