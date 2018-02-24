@@ -111,8 +111,8 @@ canvas {
   height: 24px;
   visibility: visible;
   border-width: 2px;
-  background-color: rgb(222,222,222);
-  border-style: none;
+  background-color: rgb(240,240,240);
+  border-style: outset;
 }
 
 #button_runButton {
@@ -123,8 +123,34 @@ canvas {
   height: 24px;
   visibility: visible;
   border-width: 2px;
-  background-color: rgb(222,222,222);
-  border-style: none;
+  background-color: rgb(240,240,240);
+  border-style: outset;
+}
+
+#button_copyDataButton {
+  position: absolute;
+  left: 326px;
+  top: 258px;
+  width: 104px;
+  height: 24px;
+  visibility: visible;
+  border-width: 2px;
+  background-color: rgb(240,240,240);
+  border-style: outset;
+}
+
+#button_runButton:hover,
+#button_resetButton:hover,
+#button_copyDataButton:hover {
+  background-color: rgb(180,180,240);
+}
+
+/* active seemed to work only when under hover ? */
+
+#button_runButton:active,
+#button_resetButton:active,
+#button_copyDataButton:hover {
+  background-color: rgb(255,0,0);
 }
 
 #div_reactionParams {
@@ -161,6 +187,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
@@ -184,6 +212,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
@@ -207,6 +237,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
@@ -244,6 +276,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
@@ -267,6 +301,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
@@ -290,6 +326,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
@@ -313,6 +351,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
@@ -336,6 +376,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
@@ -366,18 +408,6 @@ canvas {
   border-color: DodgerBlue;
   opacity: 1;
   LCvScrollbar: false;
-}
-
-#button_copyDataButton {
-  position: absolute;
-  left: 326px;
-  top: 258px;
-  width: 104px;
-  height: 24px;
-  visibility: visible;
-  border-width: 2px;
-  background-color: rgb(222,222,222);
-  border-style: none;
 }
 
 #field_enterJacketFeedTTempLABEL {
@@ -413,6 +443,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
@@ -436,6 +468,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
@@ -459,6 +493,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
@@ -513,6 +549,8 @@ canvas {
   width: 72px;
   height: 22px;
   visibility: visible;
+  border-width: 1px;
+  border-style: solid;
   LCvScrollbar: false;
 }
 
