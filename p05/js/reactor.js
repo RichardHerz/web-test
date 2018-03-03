@@ -38,23 +38,24 @@ function fillReactor() {
   startDate = new Date(); // need this here
   startMs = startDate.getTime();
 
-  // reset reactConc
-  reactConc = reactConc0;
-
+  // put this before change height & color or change each onclick
   // both two lines below work by themselves and don't require jquery
   var el = document.querySelector("#div_PLOTDIV_reactor_contents");
   // var el = document.getElementById("div_PLOTDIV_reactor_contents");
-  // fill with blue reactant
-  el.style.backgroundColor = "rgb(0, 0, 255)"; // backgroundColor NOT background-color
   // get current top and height
   var top = parseFloat(el.style.top); // convert, e.g., "100px" to 100
   var height = parseFloat(el.style.height); // convert, e.g., "100px" to 100
-
-  // put this before change height or get height change each onclick
+  // return if already full
   if (height >= 70) {
     fillFlag = 0;
     return;
   }
+
+  // reset reactConc
+  reactConc = reactConc0;
+
+    // fill with blue reactant
+  el.style.backgroundColor = "rgb(0, 0, 255)"; // backgroundColor NOT background-color
 
   el.style.top = top - 2 + 'px';
   height = height + 2;
@@ -137,9 +138,9 @@ function reactReactor() {
   reactConc = reactConc - k * reactConc * dt;
 
   // compute color for this reactConc
-  var bl = Math.round(255*reactConc/reactConc0);
-  var rd = 255 - bl;
-  var colorString = "rgb(" + rd.toString() + ", 0, " + bl.toString() + ")";
+  var B = Math.round(255*reactConc/reactConc0); // Blue = reactant
+  var R = 255 - B; // Red = product
+  var colorString = "rgb(" + R + ", 0, " + B + ")";
 
   // set color for this reactConc
   el.style.backgroundColor = colorString; // backgroundColor NOT background-color
