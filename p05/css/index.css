@@ -111,11 +111,12 @@ canvas {
   display: block;
   position: absolute;
   left: 99px;
-  top: 156px;
+  top: 198px;
   width: 106px;
-  height: 43px;
+  height: 1px;
   visibility: visible;
-  border-width: 2px;
+  background-color: DodgerBlue;
+  border-width: 0px;
   border-style: solid;
   border-color: DodgerBlue;
   opacity: 1;
