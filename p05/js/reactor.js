@@ -5,21 +5,25 @@
   https://www.gnu.org/licenses/gpl-3.0.en.html
 */
 
+var updateDisplayTimingMs = 100;
+var fillFlag = 0;
+var emptyFlag = 0;
+var reactFlag = 0;
+var reactConc0 = 1;
+var reactConc = reactConc0;
+var reactConcMIN = 0.1 * reactConc0;
+
 // DISPLAY INITIAL STATE ON OPEN WINDOW
 window.onload = openThisLab; // can NOT use = openThisLab();
 
 function openThisLab() {
 
   var el = document.querySelector("#div_PLOTDIV_reactor_contents");
-  el.style.top = "198px";
-  el.style.height = "2px";
+  el.style.top = "129px";
+  el.style.height = "70px";
+  el.style.backgroundColor = "rgb(0,0,255)";
 
 } // END OF function openThisLab
-
-var updateDisplayTimingMs = 100;
-var fillFlag = 0;
-var emptyFlag = 0;
-var reactFlag = 0;
 
 function fillReactor() {
 
@@ -34,9 +38,15 @@ function fillReactor() {
   startDate = new Date(); // need this here
   startMs = startDate.getTime();
 
+  // reset reactConc
+  reactConc = reactConc0;
+
   // both two lines below work by themselves and don't require jquery
   var el = document.querySelector("#div_PLOTDIV_reactor_contents");
   // var el = document.getElementById("div_PLOTDIV_reactor_contents");
+  // fill with blue reactant
+  el.style.backgroundColor = "rgb(0, 0, 255)"; // backgroundColor NOT background-color
+  // get current top and height
   var top = parseFloat(el.style.top); // convert, e.g., "100px" to 100
   var height = parseFloat(el.style.height); // convert, e.g., "100px" to 100
 
@@ -110,21 +120,29 @@ function reactReactor() {
   startDate = new Date(); // need this here
   startMs = startDate.getTime();
 
+  // >>> BREAK OUT reactReactor WHEN REACTION DONE
+  // put this before change reaction or get reaction change each onclick
+  if (reactConc/reactConc0 <= reactConcMIN) {
+    reactFlag = 0;
+    return;
+  }
+
   // both two lines below work by themselves and don't require jquery
   var el = document.querySelector("#div_PLOTDIV_reactor_contents");
   // var el = document.getElementById("div_PLOTDIV_reactor_contents");
 
-  // >>> BREAK OUT reactReactor WHEN REACTION DONE
-  // put this before change reaction or get reaction change each onclick
-  // if (height <= 2) {
-  //   emptyFlag = 0;
-  //   return;
-  // }
+  // step reaction
+  var k = 1;
+  var dt = 0.1;
+  reactConc = reactConc - k * reactConc * dt;
 
-  el.style.backgroundColor = "Tomato"; // backgroundColor NOT background-color
-  reactFlag = 0;
+  // compute color for this reactConc
+  var bl = Math.round(255*reactConc/reactConc0);
+  var rd = 255 - bl;
+  var colorString = "rgb(" + rd.toString() + ", 0, " + bl.toString() + ")";
 
-  return; // xxx TEMPORARY
+  // set color for this reactConc
+  el.style.backgroundColor = colorString; // backgroundColor NOT background-color
 
   // CONTINUE reactReactor WITH CALL TO ITSELF AFTER updateMs WAIT
   var thisDate = new Date();
