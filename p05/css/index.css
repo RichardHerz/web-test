@@ -52,13 +52,13 @@ canvas {
 #div_simFrame {
   display: block;
   position: relative;
+  float: left; /* flow text around, right or left*/
+  margin: 0px 20px 0px 0px; /* top right bottom left */
   border-color: DodgerBlue;
-  left: 7px;
-  top: 142px;
   width: 292px;
   height: 256px;
   visibility: visible;
-  border-width: 2px;
+  border-width: 0px;
   border-style: dotted;
   LCvScrollbar: false;
 }
@@ -79,7 +79,7 @@ canvas {
   left: 25px;
   top: 6px;
   width: 82px;
-  height: 23px;
+  height: 28px;
   visibility: visible;
   border-width: 2px;
   border-style: outset;
@@ -90,7 +90,7 @@ canvas {
   left: 199px;
   top: 6px;
   width: 82px;
-  height: 23px;
+  height: 28px;
   visibility: visible;
   border-width: 2px;
   border-style: outset;
@@ -101,7 +101,7 @@ canvas {
   left: 112px;
   top: 6px;
   width: 82px;
-  height: 23px;
+  height: 33px;
   visibility: visible;
   border-width: 2px;
   border-style: outset;

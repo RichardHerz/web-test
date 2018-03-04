@@ -109,6 +109,19 @@ function emptyReactor() {
 } // END OF function emptyReactor
 
 function reactReactor() {
+  if (fillFlag == 1 || emptyFlag == 1) {
+    reactFlag = 0;
+    return;
+  }
+  updateRunCount();
+  reactReactorContinue();
+}
+
+function updateRunCount() {
+   $.post("http://reactorlab.net/web_labs/webAppRunLog.lc", {webAppNumber: "home_reactor"});
+}
+
+function reactReactorContinue() {
 
   if (fillFlag == 1 || emptyFlag == 1) {
     reactFlag = 0;
@@ -117,11 +130,11 @@ function reactReactor() {
     reactFlag = 1;
   }
 
-  // get time at start of repeating reactReactor
+  // get time at start of repeating
   startDate = new Date(); // need this here
   startMs = startDate.getTime();
 
-  // >>> BREAK OUT reactReactor WHEN REACTION DONE
+  // >>> BREAK OUT WHEN REACTION DONE
   // put this before change reaction or get reaction change each onclick
   if (reactConc/reactConc0 <= reactConcMIN) {
     reactFlag = 0;
@@ -134,7 +147,7 @@ function reactReactor() {
 
   // step reaction
   var k = 1;
-  var dt = 0.1;
+  var dt = 0.075;
   reactConc = reactConc - k * reactConc * dt;
 
   // compute color for this reactConc
@@ -145,11 +158,11 @@ function reactReactor() {
   // set color for this reactConc
   el.style.backgroundColor = colorString; // backgroundColor NOT background-color
 
-  // CONTINUE reactReactor WITH CALL TO ITSELF AFTER updateMs WAIT
+  // CONTINUE WITH CALL TO ITSELF AFTER updateMs WAIT
   var thisDate = new Date();
   var currentMs = thisDate.getTime();
   elapsedMs = currentMs - startMs;
   updateMs = updateDisplayTimingMs - elapsedMs;
-  setTimeout(reactReactor, updateMs);  // reactReactor, updateMs
+  setTimeout(reactReactorContinue, updateMs);  // reactReactorContinue, updateMs
 
-} // END OF function reactReactor
+} // END OF function reactReactorContinue
