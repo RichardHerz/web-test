@@ -114,7 +114,7 @@ canvas {
   LCshowBorder: true;
 }
 
-#button_runButton_1178 {
+#button_runButton {
   position: absolute;
   left: 21px;
   top: 5px;
@@ -129,7 +129,7 @@ canvas {
   LCshowBorder: true;
 }
 
-#button_resetButton_1177 {
+#button_resetButton {
   position: absolute;
   left: 97px;
   top: 4px;
