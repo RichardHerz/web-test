@@ -1,0 +1,155 @@
+sup {
+  font-size: smaller;
+}
+
+sub {
+  font-size: smaller;
+}
+
+input {
+  display: block;
+  position: absolute;
+  text-align: center;
+}
+
+input, button {
+  text-align: center;
+}
+
+/* do NOT write general style for div since interferes
+    with plotting by jquery.flot.js */
+
+p {
+  display: block;
+  text-align: left;
+}
+
+label {
+  display: block;
+  position: absolute;
+}
+
+img {
+  display: block;
+  position: absolute;
+}
+
+select {
+  display: block;
+  position: absolute;
+}
+
+canvas {
+  display: block;
+  position: absolute;
+  text-align: left;
+}
+
+::-ms-tooltip {
+  display: none;
+}
+
+#group_10433 {
+  display: block;
+  position: absolute;
+  border-color: DodgerBlue;
+  left: 53px;
+  top: 60px;
+  width: 202px;
+  height: 257px;
+  visibility: visible;
+  border-width: 2px;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#div_PLOTDIV {
+  display: block;
+  position: absolute;
+  left: 6px;
+  top: 40px;
+  width: 190px;
+  height: 134px;
+  visibility: visible;
+  border-width: 2px;
+  background-color: rgb(0,253,255);
+  border-style: outset;
+  opacity: 1;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  LCthreeD: true;
+  LCshowBorder: true;
+  LCvScrollbar: false;
+}
+
+#canvas_CANVAS_hot {
+  position: absolute;
+  left: 6px;
+  top: 181px;
+ /* canvas element width & height must be set in HTML and not in CSS */
+  visibility: visible;
+  border-width: 2px;
+  background-color: rgb(255,252,0);
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#canvas_CANVAS_cold {
+  position: absolute;
+  left: 6px;
+  top: 217px;
+ /* canvas element width & height must be set in HTML and not in CSS */
+  visibility: visible;
+  border-width: 2px;
+  background-color: rgb(255,252,0);
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#button_runButton_1178 {
+  position: absolute;
+  left: 24px;
+  top: 7px;
+  width: 72px;
+  height: 23px;
+  visibility: visible;
+  border-width: 2px;
+  border-style: outset;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#button_resetButton_1177 {
+  position: absolute;
+  left: 100px;
+  top: 6px;
+  width: 72px;
+  height: 23px;
+  visibility: visible;
+  border-width: 2px;
+  border-style: outset;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+/* example @media for responsive design */
+/* requires meta viewport element in HTML head */
+@media(max-width: 640px) {
+  /* change the following when the screen width is <= 640px */
+  /* #div_controller {
+    top: 600px;
+    left: 20px;
+   } */
+}
