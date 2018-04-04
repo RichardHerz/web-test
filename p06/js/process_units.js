@@ -219,15 +219,12 @@ var puHeatExchanger = {
       // XXX change to get number vars for this plotsObj variable
       //     so can put in repeat - or better yet, a function
       //     and same for y-axis below
+      // first index specifies which variable
       profileData[0][k][0] = kn;
       profileData[1][k][0] = kn;
-      profileData[2][k][0] = kn;
-      profileData[3][k][0] = kn;
       // y-axis values
-      profileData[0][k][1] = 0;
-      profileData[1][k][1] = 0;
-      profileData[2][k][1] = 0;
-      profileData[3][k][1] = 0;
+      profileData[0][k][1] = this.initialTinCold;
+      profileData[1][k][1] = this.initialTinCold;
     }
 
     // XXX also need to reset strip chart data
@@ -263,119 +260,104 @@ var puHeatExchanger = {
     // } else {
     //   this.Cmax= this.initialCmax;
     // }
+    //
+    // EXAMPLE OF SETTING VALUE FROM RANGE SLIDER
+    // // update the readout field of range slider
+    // if (document.getElementById(this.inputSliderReadout)) {
+    //   document.getElementById(this.inputSliderReadout).innerHTML = this.Cmax;
+    // }
+    //
+    // // EXAMPLE RADIO BUTTONS & CHECK BOX
+    // // at least for now, do not check existence of UI element as above
+    // // Model radio buttons - selects rate determing step
+    // var m01 = document.querySelector('#' + this.inputModel01);
+    // var m02 = document.querySelector('#' + this.inputModel02);
+    // if (m01.checked) {
+    //   this.model = 1;
+    // } else {
+    //   this.model = 2;
+    // }
+    // // Input shape radio buttons
+    // var el0 = document.querySelector('#' + this.inputRadioConstant);
+    // var el1 = document.querySelector('#' + this.inputRadioSine);
+    // var el2 = document.querySelector('#' + this.inputRadioSquare);
+    // var el3 = document.querySelector('#' + this.inputCheckBoxFeed);
+    // if (el2.checked) {
+    //   this.shape = 'square';
+    // } else if (el1.checked) {
+    //   this.shape = 'sine';
+    // } else {
+    //   // assume constant checked
+    //   if (el3.checked) {
+    //     this.shape = 'constant';
+    //   } else {
+    //     this.shape = 'off';
+    //   }
+    // }
 
-    if (document.getElementById(this.inputCmax)) {
-      let tmpFunc = new Function("return " + this.inputCmax + ".value;");
-      this.Cmax = tmpFunc();
+    // XXX for now, use this for ModelFlag but replace with radio buttons
+    if (document.getElementById(this.inputModelFlag {
+      let tmpFunc = new Function("return " + this.inputModelFlag + ".value;");
+      this.ModelFlag= tmpFunc();
     } else {
-      this.Cmax= this.initialCmax;
+      this.ModelFlag = this.initialModelFlag;
     }
 
-    // update the readout field of range slider
-    if (document.getElementById(this.inputSliderReadout)) {
-      document.getElementById(this.inputSliderReadout).innerHTML = this.Cmax;
-    }
-
-    if (document.getElementById(this.inputCyclePeriod)) {
-      let tmpFunc = new Function("return " + this.inputCyclePeriod + ".value;");
-      this.period = tmpFunc();
+    if (document.getElementById(this.inputArea)) {
+      let tmpFunc = new Function("return " + this.inputArea + ".value;");
+      this.Area = tmpFunc();
     } else {
-      this.period = this.initialPeriod;
+      this.Area= this.initialArea;
     }
 
-    // NEW FOR SQUARE CYCLING WITH DUTY
-    this.frequency = 2 * Math.PI / this.period;
-
-    if (document.getElementById(this.inputDuty)) {
-      let tmpFunc = new Function("return " + this.inputDuty + ".value;");
-      this.duty = tmpFunc();
+    if (document.getElementById(this.inputCoeff)) {
+      let tmpFunc = new Function("return " + this.inputCoeff + ".value;");
+      this.Coeff = tmpFunc();
     } else {
-      this.duty= this.initialDuty;
+      this.Coeff = this.initialCoeff;
     }
 
-    if (document.getElementById(this.inputKflow)) {
-      let tmpFunc = new Function("return " + this.inputKflow + ".value;");
-      this.Kflow = tmpFunc();
+    if (document.getElementById(this.inputTinHot) {
+      let tmpFunc = new Function("return " + this.inputTinHot + ".value;");
+      this.TinHot = tmpFunc();
     } else {
-      this.Kflow = this.initialKflow;
+      this.TinHot = this.initialTinHot;
     }
 
-    if (document.getElementById(this.inputKads)) {
-      let tmpFunc = new Function("return " + this.inputKads + ".value;");
-      this.Kads = tmpFunc();
+    if (document.getElementById(this.inputTinCold) {
+      let tmpFunc = new Function("return " + this.inputTinCold + ".value;");
+      this.TinCold = tmpFunc();
     } else {
-      this.Kads = this.initialKads;
+      this.TinCold = this.initialTinCold;
     }
 
-    if (document.getElementById(this.inputKdiff)) {
-      let tmpFunc = new Function("return " + this.inputKdiff + ".value;");
-      this.Kdiff = tmpFunc();
+    if (document.getElementById(this.inputFlowHot) {
+      let tmpFunc = new Function("return " + this.inputFlowHot + ".value;");
+      this.FlowHot = tmpFunc();
     } else {
-      this.Kdiff = this.initialKdiff;
+      this.FlowHot = this.initialFlowHot;
     }
 
-    // phi << ThieleMod
-    if (document.getElementById(this.inputThieleMod)) {
-      let tmpFunc = new Function("return " + this.inputThieleMod + ".value;");
-      this.phi = tmpFunc();
+    if (document.getElementById(this.inputFlowCold) {
+      let tmpFunc = new Function("return " + this.inputFlowCold + ".value;");
+      this.FlowCold = tmpFunc();
     } else {
-      this.phi = this.initialPhi;
+      this.FlowCold = this.initialFlowCold;
     }
 
-    if (document.getElementById(this.inputAlpha)) {
-      let tmpFunc = new Function("return " + this.inputAlpha + ".value;");
-      this.alpha = tmpFunc();
+    if (document.getElementById(this.inputCpHot {
+      let tmpFunc = new Function("return " + this.inputCpHot + ".value;");
+      this.CpHot = tmpFunc();
     } else {
-      this.alpha = this.initialAlpha;
+      this.CpHot = this.initialCpHot;
     }
 
-    if (document.getElementById(this.inputBscale)) {
-      let tmpFunc = new Function("return " + this.inputBscale + ".value;");
-      this.Bscale = tmpFunc();
+    if (document.getElementById(this.inputCpCold {
+      let tmpFunc = new Function("return " + this.inputCpHot + ".value;");
+      this.CpCold = tmpFunc();
     } else {
-      this.Bscale = this.initialBscale;
+      this.CpCold = this.initialCpCold;
     }
-    // change input y-axis scale factor for plotting of B out
-    plotsObj[3]['varYscaleFactor'][1] = this.Bscale; // this.Bscale;
-
-    // RADIO BUTTONS & CHECK BOX
-    // at least for now, do not check existence of UI element as above
-    // Model radio buttons - selects rate determing step
-    var m01 = document.querySelector('#' + this.inputModel01);
-    var m02 = document.querySelector('#' + this.inputModel02);
-    if (m01.checked) {
-      this.model = 1;
-    } else {
-      this.model = 2;
-    }
-    // Input shape radio buttons
-    var el0 = document.querySelector('#' + this.inputRadioConstant);
-    var el1 = document.querySelector('#' + this.inputRadioSine);
-    var el2 = document.querySelector('#' + this.inputRadioSquare);
-    var el3 = document.querySelector('#' + this.inputCheckBoxFeed);
-    if (el2.checked) {
-      this.shape = 'square';
-    } else if (el1.checked) {
-      this.shape = 'sine';
-    } else {
-      // assume constant checked
-      if (el3.checked) {
-        this.shape = 'constant';
-      } else {
-        this.shape = 'off';
-      }
-    }
-
-    var Krxn = Math.pow(this.phi, 2)*this.Kdiff/0.3/this.alpha/this.Kads;
-    // note eps is local to updateState, so use 0.3 here
-    document.getElementById("field_Krxn").innerHTML = Krxn.toFixed(4);
-
-    // reset average rate after any change
-    this.AinSum = 0;
-    this.BoutSum = 0;
-    this.BoutCounter = 0;
-    this.aveRate = 0;
-    this.aveConversion = 0;
 
   }, // end of updateUIparams()
 
@@ -415,35 +397,6 @@ var puHeatExchanger = {
     // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
     // STATE VARIABLE
 
-    // document.getElementById("dev01").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; y = " + y[20];
-
-    var eps = 0.3; // layer void fraction, constant
-    var Vratio = 2; // layer-pellet/cell volume ratio Vp/Vc, keep constant
-    var phaseShift = 1.5 * Math.PI; // keep constant
-
-    // compute these products outside of repeat
-
-    // XXX check, note I compute 0 to this.numNodes points, therefore this.numNodes divisions
-    var dz = 1/this.numNodes; // dless distance between nodes in layer
-
-    var inverseDz2 = Math.pow(1/dz, 2);
-    var KflowCell = this.Kflow*Vratio; // Q/Vc/k-1 = (Q/Vp/k-1)*(Vp/Vc)
-    var KdOeps = this.Kdiff / eps;
-    var KdOepsOalpha = KdOeps / this.alpha;
-    var dtKdOepsOalpha = this.unitTimeStep * KdOepsOalpha;
-    var dtKdOeps = this.unitTimeStep * KdOeps;
-    var phi2 = Math.pow(this.phi, 2);
-    var flowFactor = this.Kflow / this.alpha / eps; // for aveRate
-
-    var secondDeriv = 0;
-    var D2 = 0;
-    var phi2overD2 = 0;
-    var tNewFac = 0;
-    var i = 0; // used as index
-    var k = 0; // used as index
-    var flowRate = 0;
-    var diffRate = 0;
-
     // document.getElementById("dev01").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; y = " + inverseDz2;
 
     // this unit takes multiple steps within one outer main loop repeat step
@@ -454,34 +407,8 @@ var puHeatExchanger = {
         // boundary condition at inner sealed face
         k = 0;
 
-        D2 = Math.pow((1 + this.Kads * y[k]), this.model); // this.model should be 1 or 2
-        phi2overD2 = phi2 / D2;
-        secondDeriv = ( 2 * y[k+1] - 2 * y[k] ) * inverseDz2;
-
-        tNewFac = 1 / (1/this.alpha + this.Kads/D2); // to allow any alpha (as long as quasi-equil established)
-        // replaces (D2/Kads) which is for large alpha
-
-        yNew[k] = y[k] + dtKdOepsOalpha * tNewFac * ( secondDeriv - phi2overD2 * y[k] ); // for LARGE ALPHA
-
-        // now do for y2
-        secondDeriv = ( 2*y2[k+1] - 2*y2[k] ) * inverseDz2;
-        y2New[k] = y2[k]  + dtKdOeps * ( secondDeriv + phi2overD2 * y[k] );
-
        // internal nodes
        for (k = 1; k < this.numNodes; k += 1) {
-
-          D2 = Math.pow(( 1 + this.Kads * y[k] ), this.model); // this.model should be 1 or 2
-          phi2overD2 = phi2 / D2;
-          secondDeriv = ( y[k-1] - 2*y[k] + y[k+1] ) * inverseDz2;
-
-          tNewFac = 1 / (1/this.alpha + this.Kads/D2); // to allow any alpha (as long as quasi-equil established)
-          // replaces D2/Kads which is for large alpha
-
-          yNew[k] = y[k]  + dtKdOepsOalpha * tNewFac * ( secondDeriv - phi2overD2 * y[k] ); // for LARGE ALPHA
-
-          // now do for y2
-          secondDeriv = ( y2[k-1] - 2*y2[k] + y2[k+1] ) * inverseDz2;
-          y2New[k] = y2[k]  + dtKdOeps * ( secondDeriv + phi2overD2 * y[k] );
 
       } // end repeat
 
@@ -489,103 +416,7 @@ var puHeatExchanger = {
 
       k = this.numNodes;
 
-      // reactant A feed to reactor
-      // cinNew = this.Cmax * 0.5 * (1 + Math.sin( this.frequency * simParams.simTime  + phaseShift) );
-      this.sineFuncOLD = this.sineFunc; // need for square cycle with duty fraction
-      this.sineFunc = 0.5 * (1 + Math.sin( this.frequency * simParams.simTime  + phaseShift) );
-
-      // NEW FOR SQUARE CYCLING WITH DUTY CYCLE
-      this.cycleTime = this.cycleTime + this.unitTimeStep;
-
-      cinOld = cinNew;
-
-      switch(this.shape) {
-        case 'off':
-          cinNew = 0;
-          break;
-        case 'constant':
-          cinNew = this.Cmax;
-          break;
-        case 'sine':
-          cinNew = this.Cmax * this.sineFunc;
-          break;
-        case 'square':
-          if (this.sineFuncOLD <= 0.5 && this.sineFunc > 0.5) {
-            // we are entering new cycle
-            // start timer and switch cin
-            this.cycleTime = 0;
-            cinNew = this.Cmax;
-          } else {
-            // within sine cycle
-            // check cycleTime to see what to do
-            if (this.cycleTime < this.duty/100 * this.period) {
-              // do nothing
-            } else {
-              cinNew = 0;
-            }
-          }
-          break;
-        default:
-          cinNew = this.Cmax;
-      }
-
-      // force cinNew to be a number, if not, then
-      // 0 and 1 values get treated as text when summing for aveConversion
-      cinNew = Number(cinNew);
-
-      // compute average rate and conversion
-      // need to update only after complete cycles or get values
-      // always changing - and works OK for constant feed as well
-      if (this.sineFuncOLD <= 0.5 && this.sineFunc > 0.5) {
-        // we are entering new cycle
-        // start timer
-        this.cycleTime = 0;
-        // compute averages only after complete cycles
-        if (this.BoutCounter > 0) {
-          // compute ave d'ess TOF = ave B formed per site per unit d'less time
-          this.aveRate = flowFactor * this.BoutSum / this.BoutCounter;
-        }
-        if (this.AinSum > 0) {
-          this.aveConversion = this.BoutSum / this.AinSum;
-        }
-        // reset variables used to compute averages
-        this.AinSum = 0;
-        this.BoutSum = 0;
-        this.BoutCounter = 0;
-      } else {
-        // we are in a cycle so update variables used to compute averages
-        this.AinSum = this.AinSum + cinNew;
-        this.BoutSum = this.BoutSum + cbNew;
-        this.BoutCounter = this.BoutCounter + 1;
-      }
-
-      // WARNING: do not use stripData for concentrations used in computations
-      // because they are only updated after this repeat of unitStepRepeats is done
-
-      // reactant A balance in mixing cell with diffusion in/out of layer
-      flowRate = KflowCell * (cinOld - y[k]);
-      diffRate = this.Kdiff*Vratio*this.numNodes*(y[k]-y[k-1]);
-      dcadt = flowRate - diffRate;
-      caNew = y[k] + dcadt * this.unitTimeStep;
-      yNew[k] = caNew;
-
-      // document.getElementById("dev01").innerHTML = "flowRate = " + flowRate + "; diffRate = " + diffRate;
-      // document.getElementById("dev01").innerHTML = "y[k] = " + y[k] + "; dcadt * this.unitTimeStep = " + dcadt * this.unitTimeStep;
-
-      // product B balance in mixing cell with diffusion in/out of layer
-      flowRate = KflowCell * (0 - y2[k]);
-      diffRate = this.Kdiff*Vratio*this.numNodes*(y2[k]-y2[k-1]);
-      dcbdt = flowRate - diffRate;
-      cbNew = y2[k] + dcbdt * this.unitTimeStep;
-
-      // document.getElementById("dev02").innerHTML = "flowRate = " + flowRate + "; diffRate = " + diffRate;
-      // document.getElementById("dev02").innerHTML = "y2[k] = " + y2[k] + "; dcbdt * this.unitTimeStep = " + dcbdt * this.unitTimeStep;
-
-      y2New[k] = cbNew;
-
-       // document.getElementById("dev01").innerHTML = "UPDATE BOUNDARY time = " + simParams.simTime.toFixed(0) + "; y = " +  yNew[k].toFixed(3);
-
-       // copy temp y and y2 to current y and y2
+      // copy temp y and y2 to current y and y2
       y = yNew;
       y2 = y2New;
 
