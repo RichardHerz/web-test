@@ -9,12 +9,14 @@
 //          unit that generates the plot data
 // where number plot points + 1 for origin are plotted
 
-// these vars used several places below in this file
-var numProfileVars = 4;
-var numProfilePts = puCatalystLayer.numNodes;
+// THIS FILE USED FOR DEFINITION OF PROFILE AND STRIP CHART PLOTS
 
 // these vars used several places below in this file
-var numStripVars = 3;
+var numProfileVars = 2;
+var numProfilePts = puHeatExchanger.numNodes;
+
+// these vars used several places below in this file
+var numStripVars = 1;
 var numStripPts = 80;
 
 // DECLARE PARENT OBJECT TO HOLD PLOT INFO
@@ -33,12 +35,12 @@ var plotsObj = new Object();
   //
   // plot 0 info
   plotsObj[0] = new Object();
-  plotsObj[0]['name'] = 'surface profiles';
+  plotsObj[0]['name'] = 'temperature profiles';
   plotsObj[0]['type'] = 'profile';
-  plotsObj[0]['canvas'] = '#div_PLOTDIV_catalyst_surface';
-  plotsObj[0]['numberPoints'] = puCatalystLayer.numNodes; // should match numNodes in process unit
+  plotsObj[0]['canvas'] = '#div_PLOTDIV';
+  plotsObj[0]['numberPoints'] = puHeatExchanger.numNodes; // should match numNodes in process unit
   // plot has numberPoints + 1 pts!
-  plotsObj[0]['xAxisLabel'] = 'surface in layer';
+  plotsObj[0]['xAxisLabel'] = 'position in exchanger';
   // xAxisShow false does not show numbers, nor label, nor grid for x-axis
   // might be better to cover numbers if desire not to show numbers
   plotsObj[0]['xAxisShow'] = 1; // 0 false, 1 true
@@ -53,11 +55,11 @@ var plotsObj = new Object();
   plotsObj[0]['yRightAxisMax'] = 1;
   plotsObj[0]['plotLegendPosition'] = "ne";
   plotsObj[0]['var'] = new Array();
-    plotsObj[0]['var'][0] = 2; // values are curve data number to be put on plot
-    plotsObj[0]['var'][1] = 3; // listed in order of varLabel order, etc.
+    plotsObj[0]['var'][0] = 0; // values are curve data number to be put on plot
+    plotsObj[0]['var'][1] = 1; // listed in order of varLabel order, etc.
   plotsObj[0]['varLabel'] = new Array();
-    plotsObj[0]['varLabel'][0] = 'AS'; // 1st var
-    plotsObj[0]['varLabel'][1] = 'rate';
+    plotsObj[0]['varLabel'][0] = 'Thot'; // 1st var
+    plotsObj[0]['varLabel'][1] = 'Tcold';
   plotsObj[0]['varShow'] = new Array();
     // varShow = 'show' shows curve, 'hide' hides curve but shows name in legend
     // value can be changed by javascript if want to show/hide curve with checkbox
@@ -71,130 +73,6 @@ var plotsObj = new Object();
     plotsObj[0]['varYscaleFactor'][1] = 1;
   // ALTERNATIVE to separate arrays for variable number, show, axis
   //    might be to have one array per variable equal to an array of info...?
-  //
-  // plot 1 info
-  plotsObj[1] = new Object();
-  plotsObj[1]['name'] = 'pellet gas';
-  plotsObj[1]['type'] = 'profile';
-  plotsObj[1]['canvas'] = '#div_PLOTDIV_catalyst_gas';
-  plotsObj[1]['numberPoints'] = puCatalystLayer.numNodes;
-  // plot has numberPoints + 1 pts!
-  plotsObj[1]['xAxisLabel'] = 'gas in layer';
-  // xAxisShow false does not show numbers, nor label, nor grid for x-axis
-  // might be better to cover numbers if desire not to show numbers
-  plotsObj[1]['xAxisShow'] = 1; // 0 false, 1 true
-  plotsObj[1]['xAxisMin'] = 0;
-  plotsObj[1]['xAxisMax'] = 1;
-  plotsObj[1]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
-  plotsObj[1]['yLeftAxisLabel'] = '';
-  plotsObj[1]['yLeftAxisMin'] = 0;
-  plotsObj[1]['yLeftAxisMax'] = 1;
-  plotsObj[1]['yRightAxisLabel'] = 'yRight';
-  plotsObj[1]['yRightAxisMin'] = 0;
-  plotsObj[1]['yRightAxisMax'] = 1;
-  plotsObj[1]['plotLegendPosition'] = "ne";
-  plotsObj[1]['var'] = new Array();
-    plotsObj[1]['var'][0] = 0; // 1st var in profile data array
-    plotsObj[1]['var'][1] = 1;
-  plotsObj[1]['varLabel'] = new Array();
-    plotsObj[1]['varLabel'][0] = 'A';
-    plotsObj[1]['varLabel'][1] = 'B';
-  plotsObj[1]['varShow'] = new Array();
-    // varShow = 'show' shows curve, 'hide' hides curve but shows name in legend
-    // value can be changed by javascript if want to show/hide curve with checkbox
-    plotsObj[1]['varShow'][0] = 'show'; // 1st var
-    plotsObj[1]['varShow'][1] = 'show';
-  plotsObj[1]['varYaxis'] = new Array();
-    plotsObj[1]['varYaxis'][0] = 'left'; // 1st var
-    plotsObj[1]['varYaxis'][1] = 'left';
-  plotsObj[1]['varYscaleFactor'] = new Array();
-    plotsObj[1]['varYscaleFactor'][0] = 1; // 1st var
-    plotsObj[1]['varYscaleFactor'][1] = 1;
-  // ALTERNATIVE to separate arrays for variable number, show, axis
-  //    might be to have one array per variable equal to an array of info...?
-  //
-  // plot 2 info
-  plotsObj[2] = new Object();
-  plotsObj[2]['name'] = 'inlet gas';
-  plotsObj[2]['type'] = 'strip';
-  plotsObj[2]['canvas'] = '#div_PLOTDIV_inlet_gas';
-  plotsObj[2]['numberPoints'] = numStripPts;
-  // plot has numberPoints + 1 pts!
-  plotsObj[2]['xAxisLabel'] = '< recent time | earlier time >'; // here, time is dimensionless
-  // xAxisShow false does not show numbers, nor label, nor grid for x-axis
-  // might be better to cover numbers if desire not to show numbers
-  plotsObj[2]['xAxisShow'] = 1; // 0 false, 1 true
-  plotsObj[2]['xAxisMin'] = 0;
-  plotsObj[2]['xAxisMax'] = numStripPts * simParams.simTimeStep * simParams.simStepRepeats;
-  plotsObj[2]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
-  plotsObj[2]['yLeftAxisLabel'] = '';
-  plotsObj[2]['yLeftAxisMin'] = 0;
-  plotsObj[2]['yLeftAxisMax'] = 1;
-  plotsObj[2]['yRightAxisLabel'] = 'yRight';
-  plotsObj[2]['yRightAxisMin'] = 0;
-  plotsObj[2]['yRightAxisMax'] = 1;
-  plotsObj[2]['plotLegendPosition'] = "ne";
-  plotsObj[2]['var'] = new Array();
-    plotsObj[2]['var'][0] = 0; // 1st var in profile data array
-    // plotsObj[2]['var'][1] = 1;
-  plotsObj[2]['varLabel'] = new Array();
-    plotsObj[2]['varLabel'][0] = 'A in';
-    // plotsObj[2]['varLabel'][1] = 'B';
-  plotsObj[2]['varShow'] = new Array();
-    // varShow = 'show' shows curve, 'hide' hides curve but shows name in legend
-    // value can be changed by javascript if want to show/hide curve with checkbox
-    plotsObj[2]['varShow'][0] = 'show'; // 1st var
-    // plotsObj[2]['varShow'][1] = 'show';
-  plotsObj[2]['varYaxis'] = new Array();
-    plotsObj[2]['varYaxis'][0] = 'left'; // 1st var
-    // plotsObj[2]['varYaxis'][1] = 'left';
-  plotsObj[2]['varYscaleFactor'] = new Array();
-    plotsObj[2]['varYscaleFactor'][0] = 1; // 1st var
-    plotsObj[2]['varYscaleFactor'][1] = 1;
-  // ALTERNATIVE to separate arrays for variable number, show, axis
-  //    might be to have one array per variable equal to an array of info...?
-  //
-  // plot 3 info
-  plotsObj[3] = new Object();
-  plotsObj[3]['name'] = 'outlet gas';
-  plotsObj[3]['type'] = 'strip';
-  plotsObj[3]['canvas'] = '#div_PLOTDIV_outlet_gas';
-  plotsObj[3]['numberPoints'] = numStripPts;
-  // plot has numberPoints + 1 pts!
-  plotsObj[3]['xAxisLabel'] = '< recent time | earlier time >'; // here, time is dimensionless
-  // xAxisShow false does not show numbers, nor label, nor grid for x-axis
-  // might be better to cover numbers if desire not to show numbers
-  plotsObj[3]['xAxisShow'] = 1; // 0 false, 1 true
-  plotsObj[3]['xAxisMin'] = 0;
-  plotsObj[3]['xAxisMax'] = numStripPts * simParams.simTimeStep * simParams.simStepRepeats;
-  plotsObj[3]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
-  plotsObj[3]['yLeftAxisLabel'] = '';
-  plotsObj[3]['yLeftAxisMin'] = 0;
-  plotsObj[3]['yLeftAxisMax'] = 1;
-  plotsObj[3]['yRightAxisLabel'] = 'yRight';
-  plotsObj[3]['yRightAxisMin'] = 0;
-  plotsObj[3]['yRightAxisMax'] = 1;
-  plotsObj[3]['plotLegendPosition'] = "ne";
-  plotsObj[3]['var'] = new Array();
-    plotsObj[3]['var'][0] = 1; // 1st var in profile data array
-    plotsObj[3]['var'][1] = 2;
-  plotsObj[3]['varLabel'] = new Array();
-    plotsObj[3]['varLabel'][0] = 'A out';
-    plotsObj[3]['varLabel'][1] = 'B out';
-  plotsObj[3]['varShow'] = new Array();
-    // varShow = 'show' shows curve, 'hide' hides curve but shows name in legend
-    // value can be changed by javascript if want to show/hide curve with checkbox
-    plotsObj[3]['varShow'][0] = 'show'; // 1st var
-    plotsObj[3]['varShow'][1] = 'show';
-  plotsObj[3]['varYaxis'] = new Array();
-    plotsObj[3]['varYaxis'][0] = 'left'; // 1st var
-    plotsObj[3]['varYaxis'][1] = 'left';
-  plotsObj[3]['varYscaleFactor'] = new Array();
-    plotsObj[3]['varYscaleFactor'][0] = 1; // 1st var
-    plotsObj[3]['varYscaleFactor'][1] = 1;
-  // ALTERNATIVE to separate arrays for variable number, show, axis
-  //    might be to have one array per variable equal to an array of info...?
-  //
 
   // DEFINE plotFlag ARRAY so don't have to generate
   // entire plot everytime want to just change data (and not axes, etc.)

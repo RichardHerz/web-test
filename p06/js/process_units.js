@@ -15,7 +15,7 @@
 var Thot = [];
 var Tcold = [];
 var ThotNew = []; // new values
-var Tcold = []; // new values
+var TcoldNew = []; // new values
 var tempArray = []; // for shifting data in strip chart plots
 var spaceData = []; // for shifting data in space-time plots
 
@@ -147,7 +147,7 @@ var puHeatExchanger = {
   // so that this process unit will run if units that supply inputs and
   // html inputs are not present in order to make units more independent
 
-  initialModelFlag : 1, // 0 is cocurrent flow, 1 is countercurrent flow
+  initialModelFlag : 1, // 0 is co-current flow, 1 is counter-current flow
   initialArea : 1.9, // m2, A, heat transfer surface area
   initialCoeffic : 252.0, // J/s/K/m2, U, heat transfer coefficient
   initialTinHot : 375, // K, hot T in
@@ -296,7 +296,7 @@ var puHeatExchanger = {
     // }
 
     // XXX for now, use this for ModelFlag but replace with radio buttons
-    if (document.getElementById(this.inputModelFlag {
+    if (document.getElementById(this.inputModelFlag)) {
       let tmpFunc = new Function("return " + this.inputModelFlag + ".value;");
       this.ModelFlag= tmpFunc();
     } else {
@@ -317,42 +317,42 @@ var puHeatExchanger = {
       this.Coeff = this.initialCoeff;
     }
 
-    if (document.getElementById(this.inputTinHot) {
+    if (document.getElementById(this.inputTinHot)) {
       let tmpFunc = new Function("return " + this.inputTinHot + ".value;");
       this.TinHot = tmpFunc();
     } else {
       this.TinHot = this.initialTinHot;
     }
 
-    if (document.getElementById(this.inputTinCold) {
+    if (document.getElementById(this.inputTinCold)) {
       let tmpFunc = new Function("return " + this.inputTinCold + ".value;");
       this.TinCold = tmpFunc();
     } else {
       this.TinCold = this.initialTinCold;
     }
 
-    if (document.getElementById(this.inputFlowHot) {
+    if (document.getElementById(this.inputFlowHot)) {
       let tmpFunc = new Function("return " + this.inputFlowHot + ".value;");
       this.FlowHot = tmpFunc();
     } else {
       this.FlowHot = this.initialFlowHot;
     }
 
-    if (document.getElementById(this.inputFlowCold) {
+    if (document.getElementById(this.inputFlowCold)) {
       let tmpFunc = new Function("return " + this.inputFlowCold + ".value;");
       this.FlowCold = tmpFunc();
     } else {
       this.FlowCold = this.initialFlowCold;
     }
 
-    if (document.getElementById(this.inputCpHot {
+    if (document.getElementById(this.inputCpHot)) {
       let tmpFunc = new Function("return " + this.inputCpHot + ".value;");
       this.CpHot = tmpFunc();
     } else {
       this.CpHot = this.initialCpHot;
     }
 
-    if (document.getElementById(this.inputCpCold {
+    if (document.getElementById(this.inputCpCold)) {
       let tmpFunc = new Function("return " + this.inputCpHot + ".value;");
       this.CpCold = tmpFunc();
     } else {
@@ -399,26 +399,101 @@ var puHeatExchanger = {
 
     // document.getElementById("dev01").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; y = " + inverseDz2;
 
+    // if allow flow to change then need to control
+    // volume so that get reasonable response time
+    var hotFlowCoef = 0.5;
+    var coldFlowCoef = 0.5;
+
+    var Vhot = this.FlowHot/hotFlowCoef;
+    var Vcold = this.FlowCold/coldFlowCoef;
+    var Acell = this.Area/this.numNodes; // m2, per cell
+    var hotXferCoef = this.Coeff*Acell/this.CpHot/Vhot;
+    var coldXferCoef = this.Coeff*Acell/this.CpCold/Vcold;
+
     // this unit takes multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
 
-    // XXX BUT IF RESET IS TRUE THEN DON'T WANT TO DO ANY STEPPING HERE...
+    // do node at hot inlet end
+    var n = 0;
+    var ThotN = Thot[n];
+    var ThotNm1 = this.TinHot; // special for n=0 cell, hot inlet
+    var TcoldN = Tcold[n];
+    var TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
+    var TcoldNp1 = Tcold[n+1];
 
-        // boundary condition at inner sealed face
-        k = 0;
+    var dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
 
-       // internal nodes
-       for (k = 1; k < this.numNodes; k += 1) {
+    var dTcoldDT;
+    switch(this.ModelFlag) {
+      case 0: // co-current
+        dTcoldDT = coldFlowCoef*(TcoldNm1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+      break
+      case 1: // counter-current
+        dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+    }
 
-      } // end repeat
+    ThotN = dThotDT * this.unitTimeStep;
+    TcoldN = dTcoldDT * this.unitTimeStep;
 
-      // boundary condition at outer bulk face
+    ThotNew[n] = ThotN;
+    TcoldNew[n] = TcoldN;
 
-      k = this.numNodes;
+    // internal nodes
+    for (n = 1; n < this.numNodes; n += 1) {
 
-      // copy temp y and y2 to current y and y2
-      y = yNew;
-      y2 = y2New;
+      ThotN = Thot[n];
+      ThotNm1 = Thot[n-1];
+      TcoldN = Tcold[n];
+      TcoldNm1 = Tcold[n-1];
+      TcoldNp1 = Tcold[n+1];
+
+      dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
+
+      switch(this.ModelFlag) {
+        case 0: // co-current
+          dTcoldDT = coldFlowCoef*(TcoldNm1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+        break
+        case 1: // counter-current
+          dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+      }
+
+      ThotN = dThotDT * this.unitTimeStep;
+      TcoldN = dTcoldDT * this.unitTimeStep;
+
+      ThotNew[n] = ThotN;
+      TcoldNew[n] = TcoldN;
+
+    } // end repeat through internal nodes
+
+    // do node at hot outlet end
+
+    n = this.numNodes;
+
+    ThotN = Thot[n];
+    ThotNm1 = Thot[n-1];
+    TcoldN = Tcold[n];
+    TcoldNm1 = Tcold[n-1]; // for co-current
+    TcoldNp1 = this.TinCold; // special for last cell, cold inlet for counter-current
+
+    dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
+
+    switch(this.ModelFlag) {
+      case 0: // co-current
+        dTcoldDT = coldFlowCoef*(TcoldNm1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+      break
+      case 1: // counter-current
+        dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+    }
+
+    ThotN = dThotDT * this.unitTimeStep;
+    TcoldN = dTcoldDT * this.unitTimeStep;
+
+    ThotNew[n] = ThotN;
+    TcoldNew[n] = TcoldN;
+
+    // copy new to current
+    Thot = ThotNew;
+    Tcold = TcoldNew;
 
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 
@@ -426,160 +501,42 @@ var puHeatExchanger = {
 
   display : function() {
 
-    // display average rate and average conversion
-    document.getElementById("field_aveRate").innerHTML = this.aveRate.toExponential(3);
-    document.getElementById("field_aveConversion").innerHTML = this.aveConversion.toFixed(4);
+    // // display average rate and average conversion
+    // document.getElementById("field_aveRate").innerHTML = this.aveRate.toExponential(3);
+    // document.getElementById("field_aveConversion").innerHTML = this.aveConversion.toFixed(4);
 
-    var k = 0; // used as index
-    var v = 0; // used as index
-    var s = 0; // used as index
-    var t = 0; // used as index
+    var n = 0; // used as index
 
     // HANDLE PROFILE PLOT DATA
 
-    // copy y values to profileData array which holds data for plotting
+    // copy variable values to profileData array which holds data for plotting
 
     // XXX CONSIDER RE-ORDERING LAST TWO INDEXES IN profileData SO CAN USE
     //     SIMPLE ASSIGNMENT FOR ALL Y VALUES, e.g.,
-    // profileData[0][1][k] = y;
+    // profileData[0][1][n] = y;
 
-    for (k=0; k<=this.numNodes; k+=1) {
-      profileData[0][k][1] = y[k];
-      profileData[1][k][1] = y2[k];
-      // update arrays for coverage and rate
-      // note that these values are computed above in repeat to get reactant and
-      // product gas conc but no need to update coverage and rate arrays inside repeat
-      // since this sim assumes pseudo-SS between reactant gas and coverage
-      profileData[2][k][1] = this.Kads * y[k] / (1 + this.Kads * y[k]); // coverage
-      profileData[3][k][1] = this.Kads * y[k] / Math.pow( (1 + this.Kads * y[k]), this.model); // rate, this.model should be 1 or 2
+    for (n=0; n<=this.numNodes; n+=1) {
+      profileData[0][n][1] = Thot[n];
+      profileData[1][n][1] = Tcold[n];
     }
 
-    // HANDLE SPACE-TIME DATA
+    // HANDLE SPACE-TIME DATA >> HERE IS HOT AND COLD SIDES OF EXCHANGER
+    // FOR HEAT EXCHANGER
+    // the data vs. node is horizontal, not vertical
+    // and vertical strip is all the same
+    // so when initialize spaceTimeData array, take this into account
 
-    // spaceTimeData[v][t][s] - variable, time, space (profile in layer)
-    // get 2D array for one variable at a time
-    v = 0; // first variable = rate
-    tempArray = spaceTimeData[v];
-    // get rate profile data, variable 3 in profileData array
-    for (k = 0; k <= this.numNodes; k += 1) {
-      spaceData[k] = profileData[3][k][1]; // use rate computed above
+    // spaceTimeData[v][t][s] - variable, time changes to space, space changes to one value
+    for (n=0; n<=this.numNodes; n+=1) {
+      spaceTimeData[0][n][0] = Thot[n];
+      spaceTimeData[1][n][0] = Tcold[n];
     }
 
-    // // TRY UNSUCCESSFULLY TO USE shift & push to update spaceTimeData array
-    // // shift & push worked OK on 1D arrays for strip charts
-    // // delete first and oldest element which is a layer profile
-    // tempArray.shift();
-    // // add the new layer profile at end
-    // tempArray.push(spaceData);
+    // FOR HEAT EXCHANGER - COLOR CANVAS DOES NOT SCROLL WITH TIME
+    // SO DO NOT SHIFT AND PUSH DATA LIKE DO IN SCROLLING CANVAS
 
-    /*
-    BUT SHIFT & PUSH DO NOT WORK
-    spaceData is changing with time as expected
-    trouble is that all of spaceTimeData is getting "filled" with
-    same copy of the time varying spaceData instead of just one strip
-    getting added to end...
-    strips are getting deleted and new strips added to end
-    but looks like all non-zero strips are getting filled with current
-    spaceData...
-    */
-
-    // numStripPts is a global defined in process_plot_info
-
-    // use repeats to update the spaceTimeData array
-    for (t = 0; t < numStripPts; t += 1) { // NOTE < numStripPts, don't do last one here
-      // numStripPts defined in process_plot_info.js
-      for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
-        tempArray[t][s] = tempArray[t+1][s];
-      }
-    }
-    // now update the last time
-    for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
-      tempArray[numStripPts][s] = spaceData[s];
-    }
-    // update the variable being processed
-    spaceTimeData[v] = tempArray;
-
+    // FOR HEAT EXCHANGER - DO NOT USE STRIP CHART YET
     // HANDLE STRIP CHART DATA
-
-    // XXX see if can make actions below for strip chart into general function
-
-    // copy gas in and out data to stripData array
-    // update plotData with new data
-
-    // handle cin - feed of reactant gas to mixing cell
-    v = 0;
-    tempArray = stripData[v]; // work on one plot variable at a time
-    // delete first and oldest element which is an [x,y] pair array
-    tempArray.shift();
-    // add the new [x.y] pair array at end
-    tempArray.push( [ 0, cinNew ] );
-    // update the variable being processed
-    stripData[v] = tempArray;
-
-    // handle ca - reactant in mixing cell gas
-    v = 1;
-    tempArray = stripData[v]; // work on one plot variable at a time
-    // delete first and oldest element which is an [x,y] pair array
-    tempArray.shift();
-    // add the new [x.y] pair array at end
-    tempArray.push( [ 0, caNew ] );
-    // update the variable being processed
-    stripData[v] = tempArray;
-
-    // handle cb - product gas in mixing cell gas
-    v = 2;
-    tempArray = stripData[v]; // work on one plot variable at a time
-    // delete first and oldest element which is an [x,y] pair array
-    tempArray.shift();
-    // add the new [x.y] pair array at end
-    // don't scale cbNew here or then gets fed back into calc above
-    // need to add a scale factor when plotting variable
-    tempArray.push( [ 0, cbNew ] );
-    // update the variable being processed
-    stripData[v] = tempArray;
-
-    // // recording flowRate and diffRate below are for development
-    // // WARNING: if want to use this then need to dimension stripData to hold them
-    // //          when initialize stripData in process_plot_info.js
-    //
-    // // handle flowRate - gas in mixing cell gas
-    // v = 3;
-    // tempArray = stripData[v]; // work on one plot variable at a time
-    // // delete first and oldest element which is an [x,y] pair array
-    // tempArray.shift();
-    // // add the new [x.y] pair array at end
-    // // don't scale cbNew here or then gets fed back into calc above
-    // // need to add a scale factor when plotting variable
-    // tempArray.push( [ 0, flowRate ] );
-    // // update the variable being processed
-    // stripData[v] = tempArray;
-    //
-    // // handle diffRate - gas in mixing cell gas
-    // v = 4;
-    // tempArray = stripData[v]; // work on one plot variable at a time
-    // // delete first and oldest element which is an [x,y] pair array
-    // tempArray.shift();
-    // // add the new [x.y] pair array at end
-    // // don't scale cbNew here or then gets fed back into calc above
-    // // need to add a scale factor when plotting variable
-    // tempArray.push( [ 0, diffRate ] );
-    // // update the variable being processed
-    // stripData[v] = tempArray;
-
-    // re-number the x-axis values to equal time values
-    // so they stay the same after updating y-axis values
-
-    // numStripVars & numStripPts are globals defined in process_plot_info.js
-    var timeStep = simParams.simTimeStep * simParams.simStepRepeats;
-    for (v = 0; v < numStripVars; v += 1) {
-      for (p = 0; p <= numStripPts; p += 1) { // note = in p <= numStripPts
-        // note want p <= numStripPts so get # 0 to  # numStripPts of points
-        // want next line for newest data at max time
-        stripData[v][p][0] = p * timeStep;
-        // want next line for newest data at zero time
-        // stripData[v][p][0] = (numStripPts - p) * timeStep;
-      }
-    }
 
   } // end display method
 

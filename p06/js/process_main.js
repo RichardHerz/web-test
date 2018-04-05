@@ -151,7 +151,9 @@
     }
 
     // NEW - plot space-time plots - NEW
-    plotSpaceTimePlot();
+    // XXX need to combine so one function handles multiple SpaceTime plots 
+    plotSpaceTimeHot();
+    plotSpaceTimeCold();
 
     // RETURN REAL TIME OF THIS DISPLAY UPDATE (milliseconds)
     var thisDate = new Date();
