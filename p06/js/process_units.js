@@ -442,7 +442,7 @@ var puHeatExchanger = {
     ThotNew[n] = ThotN;
     TcoldNew[n] = TcoldN;
 
-    document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; dThotDT * this.unitTimeStep = " + dThotDT * this.unitTimeStep;
+    // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; dThotDT * this.unitTimeStep = " + dThotDT * this.unitTimeStep;
 
     // internal nodes
     for (n = 1; n < this.numNodes; n += 1) {
