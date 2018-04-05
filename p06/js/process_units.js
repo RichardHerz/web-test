@@ -40,7 +40,7 @@ var simParams = {
   // WARNING: DO NOT CHANGE simTimeStep BETWEEN display updates
 
   simStepRepeats : 1, // integer number of unit updates between display updates
-  simTimeStep : 16, // time step value, simulation time, of main repeat
+  simTimeStep : 1, // time step value, simulation time, of main repeat
 
   // individual units may do more steps in one unit updateState()
   // see individual units for any unitTimeStep and unitStepRepeats
@@ -121,7 +121,7 @@ var puHeatExchanger = {
   // XXX need to enter id's of inputs
   inputModelFlag : "", // 0 is cocurrent flow, 1 is countercurrent flow
   inputArea : "", // m2, A, heat transfer surface area
-  inputCoeffic : "", // J/s/K/m2, U, heat transfer coefficient
+  inputUcoef : "", // J/s/K/m2, U, heat transfer coefficient
   inputTinHot : "", // K, hot T in
   inputTinCold : "", // K, cold T in
   inputFlowHot : "", // m3/s
@@ -135,7 +135,7 @@ var puHeatExchanger = {
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for dt in this case in this unit's updateInputs method
-  unitStepRepeats : 100,
+  unitStepRepeats : 1,
   unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
 
   // WARNING: IF INCREASE NUM NODES IN HEAT EXCHANGER BY A FACTOR THEN HAVE TO
@@ -148,10 +148,10 @@ var puHeatExchanger = {
   // html inputs are not present in order to make units more independent
 
   initialModelFlag : 1, // 0 is co-current flow, 1 is counter-current flow
-  initialArea : 1.9, // m2, A, heat transfer surface area
-  initialCoeffic : 252.0, // J/s/K/m2, U, heat transfer coefficient
-  initialTinHot : 375, // K, hot T in
-  initialTinCold : 280, // K, cold T in
+  initialArea : 10, // m2, A, heat transfer surface area
+  initialUcoef : 100, // J/s/K/m2, U, heat transfer coefficient
+  initialTinHot : 350, // K, hot T in
+  initialTinCold : 340, // K, cold T in
   initialFlowHot : 1.0e-04, // m3/s
   initialFlowCold : 1.0e-04, // m3/s
   initialCpHot : 4.17e+06, // J/m3/K, hot flow heat capacity
@@ -173,7 +173,7 @@ var puHeatExchanger = {
   //   e.g., Cmax : this.initialCmax,
   ModelFlag : this.initialModelFlag, // 0 is cocurrent flow, 1 is countercurrent flow
   Area : this.initialArea, // m2, A, heat transfer surface area
-  Coeff : this.initialCoeffic, // J/s/K/m2, U, heat transfer coefficient
+  Ucoef : this.initialUcoef, // J/s/K/m2, U, heat transfer coefficient
   TinHot : this.initialTinHot, // K, hot T in
   TinCold : this.initialTinCold, // K, cold T in
   FlowHot : this.initialFlowHot, // m3/s
@@ -223,8 +223,10 @@ var puHeatExchanger = {
       profileData[0][k][0] = kn;
       profileData[1][k][0] = kn;
       // y-axis values
-      profileData[0][k][1] = this.initialTinCold;
-      profileData[1][k][1] = this.initialTinCold;
+      // for heat exchanger this is dimensionless T
+      // (T - TinCold) / (TinHot - TinCold)
+      profileData[0][k][1] = 0;
+      profileData[1][k][1] = 0;
     }
 
     // XXX also need to reset strip chart data
@@ -311,10 +313,10 @@ var puHeatExchanger = {
     }
 
     if (document.getElementById(this.inputCoeff)) {
-      let tmpFunc = new Function("return " + this.inputCoeff + ".value;");
-      this.Coeff = tmpFunc();
+      let tmpFunc = new Function("return " + this.inputUcoef+ ".value;");
+      this.Ucoef= tmpFunc();
     } else {
-      this.Coeff = this.initialCoeff;
+      this.Ucoef= this.initialUcoef;
     }
 
     if (document.getElementById(this.inputTinHot)) {
@@ -398,17 +400,19 @@ var puHeatExchanger = {
     // STATE VARIABLE
 
     // document.getElementById("dev01").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; y = " + inverseDz2;
+    // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; Thot[this.numNodes] = " + Thot[this.numNodes];
+    // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; TinCold = " + this.TinCold;
 
     // if allow flow to change then need to control
     // volume so that get reasonable response time
     var hotFlowCoef = 0.5;
     var coldFlowCoef = 0.5;
 
-    var Vhot = this.FlowHot/hotFlowCoef;
-    var Vcold = this.FlowCold/coldFlowCoef;
-    var Acell = this.Area/this.numNodes; // m2, per cell
-    var hotXferCoef = this.Coeff*Acell/this.CpHot/Vhot;
-    var coldXferCoef = this.Coeff*Acell/this.CpCold/Vcold;
+    var Vhot = this.FlowHot / hotFlowCoef;
+    var Vcold = this.FlowCold / coldFlowCoef;
+    var Acell = this.Area / this.numNodes; // m2, per cell
+    var hotXferCoef = this.Ucoef * Acell / this.CpHot / Vhot;
+    var coldXferCoef = this.Ucoef * Acell / this.CpCold / Vcold;
 
     // this unit takes multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
@@ -432,11 +436,13 @@ var puHeatExchanger = {
         dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
     }
 
-    ThotN = dThotDT * this.unitTimeStep;
-    TcoldN = dTcoldDT * this.unitTimeStep;
+    ThotN = ThotN + dThotDT * this.unitTimeStep;
+    TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
     ThotNew[n] = ThotN;
     TcoldNew[n] = TcoldN;
+
+    document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; dThotDT * this.unitTimeStep = " + dThotDT * this.unitTimeStep;
 
     // internal nodes
     for (n = 1; n < this.numNodes; n += 1) {
@@ -447,7 +453,7 @@ var puHeatExchanger = {
       TcoldNm1 = Tcold[n-1];
       TcoldNp1 = Tcold[n+1];
 
-      dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
+      dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);;
 
       switch(this.ModelFlag) {
         case 0: // co-current
@@ -457,8 +463,8 @@ var puHeatExchanger = {
           dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
       }
 
-      ThotN = dThotDT * this.unitTimeStep;
-      TcoldN = dTcoldDT * this.unitTimeStep;
+      ThotN = ThotN + dThotDT * this.unitTimeStep;
+      TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
       ThotNew[n] = ThotN;
       TcoldNew[n] = TcoldN;
@@ -475,7 +481,7 @@ var puHeatExchanger = {
     TcoldNm1 = Tcold[n-1]; // for co-current
     TcoldNp1 = this.TinCold; // special for last cell, cold inlet for counter-current
 
-    dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
+    dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);;
 
     switch(this.ModelFlag) {
       case 0: // co-current
@@ -485,11 +491,13 @@ var puHeatExchanger = {
         dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
     }
 
-    ThotN = dThotDT * this.unitTimeStep;
-    TcoldN = dTcoldDT * this.unitTimeStep;
+    ThotN = ThotN + dThotDT * this.unitTimeStep;
+    TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
     ThotNew[n] = ThotN;
     TcoldNew[n] = TcoldN;
+
+    // finished updating all nodes
 
     // copy new to current
     Thot = ThotNew;
@@ -516,8 +524,8 @@ var puHeatExchanger = {
     // profileData[0][1][n] = y;
 
     for (n=0; n<=this.numNodes; n+=1) {
-      profileData[0][n][1] = Thot[n];
-      profileData[1][n][1] = Tcold[n];
+      profileData[0][n][1] = (Thot[n] - this.TinCold) / (this.TinHot - this.TinCold);
+      profileData[1][n][1] = (Tcold[n] - this.TinCold) / (this.TinHot - this.TinCold);
     }
 
     // HANDLE SPACE-TIME DATA >> HERE IS HOT AND COLD SIDES OF EXCHANGER
