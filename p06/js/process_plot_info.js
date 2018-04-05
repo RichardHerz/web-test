@@ -37,7 +37,7 @@ var plotsObj = new Object();
   plotsObj[0] = new Object();
   plotsObj[0]['name'] = 'temperature profiles';
   plotsObj[0]['type'] = 'profile';
-  plotsObj[0]['canvas'] = '#div_PLOTDIV';
+  plotsObj[0]['canvas'] = '#div_PLOTDIV_T_plot';
   plotsObj[0]['numberPoints'] = puHeatExchanger.numNodes; // should match numNodes in process unit
   // plot has numberPoints + 1 pts!
   plotsObj[0]['xAxisLabel'] = 'position in exchanger';
