@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+  <title>web control examples</title>
+  <meta name="description" content="Interactive Simulations">
+  <meta name="keywords" content="interactive,simulation,reactor,reaction,reactorlab">
+  <meta name="author" content="Richard Herz">
+  <!-- load style sheets for this lab  -->
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <link rel="stylesheet" href="css/range-settings.css">
+
+  <!-- load main JAVASCRIPT for this lab -->
+  <script language="javascript" src="js/process_main.js" type="text/javascript"></script>
+
+</head>
+<body>
+  <p><a href="../index.html">Examples of web controls</a> &gt; range slider</p>
+  <p id="field_example_label">
+  Range - scale - slider - scrollbar example:
+  </p>
+  <input type="range" id="range_range_slider" min="0" max="1" step="0.01" value="0.8"
+    onchange="check_range_slider()" oninput="check_range_slider()">
+  </input>
+  <p id="field_range_value">
+  1
+  </p>
+  <p id="field_range_label">
+  Slide to change value:
+  </p>
+  <p id="field_output_label">
+  Output:
+  </p>
+  <p id="field_output_field">
+  </p>
+</body>
+</html>

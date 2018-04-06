@@ -1,0 +1,34 @@
+#range_range_slider {
+ left: 72px;
+ top: 210px;
+ width: 249px;
+ height: 24px;
+}
+
+#field_range_value {
+ position: absolute;
+ left: 247px;
+ top: 159px;
+ width: 68px;
+ height: 21px;
+ border-width: 2px;
+ visibility: visible;
+ border-style: none;
+ opacity: 1;
+ LCvScrollbar: false;
+ font-size: 20px;
+}
+
+#field_range_label {
+ position: absolute;
+ left: 63px;
+ top: 158px;
+ width: 181px;
+ height: 23px;
+ border-width: 2px;
+ visibility: visible;
+ border-style: none;
+ opacity: 1;
+ LCvScrollbar: false;
+ font-size: 20px;
+}
