@@ -17,7 +17,7 @@ input[type=range]::-ms-track {
   cursor: pointer;
 
   /* Hides the slider so custom styles can be added */
-  background: transparent;
+  background: transparent; 
   border-color: transparent;
   color: transparent;
 }
@@ -55,7 +55,7 @@ input[type=range]::-ms-thumb {
   border-radius: 3px;
   background: #ffffff;
   cursor: pointer;
-}
+} 
 
 input[type=range]::-webkit-slider-runnable-track {
   width: 100%;
@@ -106,11 +106,11 @@ input[type=range]::-ms-fill-upper {
   border: 0.2px solid #010101;
   border-radius: 2.6px;
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-
+  
 }
 input[type=range]:focus::-ms-fill-upper {
   background: #367ebd;
-}
+} 
 
 input[type=range] {
   -webkit-appearance: none;
@@ -136,13 +136,13 @@ input[type=range]::-webkit-slider-runnable-track {
 input[type=range]::-webkit-slider-thumb {
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
   border: 1px solid #000000;
-  height: 56px; // 36
-  width: 6px; // 16
+  height: 36px;
+  width: 16px;
   border-radius: 3px;
   background: #ffffff;
   cursor: pointer;
   -webkit-appearance: none;
-  margin-top: -24px; // -14
+  margin-top: -14px;
 }
 
 input[type=range]:focus::-webkit-slider-runnable-track {
