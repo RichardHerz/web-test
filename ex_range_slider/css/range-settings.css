@@ -138,7 +138,7 @@ input[type=range]::-webkit-slider-thumb {
   border: 1px solid #000000;
   height: 56px; // 36
   width: 16px; // 16 - seems to have no effect
-  border-radius: 3px;
+  border-radius: 12px; // 3
   background: #ffffff;
   cursor: pointer;
   -webkit-appearance: none;
