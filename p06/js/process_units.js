@@ -120,8 +120,8 @@ var puHeatExchanger = {
   //   e.g., inputModel01 : "radio_Model_1",
   inputModel00 : "radio_co-current_flow", // model 0 is co-current flow
   inputModel01 : "radio_counter-current_flow", // model 1 is counter-current flow
-  inputArea : "", // m2, A, heat transfer surface area
-  inputUcoef : "", // J/s/K/m2, U, heat transfer coefficient
+  inputArea : "input_field_Area", // m2, A, heat transfer surface area
+  inputUcoef : "input_field_Ucoef", // J/s/K/m2, U, heat transfer coefficient
   inputTinHot : "input_field_TinHot", // K, hot T in
   inputTinCold : "input_field_TinCold", // K, cold T in
   inputFlowHot : "input_field_FlowHot", // m3/s
@@ -148,8 +148,8 @@ var puHeatExchanger = {
   // html inputs are not present in order to make units more independent
 
   initialModelFlag : 1, // 0 is co-current flow, 1 is counter-current flow
-  initialArea : 1.9, // m2, A, heat transfer surface area
-  initialUcoef : 252, // J/s/K/m2, U, heat transfer coefficient
+  initialArea : 3.0, // m2, A, heat transfer surface area
+  initialUcoef : 250, // J/s/K/m2, U, heat transfer coefficient
   initialTinHot : 370, // K, hot T in
   initialTinCold : 290, // K, cold T in
   initialFlowHot : 1.0e-04, // m3/s
@@ -285,7 +285,7 @@ var puHeatExchanger = {
       this.Area= this.initialArea;
     }
 
-    if (document.getElementById(this.inputCoeff)) {
+    if (document.getElementById(this.inputUcoef)) {
       let tmpFunc = new Function("return " + this.inputUcoef+ ".value;");
       this.Ucoef= tmpFunc();
     } else {
