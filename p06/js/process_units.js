@@ -151,7 +151,7 @@ var puHeatExchanger = {
   initialArea : 10, // m2, A, heat transfer surface area
   initialUcoef : 100, // J/s/K/m2, U, heat transfer coefficient
   initialTinHot : 350, // K, hot T in
-  initialTinCold : 340, // K, cold T in
+  initialTinCold : 300, // K, cold T in
   initialFlowHot : 1.0e-04, // m3/s
   initialFlowCold : 1.0e-04, // m3/s
   initialCpHot : 4.17e+06, // J/m3/K, hot flow heat capacity
@@ -498,8 +498,8 @@ var puHeatExchanger = {
     // profileData[0][1][n] = y;
 
     for (n=0; n<=this.numNodes; n+=1) {
-      profileData[0][n][1] = (Thot[n] - this.TinCold) / (this.TinHot - this.TinCold);
-      profileData[1][n][1] = (Tcold[n] - this.TinCold) / (this.TinHot - this.TinCold);
+      profileData[0][n][1] = Thot[n]; // or d'less (Thot[n] - this.TinCold) / (this.TinHot - this.TinCold);
+      profileData[1][n][1] = Tcold[n]; // or d'less (Tcold[n] - this.TinCold) / (this.TinHot - this.TinCold);
     }
 
     // HANDLE SPACE-TIME DATA >> HERE IS HOT AND COLD SIDES OF EXCHANGER
