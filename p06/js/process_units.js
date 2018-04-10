@@ -150,8 +150,8 @@ var puHeatExchanger = {
   initialModelFlag : 1, // 0 is co-current flow, 1 is counter-current flow
   initialArea : 1.9, // m2, A, heat transfer surface area
   initialUcoef : 252, // J/s/K/m2, U, heat transfer coefficient
-  initialTinHot : 375, // K, hot T in
-  initialTinCold : 280, // K, cold T in
+  initialTinHot : 370, // K, hot T in
+  initialTinCold : 290, // K, cold T in
   initialFlowHot : 1.0e-04, // m3/s
   initialFlowCold : 1.0e-04, // m3/s
   initialCpHot : 4.17e+06, // J/m3/K, hot flow heat capacity
@@ -272,7 +272,6 @@ var puHeatExchanger = {
     // at least for now, do not check existence of UI elements
     // Model radio buttons
     var m00 = document.querySelector('#' + this.inputModel00);
-    var m01 = document.querySelector('#' + this.inputModel01);
     if (m00.checked) {
       this.ModelFlag = 0; // co-current flow
     } else {
@@ -329,7 +328,7 @@ var puHeatExchanger = {
     }
 
     if (document.getElementById(this.inputCpCold)) {
-      let tmpFunc = new Function("return " + this.inputCpHot + ".value;");
+      let tmpFunc = new Function("return " + this.inputCpCold + ".value;");
       this.CpCold = tmpFunc();
     } else {
       this.CpCold = this.initialCpCold;
