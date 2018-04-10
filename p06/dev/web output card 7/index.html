@@ -48,17 +48,17 @@
 <div id="div_simFrame">
       <div id="div_PLOTDIV_T_plot">
       </div> <!-- end of div div_PLOTDIV_T_plot -->
-   <canvas id="canvas_CANVAS_hot" width="300" height="34"></canvas> <!-- canvas for colormap graphic -->
+   <canvas id="canvas_CANVAS_hot" width="196" height="34"></canvas> <!-- canvas for colormap graphic -->
    <!-- canvas element width & height must be specified here in HTML and not in CSS -->
-   <canvas id="canvas_CANVAS_cold" width="300" height="34"></canvas> <!-- canvas for colormap graphic -->
+   <canvas id="canvas_CANVAS_cold" width="196" height="34"></canvas> <!-- canvas for colormap graphic -->
    <!-- canvas element width & height must be specified here in HTML and not in CSS -->
    <input type="button" id="button_runButton" value="Run" value="Run" onclick="runThisLab()">
    <input type="button" id="button_resetButton" value="Reset" value="Reset" onclick="resetThisLab()">
+   <input id="input_field_cold_right_arrow" value="&rarr;">
+   <input id="input_field_hot_right_arrow" value="&larr;">
+   <input id="input_field_cold_left_arrow" value="&rarr;">
+   <input id="input_field_hot_left_arrow" value="&larr;">
 </div> <!-- end of div div_simFrame -->
-<!-- canvas for colormap graphic -->
-<!-- canvas element width & height must be specified here in HTML and not in CSS -->
-<!-- canvas for colormap graphic -->
-<!-- canvas for colormap graphic -->
 <div id="div_input_fields_group">
    <div id="div_radio_button_group">
       <label id="radio_counter-current_flow_LABEL" name="radio_of_div_radio_button_group">
@@ -73,35 +73,35 @@
    <p id="field_TinHot_label">
       T in hot (K)
    </p>
-   <input id="input_field_TinHot" value="370" onchange="puHeatExchanger.updateUIparams()" value="370">
+   <input id="input_field_TinHot" value="370" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_TinCold_label">
       T in cold (K)
    </p>
-   <input id="input_field_TinCold" value="290" onchange="puHeatExchanger.updateUIparams()" value="290">
+   <input id="input_field_TinCold" value="290" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_FlowHot_label">
       Flow hot (m3/s)
    </p>
-   <input id="input_field_FlowHot" value="1.0e-04" onchange="puHeatExchanger.updateUIparams()" value="1.0e-04">
+   <input id="input_field_FlowHot" value="1.0e-04" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_FlowCold_label">
       Flow cold (m3/s)
    </p>
-   <input id="input_field_FlowCold" value="1.0e-04" onchange="puHeatExchanger.updateUIparams()" value="1.0e-04">
+   <input id="input_field_FlowCold" value="1.0e-04" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_CpHot_label">
       Cp hot (J/m3/K)
    </p>
-   <input id="input_field_CpHot" value="4.17e+06" onchange="puHeatExchanger.updateUIparams()" value="4.17e+06">
+   <input id="input_field_CpHot" value="4.17e+06" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_CpCold_label">
       Cp cold (J/m3/K)
    </p>
-   <input id="input_field_CpCold" value="4.17e+06" onchange="puHeatExchanger.updateUIparams()" value="4.17e+06">
-   <input id="input_field_Area" value="1.9" onchange="puHeatExchanger.updateUIparams()" value="4.17e+06">
+   <input id="input_field_CpCold" value="4.17e+06" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_Area_label">
       Area (m2)
    </p>
+   <input id="input_field_Area" value="3.0" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_Ucoef_label">
       U coefficient (J/s/K/m2)
    </p>
-   <input id="input_field_Ucoef" value="250" onchange="puHeatExchanger.updateUIparams()" value="4.17e+06">
+   <input id="input_field_Ucoef" value="250" onchange="puHeatExchanger.updateUIparams()">
 </div> <!-- end of div div_input_fields_group -->
 </body>
 </html>
