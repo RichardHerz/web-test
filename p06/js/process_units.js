@@ -148,10 +148,10 @@ var puHeatExchanger = {
   // html inputs are not present in order to make units more independent
 
   initialModelFlag : 1, // 0 is co-current flow, 1 is counter-current flow
-  initialArea : 10, // m2, A, heat transfer surface area
-  initialUcoef : 100, // J/s/K/m2, U, heat transfer coefficient
-  initialTinHot : 350, // K, hot T in
-  initialTinCold : 300, // K, cold T in
+  initialArea : 1.9, // m2, A, heat transfer surface area
+  initialUcoef : 252, // J/s/K/m2, U, heat transfer coefficient
+  initialTinHot : 375, // K, hot T in
+  initialTinCold : 280, // K, cold T in
   initialFlowHot : 1.0e-04, // m3/s
   initialFlowCold : 1.0e-04, // m3/s
   initialCpHot : 4.17e+06, // J/m3/K, hot flow heat capacity
@@ -270,7 +270,7 @@ var puHeatExchanger = {
 
     // RADIO BUTTONS & CHECK BOX
     // at least for now, do not check existence of UI elements
-    // Model radio buttons - selects rate determing step
+    // Model radio buttons
     var m00 = document.querySelector('#' + this.inputModel00);
     var m01 = document.querySelector('#' + this.inputModel01);
     if (m00.checked) {
