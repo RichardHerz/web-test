@@ -118,16 +118,16 @@ var puHeatExchanger = {
   //   none
   // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
   //   e.g., inputModel01 : "radio_Model_1",
-  // XXX need to enter id's of inputs
-  inputModelFlag : "", // 0 is cocurrent flow, 1 is countercurrent flow
+  inputModel00 : "radio_co-current_flow", // model 0 is co-current flow
+  inputModel01 : "radio_counter-current_flow", // model 1 is counter-current flow
   inputArea : "", // m2, A, heat transfer surface area
   inputUcoef : "", // J/s/K/m2, U, heat transfer coefficient
-  inputTinHot : "", // K, hot T in
-  inputTinCold : "", // K, cold T in
-  inputFlowHot : "", // m3/s
-  inputFlowCold : "", // m3/s
-  inputCpHot : "", // J/m3/K, hot flow heat capacity
-  inputCpCold : "", // J/m3/K, cold flow heat capacity
+  inputTinHot : "input_field_TinHot", // K, hot T in
+  inputTinCold : "input_field_TinCold", // K, cold T in
+  inputFlowHot : "input_field_FlowHot", // m3/s
+  inputFlowCold : "input_field_FlowCold", // m3/s
+  inputCpHot : "input_field_CpHot", // J/m3/K, hot flow heat capacity
+  inputCpCold : "input_field_CpCold", // J/m3/K, cold flow heat capacity
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
   //   no user entered values for this unit
   // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE EXCEPT -----
@@ -267,42 +267,16 @@ var puHeatExchanger = {
     // // update the readout field of range slider
     // if (document.getElementById(this.inputSliderReadout)) {
     //   document.getElementById(this.inputSliderReadout).innerHTML = this.Cmax;
-    // }
-    //
-    // // EXAMPLE RADIO BUTTONS & CHECK BOX
-    // // at least for now, do not check existence of UI element as above
-    // // Model radio buttons - selects rate determing step
-    // var m01 = document.querySelector('#' + this.inputModel01);
-    // var m02 = document.querySelector('#' + this.inputModel02);
-    // if (m01.checked) {
-    //   this.model = 1;
-    // } else {
-    //   this.model = 2;
-    // }
-    // // Input shape radio buttons
-    // var el0 = document.querySelector('#' + this.inputRadioConstant);
-    // var el1 = document.querySelector('#' + this.inputRadioSine);
-    // var el2 = document.querySelector('#' + this.inputRadioSquare);
-    // var el3 = document.querySelector('#' + this.inputCheckBoxFeed);
-    // if (el2.checked) {
-    //   this.shape = 'square';
-    // } else if (el1.checked) {
-    //   this.shape = 'sine';
-    // } else {
-    //   // assume constant checked
-    //   if (el3.checked) {
-    //     this.shape = 'constant';
-    //   } else {
-    //     this.shape = 'off';
-    //   }
-    // }
 
-    // XXX for now, use this for ModelFlag but replace with radio buttons
-    if (document.getElementById(this.inputModelFlag)) {
-      let tmpFunc = new Function("return " + this.inputModelFlag + ".value;");
-      this.ModelFlag= tmpFunc();
+    // RADIO BUTTONS & CHECK BOX
+    // at least for now, do not check existence of UI elements
+    // Model radio buttons - selects rate determing step
+    var m00 = document.querySelector('#' + this.inputModel00);
+    var m01 = document.querySelector('#' + this.inputModel01);
+    if (m00.checked) {
+      this.ModelFlag = 0; // co-current flow
     } else {
-      this.ModelFlag = this.initialModelFlag;
+      this.ModelFlag = 1; // counter-current flow
     }
 
     if (document.getElementById(this.inputArea)) {

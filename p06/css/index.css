@@ -49,7 +49,7 @@ canvas {
   display: none;
 }
 
-/* #field_output_field {
+#field_output_field {
   position: absolute;
   left: 0px;
   top: 0px;
@@ -64,20 +64,20 @@ canvas {
   LCthreeD: true;
   LCshowBorder: false;
   font-size: 16px;
-} */
+}
 
 #div_simFrame {
   display: block;
   position: relative;
   border-color: DodgerBlue;
-  left: 4px;
-  top: 33px;
+  left: 1px;
+  top: 21px;
   width: 308px;
-  height: 335px;
+  height: 600px;
   visibility: visible;
-  border-width: 2px;
-  background-color: rgba(255,255,255, 0);
-  border-style: none;
+  border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: dotted;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -92,7 +92,7 @@ canvas {
   width: 300px;
   height: 224px;
   visibility: visible;
-  border-width: 2px;
+  border-width: 1px;
   background-color: rgb(0,253,255);
   border-style: outset;
   opacity: 1;
@@ -109,7 +109,7 @@ canvas {
   top: 261px;
  /* canvas element width & height must be set in HTML and not in CSS */
   visibility: visible;
-  border-width: 2px;
+  border-width: 1px;
   background-color: rgb(255,252,0);
   border-style: outset;
   opacity: 1;
@@ -123,7 +123,7 @@ canvas {
   top: 297px;
  /* canvas element width & height must be set in HTML and not in CSS */
   visibility: visible;
-  border-width: 2px;
+  border-width: 1px;
   background-color: rgb(255,252,0);
   border-style: outset;
   opacity: 1;
@@ -138,7 +138,7 @@ canvas {
   width: 72px;
   height: 23px;
   visibility: visible;
-  border-width: 2px;
+  border-width: 1px;
   background-color: rgb(255,255,255);
   border-style: outset;
   opacity: 1;
@@ -153,10 +153,281 @@ canvas {
   width: 72px;
   height: 23px;
   visibility: visible;
-  border-width: 2px;
+  border-width: 1px;
   background-color: rgb(255,255,255);
   border-style: outset;
   opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#div_input_fields_group {
+  display: block;
+  position: absolute;
+  border-color: DodgerBlue;
+  left: 19px;
+  top: 359px;
+  width: 285px;
+  height: 214px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#div_radio_button_group {
+  display: block;
+  position: absolute;
+  left: 57px;
+  top: 4px;
+  width: 176px;
+  height: 52px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#radio_counter-current_flow_LABEL {
+  display: block;
+  position: absolute;
+  width: 168px;
+  height: 23px;
+  left: 4px;
+  top: 4px;
+}
+
+#radio_counter-current_flow_SPAN {
+  margin-left: 22px;
+  line-height: 22px;
+  font-size: 16px;
+}
+
+#radio_co-current_flow_LABEL {
+  display: block;
+  position: absolute;
+  width: 168px;
+  height: 23px;
+  left: 4px;
+  top: 25px;
+}
+
+#radio_co-current_flow_SPAN {
+  margin-left: 22px;
+  line-height: 22px;
+  font-size: 16px;
+}
+
+#field_TinHot_label {
+  position: absolute;
+  left: 4px;
+  top: 39px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: dotted;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_TinHot {
+  position: absolute;
+  left: 190px;
+  top: 54px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_FlowHot_label {
+  position: absolute;
+  left: 4px;
+  top: 92px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: dotted;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_FlowHot_input {
+  position: absolute;
+  left: 190px;
+  top: 108px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_FlowCold_label {
+  position: absolute;
+  left: 4px;
+  top: 119px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: dotted;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_FlowCold_input {
+  position: absolute;
+  left: 190px;
+  top: 135px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_CpHot_label {
+  position: absolute;
+  left: 4px;
+  top: 146px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: dotted;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_CpHot_input {
+  position: absolute;
+  left: 190px;
+  top: 162px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_CpCold_label {
+  position: absolute;
+  left: 4px;
+  top: 173px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: dotted;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_CpCold_input {
+  position: absolute;
+  left: 190px;
+  top: 189px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_TinCold_label {
+  position: absolute;
+  left: 4px;
+  top: 65px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: dotted;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_TinCold {
+  position: absolute;
+  left: 190px;
+  top: 81px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: true;
 }
