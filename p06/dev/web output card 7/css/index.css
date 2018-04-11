@@ -105,7 +105,7 @@ canvas {
 
 #canvas_CANVAS_hot {
   position: absolute;
-  left: 71px;
+  left: 74px;
   top: 261px;
  /* canvas element width & height must be set in HTML and not in CSS */
   visibility: visible;
@@ -119,7 +119,7 @@ canvas {
 
 #canvas_CANVAS_cold {
   position: absolute;
-  left: 71px;
+  left: 74px;
   top: 297px;
  /* canvas element width & height must be set in HTML and not in CSS */
   visibility: visible;
@@ -161,64 +161,72 @@ canvas {
   LCshowBorder: true;
 }
 
-#input_field_cold_right_arrow {
+#field_cold_right_arrow {
   position: absolute;
-  left: 270px;
-  top: 303px;
+  left: 275px;
+  top: 275px;
   width: 23px;
   height: 22px;
 border-width: 1px;
   visibility: visible;
 border-style: none;
   opacity: 1;
+  color: orange;
+  font-size: 1.5em;
   background-color: rgba(255, 255, 255, 1);
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
 }
 
-#input_field_hot_right_arrow {
+#field_hot_right_arrow {
   position: absolute;
-  left: 270px;
-  top: 268px;
+  left: 275px;
+  top: 240px;
   width: 23px;
   height: 22px;
 border-width: 1px;
   visibility: visible;
 border-style: none;
   opacity: 1;
+  color: red;
+  font-size: 1.5em;
   background-color: rgba(255, 255, 255, 1);
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
 }
 
-#input_field_cold_left_arrow {
+#field_cold_left_arrow {
   position: absolute;
-  left: 46px;
-  top: 303px;
+  left: 49px;
+  top: 275px;
   width: 23px;
   height: 22px;
 border-width: 1px;
   visibility: visible;
 border-style: none;
   opacity: 1;
+  color: blue;
+  font-size: 1.5em;
   background-color: rgba(255, 255, 255, 1);
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
 }
 
-#input_field_hot_left_arrow {
+#field_hot_left_arrow {
   position: absolute;
-  left: 45px;
-  top: 268px;
+  left: 49px;
+  top: 240px;
   width: 23px;
   height: 22px;
 border-width: 1px;
   visibility: visible;
 border-style: none;
   opacity: 1;
+  color: orange;
+  font-size: 1.5em;
   background-color: rgba(255, 255, 255, 1);
   LCvScrollbar: false;
   LCthreeD: true;

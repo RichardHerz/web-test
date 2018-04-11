@@ -124,6 +124,7 @@ function plotSpaceTimeHot() {
   // numTimePts and numStripPts are globals defined above in this file
   var tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point
   var sPixelsPerPoint = sPixels/(numSpacePts+1); // pixels per point
+  // XXX should scale to max and min of plot, not current in and out T's
   var maxTemp = puHeatExchanger.TinHot;
   var minTemp = puHeatExchanger.TinCold;
   for (t = 0; t <= numTimePts; t += 1) { // NOTE = at t <=
@@ -180,6 +181,7 @@ function plotSpaceTimeCold() {
   // numTimePts and numStripPts are globals defined above in this file
   var tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point
   var sPixelsPerPoint = sPixels/(numSpacePts+1); // pixels per point
+  // XXX should scale to max and min of plot, not current in and out T's
   var maxTemp = puHeatExchanger.TinHot;
   var minTemp = puHeatExchanger.TinCold;
   for (t = 0; t <= numTimePts; t += 1) { // NOTE = at t <=

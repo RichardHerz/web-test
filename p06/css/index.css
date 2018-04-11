@@ -70,14 +70,14 @@ canvas {
   display: block;
   position: relative;
   border-color: DodgerBlue;
-  /* left: 7px;
-  top: 21px; */
+  left: 2px;
+  top: 21px;
   width: 308px;
   height: 335px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -87,9 +87,9 @@ canvas {
 #div_PLOTDIV_T_plot {
   display: block;
   position: absolute;
-  left: 4px;
+  left: 29px;
   top: 30px;
-  width: 300px;
+  width: 250px;
   height: 224px;
   visibility: visible;
   border-width: 1px;
@@ -105,7 +105,7 @@ canvas {
 
 #canvas_CANVAS_hot {
   position: absolute;
-  left: 4px;
+  left: 74px;
   top: 261px;
  /* canvas element width & height must be set in HTML and not in CSS */
   visibility: visible;
@@ -119,7 +119,7 @@ canvas {
 
 #canvas_CANVAS_cold {
   position: absolute;
-  left: 4px;
+  left: 74px;
   top: 297px;
  /* canvas element width & height must be set in HTML and not in CSS */
   visibility: visible;
@@ -161,18 +161,90 @@ canvas {
   LCshowBorder: true;
 }
 
+#field_cold_right_arrow {
+  position: absolute;
+  left: 275px;
+  top: 275px;
+  width: 23px;
+  height: 22px;
+border-width: 1px;
+  visibility: visible;
+border-style: none;
+  opacity: 1;
+  color: orange;
+  font-size: 1.5em;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_hot_right_arrow {
+  position: absolute;
+  left: 275px;
+  top: 240px;
+  width: 23px;
+  height: 22px;
+border-width: 1px;
+  visibility: visible;
+border-style: none;
+  opacity: 1;
+  color: red;
+  font-size: 1.5em;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_cold_left_arrow {
+  position: absolute;
+  left: 49px;
+  top: 275px;
+  width: 23px;
+  height: 22px;
+border-width: 1px;
+  visibility: visible;
+border-style: none;
+  opacity: 1;
+  color: blue;
+  font-size: 1.5em;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_hot_left_arrow {
+  position: absolute;
+  left: 49px;
+  top: 240px;
+  width: 23px;
+  height: 22px;
+border-width: 1px;
+  visibility: visible;
+border-style: none;
+  opacity: 1;
+  color: orange;
+  font-size: 1.5em;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
 #div_input_fields_group {
   display: block;
-  position: relative;
+  position: absolute;
   border-color: DodgerBlue;
-  /* left: 13px;
-  top: 380px; */
-  width: 297px;
-  height: 277px;
+  left: 14px;
+  top: 358px;
+  width: 285px;
+  height: 271px;
   visibility: visible;
   border-width: 1px;
-  background-color: rgba(255,255,255, 0);
-  border-style: dotted;
+  background-color: rgb(255,255,255);
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -183,13 +255,13 @@ canvas {
   display: block;
   position: absolute;
   border-color: DodgerBlue;
-  left: 63px;
+  left: 57px;
   top: 4px;
   width: 176px;
   height: 52px;
   visibility: visible;
   border-width: 1px;
-  background-color: rgba(255,255,255, 0);
+  background-color: rgb(255,255,255);
   border-style: none;
   opacity: 1;
   LCvScrollbar: false;
@@ -229,7 +301,7 @@ canvas {
 
 #field_TinHot_label {
   position: absolute;
-  left: 10px;
+  left: 4px;
   top: 42px;
   width: 170px;
   height: 21px;
@@ -247,7 +319,7 @@ canvas {
 
 #input_field_TinHot {
   position: absolute;
-  left: 196px;
+  left: 190px;
   top: 54px;
   width: 91px;
   height: 21px;
@@ -263,7 +335,7 @@ border-style: solid;
 
 #field_TinCold_label {
   position: absolute;
-  left: 10px;
+  left: 4px;
   top: 68px;
   width: 170px;
   height: 21px;
@@ -281,7 +353,7 @@ border-style: solid;
 
 #input_field_TinCold {
   position: absolute;
-  left: 196px;
+  left: 190px;
   top: 81px;
   width: 91px;
   height: 21px;
@@ -297,7 +369,7 @@ border-style: solid;
 
 #field_FlowHot_label {
   position: absolute;
-  left: 10px;
+  left: 4px;
   top: 95px;
   width: 170px;
   height: 21px;
@@ -315,7 +387,7 @@ border-style: solid;
 
 #input_field_FlowHot {
   position: absolute;
-  left: 196px;
+  left: 190px;
   top: 108px;
   width: 91px;
   height: 21px;
@@ -331,7 +403,7 @@ border-style: solid;
 
 #field_FlowCold_label {
   position: absolute;
-  left: 10px;
+  left: 4px;
   top: 122px;
   width: 170px;
   height: 21px;
@@ -349,7 +421,7 @@ border-style: solid;
 
 #input_field_FlowCold {
   position: absolute;
-  left: 196px;
+  left: 190px;
   top: 135px;
   width: 91px;
   height: 21px;
@@ -365,7 +437,7 @@ border-style: solid;
 
 #field_CpHot_label {
   position: absolute;
-  left: 10px;
+  left: 4px;
   top: 149px;
   width: 170px;
   height: 21px;
@@ -383,7 +455,7 @@ border-style: solid;
 
 #input_field_CpHot {
   position: absolute;
-  left: 196px;
+  left: 190px;
   top: 162px;
   width: 91px;
   height: 21px;
@@ -399,7 +471,7 @@ border-style: solid;
 
 #field_CpCold_label {
   position: absolute;
-  left: 10px;
+  left: 4px;
   top: 176px;
   width: 170px;
   height: 21px;
@@ -417,24 +489,8 @@ border-style: solid;
 
 #input_field_CpCold {
   position: absolute;
-  left: 196px;
+  left: 190px;
   top: 189px;
-  width: 91px;
-  height: 21px;
-border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-border-style: solid;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: true;
-}
-
-#input_field_Area {
-  position: absolute;
-  left: 196px;
-  top: 216px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -449,7 +505,7 @@ border-style: solid;
 
 #field_Area_label {
   position: absolute;
-  left: 10px;
+  left: 4px;
   top: 203px;
   width: 170px;
   height: 21px;
@@ -465,9 +521,25 @@ border-style: solid;
   border-color: DodgerBlue;
 }
 
+#input_field_Area {
+  position: absolute;
+  left: 190px;
+  top: 216px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
 #field_Ucoef_label {
   position: absolute;
-  left: 10px;
+  left: 4px;
   top: 230px;
   width: 170px;
   height: 21px;
@@ -485,7 +557,7 @@ border-style: solid;
 
 #input_field_Ucoef {
   position: absolute;
-  left: 196px;
+  left: 190px;
   top: 243px;
   width: 91px;
   height: 21px;

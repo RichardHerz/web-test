@@ -272,10 +272,20 @@ var puHeatExchanger = {
     // at least for now, do not check existence of UI elements
     // Model radio buttons
     var m00 = document.querySelector('#' + this.inputModel00);
+    var cra = document.querySelector('#field_cold_right_arrow');
+    var cla = document.querySelector('#field_cold_left_arrow');
     if (m00.checked) {
       this.ModelFlag = 0; // co-current flow
+      cra.style.color = 'blue';
+      cla.style.color = 'orange';
+      cra.innerHTML = '&larr;';
+      cla.innerHTML = '&larr;';
     } else {
       this.ModelFlag = 1; // counter-current flow
+      cra.style.color = 'orange';
+      cla.style.color = 'blue';
+      cra.innerHTML = '&rarr;';
+      cla.innerHTML = '&rarr;';
     }
 
     if (document.getElementById(this.inputArea)) {
