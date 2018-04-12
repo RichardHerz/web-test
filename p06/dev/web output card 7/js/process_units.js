@@ -418,9 +418,17 @@ var puHeatExchanger = {
     var n = 0;
     var ThotN = Thot[n];
     var ThotNm1 = this.TinHot; // special for n=0 cell, hot inlet
+
     var TcoldN = Tcold[n];
-    var TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
-    var TcoldNp1 = Tcold[n+1];
+    var TcoldNp1 = Tcold[n+1];;
+    var TcoldNm1; // change depending on flow direction
+    switch(this.ModelFlag) {
+      case 0: // co-current
+        TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
+      break
+      case 1: // counter-current
+        TcoldNm1 = Tcold[n]; // special for n=0 cell, cold outlet for counter-current
+    }
 
     var dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
 
@@ -474,9 +482,17 @@ var puHeatExchanger = {
 
     ThotN = Thot[n];
     ThotNm1 = Thot[n-1];
+
     TcoldN = Tcold[n];
-    TcoldNm1 = Tcold[n-1]; // for co-current
-    TcoldNp1 = this.TinCold; // special for last cell, cold inlet for counter-current
+    TcoldNp1; // change depending on flow direction
+    TcoldNm1 = Tcold[n-1];
+    switch(this.ModelFlag) {
+      case 0: // co-current
+        TcoldNp1 = Tcold[n]; // special for n=numNodes cell, cold outlet for co-current
+        break
+      case 1: // counter-current
+        TcoldNp1 = this.TinCold; // special for n=numNodes cell, cold inlet for counter-current
+    }
 
     dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);;
 
@@ -521,7 +537,7 @@ var puHeatExchanger = {
         break
       case 1: // counter-current
         document.getElementById("field_cold_left_T").innerHTML = this.TinCold + ' K';
-        document.getElementById("field_cold_right_T").innerHTML = Tcold[this.numNodes].toFixed(1) + ' K';
+        document.getElementById("field_cold_right_T").innerHTML = Tcold[0].toFixed(1) + ' K';
     }
 
     // HANDLE PROFILE PLOT DATA
