@@ -70,14 +70,14 @@ canvas {
   display: block;
   position: relative;
   border-color: DodgerBlue;
-  left: 2px;
+  left: 7px;
   top: 21px;
-  width: 308px;
+  width: 368px;
   height: 335px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
-  border-style: none;
+  border-style: dotted;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -87,7 +87,7 @@ canvas {
 #div_PLOTDIV_T_plot {
   display: block;
   position: absolute;
-  left: 29px;
+  left: 39px;
   top: 30px;
   width: 250px;
   height: 224px;
@@ -105,7 +105,7 @@ canvas {
 
 #canvas_CANVAS_hot {
   position: absolute;
-  left: 74px;
+  left: 84px;
   top: 261px;
  /* canvas element width & height must be set in HTML and not in CSS */
   visibility: visible;
@@ -119,7 +119,7 @@ canvas {
 
 #canvas_CANVAS_cold {
   position: absolute;
-  left: 74px;
+  left: 84px;
   top: 297px;
  /* canvas element width & height must be set in HTML and not in CSS */
   visibility: visible;
@@ -133,7 +133,7 @@ canvas {
 
 #button_runButton {
   position: absolute;
-  left: 77px;
+  left: 87px;
   top: 5px;
   width: 72px;
   height: 23px;
@@ -148,7 +148,7 @@ canvas {
 
 #button_resetButton {
   position: absolute;
-  left: 153px;
+  left: 163px;
   top: 4px;
   width: 72px;
   height: 23px;
@@ -163,17 +163,17 @@ canvas {
 
 #field_cold_right_arrow {
   position: absolute;
-  left: 275px;
+  left: 285px;
   top: 275px;
   width: 23px;
   height: 22px;
-border-width: 1px;
+  border-width: 1px;
   visibility: visible;
-border-style: none;
-  opacity: 1;
+  background-color: rgb(255,255,255);
   color: orange;
   font-size: 1.5em;
-  background-color: rgba(255, 255, 255, 1);
+  border-style: none;
+  opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
@@ -181,17 +181,17 @@ border-style: none;
 
 #field_hot_right_arrow {
   position: absolute;
-  left: 275px;
+  left: 285px;
   top: 240px;
   width: 23px;
   height: 22px;
-border-width: 1px;
+  border-width: 1px;
   visibility: visible;
-border-style: none;
-  opacity: 1;
+  background-color: rgb(255,255,255);
   color: red;
   font-size: 1.5em;
-  background-color: rgba(255, 255, 255, 1);
+  border-style: none;
+  opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
@@ -199,17 +199,17 @@ border-style: none;
 
 #field_cold_left_arrow {
   position: absolute;
-  left: 49px;
+  left: 59px;
   top: 275px;
   width: 23px;
   height: 22px;
-border-width: 1px;
+  border-width: 1px;
   visibility: visible;
-border-style: none;
-  opacity: 1;
+  background-color: rgb(255,255,255);
   color: blue;
   font-size: 1.5em;
-  background-color: rgba(255, 255, 255, 1);
+  border-style: none;
+  opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
@@ -217,20 +217,86 @@ border-style: none;
 
 #field_hot_left_arrow {
   position: absolute;
-  left: 49px;
+  left: 59px;
   top: 240px;
   width: 23px;
   height: 22px;
-border-width: 1px;
+  border-width: 1px;
   visibility: visible;
-border-style: none;
-  opacity: 1;
+  background-color: rgb(255,255,255);
   color: orange;
   font-size: 1.5em;
-  background-color: rgba(255, 255, 255, 1);
+  border-style: none;
+  opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
+}
+
+#field_hot_left_T {
+  position: absolute;
+  left: 4px;
+  top: 254px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_hot_right_T {
+  position: absolute;
+  left: 313px;
+  top: 254px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_cold_right_T {
+  position: absolute;
+  left: 313px;
+  top: 289px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#field_cold_left_T {
+  position: absolute;
+  left: 4px;
+  top: 289px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
 }
 
 #div_input_fields_group {
@@ -320,7 +386,7 @@ border-style: none;
 #input_field_TinHot {
   position: absolute;
   left: 190px;
-  top: 54px;
+  top: 56px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -354,7 +420,7 @@ border-style: solid;
 #input_field_TinCold {
   position: absolute;
   left: 190px;
-  top: 81px;
+  top: 83px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -388,7 +454,7 @@ border-style: solid;
 #input_field_FlowHot {
   position: absolute;
   left: 190px;
-  top: 108px;
+  top: 110px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -422,7 +488,7 @@ border-style: solid;
 #input_field_FlowCold {
   position: absolute;
   left: 190px;
-  top: 135px;
+  top: 137px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -456,7 +522,7 @@ border-style: solid;
 #input_field_CpHot {
   position: absolute;
   left: 190px;
-  top: 162px;
+  top: 164px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -490,7 +556,7 @@ border-style: solid;
 #input_field_CpCold {
   position: absolute;
   left: 190px;
-  top: 189px;
+  top: 191px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -524,7 +590,7 @@ border-style: solid;
 #input_field_Area {
   position: absolute;
   left: 190px;
-  top: 216px;
+  top: 218px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -558,7 +624,7 @@ border-style: solid;
 #input_field_Ucoef {
   position: absolute;
   left: 190px;
-  top: 243px;
+  top: 245px;
   width: 91px;
   height: 21px;
 border-width: 1px;

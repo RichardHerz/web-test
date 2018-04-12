@@ -152,10 +152,10 @@ var puHeatExchanger = {
   initialUcoef : 250, // J/s/K/m2, U, heat transfer coefficient
   initialTinHot : 370, // K, hot T in
   initialTinCold : 290, // K, cold T in
-  initialFlowHot : 1.0e-04, // m3/s
-  initialFlowCold : 1.0e-04, // m3/s
-  initialCpHot : 4.17e+06, // J/m3/K, hot flow heat capacity
-  initialCpCold : 4.17e+06, // J/m3/K, cold flow heat capacity
+  initialFlowHot : 0.1, // dm3/s
+  initialFlowCold : 0.1, // dm3/s
+  initialCpHot : 4.2, // kJ/dm3/K, hot flow heat capacity
+  initialCpCold : 4.2, // kJ/dm3/K, cold flow heat capacity
 
   // define the main variables which will not be plotted or save-copy data
   //   none here
@@ -176,10 +176,10 @@ var puHeatExchanger = {
   Ucoef : this.initialUcoef, // J/s/K/m2, U, heat transfer coefficient
   TinHot : this.initialTinHot, // K, hot T in
   TinCold : this.initialTinCold, // K, cold T in
-  FlowHot : this.initialFlowHot, // m3/s
-  FlowCold : this.initialFlowCold, // m3/s
-  CpHot : this.initialCpHot, // J/m3/K, hot flow heat capacity
-  CpCold : this.initialCpCold, // J/m3/K, cold flow heat capacity
+  FlowHot : this.initialFlowHot, // dm3/s
+  FlowCold : this.initialFlowCold, // dm3/s
+  CpHot : this.initialCpHot, // kJ/dm3/K, hot flow heat capacity
+  CpCold : this.initialCpCold, // kJ/dm3/K, cold flow heat capacity
 
   // variables to be plotted are defined as objects
   // with the properties: value, name, label, symbol, dimensional units
@@ -344,6 +344,18 @@ var puHeatExchanger = {
       this.CpCold = this.initialCpCold;
     }
 
+    // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
+    // outlet T's not defined on first entry into page
+    // but do not do full updateDisplay
+    document.getElementById("field_hot_right_T").innerHTML = this.TinHot + ' K';
+    switch(this.ModelFlag) {
+      case 0: // co-current
+        document.getElementById("field_cold_right_T").innerHTML = this.TinCold + ' K';
+        break
+      case 1: // counter-current
+        document.getElementById("field_cold_left_T").innerHTML = this.TinCold + ' K';
+    }
+
   }, // end of updateUIparams()
 
   updateInputs : function() {
@@ -394,8 +406,10 @@ var puHeatExchanger = {
     var Vhot = this.FlowHot / hotFlowCoef;
     var Vcold = this.FlowCold / coldFlowCoef;
     var Acell = this.Area / this.numNodes; // m2, per cell
-    var hotXferCoef = this.Ucoef * Acell / this.CpHot / Vhot;
-    var coldXferCoef = this.Ucoef * Acell / this.CpCold / Vcold;
+    // units of XferCoef are (1/s)
+    // 1.0e-3 factor account for some kJ and dm3 units in inputs
+    var hotXferCoef = 1.0e-3 * this.Ucoef * Acell / this.CpHot / Vhot;
+    var coldXferCoef = 1.0e-3 * this.Ucoef * Acell / this.CpCold / Vcold;
 
     // this unit takes multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
@@ -497,6 +511,18 @@ var puHeatExchanger = {
     // document.getElementById("field_aveConversion").innerHTML = this.aveConversion.toFixed(4);
 
     var n = 0; // used as index
+
+    document.getElementById("field_hot_left_T").innerHTML = Thot[this.numNodes].toFixed(1) + ' K';
+    document.getElementById("field_hot_right_T").innerHTML = this.TinHot + ' K';
+    switch(this.ModelFlag) {
+      case 0: // co-current
+        document.getElementById("field_cold_left_T").innerHTML = Tcold[this.numNodes].toFixed(1) + ' K';
+        document.getElementById("field_cold_right_T").innerHTML = this.TinCold + ' K';
+        break
+      case 1: // counter-current
+        document.getElementById("field_cold_left_T").innerHTML = this.TinCold + ' K';
+        document.getElementById("field_cold_right_T").innerHTML = Tcold[this.numNodes].toFixed(1) + ' K';
+    }
 
     // HANDLE PROFILE PLOT DATA
 
