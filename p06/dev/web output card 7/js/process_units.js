@@ -26,6 +26,12 @@ var spaceData = []; // for shifting data in space-time plots
 
 var simParams = {
 
+  // ssFlag new for process with one unit - rethink for multiple-unit processes
+  // unit's updateState can set ssFlag true when unit reaches steady state
+  // REDUCES CPU LOAD ONLY when return from top of process_main.js functions
+  // updateProcessUnits and updateDisplay but NOT from top of unit functions here
+  ssFlag : false, // steady state flag set true when sim reaches steady state
+
   runningFlag : false, // set runningFlag to false initially
   runButtonID : "button_runButton", // for functions to run, reset, copy data
   // URLs for methods updateRunCount and updateCurrentRunCountDisplay below
@@ -268,6 +274,12 @@ var puHeatExchanger = {
     // if (document.getElementById(this.inputSliderReadout)) {
     //   document.getElementById(this.inputSliderReadout).innerHTML = this.Cmax;
 
+    // change simParams.ssFlag to false if true
+    if (simParams.ssFlag) {
+      // sim was at steady state, switch ssFlag to false
+      simParams.ssFlag = false;
+    }
+
     // RADIO BUTTONS & CHECK BOX
     // at least for now, do not check existence of UI elements
     // Model radio buttons
@@ -411,6 +423,8 @@ var puHeatExchanger = {
     var hotXferCoef = 1.0e-3 * this.Ucoef * Acell / this.CpHot / Vhot;
     var coldXferCoef = 1.0e-3 * this.Ucoef * Acell / this.CpCold / Vcold;
 
+    var dTmax = 0; // used to check for steady state and set ssFlag
+
     // this unit takes multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
 
@@ -447,6 +461,12 @@ var puHeatExchanger = {
     ThotNew[n] = ThotN;
     TcoldNew[n] = TcoldN;
 
+    // check for max change to check for steady state and set ssFlag
+    var absDT = Math.abs(dThotDT);
+    if (absDT > dTmax){dTmax = absDT;}
+    absDT = Math.abs(dTcoldDT);
+    if (absDT > dTmax){dTmax = absDT;}
+
     // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; dThotDT * this.unitTimeStep = " + dThotDT * this.unitTimeStep;
 
     // internal nodes
@@ -473,6 +493,12 @@ var puHeatExchanger = {
 
       ThotNew[n] = ThotN;
       TcoldNew[n] = TcoldN;
+
+      // check for max change to check for steady state and set ssFlag
+      absDT = Math.abs(dThotDT);
+      if (absDT > dTmax){dTmax = absDT;}
+      absDT = Math.abs(dTcoldDT);
+      if (absDT > dTmax){dTmax = absDT;}
 
     } // end repeat through internal nodes
 
@@ -510,11 +536,25 @@ var puHeatExchanger = {
     ThotNew[n] = ThotN;
     TcoldNew[n] = TcoldN;
 
+    // check for max change to check for steady state and set ssFlag
+    absDT = Math.abs(dThotDT);
+    if (absDT > dTmax){dTmax = absDT;}
+    absDT = Math.abs(dTcoldDT);
+    if (absDT > dTmax){dTmax = absDT;}
+
     // finished updating all nodes
 
     // copy new to current
     Thot = ThotNew;
     Tcold = TcoldNew;
+
+    // check for close approach to steady state
+    // check for max change in T for this time step < criterion, e.g., 1.0e-4
+    if (dTmax * this.unitTimeStep < 1.0e-4) {
+      simParams.ssFlag = true;
+      // when ssFlag true will return out of process_main.js functions to save CPU time
+      // can be reset to false by updateUIparams and run and reset buttons
+    }
 
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 

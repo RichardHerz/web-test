@@ -56,6 +56,14 @@
         return;
       }
 
+      // update simTime = simulation time elapsed
+      simParams.updateSimTime();
+
+      // do NOT return here when ssFlag goes true at steady statement
+      // because then simTime will not update since this function will not call itself again
+      // DO return at top of updateProcessUnits and updateDisplay which are called below here
+      // such that this updateProcess function always completes normally and calls itself again
+
       // get time at start of repeating updateProcessUnits
       startDate = new Date(); // need this here
       startMs = startDate.getTime();
@@ -68,9 +76,6 @@
       for (i = 0; i < simParams.simStepRepeats; i += 1) {
         updateProcessUnits(resetFlag);
       }
-
-      // update simTime = simulation time elapsed
-      simParams.updateSimTime();
 
       // get time at end of repeating updateProcessUnits and call
       // to updateDisplay from updateDisplay function return value
@@ -100,6 +105,11 @@
     // DO COMPUTATIONS TO UPDATE STATE OF PROCESS
     // step all units but do not display
 
+    if (simParams.ssFlag) {
+      // exit if simParams.ssFlag true
+      return;
+    }
+
     var unitList = simParams.processUnits;
     var tmpFunc = new Function();
 
@@ -127,6 +137,16 @@
 
   function updateDisplay(resetFlag) {
 
+    if (simParams.ssFlag) {
+      // exit if simParams.ssFlag true
+      // BUT FIRST MUST DO THIS (also done below at end normal update)
+      // RETURN REAL TIME OF THIS DISPLAY UPDATE (milliseconds)
+      // or, if do not do here, simTime will race ahead
+      var thisDate = new Date();
+      var thisMs = thisDate.getTime();
+      return thisMs;
+    }
+
     var unitList = simParams.processUnits;
 
     // display all units but do not step
@@ -151,7 +171,7 @@
     }
 
     // NEW - plot space-time plots - NEW
-    // XXX need to combine so one function handles multiple SpaceTime plots 
+    // XXX need to combine so one function handles multiple SpaceTime plots
     plotSpaceTimeHot();
     plotSpaceTimeCold();
 

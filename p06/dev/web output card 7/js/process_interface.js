@@ -17,6 +17,7 @@ function runThisLab() {
   var runButtonID = simParams.runButtonID;
   var runningFlag = simParams.runningFlag;
   if (runningFlag) {
+    simParams.ssFlag = false; // unit sets true when sim reaches steady state
     eval(runButtonID + '.value = "Pause"');
     runSimulation();
     simParams.updateRunCount();
@@ -32,6 +33,7 @@ function resetThisLab() {
   var runButtonID = simParams.runButtonID;
   simParams.stopRunningFlag();
   simParams.resetSimTime();
+  simParams.ssFlag = false; // unit sets true when sim reaches steady state
   resetFlag = 1; // 0 for no reset, 1 for reset lab
   updateProcessUnits(resetFlag);
   updateDisplay(resetFlag);
