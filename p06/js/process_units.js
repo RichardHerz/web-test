@@ -26,6 +26,10 @@ var spaceData = []; // for shifting data in space-time plots
 
 var simParams = {
 
+  // ssFlag new for process with one unit - rethink for multiple-unit processes
+  // unit's updateState can set ssFlag true when unit reaches steady state
+  ssFlag : false, // steady state flag set true when sim reaches steady state
+
   runningFlag : false, // set runningFlag to false initially
   runButtonID : "button_runButton", // for functions to run, reset, copy data
   // URLs for methods updateRunCount and updateCurrentRunCountDisplay below
@@ -268,6 +272,8 @@ var puHeatExchanger = {
     // if (document.getElementById(this.inputSliderReadout)) {
     //   document.getElementById(this.inputSliderReadout).innerHTML = this.Cmax;
 
+    simParams.ssFlag = false; // can be set true when sim reaches steady state
+
     // RADIO BUTTONS & CHECK BOX
     // at least for now, do not check existence of UI elements
     // Model radio buttons
@@ -394,6 +400,14 @@ var puHeatExchanger = {
     // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
     // STATE VARIABLE
 
+    if (simParams.ssFlag) {
+      // exit if ssFlag is true
+      // ssFlag can become true when unit reaches steady state
+      // ssFlag can become not true by click of RUN-PAUSE or RESET buttons
+      // ssFlag can become not true by change in UI inputs
+      return;
+    }
+
     // document.getElementById("dev01").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; y = " + inverseDz2;
     // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; Thot[this.numNodes] = " + Thot[this.numNodes];
     // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; TinCold = " + this.TinCold;
@@ -512,6 +526,43 @@ var puHeatExchanger = {
 
     // finished updating all nodes
 
+    // check for close approach to steady state
+    // check simTime because initial state my have all values equal
+    if (simParams.simTime > 10) {
+      // determine if unit has reached steady state - if so, then
+      // set simParams.ssFlag to true
+      // have to check for changes along length of unit because some changes
+      // take time to propagate down length
+
+      // var checkThot = Math.abs(ThotNew.reduce(getSum)-Thot.reduce(getSum));
+      // var checkTcold = Math.abs(TcoldNew.reduce(getSum)-Tcold.reduce(getSum));
+      function getSum(total, num) {
+          return total + num;
+      }
+
+      var checkThot = 0;
+      var checkTcold = 0;
+      for (n = 0; n <= this.numNodes; n += 1) {
+        // checkThot = checkThot + Math.pow((ThotNew[n] - Thot[n]),2);
+        checkThot = checkThot + ThotNew[n] - Thot[n];
+      }
+      if ((checkThot < 1)  ) {
+        simParams.ssFlag = true;
+        alert(simParams.simTime + ' set ssFlag to true ' + ThotNew[10] + '; ' + Thot[10]);
+      }
+
+      // // checkSS are average (hot-cold) per node
+      // var checkSSnew = (ThotNew.reduce(getSum) - TcoldNew.reduce(getSum))/this.numNodes;
+      // var checkSS = (Thot.reduce(getSum) - Tcold.reduce(getSum))/this.numNodes;
+      // function getSum(total, num) {
+      //     return total + num;
+      // }
+      // if (Math.abs((checkSSnew - checkSS)/checkSS)<1e-6) {
+      //   simParams.ssFlag = true;
+      //   alert('set ssFlag to true ' + checkSSnew + '; ' + checkSS);
+      // }
+    }
+
     // copy new to current
     Thot = ThotNew;
     Tcold = TcoldNew;
@@ -521,6 +572,14 @@ var puHeatExchanger = {
   }, // end updateState method
 
   display : function() {
+
+    if (simParams.ssFlag) {
+      // exit if ssFlag is true
+      // ssFlag can become true when unit reaches steady state
+      // ssFlag can become not true by click of RUN-PAUSE or RESET buttons
+      // ssFlag can become not true by change in UI inputs
+      return;
+    }
 
     // // display average rate and average conversion
     // document.getElementById("field_aveRate").innerHTML = this.aveRate.toExponential(3);

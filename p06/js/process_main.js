@@ -56,6 +56,9 @@
         return;
       }
 
+      // do not suspend here when new ssFlag goes true at steady statement
+      // because then simTime will not update
+
       // get time at start of repeating updateProcessUnits
       startDate = new Date(); // need this here
       startMs = startDate.getTime();
@@ -151,7 +154,7 @@
     }
 
     // NEW - plot space-time plots - NEW
-    // XXX need to combine so one function handles multiple SpaceTime plots 
+    // XXX need to combine so one function handles multiple SpaceTime plots
     plotSpaceTimeHot();
     plotSpaceTimeCold();
 
