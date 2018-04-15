@@ -46,7 +46,7 @@ var simParams = {
   // WARNING: DO NOT CHANGE simTimeStep BETWEEN display updates
 
   simStepRepeats : 1, // integer number of unit updates between display updates
-  simTimeStep : 100, // time step value, simulation time, of main repeat
+  simTimeStep : 2, // time step value, simulation time, of main repeat
 
   // individual units may do more steps in one unit updateState()
   // see individual units for any unitTimeStep and unitStepRepeats
@@ -168,8 +168,9 @@ var puHeatExchanger = {
   // define the main variables which will not be plotted or save-copy data
   //   none here
 
-  // WARNING: have to change simTimeStep and simStepRepeats if change numNodes
+  // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
   // WARNING: numNodes is accessed in process_plot_info.js
+  // WARNING: really should get numNodes from turbulent dispersion and length of tube...
   numNodes : 50,
 
   FluidDensity : 1000, // kg/m3, fluid density specified to be that of water
@@ -396,22 +397,22 @@ var puHeatExchanger = {
     var Re = this.FlowHot / this.FluidDensity / this.FluidKinematicViscosity * 4 / Math.PI / this.Diam;
     document.getElementById("field_Reynolds").innerHTML = 'Re<sub> hot-tube</sub> = ' + Re.toFixed(0);
 
-    // compute space velocity of hot tube
-    var sv = this.FlowHot / this.FluidDensity / Volume;
-    // document.getElementById("field_output_field").innerHTML = 'sv = ' + sv;
+    // now update unit time step and repeats for space time of single cell (1/space velocity)
 
-    // now adjust unit time step and repeats for any change in space velocity
-    
+    // compute space time of single cell in hot tube
+    var spaceTime = (Volume / this.numNodes) / (this.FlowHot / this.FluidDensity) ;
+    // document.getElementById("field_output_field").innerHTML = 'cell residence time = ' + spaceTime;
+
     // first estimate unitTimeStep
     // do NOT change simParams.simTimeStep here
-    this.unitTimeStep = 1 / 3 / sv; // for sv of 1/300 get unitTimeStep = 100 = simTimeStep
+    this.unitTimeStep = spaceTime / 3; // for cell spaceTime of 6 get unitTimeStep = 2 = simTimeStep
     // then get integer number of unitStepRepeats
     this.unitStepRepeats = Math.round(simParams.simTimeStep / this.unitTimeStep);
     // min value of unitStepRepeats is 1 or get divide by zero error
     if (this.unitStepRepeats <= 0) {this.unitStepRepeats = 1;}
     // then recompute unitTimeStep with integer number unitStepRepeats
     this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
-    document.getElementById("field_output_field").innerHTML = 'dt, nr = ' + this.unitTimeStep + ', ' + this.unitStepRepeats;
+    // document.getElementById("field_output_field").innerHTML = 'dt, nr = ' + this.unitTimeStep + ', ' + this.unitStepRepeats;
 
   }, // end of updateUIparams()
 
@@ -461,14 +462,15 @@ var puHeatExchanger = {
     var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
 
     // specify hot and cold volumes equal
-    var Vhot = Volume;
-    var Vcold = Volume;
+    // these are CELL volumes
+    var Vhot = Volume / this.numNodes;
+    var Vcold = Vhot;
 
-    // compute FlowCoef (1/s) = space velocity = volumetric flow rate / volume
-    var hotFlowCoef = this.FlowHot / this.FluidDensity / Volume;
-    var coldFlowCoef = this.FlowCold / this.FluidDensity / Volume;
+    // compute FlowCoef (1/s) = space velocity = volumetric flow rate / cell volume
+    var hotFlowCoef = this.FlowHot / this.FluidDensity / Vhot;
+    var coldFlowCoef = this.FlowCold / this.FluidDensity / Vcold;
 
-    // document.getElementById("field_output_field").innerHTML = 'space velocity = ' + hotFlowCoef.toFixed(3);
+    // document.getElementById("field_output_field").innerHTML = 'cell space velocity = ' + hotFlowCoef.toFixed(3);
 
     var Acell = this.Area / this.numNodes; // m2, per mixing cell
 
