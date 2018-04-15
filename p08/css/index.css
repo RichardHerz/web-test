@@ -54,7 +54,7 @@ canvas {
   left: 0px;
   top: 0px;
   width: 620px;
-  height: 32px;
+  height: 62px;
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
@@ -71,9 +71,9 @@ canvas {
   position: relative;
   border-color: DodgerBlue;
   left: 7px;
-  top: 21px;
+  top: 41px;
   width: 368px;
-  height: 335px;
+  height: 375px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
@@ -301,10 +301,10 @@ canvas {
 
 #div_input_fields_group {
   display: block;
-  position: absolute;
+  position: relative;
   border-color: DodgerBlue;
   left: 14px;
-  top: 358px;
+  /* top: 358px; */
   width: 285px;
   height: 271px;
   visibility: visible;

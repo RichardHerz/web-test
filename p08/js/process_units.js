@@ -46,7 +46,7 @@ var simParams = {
   // WARNING: DO NOT CHANGE simTimeStep BETWEEN display updates
 
   simStepRepeats : 1, // integer number of unit updates between display updates
-  simTimeStep : 1.5, // time step value, simulation time, of main repeat
+  simTimeStep : 100, // time step value, simulation time, of main repeat
 
   // individual units may do more steps in one unit updateState()
   // see individual units for any unitTimeStep and unitStepRepeats
@@ -169,8 +169,11 @@ var puHeatExchanger = {
   //   none here
 
   // WARNING: have to change simTimeStep and simStepRepeats if change numNodes
-  // WARNING: numNodes is accessed  in process_plot_info.js
+  // WARNING: numNodes is accessed in process_plot_info.js
   numNodes : 50,
+
+  FluidDensity : 1000, // kg/m3, fluid density specified to be that of water
+  FluidKinematicViscosity : 5.0e-7, // m2/s, for water at mid-T of 330 K for Reynolds number
 
   // XXX WARNING: THESE DO NOT HAVE ANY EFFECT HERE WHEN
   //     THEY ARE ALSO SET IN updateUIparams
@@ -378,19 +381,37 @@ var puHeatExchanger = {
         document.getElementById("field_cold_left_T").innerHTML = this.TinCold + ' K';
     }
 
-    // update display of tube length and Renolds number
+    // update display of tube length and Reynolds number
+
     // from Area and Diam inputs & specify cylindrical tube
     // can compute Length and Volume
-    var L = this.Area / this.Diam / Math.PI;
-    document.getElementById("field_length").innerHTML = 'L (m) = ' + L.toFixed(1);
+    var Length = this.Area / this.Diam / Math.PI;
+    var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
+
+    document.getElementById("field_length").innerHTML = 'L (m) = ' + Length.toFixed(1);
     // note use .toFixed(n) method of object to round number to n decimal points
 
     // for Re, use kinematic viscosity from
     // https://www.engineeringtoolbox.com/water-dynamic-kinematic-viscosity-d_596.html?vA=30&units=C#
-    // use density of 1000 kg/m3
-    var kv = 5.0e-7; // m2/s, kinematic viscosity of water at mid-T of 330 K
-    var Re = this.FlowHot / 1000 / kv * 4 / Math.PI / this.Diam;
+    var Re = this.FlowHot / this.FluidDensity / this.FluidKinematicViscosity * 4 / Math.PI / this.Diam;
     document.getElementById("field_Reynolds").innerHTML = 'Re<sub> hot-tube</sub> = ' + Re.toFixed(0);
+
+    // compute space velocity of hot tube
+    var sv = this.FlowHot / this.FluidDensity / Volume;
+    // document.getElementById("field_output_field").innerHTML = 'sv = ' + sv;
+
+    // now adjust unit time step and repeats for any change in space velocity
+    
+    // first estimate unitTimeStep
+    // do NOT change simParams.simTimeStep here
+    this.unitTimeStep = 1 / 3 / sv; // for sv of 1/300 get unitTimeStep = 100 = simTimeStep
+    // then get integer number of unitStepRepeats
+    this.unitStepRepeats = Math.round(simParams.simTimeStep / this.unitTimeStep);
+    // min value of unitStepRepeats is 1 or get divide by zero error
+    if (this.unitStepRepeats <= 0) {this.unitStepRepeats = 1;}
+    // then recompute unitTimeStep with integer number unitStepRepeats
+    this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
+    document.getElementById("field_output_field").innerHTML = 'dt, nr = ' + this.unitTimeStep + ', ' + this.unitStepRepeats;
 
   }, // end of updateUIparams()
 
@@ -434,28 +455,26 @@ var puHeatExchanger = {
     // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; Thot[this.numNodes] = " + Thot[this.numNodes];
     // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; TinCold = " + this.TinCold;
 
-    var Density = 1000; // kg/m3, fluid density specified that of water
-
     // from Area and Diam inputs & specify cylindrical tube
     // can compute Length and Volume
     var Length = this.Area / this.Diam / Math.PI;
-    var Volume = Math.PI * Math.pow(this.Diam, 2) / 4.0 / Length;
+    var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
+
     // specify hot and cold volumes equal
     var Vhot = Volume;
     var Vcold = Volume;
 
     // compute FlowCoef (1/s) = space velocity = volumetric flow rate / volume
-    var hotFlowCoef = this.FlowHot / Density / Volume;
-    var coldFlowCoef = this.FlowCold / Density / Volume;
+    var hotFlowCoef = this.FlowHot / this.FluidDensity / Volume;
+    var coldFlowCoef = this.FlowCold / this.FluidDensity / Volume;
 
     // document.getElementById("field_output_field").innerHTML = 'space velocity = ' + hotFlowCoef.toFixed(3);
 
     var Acell = this.Area / this.numNodes; // m2, per mixing cell
 
     // units of XferCoef are (1/s)
-    // Density ()
-    var hotXferCoef = this.Ucoef * Acell / this.CpHot / Vhot / Density;
-    var coldXferCoef = this.Ucoef * Acell / this.CpCold / Vcold / Density;
+    var hotXferCoef = this.Ucoef * Acell / this.CpHot / Vhot / this.FluidDensity;
+    var coldXferCoef = this.Ucoef * Acell / this.CpCold / Vcold / this.FluidDensity;
 
     var dTmax = 0; // used to check for steady state and set ssFlag
 

@@ -54,7 +54,7 @@ canvas {
   left: 0px;
   top: 0px;
   width: 620px;
-  height: 32px;
+  height: 62px;
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
@@ -70,14 +70,14 @@ canvas {
   display: block;
   position: relative;
   border-color: DodgerBlue;
-  left: 1px;
-  top: 21px;
+  left: 7px;
+  top: 41px;
   width: 368px;
-  height: 335px;
+  height: 375px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
-  border-style: none;
+  border-style: dotted;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -170,12 +170,13 @@ canvas {
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
+  color: orange;
+  font-size: 1.5em;
   border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
-  font-size: 16px;
 }
 
 #field_hot_right_arrow {
@@ -187,12 +188,13 @@ canvas {
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
+  color: red;
+  font-size: 1.5em;
   border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
-  font-size: 16px;
 }
 
 #field_cold_left_arrow {
@@ -204,12 +206,13 @@ canvas {
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
+  color: blue;
+  font-size: 1.5em;
   border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
-  font-size: 16px;
 }
 
 #field_hot_left_arrow {
@@ -221,12 +224,13 @@ canvas {
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
+  color: orange;
+  font-size: 1.5em;
   border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
-  font-size: 16px;
 }
 
 #field_hot_left_T {
@@ -243,13 +247,28 @@ canvas {
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
-  font-size: 16px;
 }
 
 #field_hot_right_T {
   position: absolute;
   left: 313px;
   top: 254px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_cold_right_T {
+  position: absolute;
+  left: 313px;
+  top: 289px;
   width: 55px;
   height: 22px;
   border-width: 1px;
@@ -280,31 +299,14 @@ canvas {
   font-size: 16px;
 }
 
-#field_cold_right_T {
-  position: absolute;
-  left: 313px;
-  top: 289px;
-  width: 55px;
-  height: 22px;
-  border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-  border-style: none;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
 #div_input_fields_group {
   display: block;
-  position: absolute;
+  position: relative;
   border-color: DodgerBlue;
   left: 14px;
-  top: 358px;
+  /* top: 358px; */
   width: 285px;
-  height: 325px;
+  height: 271px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
