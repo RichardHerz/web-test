@@ -46,7 +46,7 @@ var simParams = {
   // WARNING: DO NOT CHANGE simTimeStep BETWEEN display updates
 
   simStepRepeats : 1, // integer number of unit updates between display updates
-  simTimeStep : 1, // time step value, simulation time, of main repeat
+  simTimeStep : 1.5, // time step value, simulation time, of main repeat
 
   // individual units may do more steps in one unit updateState()
   // see individual units for any unitTimeStep and unitStepRepeats
@@ -155,14 +155,14 @@ var puHeatExchanger = {
   // html inputs are not present in order to make units more independent
 
   initialModelFlag : 1, // 0 is co-current flow, 1 is counter-current flow
-  initialTinHot : 363, // K, hot T in
-  initialTinCold : 313, // K, cold T in
+  initialTinHot : 360, // K, hot T in
+  initialTinCold : 310, // K, cold T in
   initialFlowHot : 0.5, // kg/s
   initialFlowCold : 0.75, // kg/s
   initialCpHot : 4.2, // kJ/kg/K, hot flow heat capacity
   initialCpCold : 4.2, // kJ/kg/K, cold flow heat capacity
-  initialUcoef : 0.68, // kW/m2/K, U, heat transfer coefficient
-  initialArea : 3.76, // m2, heat transfer surface area
+  initialUcoef : 0.6, // kW/m2/K, U, heat transfer coefficient
+  initialArea : 4.0, // m2, heat transfer surface area
   initialDiam : 0.15, // m, tube diameter
 
   // define the main variables which will not be plotted or save-copy data
@@ -385,6 +385,13 @@ var puHeatExchanger = {
     document.getElementById("field_length").innerHTML = 'L (m) = ' + L.toFixed(1);
     // note use .toFixed(n) method of object to round number to n decimal points
 
+    // for Re, use kinematic viscosity from
+    // https://www.engineeringtoolbox.com/water-dynamic-kinematic-viscosity-d_596.html?vA=30&units=C#
+    // use density of 1000 kg/m3
+    var kv = 5.0e-7; // m2/s, kinematic viscosity of water at mid-T of 330 K
+    var Re = this.FlowHot / 1000 / kv * 4 / Math.PI / this.Diam;
+    document.getElementById("field_Reynolds").innerHTML = 'Re<sub> hot-tube</sub> = ' + Re.toFixed(0);
+
   }, // end of updateUIparams()
 
   updateInputs : function() {
@@ -440,6 +447,8 @@ var puHeatExchanger = {
     // compute FlowCoef (1/s) = space velocity = volumetric flow rate / volume
     var hotFlowCoef = this.FlowHot / Density / Volume;
     var coldFlowCoef = this.FlowCold / Density / Volume;
+
+    // document.getElementById("field_output_field").innerHTML = 'space velocity = ' + hotFlowCoef.toFixed(3);
 
     var Acell = this.Area / this.numNodes; // m2, per mixing cell
 
