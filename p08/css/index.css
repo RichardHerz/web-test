@@ -572,7 +572,7 @@ border-style: solid;
 #field_Area_label {
   position: absolute;
   left: 4px;
-  top: 203px;
+  top: 230px;
   width: 170px;
   height: 21px;
   border-width: 1px;
@@ -590,7 +590,7 @@ border-style: solid;
 #input_field_Area {
   position: absolute;
   left: 190px;
-  top: 218px;
+  top: 245px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -606,7 +606,7 @@ border-style: solid;
 #field_Ucoef_label {
   position: absolute;
   left: 4px;
-  top: 230px;
+  top: 203px;
   width: 170px;
   height: 21px;
   border-width: 1px;
@@ -624,7 +624,7 @@ border-style: solid;
 #input_field_Ucoef {
   position: absolute;
   left: 190px;
-  top: 245px;
+  top: 218px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -635,6 +635,74 @@ border-style: solid;
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: true;
+}
+
+#field_diam_label {
+  position: absolute;
+  left: 4px;
+  top: 257px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: dotted;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_diam {
+  position: absolute;
+  left: 190px;
+  top: 272px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_length {
+  position: absolute;
+  left: 4px;
+  top: 284px;
+  width: 131px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#field_Reynolds {
+  position: absolute;
+  left: 150px;
+  top: 283px;
+  width: 131px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
 }
 
 /* example @media for responsive design */
