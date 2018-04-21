@@ -82,7 +82,7 @@
    </p>
 </div> <!-- end of div div_simFrame -->
 <div id="div_input_fields_group">
-  <!-- onchange can send updateUIparams() to process_main.js to update all units *OR* send to specific units -->
+   <!-- onchange can send updateUIparams() to process_main.js to update all units *OR* send to specific units -->
    <div id="div_radio_button_group">
       <label id="radio_counter-current_flow_LABEL" name="radio_of_div_radio_button_group">
             <input type="radio" id="radio_counter-current_flow" name="radio_of_div_radio_button_group" checked onchange="puHeatExchanger.updateUIparams()">
@@ -96,35 +96,45 @@
    <p id="field_TinHot_label">
       T in hot (K)
    </p>
-   <input id="input_field_TinHot" value="370" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_TinHot" value="360" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_TinCold_label">
       T in cold (K)
    </p>
-   <input id="input_field_TinCold" value="290" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_TinCold" value="310" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_FlowHot_label">
-      Flow hot (dm<sup>3</sup>/s)
+      Flow hot (kg/s)
    </p>
-   <input id="input_field_FlowHot" value="0.1" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_FlowHot" value="0.5" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_FlowCold_label">
-      Flow cold (dm<sup>3</sup>/s)
+      Flow cold (kg/s)
    </p>
-   <input id="input_field_FlowCold" value="0.1" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_FlowCold" value="0.75" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_CpHot_label">
-      Cp hot (kJ/dm<sup>3</sup>/K)
+      Cp hot (kJ/kg/K)
    </p>
    <input id="input_field_CpHot" value="4.2" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_CpCold_label">
-      Cp cold (kJ/dm<sup>3</sup>/K)
+      Cp cold (kJ/kg/K)
    </p>
    <input id="input_field_CpCold" value="4.2" onchange="puHeatExchanger.updateUIparams()">
-   <p id="field_Area_label">
-      Area (m<sup>2</sup>)
-   </p>
-   <input id="input_field_Area" value="3.0" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_Ucoef_label">
-      U coefficient (J/s/K/m<sup>2</sup>)
+      U coefficient (kW/m<sup shift="-4">2</sup>/K)
    </p>
-   <input id="input_field_Ucoef" value="250" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_Ucoef" value="0.6" onchange="puHeatExchanger.updateUIparams()">
+   <p id="field_Area_label">
+      heat transfer Area (m<sup shift="-4">2</sup>)
+   </p>
+   <input id="input_field_Area" value="4.0" onchange="puHeatExchanger.updateUIparams()">
+   <p id="field_diam_label">
+      tube diameter (m)
+   </p>
+   <input id="input_field_diam" value="0.15" onchange="puHeatExchanger.updateUIparams()">
+   <p id="field_length">
+      L (m) =
+   </p>
+   <p id="field_Reynolds" onchange="puHeatExchanger.updateUIparams()">
+      Re =
+   </p>
 </div> <!-- end of div div_input_fields_group -->
 </body>
 </html>

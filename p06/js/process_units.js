@@ -46,7 +46,7 @@ var simParams = {
   // WARNING: DO NOT CHANGE simTimeStep BETWEEN display updates
 
   simStepRepeats : 1, // integer number of unit updates between display updates
-  simTimeStep : 1, // time step value, simulation time, of main repeat
+  simTimeStep : 2, // time step value, simulation time, of main repeat
 
   // individual units may do more steps in one unit updateState()
   // see individual units for any unitTimeStep and unitStepRepeats
@@ -126,14 +126,15 @@ var puHeatExchanger = {
   //   e.g., inputModel01 : "radio_Model_1",
   inputModel00 : "radio_co-current_flow", // model 0 is co-current flow
   inputModel01 : "radio_counter-current_flow", // model 1 is counter-current flow
-  inputArea : "input_field_Area", // m2, A, heat transfer surface area
-  inputUcoef : "input_field_Ucoef", // J/s/K/m2, U, heat transfer coefficient
   inputTinHot : "input_field_TinHot", // K, hot T in
   inputTinCold : "input_field_TinCold", // K, cold T in
-  inputFlowHot : "input_field_FlowHot", // m3/s
-  inputFlowCold : "input_field_FlowCold", // m3/s
-  inputCpHot : "input_field_CpHot", // J/m3/K, hot flow heat capacity
-  inputCpCold : "input_field_CpCold", // J/m3/K, cold flow heat capacity
+  inputFlowHot : "input_field_FlowHot", // kg/s
+  inputFlowCold : "input_field_FlowCold", // kg/s
+  inputCpHot : "input_field_CpHot", // kJ/kg/K, hot flow heat capacity
+  inputCpCold : "input_field_CpCold", // kJ/kg/K, cold flow heat capacity
+  inputUcoef : "input_field_Ucoef", // kW/m2/K, U, heat transfer coefficient
+  inputArea : "input_field_Area", // m2, heat transfer surface area
+  inputDiam : "input_field_diam", // m, tube diameter
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
   //   no user entered values for this unit
   // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE EXCEPT -----
@@ -154,21 +155,26 @@ var puHeatExchanger = {
   // html inputs are not present in order to make units more independent
 
   initialModelFlag : 1, // 0 is co-current flow, 1 is counter-current flow
-  initialArea : 3.0, // m2, A, heat transfer surface area
-  initialUcoef : 250, // J/s/K/m2, U, heat transfer coefficient
-  initialTinHot : 370, // K, hot T in
-  initialTinCold : 290, // K, cold T in
-  initialFlowHot : 0.1, // dm3/s
-  initialFlowCold : 0.1, // dm3/s
-  initialCpHot : 4.2, // kJ/dm3/K, hot flow heat capacity
-  initialCpCold : 4.2, // kJ/dm3/K, cold flow heat capacity
+  initialTinHot : 360, // K, hot T in
+  initialTinCold : 310, // K, cold T in
+  initialFlowHot : 0.5, // kg/s
+  initialFlowCold : 0.75, // kg/s
+  initialCpHot : 4.2, // kJ/kg/K, hot flow heat capacity
+  initialCpCold : 4.2, // kJ/kg/K, cold flow heat capacity
+  initialUcoef : 0.6, // kW/m2/K, U, heat transfer coefficient
+  initialArea : 4.0, // m2, heat transfer surface area
+  initialDiam : 0.15, // m, tube diameter
 
   // define the main variables which will not be plotted or save-copy data
   //   none here
 
-  // WARNING: have to change simTimeStep and simStepRepeats if change numNodes
-  // WARNING: numNodes is accessed  in process_plot_info.js
+  // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
+  // WARNING: numNodes is accessed in process_plot_info.js
+  // WARNING: really should get numNodes from turbulent dispersion and length of tube...
   numNodes : 50,
+
+  FluidDensity : 1000, // kg/m3, fluid density specified to be that of water
+  FluidKinematicViscosity : 5.0e-7, // m2/s, for water at mid-T of 330 K for Reynolds number
 
   // XXX WARNING: THESE DO NOT HAVE ANY EFFECT HERE WHEN
   //     THEY ARE ALSO SET IN updateUIparams
@@ -178,14 +184,15 @@ var puHeatExchanger = {
   // list here then apparently is created in updateUIparams...
   //   e.g., Cmax : this.initialCmax,
   ModelFlag : this.initialModelFlag, // 0 is cocurrent flow, 1 is countercurrent flow
-  Area : this.initialArea, // m2, A, heat transfer surface area
-  Ucoef : this.initialUcoef, // J/s/K/m2, U, heat transfer coefficient
   TinHot : this.initialTinHot, // K, hot T in
   TinCold : this.initialTinCold, // K, cold T in
   FlowHot : this.initialFlowHot, // dm3/s
   FlowCold : this.initialFlowCold, // dm3/s
   CpHot : this.initialCpHot, // kJ/dm3/K, hot flow heat capacity
   CpCold : this.initialCpCold, // kJ/dm3/K, cold flow heat capacity
+  Ucoef : this.initialUcoef, // J/s/K/m2, U, heat transfer coefficient
+  Area : this.initialArea, // m2, heat transfer surface area
+  Diam : this.initialDiam, // m, tube diameter
 
   // variables to be plotted are defined as objects
   // with the properties: value, name, label, symbol, dimensional units
@@ -300,20 +307,6 @@ var puHeatExchanger = {
       cla.innerHTML = '&rarr;';
     }
 
-    if (document.getElementById(this.inputArea)) {
-      let tmpFunc = new Function("return " + this.inputArea + ".value;");
-      this.Area = tmpFunc();
-    } else {
-      this.Area= this.initialArea;
-    }
-
-    if (document.getElementById(this.inputUcoef)) {
-      let tmpFunc = new Function("return " + this.inputUcoef+ ".value;");
-      this.Ucoef= tmpFunc();
-    } else {
-      this.Ucoef= this.initialUcoef;
-    }
-
     if (document.getElementById(this.inputTinHot)) {
       let tmpFunc = new Function("return " + this.inputTinHot + ".value;");
       this.TinHot = tmpFunc();
@@ -356,6 +349,27 @@ var puHeatExchanger = {
       this.CpCold = this.initialCpCold;
     }
 
+    if (document.getElementById(this.inputUcoef)) {
+      let tmpFunc = new Function("return " + this.inputUcoef+ ".value;");
+      this.Ucoef= tmpFunc();
+    } else {
+      this.Ucoef= this.initialUcoef;
+    }
+
+    if (document.getElementById(this.inputArea)) {
+      let tmpFunc = new Function("return " + this.inputArea + ".value;");
+      this.Area = tmpFunc();
+    } else {
+      this.Area = this.initialArea;
+    }
+
+    if (document.getElementById(this.inputDiam)) {
+      let tmpFunc = new Function("return " + this.inputDiam + ".value;");
+      this.Diam = tmpFunc();
+    } else {
+      this.Diam = this.initialDiam;
+    }
+
     // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
     // outlet T's not defined on first entry into page
     // but do not do full updateDisplay
@@ -367,6 +381,38 @@ var puHeatExchanger = {
       case 1: // counter-current
         document.getElementById("field_cold_left_T").innerHTML = this.TinCold + ' K';
     }
+
+    // update display of tube length and Reynolds number
+
+    // from Area and Diam inputs & specify cylindrical tube
+    // can compute Length and Volume
+    var Length = this.Area / this.Diam / Math.PI;
+    var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
+
+    document.getElementById("field_length").innerHTML = 'L (m) = ' + Length.toFixed(1);
+    // note use .toFixed(n) method of object to round number to n decimal points
+
+    // for Re, use kinematic viscosity from
+    // https://www.engineeringtoolbox.com/water-dynamic-kinematic-viscosity-d_596.html?vA=30&units=C#
+    var Re = this.FlowHot / this.FluidDensity / this.FluidKinematicViscosity * 4 / Math.PI / this.Diam;
+    document.getElementById("field_Reynolds").innerHTML = 'Re<sub> hot-tube</sub> = ' + Re.toFixed(0);
+
+    // now update unit time step and repeats for space time of single cell (1/space velocity)
+
+    // compute space time of single cell in hot tube
+    var spaceTime = (Volume / this.numNodes) / (this.FlowHot / this.FluidDensity) ;
+    // document.getElementById("field_output_field").innerHTML = 'cell residence time = ' + spaceTime;
+
+    // first estimate unitTimeStep
+    // do NOT change simParams.simTimeStep here
+    this.unitTimeStep = spaceTime / 3; // for cell spaceTime of 6 get unitTimeStep = 2 = simTimeStep
+    // then get integer number of unitStepRepeats
+    this.unitStepRepeats = Math.round(simParams.simTimeStep / this.unitTimeStep);
+    // min value of unitStepRepeats is 1 or get divide by zero error
+    if (this.unitStepRepeats <= 0) {this.unitStepRepeats = 1;}
+    // then recompute unitTimeStep with integer number unitStepRepeats
+    this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
+    // document.getElementById("field_output_field").innerHTML = 'dt, nr = ' + this.unitTimeStep + ', ' + this.unitStepRepeats;
 
   }, // end of updateUIparams()
 
@@ -410,18 +456,27 @@ var puHeatExchanger = {
     // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; Thot[this.numNodes] = " + Thot[this.numNodes];
     // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; TinCold = " + this.TinCold;
 
-    // if allow flow to change then need to control
-    // volume so that get reasonable response time
-    var hotFlowCoef = 0.5;
-    var coldFlowCoef = 0.5;
+    // from Area and Diam inputs & specify cylindrical tube
+    // can compute Length and Volume
+    var Length = this.Area / this.Diam / Math.PI;
+    var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
 
-    var Vhot = this.FlowHot / hotFlowCoef;
-    var Vcold = this.FlowCold / coldFlowCoef;
-    var Acell = this.Area / this.numNodes; // m2, per cell
+    // specify hot and cold volumes equal
+    // these are CELL volumes
+    var Vhot = Volume / this.numNodes;
+    var Vcold = Vhot;
+
+    // compute FlowCoef (1/s) = space velocity = volumetric flow rate / cell volume
+    var hotFlowCoef = this.FlowHot / this.FluidDensity / Vhot;
+    var coldFlowCoef = this.FlowCold / this.FluidDensity / Vcold;
+
+    // document.getElementById("field_output_field").innerHTML = 'cell space velocity = ' + hotFlowCoef.toFixed(3);
+
+    var Acell = this.Area / this.numNodes; // m2, per mixing cell
+
     // units of XferCoef are (1/s)
-    // 1.0e-3 factor account for some kJ and dm3 units in inputs
-    var hotXferCoef = 1.0e-3 * this.Ucoef * Acell / this.CpHot / Vhot;
-    var coldXferCoef = 1.0e-3 * this.Ucoef * Acell / this.CpCold / Vcold;
+    var hotXferCoef = this.Ucoef * Acell / this.CpHot / Vhot / this.FluidDensity;
+    var coldXferCoef = this.Ucoef * Acell / this.CpCold / Vcold / this.FluidDensity;
 
     var dTmax = 0; // used to check for steady state and set ssFlag
 
@@ -566,8 +621,9 @@ var puHeatExchanger = {
     // document.getElementById("field_aveRate").innerHTML = this.aveRate.toExponential(3);
     // document.getElementById("field_aveConversion").innerHTML = this.aveConversion.toFixed(4);
 
-    var n = 0; // used as index
+    // note use .toFixed(n) method of object to round number to n decimal points
 
+    var n = 0; // used as index
     document.getElementById("field_hot_left_T").innerHTML = Thot[this.numNodes].toFixed(1) + ' K';
     document.getElementById("field_hot_right_T").innerHTML = this.TinHot + ' K';
     switch(this.ModelFlag) {
