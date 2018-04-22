@@ -405,7 +405,13 @@ var puHeatExchanger = {
 
     // first estimate unitTimeStep
     // do NOT change simParams.simTimeStep here
+    // this.unitTimeStep = spaceTime / 3; // for cell spaceTime of 6 get unitTimeStep = 2 = simTimeStep
+
+    // XXX NEW
+    // XXX this orig line above OK for Disp = 1e-6 but time step needs to be reduced as Disp value increases
+    // XXX so also need to compute Disp value here in updateUIparams()
     this.unitTimeStep = spaceTime / 3; // for cell spaceTime of 6 get unitTimeStep = 2 = simTimeStep
+
     // then get integer number of unitStepRepeats
     this.unitStepRepeats = Math.round(simParams.simTimeStep / this.unitTimeStep);
     // min value of unitStepRepeats is 1 or get divide by zero error
@@ -483,13 +489,21 @@ var puHeatExchanger = {
     // XXX NEW - start converting to finite difference model from mixing cell in series model
     // this is so we can change axial dispersion while keeping number nodes constant for simple plotting
 
+    var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // cross-sectional area for flow
+    var Uveloc = this.FlowHot / this.FluidDensity / Ax; // linear fluid velocity
+    // XferCoefHot = U * (wall area per unit length = pi * diam * L/L) / (rho * Cp * Ax)
+    var XferCoefHot = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / this.CpHot / Ax;
+
     // Disp (m2/s) is axial dispersion coefficient for turbulent flow
     // for now just use a fixed value
     // later compute from function of Reynolds number, etc.
+    // XXX need to compute Disp in updateUIparams() because need to adjust
+    // XXX unit time step shorter as dispersion increases
     var DispHot = 1e-6; // (m2/s), axial dispersion coefficient for turbulent flow
     var DispCold = 1e-6;
     var dz = Length / this.numNodes; // (m), distance between nodes
-    var dz2 = Math.pow(dz, 2); // (m2), to minimize computation in loops
+    var UvelocOverDZ = Uveloc / dz; // precompute to save time in loop
+    var DispHotOverDZ2 = DispHot / Math.pow(dz, 2);  // precompute to save time in loop
     // XXX later consider combine constants, e.g., DispHotOverDZ2
 
     // this unit takes multiple steps within one outer main loop repeat step
@@ -511,7 +525,11 @@ var puHeatExchanger = {
           TcoldNm1 = Tcold[n]; // special for n=0 cell, cold outlet for counter-current
       }
 
-      var dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
+      // var dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
+      // XXX NEW
+      var ThotNp1 = Thot[n+1];
+      var dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+                    + DispHotOverDZ2*(ThotNp1-2*ThotN+ThotNm1);
 
       var dTcoldDT;
       switch(this.ModelFlag) {
@@ -545,7 +563,11 @@ var puHeatExchanger = {
         TcoldNm1 = Tcold[n-1];
         TcoldNp1 = Tcold[n+1];
 
-        dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);;
+        // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
+        // XXX NEW
+        var ThotNp1 = Thot[n+1];
+        var dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+                      + DispHotOverDZ2*(ThotNp1-2*ThotN+ThotNm1);
 
         switch(this.ModelFlag) {
           case 0: // co-current
@@ -587,7 +609,11 @@ var puHeatExchanger = {
           TcoldNp1 = this.TinCold; // special for n=numNodes cell, cold inlet for counter-current
       }
 
-      dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);;
+      // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
+      // XXX NEW
+      var ThotNp1 = Thot[n]; // SPECIAL - BC at hot end is zero heat flux axially
+      var dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+                    + DispHotOverDZ2*(ThotNp1-2*ThotN+ThotNm1);
 
       switch(this.ModelFlag) {
         case 0: // co-current
