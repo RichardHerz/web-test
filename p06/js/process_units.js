@@ -480,58 +480,112 @@ var puHeatExchanger = {
 
     var dTmax = 0; // used to check for steady state and set ssFlag
 
+    // XXX NEW - start converting to finite difference model from mixing cell in series model
+    // this is so we can change axial dispersion while keeping number nodes constant for simple plotting
+
+    // Disp (m2/s) is axial dispersion coefficient for turbulent flow
+    // for now just use a fixed value
+    // later compute from function of Reynolds number, etc.
+    var DispHot = 1e-6; // (m2/s), axial dispersion coefficient for turbulent flow
+    var DispCold = 1e-6;
+    var dz = Length / this.numNodes; // (m), distance between nodes
+    var dz2 = Math.pow(dz, 2); // (m2), to minimize computation in loops
+    // XXX later consider combine constants, e.g., DispHotOverDZ2
+
     // this unit takes multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
 
-    // do node at hot inlet end
-    var n = 0;
-    var ThotN = Thot[n];
-    var ThotNm1 = this.TinHot; // special for n=0 cell, hot inlet
+      // do node at hot inlet end
+      var n = 0;
+      var ThotN = Thot[n];
+      var ThotNm1 = this.TinHot; // special for n=0 cell, hot inlet
 
-    var TcoldN = Tcold[n];
-    var TcoldNp1 = Tcold[n+1];;
-    var TcoldNm1; // change depending on flow direction
-    switch(this.ModelFlag) {
-      case 0: // co-current
-        TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
-      break
-      case 1: // counter-current
-        TcoldNm1 = Tcold[n]; // special for n=0 cell, cold outlet for counter-current
-    }
+      var TcoldN = Tcold[n];
+      var TcoldNp1 = Tcold[n+1];;
+      var TcoldNm1; // change depending on flow direction
+      switch(this.ModelFlag) {
+        case 0: // co-current
+          TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
+        break
+        case 1: // counter-current
+          TcoldNm1 = Tcold[n]; // special for n=0 cell, cold outlet for counter-current
+      }
 
-    var dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
+      var dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
 
-    var dTcoldDT;
-    switch(this.ModelFlag) {
-      case 0: // co-current
-        dTcoldDT = coldFlowCoef*(TcoldNm1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
-      break
-      case 1: // counter-current
-        dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
-    }
+      var dTcoldDT;
+      switch(this.ModelFlag) {
+        case 0: // co-current
+          dTcoldDT = coldFlowCoef*(TcoldNm1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+        break
+        case 1: // counter-current
+          dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+      }
 
-    ThotN = ThotN + dThotDT * this.unitTimeStep;
-    TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
+      ThotN = ThotN + dThotDT * this.unitTimeStep;
+      TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
-    ThotNew[n] = ThotN;
-    TcoldNew[n] = TcoldN;
+      ThotNew[n] = ThotN;
+      TcoldNew[n] = TcoldN;
 
-    // check for max change to check for steady state and set ssFlag
-    var absDT = Math.abs(dThotDT);
-    if (absDT > dTmax){dTmax = absDT;}
-    absDT = Math.abs(dTcoldDT);
-    if (absDT > dTmax){dTmax = absDT;}
+      // check for max change to check for steady state and set ssFlag
+      var absDT = Math.abs(dThotDT);
+      if (absDT > dTmax){dTmax = absDT;}
+      absDT = Math.abs(dTcoldDT);
+      if (absDT > dTmax){dTmax = absDT;}
 
-    // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; dThotDT * this.unitTimeStep = " + dThotDT * this.unitTimeStep;
+      // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; dThotDT * this.unitTimeStep = " + dThotDT * this.unitTimeStep;
 
-    // internal nodes
-    for (n = 1; n < this.numNodes; n += 1) {
+      // internal nodes
+      for (n = 1; n < this.numNodes; n += 1) {
+
+        ThotN = Thot[n];
+        ThotNm1 = Thot[n-1];
+        TcoldN = Tcold[n];
+        TcoldNm1 = Tcold[n-1];
+        TcoldNp1 = Tcold[n+1];
+
+        dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);;
+
+        switch(this.ModelFlag) {
+          case 0: // co-current
+            dTcoldDT = coldFlowCoef*(TcoldNm1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+          break
+          case 1: // counter-current
+            dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+        }
+
+        ThotN = ThotN + dThotDT * this.unitTimeStep;
+        TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
+
+        ThotNew[n] = ThotN;
+        TcoldNew[n] = TcoldN;
+
+        // check for max change to check for steady state and set ssFlag
+        absDT = Math.abs(dThotDT);
+        if (absDT > dTmax){dTmax = absDT;}
+        absDT = Math.abs(dTcoldDT);
+        if (absDT > dTmax){dTmax = absDT;}
+
+      } // end repeat through internal nodes
+
+      // do node at hot outlet end
+
+      n = this.numNodes;
 
       ThotN = Thot[n];
       ThotNm1 = Thot[n-1];
+
       TcoldN = Tcold[n];
+      TcoldNp1; // change depending on flow direction
       TcoldNm1 = Tcold[n-1];
-      TcoldNp1 = Tcold[n+1];
+      switch(this.ModelFlag) {
+        case 0: // co-current
+          TcoldNp1 = Tcold[n]; // special for n=numNodes cell, cold outlet for co-current
+          break
+        case 1: // counter-current
+          TcoldNp1 = this.TinCold; // special for n=numNodes cell, cold inlet for counter-current
+      }
 
       dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);;
 
@@ -555,61 +609,19 @@ var puHeatExchanger = {
       absDT = Math.abs(dTcoldDT);
       if (absDT > dTmax){dTmax = absDT;}
 
-    } // end repeat through internal nodes
+      // finished updating all nodes
 
-    // do node at hot outlet end
+      // copy new to current
+      Thot = ThotNew;
+      Tcold = TcoldNew;
 
-    n = this.numNodes;
-
-    ThotN = Thot[n];
-    ThotNm1 = Thot[n-1];
-
-    TcoldN = Tcold[n];
-    TcoldNp1; // change depending on flow direction
-    TcoldNm1 = Tcold[n-1];
-    switch(this.ModelFlag) {
-      case 0: // co-current
-        TcoldNp1 = Tcold[n]; // special for n=numNodes cell, cold outlet for co-current
-        break
-      case 1: // counter-current
-        TcoldNp1 = this.TinCold; // special for n=numNodes cell, cold inlet for counter-current
-    }
-
-    dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);;
-
-    switch(this.ModelFlag) {
-      case 0: // co-current
-        dTcoldDT = coldFlowCoef*(TcoldNm1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
-      break
-      case 1: // counter-current
-        dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
-    }
-
-    ThotN = ThotN + dThotDT * this.unitTimeStep;
-    TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
-
-    ThotNew[n] = ThotN;
-    TcoldNew[n] = TcoldN;
-
-    // check for max change to check for steady state and set ssFlag
-    absDT = Math.abs(dThotDT);
-    if (absDT > dTmax){dTmax = absDT;}
-    absDT = Math.abs(dTcoldDT);
-    if (absDT > dTmax){dTmax = absDT;}
-
-    // finished updating all nodes
-
-    // copy new to current
-    Thot = ThotNew;
-    Tcold = TcoldNew;
-
-    // check for close approach to steady state
-    // check for max change in T for this time step < criterion, e.g., 1.0e-4
-    if (dTmax * this.unitTimeStep < 1.0e-4) {
-      simParams.ssFlag = true;
-      // when ssFlag true will return out of process_main.js functions to save CPU time
-      // can be reset to false by updateUIparams and run and reset buttons
-    }
+      // check for close approach to steady state
+      // check for max change in T for this time step < criterion, e.g., 1.0e-4
+      if (dTmax * this.unitTimeStep < 1.0e-4) {
+        simParams.ssFlag = true;
+        // when ssFlag true will return out of process_main.js functions to save CPU time
+        // can be reset to false by updateUIparams and run and reset buttons
+      }
 
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 
