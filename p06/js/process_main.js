@@ -127,11 +127,15 @@
       if (resetFlag) {
         tmpFunc = new Function(unitName + ".reset();");
         tmpFunc();
+      } else {
+
+        // XXX NEW PUT updateState INTO ELSE rather than execute every time 
+
+        tmpFunc = new Function(unitName + ".updateState();");
+        tmpFunc();
       }
 
-      tmpFunc = new Function(unitName + ".updateState();");
-      tmpFunc();
-    }
+    } // end function fUpdateState
 
   } // END OF updateProcessUnits
 

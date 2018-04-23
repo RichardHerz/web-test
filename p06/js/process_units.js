@@ -155,13 +155,13 @@ var puHeatExchanger = {
   // html inputs are not present in order to make units more independent
 
   initialModelFlag : 1, // 0 is co-current flow, 1 is counter-current flow
-  initialTinHot : 360, // K, hot T in
-  initialTinCold : 310, // K, cold T in
+  initialTinHot : 360.0, // K, hot T in
+  initialTinCold : 310.0, // K, cold T in
   initialFlowHot : 0.5, // kg/s
   initialFlowCold : 0.75, // kg/s
   initialCpHot : 4.2, // kJ/kg/K, hot flow heat capacity
   initialCpCold : 4.2, // kJ/kg/K, cold flow heat capacity
-  initialUcoef : 0.6, // kW/m2/K, U, heat transfer coefficient
+  initialUcoef : 0.0, // kW/m2/K, U, heat transfer coefficient
   initialArea : 4.0, // m2, heat transfer surface area
   initialDiam : 0.15, // m, tube diameter
 
@@ -171,9 +171,9 @@ var puHeatExchanger = {
   // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
   // WARNING: numNodes is accessed in process_plot_info.js
   // WARNING: really should get numNodes from turbulent dispersion and length of tube...
-  numNodes : 50,
+  numNodes : 100,
 
-  FluidDensity : 1000, // kg/m3, fluid density specified to be that of water
+  FluidDensity : 1000.0, // kg/m3, fluid density specified to be that of water
   FluidKinematicViscosity : 5.0e-7, // m2/s, for water at mid-T of 330 K for Reynolds number
 
   // XXX WARNING: THESE DO NOT HAVE ANY EFFECT HERE WHEN
@@ -219,8 +219,8 @@ var puHeatExchanger = {
 
     for (k = 0; k <= this.numNodes; k += 1) {
       Thot[k] = this.initialTinCold;
-      Tcold[k] = this.initialTinCold;
       ThotNew[k] = this.initialTinCold;
+      Tcold[k] = this.initialTinCold;
       TcoldNew[k] = this.initialTinCold;
     }
 
@@ -310,6 +310,7 @@ var puHeatExchanger = {
     if (document.getElementById(this.inputTinHot)) {
       let tmpFunc = new Function("return " + this.inputTinHot + ".value;");
       this.TinHot = tmpFunc();
+      this.TinHot = Number(this.TinHot); // force any string to number
     } else {
       this.TinHot = this.initialTinHot;
     }
@@ -317,6 +318,7 @@ var puHeatExchanger = {
     if (document.getElementById(this.inputTinCold)) {
       let tmpFunc = new Function("return " + this.inputTinCold + ".value;");
       this.TinCold = tmpFunc();
+      this.TinCold = Number(this.TinCold); // force any string to number
     } else {
       this.TinCold = this.initialTinCold;
     }
@@ -324,6 +326,7 @@ var puHeatExchanger = {
     if (document.getElementById(this.inputFlowHot)) {
       let tmpFunc = new Function("return " + this.inputFlowHot + ".value;");
       this.FlowHot = tmpFunc();
+      this.FlowHot = Number(this.FlowHot); // force any string to number
     } else {
       this.FlowHot = this.initialFlowHot;
     }
@@ -331,6 +334,7 @@ var puHeatExchanger = {
     if (document.getElementById(this.inputFlowCold)) {
       let tmpFunc = new Function("return " + this.inputFlowCold + ".value;");
       this.FlowCold = tmpFunc();
+      this.FlowCold = Number(this.FlowCold); // force any string to number
     } else {
       this.FlowCold = this.initialFlowCold;
     }
@@ -338,6 +342,7 @@ var puHeatExchanger = {
     if (document.getElementById(this.inputCpHot)) {
       let tmpFunc = new Function("return " + this.inputCpHot + ".value;");
       this.CpHot = tmpFunc();
+      this.CpHot = Number(this.CpHot); // force any string to number
     } else {
       this.CpHot = this.initialCpHot;
     }
@@ -345,6 +350,7 @@ var puHeatExchanger = {
     if (document.getElementById(this.inputCpCold)) {
       let tmpFunc = new Function("return " + this.inputCpCold + ".value;");
       this.CpCold = tmpFunc();
+      this.CpCold = Number(this.CpCold); // force any string to number
     } else {
       this.CpCold = this.initialCpCold;
     }
@@ -352,6 +358,7 @@ var puHeatExchanger = {
     if (document.getElementById(this.inputUcoef)) {
       let tmpFunc = new Function("return " + this.inputUcoef+ ".value;");
       this.Ucoef= tmpFunc();
+      this.Ucoef = Number(this.Ucoef); // force any string to number
     } else {
       this.Ucoef= this.initialUcoef;
     }
@@ -359,6 +366,7 @@ var puHeatExchanger = {
     if (document.getElementById(this.inputArea)) {
       let tmpFunc = new Function("return " + this.inputArea + ".value;");
       this.Area = tmpFunc();
+      this.Area = Number(this.Area); // force any string to number
     } else {
       this.Area = this.initialArea;
     }
@@ -366,6 +374,7 @@ var puHeatExchanger = {
     if (document.getElementById(this.inputDiam)) {
       let tmpFunc = new Function("return " + this.inputDiam + ".value;");
       this.Diam = tmpFunc();
+      this.Diam = Number(this.Diam ); // force any string to number
     } else {
       this.Diam = this.initialDiam;
     }
@@ -405,12 +414,7 @@ var puHeatExchanger = {
 
     // first estimate unitTimeStep
     // do NOT change simParams.simTimeStep here
-    // this.unitTimeStep = spaceTime / 3; // for cell spaceTime of 6 get unitTimeStep = 2 = simTimeStep
-
-    // XXX NEW
-    // XXX this orig line above OK for Disp = 1e-6 but time step needs to be reduced as Disp value increases
-    // XXX so also need to compute Disp value here in updateUIparams()
-    this.unitTimeStep = spaceTime / 3; // for cell spaceTime of 6 get unitTimeStep = 2 = simTimeStep
+    this.unitTimeStep = spaceTime / 3;
 
     // then get integer number of unitStepRepeats
     this.unitStepRepeats = Math.round(simParams.simTimeStep / this.unitTimeStep);
@@ -418,7 +422,7 @@ var puHeatExchanger = {
     if (this.unitStepRepeats <= 0) {this.unitStepRepeats = 1;}
     // then recompute unitTimeStep with integer number unitStepRepeats
     this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
-    // document.getElementById("field_output_field").innerHTML = 'dt, nr = ' + this.unitTimeStep + ', ' + this.unitStepRepeats;
+    document.getElementById("field_output_field").innerHTML = 'this.unitStepRepeats = ' + this.unitStepRepeats;
 
   }, // end of updateUIparams()
 
@@ -504,19 +508,29 @@ var puHeatExchanger = {
     var dz = Length / this.numNodes; // (m), distance between nodes
     var UvelocOverDZ = Uveloc / dz; // precompute to save time in loop
     var DispHotOverDZ2 = DispHot / Math.pow(dz, 2);  // precompute to save time in loop
-    // XXX later consider combine constants, e.g., DispHotOverDZ2
+
+    var i = 0; // index for step repeats
+    var n = 0; // index for nodes
+    var ThotN = 0.0;
+    var ThotNm1 = 0.0;
+    var ThotNp1 = 0.0;
+    var TcoldN = 0.0;
+    var TcoldNm1 = 0.0;
+    var TcoldNp1 = 0.0;
+    var dThotDT = 0.0;
+    var ttempxx = 0.0;
 
     // this unit takes multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
 
       // do node at hot inlet end
-      var n = 0;
-      var ThotN = Thot[n];
-      var ThotNm1 = this.TinHot; // special for n=0 cell, hot inlet
+      n = 0;
+      ThotN = Thot[n];
+      ThotNm1 = this.TinHot; // special for n=0 cell, hot inlet
 
-      var TcoldN = Tcold[n];
-      var TcoldNp1 = Tcold[n+1];;
-      var TcoldNm1; // change depending on flow direction
+      TcoldN = Tcold[n];
+      TcoldNp1 = Tcold[n+1];
+      TcoldNm1; // change depending on flow direction
       switch(this.ModelFlag) {
         case 0: // co-current
           TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
@@ -525,11 +539,26 @@ var puHeatExchanger = {
           TcoldNm1 = Tcold[n]; // special for n=0 cell, cold outlet for counter-current
       }
 
-      // var dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
+      // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
       // XXX NEW
-      var ThotNp1 = Thot[n+1];
-      var dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
-                    + DispHotOverDZ2*(ThotNp1-2*ThotN+ThotNm1);
+      ThotNp1 = Thot[n+1];
+      dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+                    + DispHotOverDZ2 * (Thot[n+1] - 2.0 * Thot[n] + ThotNm1);
+
+      // alert('i, n, UvelocOverDZ*(ThotNm1-ThotN) = ' + i + ', ' + n + ', ' + UvelocOverDZ*(ThotNm1-ThotN));
+      // alert('i, n, XferCoefHot*(TcoldN-ThotN) = ' + i + ', ' + n + ', ' + XferCoefHot*(TcoldN-ThotN));
+      // alert('i, n, DispHotOverDZ2 = ' + i + ', ' + n + ', ' + DispHotOverDZ2);
+      // alert('i, n, (Thot[n+1] - 2.0 * Thot[n] + Thot[n-1]) = ' + i + ', ' + n + ', ' + (Thot[n+1]- 2.0 * Thot[n] + this.TinHot));
+      // alert('i, n, ThotNp1 = ' + i + ', ' + n + ', ' + ThotNp1);
+      // alert('i, n, ThotN = ' + i + ', ' + n + ', ' + ThotN);
+      // alert('i, n, ThotNm1 = ' + i + ', ' + n + ', ' + ThotNm1);
+      // alert('i, n, dThotDT = ' + i + ', ' + n + ', ' + dThotDT);
+
+      // if (isNaN(DispHotOverDZ2*(ThotNp1-2*ThotN+ThotNm1))) {
+      //   dThotDT = Number('0.0');
+      //   document.getElementById("field_output_field").innerHTML = 'i, n, dThotDT was NaN, dThotDT = ' + i + ', ' + n + ', ' + dThotDT;
+      //   return;
+      // }
 
       var dTcoldDT;
       switch(this.ModelFlag) {
@@ -542,6 +571,12 @@ var puHeatExchanger = {
 
       ThotN = ThotN + dThotDT * this.unitTimeStep;
       TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
+
+      // XXX NEW
+      if (ThotN > this.TinHot) {ThotN = this.TinHot;}
+      if (ThotN < this.TinCold) {ThotN = this.TinCold;}
+      if (TcoldN > this.TinHot) {TcoldN = this.TinHot;}
+      if (TcoldN < this.TinCold) {TcoldN = this.TinCold;}
 
       ThotNew[n] = ThotN;
       TcoldNew[n] = TcoldN;
@@ -565,9 +600,9 @@ var puHeatExchanger = {
 
         // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
         // XXX NEW
-        var ThotNp1 = Thot[n+1];
-        var dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
-                      + DispHotOverDZ2*(ThotNp1-2*ThotN+ThotNm1);
+        ThotNp1 = Thot[n+1];
+        dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+                      + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
         switch(this.ModelFlag) {
           case 0: // co-current
@@ -579,6 +614,11 @@ var puHeatExchanger = {
 
         ThotN = ThotN + dThotDT * this.unitTimeStep;
         TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
+
+        if (ThotN > this.TinHot) {ThotN = this.TinHot;}
+        if (ThotN < this.TinCold) {ThotN = this.TinCold;}
+        if (TcoldN > this.TinHot) {TcoldN = this.TinHot;}
+        if (TcoldN < this.TinCold) {TcoldN = this.TinCold;}
 
         ThotNew[n] = ThotN;
         TcoldNew[n] = TcoldN;
@@ -611,9 +651,9 @@ var puHeatExchanger = {
 
       // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
       // XXX NEW
-      var ThotNp1 = Thot[n]; // SPECIAL - BC at hot end is zero heat flux axially
-      var dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
-                    + DispHotOverDZ2*(ThotNp1-2*ThotN+ThotNm1);
+      ThotNp1 = Thot[n]; // SPECIAL - BC at hot end is zero heat flux axially
+      dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+                    + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
       switch(this.ModelFlag) {
         case 0: // co-current
@@ -625,6 +665,11 @@ var puHeatExchanger = {
 
       ThotN = ThotN + dThotDT * this.unitTimeStep;
       TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
+
+      if (ThotN > this.TinHot) {ThotN = this.TinHot;}
+      if (ThotN < this.TinCold) {ThotN = this.TinCold;}
+      if (TcoldN > this.TinHot) {TcoldN = this.TinHot;}
+      if (TcoldN < this.TinCold) {TcoldN = this.TinCold;}
 
       ThotNew[n] = ThotN;
       TcoldNew[n] = TcoldN;
@@ -640,6 +685,10 @@ var puHeatExchanger = {
       // copy new to current
       Thot = ThotNew;
       Tcold = TcoldNew;
+      // for (n = 0; n <= this.numNodes; n += 1) {
+      //   Thot[n] = ThotNew[n];
+      //   Tcold[n] = TcoldNew[n];
+      // }
 
       // check for close approach to steady state
       // check for max change in T for this time step < criterion, e.g., 1.0e-4
@@ -651,6 +700,11 @@ var puHeatExchanger = {
 
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 
+    // var n = this.numNodes;
+    // document.getElementById("field_output_field").innerHTML = 'n, Thot[n] = ' + n + ', ' + Thot[n];
+    // document.getElementById("field_output_field").innerHTML = 'n, (Thot[n+1] - 2 * Thot[n] + Thot[n-1]) = ' + n + ', ' + (Thot[n+1] - 2 * Thot[n] + Thot[n-1]);
+    // document.getElementById("field_output_field").innerHTML = 'n, (Thot[n-1]) = ' + n + ', ' + (Thot[n-1]);
+
   }, // end updateState method
 
   display : function() {
@@ -661,17 +715,22 @@ var puHeatExchanger = {
 
     // note use .toFixed(n) method of object to round number to n decimal points
 
+    // document.getElementById("field_output_field").innerHTML = 'Thot[numNodes-1] = ' + Thot[this.numNodes-1];
+
     var n = 0; // used as index
     document.getElementById("field_hot_left_T").innerHTML = Thot[this.numNodes].toFixed(1) + ' K';
+    // document.getElementById("field_hot_left_T").innerHTML = Thot[this.numNodes] + ' K';
     document.getElementById("field_hot_right_T").innerHTML = this.TinHot + ' K';
     switch(this.ModelFlag) {
       case 0: // co-current
         document.getElementById("field_cold_left_T").innerHTML = Tcold[this.numNodes].toFixed(1) + ' K';
+        // document.getElementById("field_cold_left_T").innerHTML = Tcold[this.numNodes] + ' K';
         document.getElementById("field_cold_right_T").innerHTML = this.TinCold + ' K';
         break
       case 1: // counter-current
         document.getElementById("field_cold_left_T").innerHTML = this.TinCold + ' K';
         document.getElementById("field_cold_right_T").innerHTML = Tcold[0].toFixed(1) + ' K';
+        // document.getElementById("field_cold_right_T").innerHTML = Tcold[0] + ' K';
     }
 
     // HANDLE PROFILE PLOT DATA
