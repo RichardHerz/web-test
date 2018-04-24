@@ -662,7 +662,8 @@ var puHeatExchanger = {
 
       // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
       // XXX NEW
-      ThotNp1 = Thot[n]; // SPECIAL - BC at hot end is zero heat flux axially
+      // XXX CHECK SS RESULTS FOR ThotNp1 = Thot[n-1] or Thot[n]
+      ThotNp1 = Thot[n-1]; // SPECIAL - BC at hot end is zero heat flux axially
       dThotDT = VelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                     + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
