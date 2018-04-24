@@ -129,7 +129,7 @@
         tmpFunc();
       } else {
 
-        // XXX NEW PUT updateState INTO ELSE rather than execute every time 
+        // XXX NEW PUT updateState INTO ELSE rather than execute every time
 
         tmpFunc = new Function(unitName + ".updateState();");
         tmpFunc();

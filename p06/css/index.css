@@ -87,9 +87,11 @@ canvas {
 #div_PLOTDIV_T_plot {
   display: block;
   position: absolute;
-  left: 39px;
+  /* left: 39px; */
+  left: 36px;
   top: 30px;
-  width: 250px;
+  /* width: 250px; */
+  width: 256px;
   height: 224px;
   visibility: visible;
   border-width: 1px;
@@ -105,7 +107,8 @@ canvas {
 
 #canvas_CANVAS_hot {
   position: absolute;
-  left: 84px;
+  /* left: 84px; */
+  left: 81px;
   top: 261px;
  /* canvas element width & height must be set in HTML and not in CSS */
   visibility: visible;
@@ -119,7 +122,8 @@ canvas {
 
 #canvas_CANVAS_cold {
   position: absolute;
-  left: 84px;
+  /* left: 84px; */
+  left: 81px;
   top: 297px;
  /* canvas element width & height must be set in HTML and not in CSS */
   visibility: visible;

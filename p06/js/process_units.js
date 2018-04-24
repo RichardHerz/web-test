@@ -164,6 +164,7 @@ var puHeatExchanger = {
   initialUcoef : 0.0, // kW/m2/K, U, heat transfer coefficient
   initialArea : 4.0, // m2, heat transfer surface area
   initialDiam : 0.15, // m, tube diameter
+  initialDispCoef : 1e-6, // (m2/s), axial dispersion coefficient
 
   // define the main variables which will not be plotted or save-copy data
   //   none here
@@ -193,6 +194,7 @@ var puHeatExchanger = {
   Ucoef : this.initialUcoef, // J/s/K/m2, U, heat transfer coefficient
   Area : this.initialArea, // m2, heat transfer surface area
   Diam : this.initialDiam, // m, tube diameter
+  DispCoef : this.initialDispCoef, // (m2/s), axial dispersion coefficient
 
   // variables to be plotted are defined as objects
   // with the properties: value, name, label, symbol, dimensional units
@@ -406,23 +408,35 @@ var puHeatExchanger = {
     var Re = this.FlowHot / this.FluidDensity / this.FluidKinematicViscosity * 4 / Math.PI / this.Diam;
     document.getElementById("field_Reynolds").innerHTML = 'Re<sub> hot-tube</sub> = ' + Re.toFixed(0);
 
-    // now update unit time step and repeats for space time of single cell (1/space velocity)
+    // compute axial dispersion coefficient for turbulent flow
+    // Dispersion coefficient correlation for Re > 2000 from Wen & Fan as shown in
+    // https://classes.engineering.wustl.edu/che503/Axial%20Dispersion%20Model%20Figures.pdf 
+    // and
+    // https://classes.engineering.wustl.edu/che503/chapter%205.pdf
+    var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
+    var Uveloc = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
+    this.DispCoef = Uveloc * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
+    // document.getElementById("field_output_field").innerHTML = 'this.DispCoef = ' + this.DispCoef;
 
-    // compute space time of single cell in hot tube
-    var spaceTime = (Volume / this.numNodes) / (this.FlowHot / this.FluidDensity) ;
+    // UPDATE UNIT TIME STEP AND UNIT REPEATS
+
+    // FIRST, compute spaceTime = residence time between two nodes in hot tube, also
+    //                          = space time of equivalent single mixing cell
+    var spaceTime = (Length / this.numNodes) / Uveloc; // (s)
     // document.getElementById("field_output_field").innerHTML = 'cell residence time = ' + spaceTime;
 
-    // first estimate unitTimeStep
+    // SECOND, estimate unitTimeStep
     // do NOT change simParams.simTimeStep here
-    this.unitTimeStep = spaceTime / 3;
+    this.unitTimeStep = spaceTime / 15;
 
-    // then get integer number of unitStepRepeats
+    // THIRD, get integer number of unitStepRepeats
     this.unitStepRepeats = Math.round(simParams.simTimeStep / this.unitTimeStep);
     // min value of unitStepRepeats is 1 or get divide by zero error
     if (this.unitStepRepeats <= 0) {this.unitStepRepeats = 1;}
-    // then recompute unitTimeStep with integer number unitStepRepeats
+
+    // FOURTH and finally, recompute unitTimeStep with integer number unitStepRepeats
     this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
-    document.getElementById("field_output_field").innerHTML = 'this.unitStepRepeats = ' + this.unitStepRepeats;
+    // document.getElementById("field_output_field").innerHTML = 'this.unitStepRepeats = ' + this.unitStepRepeats;
 
   }, // end of updateUIparams()
 
@@ -493,18 +507,15 @@ var puHeatExchanger = {
     // XXX NEW - start converting to finite difference model from mixing cell in series model
     // this is so we can change axial dispersion while keeping number nodes constant for simple plotting
 
-    var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // cross-sectional area for flow
-    var Uveloc = this.FlowHot / this.FluidDensity / Ax; // linear fluid velocity
+    var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
+    var Uveloc = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
     // XferCoefHot = U * (wall area per unit length = pi * diam * L/L) / (rho * Cp * Ax)
     var XferCoefHot = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / this.CpHot / Ax;
 
     // Disp (m2/s) is axial dispersion coefficient for turbulent flow
-    // for now just use a fixed value
-    // later compute from function of Reynolds number, etc.
-    // XXX need to compute Disp in updateUIparams() because need to adjust
-    // XXX unit time step shorter as dispersion increases
-    var DispHot = 1e-6; // (m2/s), axial dispersion coefficient for turbulent flow
-    var DispCold = 1e-6;
+    // this.DispCoef computed in updateUIparams()
+    var DispHot = this.DispCoef; // (m2/s), axial dispersion coefficient for turbulent flow
+    var DispCold = DispHot;
     var dz = Length / this.numNodes; // (m), distance between nodes
     var UvelocOverDZ = Uveloc / dz; // precompute to save time in loop
     var DispHotOverDZ2 = DispHot / Math.pow(dz, 2);  // precompute to save time in loop
