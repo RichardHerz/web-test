@@ -171,8 +171,7 @@ var puHeatExchanger = {
 
   // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
   // WARNING: numNodes is accessed in process_plot_info.js
-  // WARNING: really should get numNodes from turbulent dispersion and length of tube...
-  numNodes : 100,
+  numNodes : 200,
 
   FluidDensity : 1000.0, // kg/m3, fluid density specified to be that of water
   FluidKinematicViscosity : 5.0e-7, // m2/s, for water at mid-T of 330 K for Reynolds number
@@ -410,19 +409,19 @@ var puHeatExchanger = {
 
     // compute axial dispersion coefficient for turbulent flow
     // Dispersion coefficient correlation for Re > 2000 from Wen & Fan as shown in
-    // https://classes.engineering.wustl.edu/che503/Axial%20Dispersion%20Model%20Figures.pdf 
+    // https://classes.engineering.wustl.edu/che503/Axial%20Dispersion%20Model%20Figures.pdf
     // and
     // https://classes.engineering.wustl.edu/che503/chapter%205.pdf
     var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
-    var Uveloc = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
-    this.DispCoef = Uveloc * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
+    var Veloc = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
+    this.DispCoef = Veloc * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
     // document.getElementById("field_output_field").innerHTML = 'this.DispCoef = ' + this.DispCoef;
 
     // UPDATE UNIT TIME STEP AND UNIT REPEATS
 
     // FIRST, compute spaceTime = residence time between two nodes in hot tube, also
     //                          = space time of equivalent single mixing cell
-    var spaceTime = (Length / this.numNodes) / Uveloc; // (s)
+    var spaceTime = (Length / this.numNodes) / Veloc; // (s)
     // document.getElementById("field_output_field").innerHTML = 'cell residence time = ' + spaceTime;
 
     // SECOND, estimate unitTimeStep
@@ -508,16 +507,17 @@ var puHeatExchanger = {
     // this is so we can change axial dispersion while keeping number nodes constant for simple plotting
 
     var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
-    var Uveloc = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
+    var Veloc = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
     // XferCoefHot = U * (wall area per unit length = pi * diam * L/L) / (rho * Cp * Ax)
     var XferCoefHot = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / this.CpHot / Ax;
 
     // Disp (m2/s) is axial dispersion coefficient for turbulent flow
     // this.DispCoef computed in updateUIparams()
     var DispHot = this.DispCoef; // (m2/s), axial dispersion coefficient for turbulent flow
+    // DispHot = 0.0 // XXX TEST
     var DispCold = DispHot;
     var dz = Length / this.numNodes; // (m), distance between nodes
-    var UvelocOverDZ = Uveloc / dz; // precompute to save time in loop
+    var VelocOverDZ = Veloc / dz; // precompute to save time in loop
     var DispHotOverDZ2 = DispHot / Math.pow(dz, 2);  // precompute to save time in loop
 
     var i = 0; // index for step repeats
@@ -553,10 +553,10 @@ var puHeatExchanger = {
       // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
       // XXX NEW
       ThotNp1 = Thot[n+1];
-      dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+      dThotDT = VelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                     + DispHotOverDZ2 * (Thot[n+1] - 2.0 * Thot[n] + ThotNm1);
 
-      // alert('i, n, UvelocOverDZ*(ThotNm1-ThotN) = ' + i + ', ' + n + ', ' + UvelocOverDZ*(ThotNm1-ThotN));
+      // alert('i, n, VelocOverDZ*(ThotNm1-ThotN) = ' + i + ', ' + n + ', ' + VelocOverDZ*(ThotNm1-ThotN));
       // alert('i, n, XferCoefHot*(TcoldN-ThotN) = ' + i + ', ' + n + ', ' + XferCoefHot*(TcoldN-ThotN));
       // alert('i, n, DispHotOverDZ2 = ' + i + ', ' + n + ', ' + DispHotOverDZ2);
       // alert('i, n, (Thot[n+1] - 2.0 * Thot[n] + Thot[n-1]) = ' + i + ', ' + n + ', ' + (Thot[n+1]- 2.0 * Thot[n] + this.TinHot));
@@ -612,7 +612,7 @@ var puHeatExchanger = {
         // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
         // XXX NEW
         ThotNp1 = Thot[n+1];
-        dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+        dThotDT = VelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                       + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
         switch(this.ModelFlag) {
@@ -663,7 +663,7 @@ var puHeatExchanger = {
       // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
       // XXX NEW
       ThotNp1 = Thot[n]; // SPECIAL - BC at hot end is zero heat flux axially
-      dThotDT = UvelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+      dThotDT = VelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                     + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
       switch(this.ModelFlag) {
