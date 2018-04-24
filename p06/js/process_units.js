@@ -161,10 +161,10 @@ var puHeatExchanger = {
   initialFlowCold : 0.75, // kg/s
   initialCpHot : 4.2, // kJ/kg/K, hot flow heat capacity
   initialCpCold : 4.2, // kJ/kg/K, cold flow heat capacity
-  initialUcoef : 0.0, // kW/m2/K, U, heat transfer coefficient
+  initialUcoef : 0.6, // kW/m2/K, U, heat transfer coefficient
   initialArea : 4.0, // m2, heat transfer surface area
   initialDiam : 0.15, // m, tube diameter
-  initialDispCoef : 1e-6, // (m2/s), axial dispersion coefficient
+  initialDispCoef : 0.0, // (m2/s), axial dispersion coefficient
 
   // define the main variables which will not be plotted or save-copy data
   //   none here
@@ -173,8 +173,10 @@ var puHeatExchanger = {
   // WARNING: numNodes is accessed in process_plot_info.js
   numNodes : 200,
 
-  FluidDensity : 1000.0, // kg/m3, fluid density specified to be that of water
+  // for Reynolds number Re, use kinematic viscosity from
+  // https://www.engineeringtoolbox.com/water-dynamic-kinematic-viscosity-d_596.html?vA=30&units=C#
   FluidKinematicViscosity : 5.0e-7, // m2/s, for water at mid-T of 330 K for Reynolds number
+  FluidDensity : 1000.0, // kg/m3, fluid density specified to be that of water
 
   // XXX WARNING: THESE DO NOT HAVE ANY EFFECT HERE WHEN
   //     THEY ARE ALSO SET IN updateUIparams
@@ -208,6 +210,9 @@ var puHeatExchanger = {
   // },
 
   reset : function() {
+
+    // alert('enter reset function'); // XXX
+
     // On 1st load or reload page, the html file fills the fields with html file
     // values and calls reset, which needs updateUIparams to get values in fields.
     // On click reset button but not reload page, unless do something else here,
@@ -249,9 +254,14 @@ var puHeatExchanger = {
     // then reset it to zero below this line or will get results at this node
     // document.getElementById("dev01").innerHTML = "RESET time = " + simParams.simTime.toFixed(0) + "; y = " + y[0];
 
+    // alert('exit reset function'); // XXX
+
   }, // end reset
 
   updateUIparams : function() {
+
+    // alert('enter updateUIparams function'); // XXX
+
     //
     // SPECIFY REFERENCES TO HTML UI COMPONENTS ABOVE in this unit definition
     //
@@ -402,8 +412,7 @@ var puHeatExchanger = {
     document.getElementById("field_length").innerHTML = 'L (m) = ' + Length.toFixed(1);
     // note use .toFixed(n) method of object to round number to n decimal points
 
-    // for Re, use kinematic viscosity from
-    // https://www.engineeringtoolbox.com/water-dynamic-kinematic-viscosity-d_596.html?vA=30&units=C#
+    // note Re is dimensionless Reynolds number in hot flow tube
     var Re = this.FlowHot / this.FluidDensity / this.FluidKinematicViscosity * 4 / Math.PI / this.Diam;
     document.getElementById("field_Reynolds").innerHTML = 'Re<sub> hot-tube</sub> = ' + Re.toFixed(0);
 
@@ -436,6 +445,8 @@ var puHeatExchanger = {
     // FOURTH and finally, recompute unitTimeStep with integer number unitStepRepeats
     this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
     // document.getElementById("field_output_field").innerHTML = 'this.unitStepRepeats = ' + this.unitStepRepeats;
+
+    // alert('exit updateUIparams function'); // XXX
 
   }, // end of updateUIparams()
 
@@ -479,46 +490,28 @@ var puHeatExchanger = {
     // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; Thot[this.numNodes] = " + Thot[this.numNodes];
     // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; TinCold = " + this.TinCold;
 
-    // from Area and Diam inputs & specify cylindrical tube
+    // from Area and Diam inputs & specify cylindrical tube for hot flow
     // can compute Length and Volume
     var Length = this.Area / this.Diam / Math.PI;
-    var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
-
-    // specify hot and cold volumes equal
-    // these are CELL volumes
-    var Vhot = Volume / this.numNodes;
-    var Vcold = Vhot;
-
-    // compute FlowCoef (1/s) = space velocity = volumetric flow rate / cell volume
-    var hotFlowCoef = this.FlowHot / this.FluidDensity / Vhot;
-    var coldFlowCoef = this.FlowCold / this.FluidDensity / Vcold;
-
-    // document.getElementById("field_output_field").innerHTML = 'cell space velocity = ' + hotFlowCoef.toFixed(3);
-
-    var Acell = this.Area / this.numNodes; // m2, per mixing cell
-
-    // units of XferCoef are (1/s)
-    var hotXferCoef = this.Ucoef * Acell / this.CpHot / Vhot / this.FluidDensity;
-    var coldXferCoef = this.Ucoef * Acell / this.CpCold / Vcold / this.FluidDensity;
-
     var dTmax = 0; // used to check for steady state and set ssFlag
 
-    // XXX NEW - start converting to finite difference model from mixing cell in series model
-    // this is so we can change axial dispersion while keeping number nodes constant for simple plotting
-
+    // XXX check later for different Volume, Ax and Veloc for hot and cold
+    var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
     var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
     var Veloc = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
-    // XferCoefHot = U * (wall area per unit length = pi * diam * L/L) / (rho * Cp * Ax)
-    var XferCoefHot = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / this.CpHot / Ax;
 
+    // note XferCoefHot = U * (wall area per unit length = pi * diam * L/L) / (rho * Cp * Ax)
+    var XferCoefHot = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / this.CpHot / Ax;
+    var XferCoefCold = XferCoefHot; // XXX check later
     // Disp (m2/s) is axial dispersion coefficient for turbulent flow
     // this.DispCoef computed in updateUIparams()
     var DispHot = this.DispCoef; // (m2/s), axial dispersion coefficient for turbulent flow
     // DispHot = 0.0 // XXX TEST
-    var DispCold = DispHot;
+    var DispCold = DispHot; // XXX check later
     var dz = Length / this.numNodes; // (m), distance between nodes
     var VelocOverDZ = Veloc / dz; // precompute to save time in loop
     var DispHotOverDZ2 = DispHot / Math.pow(dz, 2);  // precompute to save time in loop
+    var DispColdOverDZ2 = DispCold / Math.pow(dz, 2);  // precompute to save time in loop
 
     var i = 0; // index for step repeats
     var n = 0; // index for nodes
@@ -529,71 +522,52 @@ var puHeatExchanger = {
     var TcoldNm1 = 0.0;
     var TcoldNp1 = 0.0;
     var dThotDT = 0.0;
+    var dTcoldDT = 0.0;
     var ttempxx = 0.0;
+    var absDT = 0.0;
 
-    // this unit takes multiple steps within one outer main loop repeat step
+    // this unit can take multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
 
       // do node at hot inlet end
       n = 0;
+
       ThotN = Thot[n];
-      ThotNm1 = this.TinHot; // special for n=0 cell, hot inlet
+      ThotNp1 = Thot[n+1];
+      ThotNm1 = this.TinHot; // SPECIAL for n=0 cell, hot inlet
+      dThotDT = VelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+                    + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
       TcoldN = Tcold[n];
       TcoldNp1 = Tcold[n+1];
-      TcoldNm1; // change depending on flow direction
       switch(this.ModelFlag) {
         case 0: // co-current
           TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
+          dTcoldDT = VelocOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+                        + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
         break
         case 1: // counter-current
           TcoldNm1 = Tcold[n]; // special for n=0 cell, cold outlet for counter-current
-      }
-
-      // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
-      // XXX NEW
-      ThotNp1 = Thot[n+1];
-      dThotDT = VelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
-                    + DispHotOverDZ2 * (Thot[n+1] - 2.0 * Thot[n] + ThotNm1);
-
-      // alert('i, n, VelocOverDZ*(ThotNm1-ThotN) = ' + i + ', ' + n + ', ' + VelocOverDZ*(ThotNm1-ThotN));
-      // alert('i, n, XferCoefHot*(TcoldN-ThotN) = ' + i + ', ' + n + ', ' + XferCoefHot*(TcoldN-ThotN));
-      // alert('i, n, DispHotOverDZ2 = ' + i + ', ' + n + ', ' + DispHotOverDZ2);
-      // alert('i, n, (Thot[n+1] - 2.0 * Thot[n] + Thot[n-1]) = ' + i + ', ' + n + ', ' + (Thot[n+1]- 2.0 * Thot[n] + this.TinHot));
-      // alert('i, n, ThotNp1 = ' + i + ', ' + n + ', ' + ThotNp1);
-      // alert('i, n, ThotN = ' + i + ', ' + n + ', ' + ThotN);
-      // alert('i, n, ThotNm1 = ' + i + ', ' + n + ', ' + ThotNm1);
-      // alert('i, n, dThotDT = ' + i + ', ' + n + ', ' + dThotDT);
-
-      // if (isNaN(DispHotOverDZ2*(ThotNp1-2*ThotN+ThotNm1))) {
-      //   dThotDT = Number('0.0');
-      //   document.getElementById("field_output_field").innerHTML = 'i, n, dThotDT was NaN, dThotDT = ' + i + ', ' + n + ', ' + dThotDT;
-      //   return;
-      // }
-
-      var dTcoldDT;
-      switch(this.ModelFlag) {
-        case 0: // co-current
-          dTcoldDT = coldFlowCoef*(TcoldNm1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
-        break
-        case 1: // counter-current
-          dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+          dTcoldDT = VelocOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+                        + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
       }
 
       ThotN = ThotN + dThotDT * this.unitTimeStep;
       TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
-      // XXX NEW
-      if (ThotN > this.TinHot) {ThotN = this.TinHot;}
-      if (ThotN < this.TinCold) {ThotN = this.TinCold;}
-      if (TcoldN > this.TinHot) {TcoldN = this.TinHot;}
-      if (TcoldN < this.TinCold) {TcoldN = this.TinCold;}
+      // CONSTRAIN T's TO BE IN BOUND
+      // can not use TinHot and TinCold because want to be able
+      // to change these in middle of a run
+      if (ThotN > plotsObj[0]['yLeftAxisMax']) {ThotN = plotsObj[0]['yLeftAxisMax'];}
+      if (ThotN < plotsObj[0]['yLeftAxisMin']) {ThotN = plotsObj[0]['yLeftAxisMin'];}
+      if (TcoldN > plotsObj[0]['yLeftAxisMax']) {TcoldN = plotsObj[0]['yLeftAxisMax'];}
+      if (TcoldN < plotsObj[0]['yLeftAxisMin']) {TcoldN = plotsObj[0]['yLeftAxisMin'];}
 
       ThotNew[n] = ThotN;
       TcoldNew[n] = TcoldN;
 
       // check for max change to check for steady state and set ssFlag
-      var absDT = Math.abs(dThotDT);
+      absDT = Math.abs(dThotDT);
       if (absDT > dTmax){dTmax = absDT;}
       absDT = Math.abs(dTcoldDT);
       if (absDT > dTmax){dTmax = absDT;}
@@ -604,32 +578,34 @@ var puHeatExchanger = {
       for (n = 1; n < this.numNodes; n += 1) {
 
         ThotN = Thot[n];
-        ThotNm1 = Thot[n-1];
-        TcoldN = Tcold[n];
-        TcoldNm1 = Tcold[n-1];
-        TcoldNp1 = Tcold[n+1];
-
-        // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
-        // XXX NEW
         ThotNp1 = Thot[n+1];
+        ThotNm1 = Thot[n-1];
         dThotDT = VelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                       + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
+        TcoldN = Tcold[n];
+        TcoldNp1 = Tcold[n+1];
+        TcoldNm1 = Tcold[n-1];
         switch(this.ModelFlag) {
           case 0: // co-current
-            dTcoldDT = coldFlowCoef*(TcoldNm1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+            dTcoldDT = VelocOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+                          + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
           break
           case 1: // counter-current
-            dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+            dTcoldDT = VelocOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+                          + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
         }
 
         ThotN = ThotN + dThotDT * this.unitTimeStep;
         TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
-        if (ThotN > this.TinHot) {ThotN = this.TinHot;}
-        if (ThotN < this.TinCold) {ThotN = this.TinCold;}
-        if (TcoldN > this.TinHot) {TcoldN = this.TinHot;}
-        if (TcoldN < this.TinCold) {TcoldN = this.TinCold;}
+        // CONSTRAIN T's TO BE IN BOUND
+        // can not use TinHot and TinCold because want to be able
+        // to change these in middle of a run
+        if (ThotN > plotsObj[0]['yLeftAxisMax']) {ThotN = plotsObj[0]['yLeftAxisMax'];}
+        if (ThotN < plotsObj[0]['yLeftAxisMin']) {ThotN = plotsObj[0]['yLeftAxisMin'];}
+        if (TcoldN > plotsObj[0]['yLeftAxisMax']) {TcoldN = plotsObj[0]['yLeftAxisMax'];}
+        if (TcoldN < plotsObj[0]['yLeftAxisMin']) {TcoldN = plotsObj[0]['yLeftAxisMin'];}
 
         ThotNew[n] = ThotN;
         TcoldNew[n] = TcoldN;
@@ -648,40 +624,34 @@ var puHeatExchanger = {
 
       ThotN = Thot[n];
       ThotNm1 = Thot[n-1];
-
-      TcoldN = Tcold[n];
-      TcoldNp1; // change depending on flow direction
-      TcoldNm1 = Tcold[n-1];
-      switch(this.ModelFlag) {
-        case 0: // co-current
-          TcoldNp1 = Tcold[n]; // special for n=numNodes cell, cold outlet for co-current
-          break
-        case 1: // counter-current
-          TcoldNp1 = this.TinCold; // special for n=numNodes cell, cold inlet for counter-current
-      }
-
-      // dThotDT = hotFlowCoef*(ThotNm1-ThotN) - hotXferCoef*(ThotN-TcoldN);
-      // XXX NEW
-      // XXX CHECK SS RESULTS FOR ThotNp1 = Thot[n-1] or Thot[n]
-      ThotNp1 = Thot[n-1]; // SPECIAL - BC at hot end is zero heat flux axially
+      ThotNp1 = Thot[n]; // SPECIAL at hot outlet
       dThotDT = VelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                     + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
+      TcoldN = Tcold[n];
+      TcoldNm1 = Tcold[n-1];
       switch(this.ModelFlag) {
         case 0: // co-current
-          dTcoldDT = coldFlowCoef*(TcoldNm1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
-        break
+          TcoldNp1 = Tcold[n]; // SPECIAL for n=numNodes cell, cold outlet for co-current
+          dTcoldDT = VelocOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+                        + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
+          break
         case 1: // counter-current
-          dTcoldDT = coldFlowCoef*(TcoldNp1-TcoldN) - coldXferCoef*(TcoldN-ThotN);
+          TcoldNp1 = this.TinCold; // SPECIAL for n=numNodes cell, cold inlet for counter-current
+          dTcoldDT = VelocOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+                        + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
       }
 
       ThotN = ThotN + dThotDT * this.unitTimeStep;
       TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
-      if (ThotN > this.TinHot) {ThotN = this.TinHot;}
-      if (ThotN < this.TinCold) {ThotN = this.TinCold;}
-      if (TcoldN > this.TinHot) {TcoldN = this.TinHot;}
-      if (TcoldN < this.TinCold) {TcoldN = this.TinCold;}
+      // CONSTRAIN T's TO BE IN BOUND
+      // can not use TinHot and TinCold because want to be able
+      // to change these in middle of a run
+      if (ThotN > plotsObj[0]['yLeftAxisMax']) {ThotN = plotsObj[0]['yLeftAxisMax'];}
+      if (ThotN < plotsObj[0]['yLeftAxisMin']) {ThotN = plotsObj[0]['yLeftAxisMin'];}
+      if (TcoldN > plotsObj[0]['yLeftAxisMax']) {TcoldN = plotsObj[0]['yLeftAxisMax'];}
+      if (TcoldN < plotsObj[0]['yLeftAxisMin']) {TcoldN = plotsObj[0]['yLeftAxisMin'];}
 
       ThotNew[n] = ThotN;
       TcoldNew[n] = TcoldN;
@@ -697,52 +667,36 @@ var puHeatExchanger = {
       // copy new to current
       Thot = ThotNew;
       Tcold = TcoldNew;
-      // for (n = 0; n <= this.numNodes; n += 1) {
-      //   Thot[n] = ThotNew[n];
-      //   Tcold[n] = TcoldNew[n];
-      // }
 
       // check for close approach to steady state
       // check for max change in T for this time step < criterion, e.g., 1.0e-4
-      if (dTmax * this.unitTimeStep < 1.0e-4) {
+      if (dTmax * this.unitTimeStep < 1.0e-1) {
         simParams.ssFlag = true;
         // when ssFlag true will return out of process_main.js functions to save CPU time
         // can be reset to false by updateUIparams and run and reset buttons
       }
 
-    } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
+      document.getElementById("field_output_field").innerHTML = 'dTmax = ' + dTmax;
 
-    // var n = this.numNodes;
-    // document.getElementById("field_output_field").innerHTML = 'n, Thot[n] = ' + n + ', ' + Thot[n];
-    // document.getElementById("field_output_field").innerHTML = 'n, (Thot[n+1] - 2 * Thot[n] + Thot[n-1]) = ' + n + ', ' + (Thot[n+1] - 2 * Thot[n] + Thot[n-1]);
-    // document.getElementById("field_output_field").innerHTML = 'n, (Thot[n-1]) = ' + n + ', ' + (Thot[n-1]);
+    } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 
   }, // end updateState method
 
   display : function() {
 
-    // // display average rate and average conversion
-    // document.getElementById("field_aveRate").innerHTML = this.aveRate.toExponential(3);
-    // document.getElementById("field_aveConversion").innerHTML = this.aveConversion.toFixed(4);
-
     // note use .toFixed(n) method of object to round number to n decimal points
-
-    // document.getElementById("field_output_field").innerHTML = 'Thot[numNodes-1] = ' + Thot[this.numNodes-1];
 
     var n = 0; // used as index
     document.getElementById("field_hot_left_T").innerHTML = Thot[this.numNodes].toFixed(1) + ' K';
-    // document.getElementById("field_hot_left_T").innerHTML = Thot[this.numNodes] + ' K';
     document.getElementById("field_hot_right_T").innerHTML = this.TinHot + ' K';
     switch(this.ModelFlag) {
       case 0: // co-current
         document.getElementById("field_cold_left_T").innerHTML = Tcold[this.numNodes].toFixed(1) + ' K';
-        // document.getElementById("field_cold_left_T").innerHTML = Tcold[this.numNodes] + ' K';
         document.getElementById("field_cold_right_T").innerHTML = this.TinCold + ' K';
         break
       case 1: // counter-current
         document.getElementById("field_cold_left_T").innerHTML = this.TinCold + ' K';
         document.getElementById("field_cold_right_T").innerHTML = Tcold[0].toFixed(1) + ' K';
-        // document.getElementById("field_cold_right_T").innerHTML = Tcold[0] + ' K';
     }
 
     // HANDLE PROFILE PLOT DATA

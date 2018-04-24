@@ -91,7 +91,7 @@
       // DISPLAY TIMING DATA DURING DEVELOPMENT - PERCENT TIME IDLE
       var tIdleTime = 100*(1-elapsedMs/updateMs);
       tIdleTime = Number(tIdleTime).toPrecision(2);
-      document.getElementById("field_output_field").innerHTML = "% idle = " + tIdleTime + "&nbsp;&nbsp;";
+      // document.getElementById("field_output_field").innerHTML = "% idle = " + tIdleTime + "&nbsp;&nbsp;";
       // document.getElementById("dev01").innerHTML = "elapsedMs = " + elapsedMs + "&nbsp;&nbsp;";
 
       // END updateProcess WITH CALL TO ITSELF AFTER updateMs WAIT
