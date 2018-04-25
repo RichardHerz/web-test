@@ -523,11 +523,20 @@ var puHeatExchanger = {
     var TcoldNp1 = 0.0;
     var dThotDT = 0.0;
     var dTcoldDT = 0.0;
-    var ttempxx = 0.0;
     var absDT = 0.0;
+    var dTmax = 0.0;
+
+    var NmaxDThot = 999;
+    var NmaxDTcold = 999;
+    var DThot = 0;
+    var DTcold = 0;
+
 
     // this unit can take multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
+
+      // reset dTmax at top every repeat or get stuck with initial large change
+      dTmax = 0.0;
 
       // do node at hot inlet end
       n = 0;
@@ -568,9 +577,9 @@ var puHeatExchanger = {
 
       // check for max change to check for steady state and set ssFlag
       absDT = Math.abs(dThotDT);
-      if (absDT > dTmax){dTmax = absDT;}
+      if (absDT > dTmax){dTmax = absDT; NmaxDThot = n; DThot = dThotDT;}
       absDT = Math.abs(dTcoldDT);
-      if (absDT > dTmax){dTmax = absDT;}
+      if (absDT > dTmax){dTmax = absDT; NmaxDTcold = n; DTcold = dTcoldDT;}
 
       // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; dThotDT * this.unitTimeStep = " + dThotDT * this.unitTimeStep;
 
@@ -612,9 +621,9 @@ var puHeatExchanger = {
 
         // check for max change to check for steady state and set ssFlag
         absDT = Math.abs(dThotDT);
-        if (absDT > dTmax){dTmax = absDT;}
+        if (absDT > dTmax){dTmax = absDT; NmaxDThot = n; DThot = dThotDT;}
         absDT = Math.abs(dTcoldDT);
-        if (absDT > dTmax){dTmax = absDT;}
+        if (absDT > dTmax){dTmax = absDT; NmaxDTcold = n; DTcold = dTcoldDT;}
 
       } // end repeat through internal nodes
 
@@ -658,9 +667,9 @@ var puHeatExchanger = {
 
       // check for max change to check for steady state and set ssFlag
       absDT = Math.abs(dThotDT);
-      if (absDT > dTmax){dTmax = absDT;}
+      if (absDT > dTmax){dTmax = absDT; NmaxDThot = n; DThot = dThotDT;}
       absDT = Math.abs(dTcoldDT);
-      if (absDT > dTmax){dTmax = absDT;}
+      if (absDT > dTmax){dTmax = absDT; NmaxDTcold = n; DTcold = dTcoldDT;}
 
       // finished updating all nodes
 
@@ -668,15 +677,18 @@ var puHeatExchanger = {
       Thot = ThotNew;
       Tcold = TcoldNew;
 
+      document.getElementById("field_output_field").innerHTML = 'simTime = ' + simParams.simTime
+      + ', dTmax = ' + dTmax + ', dTmax * this.unitTimeStep = ' + dTmax * this.unitTimeStep
+      + ', NmaxDThot = ' + NmaxDThot + ', NmaxDTcold = ' + NmaxDTcold;
+
       // check for close approach to steady state
       // check for max change in T for this time step < criterion, e.g., 1.0e-4
-      if (dTmax * this.unitTimeStep < 1.0e-1) {
+      if (dTmax * this.unitTimeStep < 4.447e-4) {
+        alert('setting simParams.ssFlag to true');
         simParams.ssFlag = true;
         // when ssFlag true will return out of process_main.js functions to save CPU time
         // can be reset to false by updateUIparams and run and reset buttons
       }
-
-      document.getElementById("field_output_field").innerHTML = 'dTmax = ' + dTmax;
 
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 
