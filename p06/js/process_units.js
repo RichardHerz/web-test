@@ -24,6 +24,10 @@ var spaceData = []; // for shifting data in space-time plots
 
 // ----- OBJECT TO CONTAIN & SET SIMULATION & PLOT PARAMETERS ---------
 
+function getState() {
+
+}
+
 var simParams = {
 
   // ssFlag new for process with one unit - rethink for multiple-unit processes
@@ -426,6 +430,8 @@ var puHeatExchanger = {
     this.DispCoef = Veloc * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
     // document.getElementById("field_output_field").innerHTML = 'this.DispCoef = ' + this.DispCoef;
 
+    // alert('residence time = ' + Length / Veloc);
+
     // UPDATE UNIT TIME STEP AND UNIT REPEATS
 
     // FIRST, compute spaceTime = residence time between two nodes in hot tube, also
@@ -531,7 +537,6 @@ var puHeatExchanger = {
     var DThot = 0;
     var DTcold = 0;
 
-
     // this unit can take multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
 
@@ -571,6 +576,7 @@ var puHeatExchanger = {
       if (ThotN < plotsObj[0]['yLeftAxisMin']) {ThotN = plotsObj[0]['yLeftAxisMin'];}
       if (TcoldN > plotsObj[0]['yLeftAxisMax']) {TcoldN = plotsObj[0]['yLeftAxisMax'];}
       if (TcoldN < plotsObj[0]['yLeftAxisMin']) {TcoldN = plotsObj[0]['yLeftAxisMin'];}
+      // XXX maybe change primary location of these values to simParams...?
 
       ThotNew[n] = ThotN;
       TcoldNew[n] = TcoldN;
@@ -681,14 +687,14 @@ var puHeatExchanger = {
       + ', dTmax = ' + dTmax + ', dTmax * this.unitTimeStep = ' + dTmax * this.unitTimeStep
       + ', NmaxDThot = ' + NmaxDThot + ', NmaxDTcold = ' + NmaxDTcold;
 
-      // check for close approach to steady state
-      // check for max change in T for this time step < criterion, e.g., 1.0e-4
-      if (dTmax * this.unitTimeStep < 4.447e-4) {
-        alert('setting simParams.ssFlag to true');
-        simParams.ssFlag = true;
-        // when ssFlag true will return out of process_main.js functions to save CPU time
-        // can be reset to false by updateUIparams and run and reset buttons
-      }
+      // // check for close approach to steady state
+      // // check for max change in T for this time step < criterion, e.g., 1.0e-4
+      // if (dTmax * this.unitTimeStep < 4.447e-4) {
+      //   alert('setting simParams.ssFlag to true');
+      //   simParams.ssFlag = true;
+      //   // when ssFlag true will return out of process_main.js functions to save CPU time
+      //   // can be reset to false by updateUIparams and run and reset buttons
+      // }
 
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 
