@@ -24,10 +24,6 @@ var spaceData = []; // for shifting data in space-time plots
 
 // ----- OBJECT TO CONTAIN & SET SIMULATION & PLOT PARAMETERS ---------
 
-function getState() {
-
-}
-
 var simParams = {
 
   // ssFlag new for process with one unit - rethink for multiple-unit processes
@@ -35,6 +31,8 @@ var simParams = {
   // REDUCES CPU LOAD ONLY when return from top of process_main.js functions
   // updateProcessUnits and updateDisplay but NOT from top of unit functions here
   ssFlag : false, // steady state flag set true when sim reaches steady state
+  oldSimTime : 0, // (s), time at last check for steady state
+  // also see in puHeatExchanger the vars SScheck and residenceTime
 
   runningFlag : false, // set runningFlag to false initially
   runButtonID : "button_runButton", // for functions to run, reset, copy data
@@ -60,9 +58,6 @@ var simParams = {
   updateDisplayTimingMs : 50, // real time milliseconds between display updates
 
   simTime : 0, // (s), time, initialize simulation time, also see resetSimTime
-
-  // XXX NEW for SScheck
-  oldSimTime : 0, // (s), time at last check for steady state 
 
   // LIST ACTIVE PROCESS UNITS
   // processUnits array is the list of names of active process units
@@ -184,8 +179,10 @@ var puHeatExchanger = {
   // https://www.engineeringtoolbox.com/water-dynamic-kinematic-viscosity-d_596.html?vA=30&units=C#
   FluidKinematicViscosity : 5.0e-7, // m2/s, for water at mid-T of 330 K for Reynolds number
   FluidDensity : 1000.0, // kg/m3, fluid density specified to be that of water
-  SScheck : 0, // XXX NEW
-  residenceTime : 0, // XXX NEW
+
+  // also see simParams.ssFlag and simParams.SScheck
+  SScheck : 0, // for saving steady state check number
+  residenceTime : 0, // for timing checks for steady state check
 
   // XXX WARNING: THESE DO NOT HAVE ANY EFFECT HERE WHEN
   //     THEY ARE ALSO SET IN updateUIparams
@@ -442,7 +439,7 @@ var puHeatExchanger = {
     this.DispCoef = Veloc * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
     // document.getElementById("field_output_field").innerHTML = 'this.DispCoef = ' + this.DispCoef;
 
-    // XXX NEW for SScheck
+    // residence time used for timing checks for steady state
     this.residenceTime = Length / Veloc;
 
     // alert('residence time = ' + Length / Veloc);
@@ -514,7 +511,6 @@ var puHeatExchanger = {
     // from Area and Diam inputs & specify cylindrical tube for hot flow
     // can compute Length and Volume
     var Length = this.Area / this.Diam / Math.PI;
-    var dTmax = 0; // used to check for steady state and set ssFlag
 
     // XXX check later for different Volume, Ax and Veloc for hot and cold
     var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
@@ -596,14 +592,6 @@ var puHeatExchanger = {
       ThotNew[n] = ThotN;
       TcoldNew[n] = TcoldN;
 
-      // check for max change to check for steady state and set ssFlag
-      absDT = Math.abs(dThotDT);
-      if (absDT > dTmax){dTmax = absDT; NmaxDThot = n; DThot = dThotDT;}
-      absDT = Math.abs(dTcoldDT);
-      if (absDT > dTmax){dTmax = absDT; NmaxDTcold = n; DTcold = dTcoldDT;}
-
-      // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; dThotDT * this.unitTimeStep = " + dThotDT * this.unitTimeStep;
-
       // internal nodes
       for (n = 1; n < this.numNodes; n += 1) {
 
@@ -639,12 +627,6 @@ var puHeatExchanger = {
 
         ThotNew[n] = ThotN;
         TcoldNew[n] = TcoldN;
-
-        // check for max change to check for steady state and set ssFlag
-        absDT = Math.abs(dThotDT);
-        if (absDT > dTmax){dTmax = absDT; NmaxDThot = n; DThot = dThotDT;}
-        absDT = Math.abs(dTcoldDT);
-        if (absDT > dTmax){dTmax = absDT; NmaxDTcold = n; DTcold = dTcoldDT;}
 
       } // end repeat through internal nodes
 
@@ -686,30 +668,11 @@ var puHeatExchanger = {
       ThotNew[n] = ThotN;
       TcoldNew[n] = TcoldN;
 
-      // check for max change to check for steady state and set ssFlag
-      absDT = Math.abs(dThotDT);
-      if (absDT > dTmax){dTmax = absDT; NmaxDThot = n; DThot = dThotDT;}
-      absDT = Math.abs(dTcoldDT);
-      if (absDT > dTmax){dTmax = absDT; NmaxDTcold = n; DTcold = dTcoldDT;}
-
       // finished updating all nodes
 
       // copy new to current
       Thot = ThotNew;
       Tcold = TcoldNew;
-
-      // document.getElementById("field_output_field").innerHTML = 'simTime = ' + simParams.simTime
-      // + ', dTmax = ' + dTmax + ', dTmax * this.unitTimeStep = ' + dTmax * this.unitTimeStep
-      // + ', NmaxDThot = ' + NmaxDThot + ', NmaxDTcold = ' + NmaxDTcold;
-
-      // // check for close approach to steady state
-      // // check for max change in T for this time step < criterion, e.g., 1.0e-4
-      // if (dTmax * this.unitTimeStep < 4.447e-4) {
-      //   alert('setting simParams.ssFlag to true');
-      //   simParams.ssFlag = true;
-      //   // when ssFlag true will return out of process_main.js functions to save CPU time
-      //   // can be reset to false by updateUIparams and run and reset buttons
-      // }
 
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 

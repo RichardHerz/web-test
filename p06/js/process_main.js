@@ -88,11 +88,10 @@
       elapsedMs = currentMs - startMs;
       updateMs = updateDisplayTimingMs - elapsedMs;
 
-      // DISPLAY TIMING DATA DURING DEVELOPMENT - PERCENT TIME IDLE
-      var tIdleTime = 100*(1-elapsedMs/updateMs);
-      tIdleTime = Number(tIdleTime).toPrecision(2);
+      // // DISPLAY TIMING DATA DURING DEVELOPMENT - PERCENT TIME IDLE
+      // var tIdleTime = 100*(1-elapsedMs/updateMs);
+      // tIdleTime = Number(tIdleTime).toPrecision(2);
       // document.getElementById("field_output_field").innerHTML = "% idle = " + tIdleTime + "&nbsp;&nbsp;";
-      // document.getElementById("dev01").innerHTML = "elapsedMs = " + elapsedMs + "&nbsp;&nbsp;";
 
       // END updateProcess WITH CALL TO ITSELF AFTER updateMs WAIT
       setTimeout(updateProcess, updateMs);  // updateMs
@@ -137,7 +136,7 @@
 
     } // end function fUpdateState
 
-    // XXX NEW - CHECK FOR APPROACH TO STEADY STATE
+    // CHECK FOR APPROACH TO STEADY STATE
 
     if (simParams.simTime >= simParams.oldSimTime + puHeatExchanger.residenceTime) {
       // check for steady state by checking for any significant change in end T's
