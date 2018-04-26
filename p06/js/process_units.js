@@ -435,20 +435,20 @@ var puHeatExchanger = {
     // and
     // https://classes.engineering.wustl.edu/che503/chapter%205.pdf
     var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
-    var Veloc = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
-    this.DispCoef = Veloc * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
+    var VelocHot = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
+    this.DispCoef = VelocHot * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
     // document.getElementById("field_output_field").innerHTML = 'this.DispCoef = ' + this.DispCoef;
 
     // residence time used for timing checks for steady state
-    this.residenceTime = Length / Veloc;
+    this.residenceTime = Length / VelocHot;
 
-    // alert('residence time = ' + Length / Veloc);
+    // alert('residence time = ' + Length / VelocHot);
 
     // UPDATE UNIT TIME STEP AND UNIT REPEATS
 
     // FIRST, compute spaceTime = residence time between two nodes in hot tube, also
     //                          = space time of equivalent single mixing cell
-    var spaceTime = (Length / this.numNodes) / Veloc; // (s)
+    var spaceTime = (Length / this.numNodes) / VelocHot; // (s)
     // document.getElementById("field_output_field").innerHTML = 'cell residence time = ' + spaceTime;
 
     // SECOND, estimate unitTimeStep
@@ -515,18 +515,21 @@ var puHeatExchanger = {
     // XXX check later for different Volume, Ax and Veloc for hot and cold
     var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
     var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
-    var Veloc = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
+    var VelocHot = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
+    // XXX assume cold uses same flow cross-sectional area as hot 
+    var VelocCold = this.FlowCold / this.FluidDensity / Ax; // (m/s), linear fluid velocity
 
     // note XferCoefHot = U * (wall area per unit length = pi * diam * L/L) / (rho * Cp * Ax)
     var XferCoefHot = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / this.CpHot / Ax;
-    var XferCoefCold = XferCoefHot; // XXX check later
+    var XferCoefCold = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / this.CpCold / Ax;
     // Disp (m2/s) is axial dispersion coefficient for turbulent flow
     // this.DispCoef computed in updateUIparams()
     var DispHot = this.DispCoef; // (m2/s), axial dispersion coefficient for turbulent flow
     // DispHot = 0.0 // XXX TEST
     var DispCold = DispHot; // XXX check later
     var dz = Length / this.numNodes; // (m), distance between nodes
-    var VelocOverDZ = Veloc / dz; // precompute to save time in loop
+    var VelocHotOverDZ = VelocHot / dz; // precompute to save time in loop
+    var VelocColdOverDZ = VelocCold / dz; // precompute to save time in loop
     var DispHotOverDZ2 = DispHot / Math.pow(dz, 2);  // precompute to save time in loop
     var DispColdOverDZ2 = DispCold / Math.pow(dz, 2);  // precompute to save time in loop
 
@@ -560,7 +563,7 @@ var puHeatExchanger = {
       ThotN = Thot[n];
       ThotNp1 = Thot[n+1];
       ThotNm1 = this.TinHot; // SPECIAL for n=0 cell, hot inlet
-      dThotDT = VelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+      dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                     + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
       TcoldN = Tcold[n];
@@ -568,12 +571,12 @@ var puHeatExchanger = {
       switch(this.ModelFlag) {
         case 0: // co-current
           TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
-          dTcoldDT = VelocOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+          dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                         + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
         break
         case 1: // counter-current
           TcoldNm1 = Tcold[n]; // special for n=0 cell, cold outlet for counter-current
-          dTcoldDT = VelocOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+          dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                         + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
       }
 
@@ -598,7 +601,7 @@ var puHeatExchanger = {
         ThotN = Thot[n];
         ThotNp1 = Thot[n+1];
         ThotNm1 = Thot[n-1];
-        dThotDT = VelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+        dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                       + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
         TcoldN = Tcold[n];
@@ -606,11 +609,11 @@ var puHeatExchanger = {
         TcoldNm1 = Tcold[n-1];
         switch(this.ModelFlag) {
           case 0: // co-current
-            dTcoldDT = VelocOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+            dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                           + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
           break
           case 1: // counter-current
-            dTcoldDT = VelocOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+            dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                           + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
         }
 
@@ -637,7 +640,7 @@ var puHeatExchanger = {
       ThotN = Thot[n];
       ThotNm1 = Thot[n-1];
       ThotNp1 = Thot[n]; // SPECIAL at hot outlet
-      dThotDT = VelocOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
+      dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                     + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
       TcoldN = Tcold[n];
@@ -645,12 +648,12 @@ var puHeatExchanger = {
       switch(this.ModelFlag) {
         case 0: // co-current
           TcoldNp1 = Tcold[n]; // SPECIAL for n=numNodes cell, cold outlet for co-current
-          dTcoldDT = VelocOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+          dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                         + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
           break
         case 1: // counter-current
           TcoldNp1 = this.TinCold; // SPECIAL for n=numNodes cell, cold inlet for counter-current
-          dTcoldDT = VelocOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
+          dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                         + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
       }
 
