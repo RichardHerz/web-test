@@ -61,6 +61,9 @@ var simParams = {
 
   simTime : 0, // (s), time, initialize simulation time, also see resetSimTime
 
+  // XXX NEW for SScheck
+  oldSimTime : 0, // (s), time at last check for steady state 
+
   // LIST ACTIVE PROCESS UNITS
   // processUnits array is the list of names of active process units
   // the order of units in the list is not important
@@ -181,6 +184,8 @@ var puHeatExchanger = {
   // https://www.engineeringtoolbox.com/water-dynamic-kinematic-viscosity-d_596.html?vA=30&units=C#
   FluidKinematicViscosity : 5.0e-7, // m2/s, for water at mid-T of 330 K for Reynolds number
   FluidDensity : 1000.0, // kg/m3, fluid density specified to be that of water
+  SScheck : 0, // XXX NEW
+  residenceTime : 0, // XXX NEW
 
   // XXX WARNING: THESE DO NOT HAVE ANY EFFECT HERE WHEN
   //     THEY ARE ALSO SET IN updateUIparams
@@ -226,6 +231,9 @@ var puHeatExchanger = {
 
     // this.command.value = this.initialCommand;
     // this.errorIntegral = this.initialErrorIntegral;
+
+    simParams.ssFlag = false;
+    this.SScheck = 0;
 
     for (k = 0; k <= this.numNodes; k += 1) {
       Thot[k] = this.initialTinCold;
@@ -274,8 +282,8 @@ var puHeatExchanger = {
     // The following IF structures provide for unit independence
     // such that when input doesn't exist, you get "initial" value
     //
-    // EXAMPLE FOR SETTING VALUE OF AN OBJECT WITH MULTIPLE properties
-    //   THUS set value of this.setPoint.value
+    // // EXAMPLE FOR SETTING VALUE OF AN OBJECT WITH MULTIPLE properties
+    // //   THUS set value of this.setPoint.value
     // if (document.getElementById(this.inputSetPoint)) {
     //   let tmpFunc = new Function("return " + this.inputSetPoint + ".value;");
     //   this.setPoint.value = tmpFunc();
@@ -283,7 +291,7 @@ var puHeatExchanger = {
     //   this.setPoint.value = this.initialSetPoint;
     // }
     //
-    // EXAMPLE SETTING VALUE OF SIMPLE VARIABLE (no .value = )
+    // // EXAMPLE SETTING VALUE OF SIMPLE VARIABLE (no .value = )
     // if (document.getElementById(this.inputCmax)) {
     //   let tmpFunc = new Function("return " + this.inputCmax + ".value;");
     //   this.Cmax = tmpFunc();
@@ -291,7 +299,7 @@ var puHeatExchanger = {
     //   this.Cmax= this.initialCmax;
     // }
     //
-    // EXAMPLE OF SETTING VALUE FROM RANGE SLIDER
+    // // EXAMPLE OF SETTING VALUE FROM RANGE SLIDER
     // // update the readout field of range slider
     // if (document.getElementById(this.inputSliderReadout)) {
     //   document.getElementById(this.inputSliderReadout).innerHTML = this.Cmax;
@@ -301,6 +309,8 @@ var puHeatExchanger = {
       // sim was at steady state, switch ssFlag to false
       simParams.ssFlag = false;
     }
+    // reset SScheck checksum used to check for ss
+    this.SScheck = 0;
 
     // RADIO BUTTONS & CHECK BOX
     // at least for now, do not check existence of UI elements
@@ -326,6 +336,7 @@ var puHeatExchanger = {
       let tmpFunc = new Function("return " + this.inputTinHot + ".value;");
       this.TinHot = tmpFunc();
       this.TinHot = Number(this.TinHot); // force any string to number
+      this.TinHot = this.TinHot;
     } else {
       this.TinHot = this.initialTinHot;
     }
@@ -334,6 +345,7 @@ var puHeatExchanger = {
       let tmpFunc = new Function("return " + this.inputTinCold + ".value;");
       this.TinCold = tmpFunc();
       this.TinCold = Number(this.TinCold); // force any string to number
+      this.TinCold = this.TinCold;
     } else {
       this.TinCold = this.initialTinCold;
     }
@@ -429,6 +441,9 @@ var puHeatExchanger = {
     var Veloc = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
     this.DispCoef = Veloc * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
     // document.getElementById("field_output_field").innerHTML = 'this.DispCoef = ' + this.DispCoef;
+
+    // XXX NEW for SScheck
+    this.residenceTime = Length / Veloc;
 
     // alert('residence time = ' + Length / Veloc);
 
@@ -683,9 +698,9 @@ var puHeatExchanger = {
       Thot = ThotNew;
       Tcold = TcoldNew;
 
-      document.getElementById("field_output_field").innerHTML = 'simTime = ' + simParams.simTime
-      + ', dTmax = ' + dTmax + ', dTmax * this.unitTimeStep = ' + dTmax * this.unitTimeStep
-      + ', NmaxDThot = ' + NmaxDThot + ', NmaxDTcold = ' + NmaxDTcold;
+      // document.getElementById("field_output_field").innerHTML = 'simTime = ' + simParams.simTime
+      // + ', dTmax = ' + dTmax + ', dTmax * this.unitTimeStep = ' + dTmax * this.unitTimeStep
+      // + ', NmaxDThot = ' + NmaxDThot + ', NmaxDTcold = ' + NmaxDTcold;
 
       // // check for close approach to steady state
       // // check for max change in T for this time step < criterion, e.g., 1.0e-4

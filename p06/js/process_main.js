@@ -137,6 +137,41 @@
 
     } // end function fUpdateState
 
+    // XXX NEW - CHECK FOR APPROACH TO STEADY STATE
+
+    if (simParams.simTime >= simParams.oldSimTime + puHeatExchanger.residenceTime) {
+      // check for steady state by checking for any significant change in end T's
+      // but wait at least one hot flow residence time after the previous check
+      // to allow changes to propagate down tubes
+      // XXX is hot flow residence time a sufficient time constant?
+      // create SScheck which is a 16-digit number unique to current 4 end T's
+      // NOTE: earlier try of checking for max change in dThotDT & dTcoldDT < criterion
+      // in puHeatExchanger.updateState() was not successful
+      // since those values appeared to settle down to different non-zero values
+      // that didn't appear to change with time for different input values
+      var nn = puHeatExchanger.numNodes;
+      // Thot and Tcold arrays are globals
+      var hlt = 1.0e5 * Thot[nn].toFixed(1);
+      var hrt = 1.0e1 * Thot[0].toFixed(1);
+      var clt = 1.0e-3 * Tcold[nn].toFixed(1);
+      var crt = 1.0e-7 * Tcold[0].toFixed(1);
+      var SScheck = hlt + hrt + clt  + crt;
+      SScheck = SScheck.toFixed(8); // need because last operation adds significant figs
+      // note SScheck = hlt0hrt0.clt0crt0 << 16 digits, 4 each for 4 end T's
+      var oldSScheck = puHeatExchanger.SScheck;
+      if (SScheck == oldSScheck) {
+        // set ssFlag
+        simParams.ssFlag = true;
+      }
+
+      document.getElementById("field_output_field").innerHTML = 'simTime = ' + simParams.simTime
+            + '<br>oldSScheck = ' + oldSScheck + '<br>_--SScheck = ' + SScheck + ', ssFlag = ' + simParams.ssFlag;
+
+      // save current values as the old values
+      puHeatExchanger.SScheck = SScheck;
+      simParams.oldSimTime = simParams.simTime;
+    } // END OF if (simParams.simTime >= simParams.oldSimTime + puHeatExchanger.residenceTime)
+
   } // END OF updateProcessUnits
 
   function updateDisplay(resetFlag) {

@@ -49,12 +49,29 @@ canvas {
   display: none;
 }
 
+#div_page_header {
+  display: block;
+  position: relative;
+  border-color: DodgerBlue;
+  left: 7px;
+  width: 368px;
+  height: 80px;
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: dotted;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
 #field_output_field {
   position: absolute;
   left: 0px;
   top: 0px;
-  width: 620px;
-  height: 62px;
+  width: 368px;
+  height: 80px;
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
@@ -71,9 +88,10 @@ canvas {
   position: relative;
   border-color: DodgerBlue;
   left: 7px;
-  top: 41px;
+  /* top: 61px; */
   width: 368px;
-  height: 375px;
+  /* height: 375px; */
+  height: 340px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
