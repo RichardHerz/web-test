@@ -1,2 +1,0 @@
-  plotsObj[0]['plotLegendShow'] = 0;  // Boolean, '' or 0 for no show, 1 or "show"
-  plotsObj[0]['plotGridBgColor'] = 'white';
