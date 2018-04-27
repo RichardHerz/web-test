@@ -174,6 +174,11 @@ var puHeatExchanger = {
   // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
   // WARNING: numNodes is accessed in process_plot_info.js
   numNodes : 200,
+  // 20180427: discrepancy between steady-state Qcold and Qhot (from Qcold/Qhot)
+  // from array end values
+  // is 1.19% for 200 nodes, 0.97% for 400, 0.88% for 600 nodes, 0.85% for 800 nodes
+  // but shows same output T's to one decimal place for 200-800 nodes
+  // ??? how does spaceTime canvas handle more points than pixel width?
 
   // for Reynolds number Re, use kinematic viscosity from
   // https://www.engineeringtoolbox.com/water-dynamic-kinematic-viscosity-d_596.html?vA=30&units=C#
