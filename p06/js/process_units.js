@@ -516,7 +516,7 @@ var puHeatExchanger = {
     var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
     var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
     var VelocHot = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
-    // XXX assume cold uses same flow cross-sectional area as hot 
+    // XXX assume cold uses same flow cross-sectional area as hot
     var VelocCold = this.FlowCold / this.FluidDensity / Ax; // (m/s), linear fluid velocity
 
     // note XferCoefHot = U * (wall area per unit length = pi * diam * L/L) / (rho * Cp * Ax)
@@ -680,6 +680,32 @@ var puHeatExchanger = {
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 
   }, // end updateState method
+
+  checkSSvalues : function() {
+    // Q = U*A*(dT2 - dT1)/log(dT2/dT1) FOR dT1 != dT2 (or get log = inf)
+    // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
+    var nn = puHeatExchanger.numNodes;
+    // Thot and Tcold arrays are globals
+    var hlt = Thot[nn]; // outlet hot
+    var hrt = Thot[0]; // inlet hot
+    var clt = Tcold[nn];
+    var crt = Tcold[0];
+    var dT1 = hrt - crt;
+    var dT2 = hlt - clt;
+    if (dT1 == dT2) {
+      alert('dT1 == dT2');
+      return;
+    }
+    var RHS = this.Ucoef * this.Area * (dT2 - dT1) / Math.log(dT2/dT1); // kJ/s = kW
+    var Qhot = (hrt - hlt) * this.FlowHot * this.CpHot; // kJ/s = kW
+    alert('Qhot = RHS: ' + Qhot + ' = ' + RHS);
+    // getting about 2.5% discrepancy that increases somewhat as
+    // the two dT's approach same values...
+    // similar discrepancy using inlet & outlet display values
+    var Qcold = (crt - clt) * this.FlowCold * this.CpCold;
+    alert('Qhot = Qcold: ' + Qhot + ' = '+ Math.abs(Qcold)); // abs for co- or counter-
+    // got about 1% discrepancy in Q's using either array ends or display values
+  },
 
   display : function() {
 

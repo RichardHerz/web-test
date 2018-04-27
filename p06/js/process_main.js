@@ -148,6 +148,7 @@
       // in puHeatExchanger.updateState() was not successful
       // since those values appeared to settle down to different non-zero values
       // that didn't appear to change with time for different input values
+      // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
       var nn = puHeatExchanger.numNodes;
       // Thot and Tcold arrays are globals
       var hlt = 1.0e5 * Thot[nn].toFixed(1);
@@ -155,12 +156,13 @@
       var clt = 1.0e-3 * Tcold[nn].toFixed(1);
       var crt = 1.0e-7 * Tcold[0].toFixed(1);
       var SScheck = hlt + hrt + clt  + crt;
-      SScheck = SScheck.toFixed(8); // need because last operation adds significant figs
+      SScheck = SScheck.toFixed(8); // need because last sum operation adds significant figs
       // note SScheck = hlt0hrt0.clt0crt0 << 16 digits, 4 each for 4 end T's
       var oldSScheck = puHeatExchanger.SScheck;
       if (SScheck == oldSScheck) {
         // set ssFlag
         simParams.ssFlag = true;
+        puHeatExchanger.checkSSvalues();
       }
 
       document.getElementById("field_output_field").innerHTML = 'simTime = ' + simParams.simTime
