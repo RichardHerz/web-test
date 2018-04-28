@@ -142,7 +142,7 @@
       // check for steady state by checking for any significant change in end T's
       // but wait at least one hot flow residence time after the previous check
       // to allow changes to propagate down tubes
-      // XXX is hot flow residence time a sufficient time constant?
+      // XXX is hot flow residence time a sufficient time constant - or check cold flow?
       // create SScheck which is a 16-digit number unique to current 4 end T's
       // NOTE: earlier try of checking for max change in dThotDT & dTcoldDT < criterion
       // in puHeatExchanger.updateState() was not successful

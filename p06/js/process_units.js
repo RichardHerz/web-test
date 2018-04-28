@@ -530,7 +530,7 @@ var puHeatExchanger = {
     // Disp (m2/s) is axial dispersion coefficient for turbulent flow
     // this.DispCoef computed in updateUIparams()
     var DispHot = this.DispCoef; // (m2/s), axial dispersion coefficient for turbulent flow
-    // DispHot = 0.0 // XXX TEST
+    // DispHot = 0.0 // FOR TESTING
     var DispCold = DispHot; // XXX check later
     var dz = Length / this.numNodes; // (m), distance between nodes
     var VelocHotOverDZ = VelocHot / dz; // precompute to save time in loop
@@ -581,6 +581,7 @@ var puHeatExchanger = {
         break
         case 1: // counter-current
           TcoldNm1 = Tcold[n]; // special for n=0 cell, cold outlet for counter-current
+          // TcoldNm1 = Tcold[n+1]; // XXX ALT SPECIAL for n=0 cell, cold outlet for counter-current - BUT get worse SS results
           dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                         + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
       }
@@ -645,6 +646,7 @@ var puHeatExchanger = {
       ThotN = Thot[n];
       ThotNm1 = Thot[n-1];
       ThotNp1 = Thot[n]; // SPECIAL at hot outlet
+      // ThotNp1 = Thot[n-1]; // XXX ALT SPECIAL at hot outlet - BUT get worse SS results
       dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                     + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
@@ -653,6 +655,7 @@ var puHeatExchanger = {
       switch(this.ModelFlag) {
         case 0: // co-current
           TcoldNp1 = Tcold[n]; // SPECIAL for n=numNodes cell, cold outlet for co-current
+          // TcoldNp1 = Tcold[n-1]; // XXX ALT SPECIAL for n=numNodes cell, cold outlet for co-current - BUT get worse SS results
           dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                         + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
           break
@@ -701,15 +704,31 @@ var puHeatExchanger = {
       alert('dT1 == dT2');
       return;
     }
-    var RHS = this.Ucoef * this.Area * (dT2 - dT1) / Math.log(dT2/dT1); // kJ/s = kW
+    var tRHS = this.Ucoef * this.Area * (dT2 - dT1) / Math.log(dT2/dT1); // kJ/s = kW
     var Qhot = (hrt - hlt) * this.FlowHot * this.CpHot; // kJ/s = kW
-    alert('Qhot = RHS: ' + Qhot + ' = ' + RHS);
     // getting about 2.5% discrepancy that increases somewhat as
     // the two dT's approach same values...
     // similar discrepancy using inlet & outlet display values
-    var Qcold = (crt - clt) * this.FlowCold * this.CpCold;
-    alert('Qhot = Qcold: ' + Qhot + ' = '+ Math.abs(Qcold)); // abs for co- or counter-
-    // got about 1% discrepancy in Q's using either array ends or display values
+    var Qcold = Math.abs((crt - clt) * this.FlowCold * this.CpCold); // abs for co- or counter-
+    var discrep = 100*(tRHS/Qhot-1);
+    var discrep2 = 100*(Qcold/Qhot-1);
+    alert('Qhot = RHS: ' + Qhot + ' = ' + tRHS + ', discrepancy = ' + discrep.toFixed(3) + ' %');
+    alert('Qhot = Qcold: ' + Qhot + ' = '+ Qcold + ', discrepancy = ' + discrep2.toFixed(3) + ' %');
+    //
+    // Fhot = 0.5, Fcold = 0.75, both Cp = 4.2, U = 0.6, A = 4, TinHot = 360,
+    // TinCold = 310, counter-current
+    // with dispersion using end array values got 2.6% in Qhot vs RHS and 1.2% in Qcold/Qhot
+    // with dispersion using end display values got 2.4% in Qhot vs RHS and 0.8% in Qcold/Qhot
+    // withOUT dispersion using end array values got 0.4% in Qhot vs RHS and 0.4% in Qcold/Qhot
+    // withOUT dispersion using end display values got 0.5% in Qhot vs RHS and 0.1% in Qcold/Qhot
+    //
+    // change ends with dispersion to "true" zero-flux BC (symm about end array values)
+    //    with dispersion using end array values got 2.9% in Qhot vs RHS and 1.3% in Qcold/Qhot
+    //    with dispersion using display values got same as above 2.4% and 0.8% (same readings)
+    //    so more error using disp with "true" zero-flux BC
+    //
+    // what about use dispersion during transient then switch to zero disp as approach SS?
+    // gives change in display values when switch then they return to same display values
   },
 
   display : function() {
