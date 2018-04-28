@@ -174,8 +174,8 @@ var puHeatExchanger = {
   // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
   // WARNING: numNodes is accessed in process_plot_info.js
   numNodes : 200,
-  // 20180427: discrepancy between steady-state Qcold and Qhot (from Qcold/Qhot)
-  // from array end values
+  // NOTE 20180427: discrepancy between steady-state Qcold and Qhot (from Qcold/Qhot)
+  // from array end values with dispersion
   // is 1.19% for 200 nodes, 0.97% for 400, 0.88% for 600 nodes, 0.85% for 800 nodes
   // but shows same output T's to one decimal place for 200-800 nodes
   // ??? how does spaceTime canvas handle more points than pixel width?
@@ -513,7 +513,7 @@ var puHeatExchanger = {
     // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; Thot[this.numNodes] = " + Thot[this.numNodes];
     // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; TinCold = " + this.TinCold;
 
-    // from Area and Diam inputs & specify cylindrical tube for hot flow
+    // from cylindrical outer Area and Diam inputs & specify cylindrical tube for hot flow
     // can compute Length and Volume
     var Length = this.Area / this.Diam / Math.PI;
 
@@ -548,19 +548,9 @@ var puHeatExchanger = {
     var TcoldNp1 = 0.0;
     var dThotDT = 0.0;
     var dTcoldDT = 0.0;
-    var absDT = 0.0;
-    var dTmax = 0.0;
-
-    var NmaxDThot = 999;
-    var NmaxDTcold = 999;
-    var DThot = 0;
-    var DTcold = 0;
 
     // this unit can take multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
-
-      // reset dTmax at top every repeat or get stuck with initial large change
-      dTmax = 0.0;
 
       // do node at hot inlet end
       n = 0;
@@ -571,6 +561,9 @@ var puHeatExchanger = {
       dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                     + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
+      // XXX TEST NO DISPERSION AT ENDS
+      dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN);
+
       TcoldN = Tcold[n];
       TcoldNp1 = Tcold[n+1];
       switch(this.ModelFlag) {
@@ -578,12 +571,19 @@ var puHeatExchanger = {
           TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
           dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                         + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
+
+          // XXX TEST NO DISPERSION AT ENDS
+          dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
+
         break
         case 1: // counter-current
           TcoldNm1 = Tcold[n]; // special for n=0 cell, cold outlet for counter-current
           // TcoldNm1 = Tcold[n+1]; // XXX ALT SPECIAL for n=0 cell, cold outlet for counter-current - BUT get worse SS results
           dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                         + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
+
+          // XXX TEST NO DISPERSION AT ENDS
+          dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
       }
 
       ThotN = ThotN + dThotDT * this.unitTimeStep;
@@ -650,6 +650,9 @@ var puHeatExchanger = {
       dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                     + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
+      // XXX TEST NO DISPERSION AT ENDS
+      dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN);
+
       TcoldN = Tcold[n];
       TcoldNm1 = Tcold[n-1];
       switch(this.ModelFlag) {
@@ -658,11 +661,19 @@ var puHeatExchanger = {
           // TcoldNp1 = Tcold[n-1]; // XXX ALT SPECIAL for n=numNodes cell, cold outlet for co-current - BUT get worse SS results
           dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                         + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
+
+          // XXX TEST NO DISPERSION AT ENDS
+          dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
+
           break
         case 1: // counter-current
           TcoldNp1 = this.TinCold; // SPECIAL for n=numNodes cell, cold inlet for counter-current
           dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
                         + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
+
+          // XXX TEST NO DISPERSION AT ENDS
+          dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
+
       }
 
       ThotN = ThotN + dThotDT * this.unitTimeStep;
@@ -711,9 +722,11 @@ var puHeatExchanger = {
     // similar discrepancy using inlet & outlet display values
     var Qcold = Math.abs((crt - clt) * this.FlowCold * this.CpCold); // abs for co- or counter-
     var discrep = 100*(tRHS/Qhot-1);
-    var discrep2 = 100*(Qcold/Qhot-1);
+    var discrep2 = 100*(tRHS/Qcold-1);
+    var discrep3 = 100*(Qcold/Qhot-1);
     alert('Qhot = RHS: ' + Qhot + ' = ' + tRHS + ', discrepancy = ' + discrep.toFixed(3) + ' %');
-    alert('Qhot = Qcold: ' + Qhot + ' = '+ Qcold + ', discrepancy = ' + discrep2.toFixed(3) + ' %');
+    alert('Qcold = RHS: ' + Qcold + ' = ' + tRHS + ', discrepancy = ' + discrep2.toFixed(3) + ' %');
+    alert('Qhot = Qcold: ' + Qhot + ' = '+ Qcold + ', discrepancy = ' + discrep3.toFixed(3) + ' %');
     //
     // NOTE that "no dispersion" with this finite diff model becomes same math as mixing
     // cells in series, so there is actual dispersion since number nodes = number cells
@@ -724,7 +737,7 @@ var puHeatExchanger = {
     // to approximate expected turbulent dispersion at default conditions and to be
     // not too bad in range of allowed input values (flows, tube diam, length(area))
     //
-    // experiment conditions 
+    // experiment conditions
     // Fhot = 0.5, Fcold = 0.75, both Cp = 4.2, U = 0.6, A = 4, TinHot = 360,
     // TinCold = 310, counter-current
     //
@@ -745,7 +758,19 @@ var puHeatExchanger = {
     //    so more error using disp with "true" zero-flux BC
     //
     // what about use dispersion during transient then switch to zero disp as approach SS?
-    // gives change in display values when switch then they return to same display values
+    // BAD - gives change in display values when switch then they return to same bad display values
+    //
+    // TURN OFF DISPERSION on both hot and cold at both ends (leave in middle) and get less error
+    // using array ends: Qh vs. RHS 0.78%, Qc vs. RHS 0.27%, Qh vs Qc 1.06%
+    // display values for both outlets (331.0 & 329.4) 0.1 K higher than with no dispersion
+    // using display values (not array end) for error check get
+    // Qh vs. RHS 0.49% (0.50% no disp), Qc vs. RHS 0.15% (0.61% no disp), Qh vs Qc 0.34% (0.10% no disp)
+    // so no disp at ends but disp in middle is better than full disp and about same as no disp
+    // and using display fields to compute RHS, Qhot and Qcold get same values to within 1 kW
+    // (+/- 0.2 kW) with no disp at ends vs. no disp at all
+    //
+    // (array ends: no disp Qh vs. RHS 0.38%, Qc vs. RHS 0.01%, Qh vs Qc 0.39%; 330.9 & 329.3)
+    // (array ends: full disp Qh vs. RHS 2.57%, Qc vs. RHS 1.38%, Qh vs Qc 1.18%; 331.3 & 329.3)
   },
 
   display : function() {
