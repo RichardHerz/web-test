@@ -720,6 +720,10 @@ var puHeatExchanger = {
     // difference is that can add additioal dispersion in finite diff model to
     // without need to change number mixing cells (nodes)
     //
+    // maybe choose number nodes with zero additional finite diff dispersion
+    // to approximate expected turbulent dispersion at default conditions and to be
+    // not too bad in range of allowed input values (flows, tube diam, length(area))
+    //
     // Fhot = 0.5, Fcold = 0.75, both Cp = 4.2, U = 0.6, A = 4, TinHot = 360,
     // TinCold = 310, counter-current
     // with dispersion using end array values got 2.6% in Qhot vs RHS and 1.2% in Qcold/Qhot
