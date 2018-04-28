@@ -724,8 +724,16 @@ var puHeatExchanger = {
     // to approximate expected turbulent dispersion at default conditions and to be
     // not too bad in range of allowed input values (flows, tube diam, length(area))
     //
+    // experiment conditions 
     // Fhot = 0.5, Fcold = 0.75, both Cp = 4.2, U = 0.6, A = 4, TinHot = 360,
     // TinCold = 310, counter-current
+    //
+    // display values same with and w/o dispersion except Hot out was
+    // was 331.3 with disp and 330.9 w/o dispersion
+    // w/ disp HOT (331.3 < 360) COLD (310 > 329.3)
+    // w/o disp HOT (330.9 < 360) COLD (310 > 329.3)
+    // XXX SO DOUBLE-CHECK HOT EQUATIONS
+    //
     // with dispersion using end array values got 2.6% in Qhot vs RHS and 1.2% in Qcold/Qhot
     // with dispersion using end display values got 2.4% in Qhot vs RHS and 0.8% in Qcold/Qhot
     // withOUT dispersion using end array values got 0.4% in Qhot vs RHS and 0.4% in Qcold/Qhot
