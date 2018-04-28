@@ -715,6 +715,11 @@ var puHeatExchanger = {
     alert('Qhot = RHS: ' + Qhot + ' = ' + tRHS + ', discrepancy = ' + discrep.toFixed(3) + ' %');
     alert('Qhot = Qcold: ' + Qhot + ' = '+ Qcold + ', discrepancy = ' + discrep2.toFixed(3) + ' %');
     //
+    // NOTE that "no dispersion" with this finite diff model becomes same math as mixing
+    // cells in series, so there is actual dispersion since number nodes = number cells
+    // difference is that can add additioal dispersion in finite diff model to
+    // without need to change number mixing cells (nodes)
+    //
     // Fhot = 0.5, Fcold = 0.75, both Cp = 4.2, U = 0.6, A = 4, TinHot = 360,
     // TinCold = 310, counter-current
     // with dispersion using end array values got 2.6% in Qhot vs RHS and 1.2% in Qcold/Qhot
