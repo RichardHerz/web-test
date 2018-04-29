@@ -44,6 +44,8 @@
 <body>
 <div id="div_page_header">
   <p id="field_output_field">
+    This is a simulation of a heat exchanger consisting of a tube within a tube.
+    Change an input value, then hit the enter/return key or click out of the input field.
   </p>
 </div> <!-- end of div div_page_header -->
 <div id="div_simFrame">
@@ -95,39 +97,39 @@
       </label>
    </div> <!-- end of div div_radio_button_group -->
    <p id="field_TinHot_label">
-      T in hot (K)
+      T in hot (300-380 K)
    </p>
    <input id="input_field_TinHot" value="360" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_TinCold_label">
-      T in cold (K)
+      T in cold (300-380 K)
    </p>
    <input id="input_field_TinCold" value="310" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_FlowHot_label">
-      Flow hot (kg/s)
+      Flow hot (0.15-4 kg/s)
    </p>
    <input id="input_field_FlowHot" value="0.5" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_FlowCold_label">
-      Flow cold (kg/s)
+      Flow cold (0.15-4 kg/s)
    </p>
    <input id="input_field_FlowCold" value="0.75" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_CpHot_label">
-      Cp hot (kJ/kg/K)
+      Cp hot (1-10 kJ/kg/K)
    </p>
    <input id="input_field_CpHot" value="4.2" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_CpCold_label">
-      Cp cold (kJ/kg/K)
+      Cp cold (1-10 kJ/kg/K)
    </p>
    <input id="input_field_CpCold" value="4.2" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_Ucoef_label">
-      U coefficient (kW/m<sup shift="-4">2</sup>/K)
+      U (0-10 kW/m<sup shift="-4">2</sup>/K)
    </p>
    <input id="input_field_Ucoef" value="0.6" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_Area_label">
-      heat transfer Area (m<sup shift="-4">2</sup>)
+      Area (1-10 m<sup shift="-4">2</sup>)
    </p>
    <input id="input_field_Area" value="4.0" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_diam_label">
-      tube diameter (m)
+      tube diam (0.05-0.28 m)
    </p>
    <input id="input_field_diam" value="0.15" onchange="puHeatExchanger.updateUIparams()">
    <p id="field_length">

@@ -152,6 +152,7 @@ var puHeatExchanger = {
   // AND INCREASE step repeats BY SAME FACTOR IF WANT SAME SIM TIME BETWEEN
   // DISPLAY UPDATES
 
+  // ADD INITIAL - DEFAULT VALUES FOR INPUTS
   // define "initialVarName" values for reset function and
   // so that this process unit will run if units that supply inputs and
   // html inputs are not present in order to make units more independent
@@ -167,6 +168,30 @@ var puHeatExchanger = {
   initialArea : 4.0, // m2, heat transfer surface area
   initialDiam : 0.15, // m, tube diameter
   initialDispCoef : 0.0, // (m2/s), axial dispersion coefficient
+
+  // SET MIN AND MAX FOR INPUTS
+  // here set range so solution stable when only one variable changed in
+  // min-max range at default conditions
+
+  minTinHot : 300.0, // K, hot T in
+  minTinCold : 300.0, // K, cold T in
+  minFlowHot : 0.15, // kg/s
+  minFlowCold : 0.15, // kg/s
+  minCpHot : 1, // kJ/kg/K, hot flow heat capacity
+  minCpCold : 1, // kJ/kg/K, cold flow heat capacity
+  minUcoef : 0.0, // kW/m2/K, U, heat transfer coefficient, allow zero min
+  minArea : 1, // m2, heat transfer surface area
+  minDiam : 0.05, // m, tube diameter
+
+  maxTinHot : 380.0, // K, hot T in
+  maxTinCold : 380.0, // K, cold T in
+  maxFlowHot : 4, // kg/s
+  maxFlowCold : 4, // kg/s
+  maxCpHot : 10, // kJ/kg/K, hot flow heat capacity
+  maxCpCold : 10, // kJ/kg/K, cold flow heat capacity
+  maxUcoef : 10, // kW/m2/K, U, heat transfer coefficient
+  maxArea : 10, // m2, heat transfer surface area
+  maxDiam : 0.28, // m, tube diameter
 
   // define the main variables which will not be plotted or save-copy data
   //   none here
@@ -338,7 +363,9 @@ var puHeatExchanger = {
       let tmpFunc = new Function("return " + this.inputTinHot + ".value;");
       this.TinHot = tmpFunc();
       this.TinHot = Number(this.TinHot); // force any string to number
-      this.TinHot = this.TinHot;
+      if (this.TinHot > this.maxTinHot) {this.TinHot = this.maxTinHot;}
+      if (this.TinHot < this.minTinHot) {this.TinHot = this.minTinHot;}
+      document.getElementById(this.inputTinHot).value = this.TinHot;
     } else {
       this.TinHot = this.initialTinHot;
     }
@@ -347,7 +374,9 @@ var puHeatExchanger = {
       let tmpFunc = new Function("return " + this.inputTinCold + ".value;");
       this.TinCold = tmpFunc();
       this.TinCold = Number(this.TinCold); // force any string to number
-      this.TinCold = this.TinCold;
+      if (this.TinCold > this.maxTinCold) {this.TinCold = this.maxTinCold;}
+      if (this.TinCold < this.minTinCold) {this.TinCold = this.minTinCold;}
+      document.getElementById(this.inputTinCold).value = this.TinCold;
     } else {
       this.TinCold = this.initialTinCold;
     }
@@ -356,6 +385,9 @@ var puHeatExchanger = {
       let tmpFunc = new Function("return " + this.inputFlowHot + ".value;");
       this.FlowHot = tmpFunc();
       this.FlowHot = Number(this.FlowHot); // force any string to number
+      if (this.FlowHot > this.maxFlowHot) {this.FlowHot = this.maxFlowHot;}
+      if (this.FlowHot < this.minFlowHot) {this.FlowHot = this.minFlowHot;}
+      document.getElementById(this.inputFlowHot).value = this.FlowHot;
     } else {
       this.FlowHot = this.initialFlowHot;
     }
@@ -364,6 +396,9 @@ var puHeatExchanger = {
       let tmpFunc = new Function("return " + this.inputFlowCold + ".value;");
       this.FlowCold = tmpFunc();
       this.FlowCold = Number(this.FlowCold); // force any string to number
+      if (this.FlowCold > this.maxFlowCold) {this.FlowCold = this.maxFlowCold;}
+      if (this.FlowCold < this.minFlowCold) {this.FlowCold = this.minFlowCold;}
+      document.getElementById(this.inputFlowCold).value = this.FlowCold;
     } else {
       this.FlowCold = this.initialFlowCold;
     }
@@ -372,6 +407,9 @@ var puHeatExchanger = {
       let tmpFunc = new Function("return " + this.inputCpHot + ".value;");
       this.CpHot = tmpFunc();
       this.CpHot = Number(this.CpHot); // force any string to number
+      if (this.CpHot > this.maxCpHot) {this.CpHot = this.maxCpHot;}
+      if (this.CpHot < this.minCpHot) {this.CpHot = this.minCpHot;}
+      document.getElementById(this.inputCpHot).value = this.CpHot;
     } else {
       this.CpHot = this.initialCpHot;
     }
@@ -380,6 +418,9 @@ var puHeatExchanger = {
       let tmpFunc = new Function("return " + this.inputCpCold + ".value;");
       this.CpCold = tmpFunc();
       this.CpCold = Number(this.CpCold); // force any string to number
+      if (this.CpCold > this.maxCpCold) {this.CpCold = this.maxCpCold;}
+      if (this.CpCold < this.minCpCold) {this.CpCold = this.minCpCold;}
+      document.getElementById(this.inputCpCold).value = this.CpCold;
     } else {
       this.CpCold = this.initialCpCold;
     }
@@ -388,6 +429,9 @@ var puHeatExchanger = {
       let tmpFunc = new Function("return " + this.inputUcoef+ ".value;");
       this.Ucoef= tmpFunc();
       this.Ucoef = Number(this.Ucoef); // force any string to number
+      if (this.Ucoef > this.maxUcoef) {this.Ucoef = this.maxUcoef;}
+      if (this.Ucoef < this.minUcoef) {this.Ucoef = this.minUcoef;}
+      document.getElementById(this.inputUcoef).value = this.Ucoef;
     } else {
       this.Ucoef= this.initialUcoef;
     }
@@ -396,6 +440,9 @@ var puHeatExchanger = {
       let tmpFunc = new Function("return " + this.inputArea + ".value;");
       this.Area = tmpFunc();
       this.Area = Number(this.Area); // force any string to number
+      if (this.Area > this.maxArea) {this.Area = this.maxArea;}
+      if (this.Area < this.minArea) {this.Area = this.minArea;}
+      document.getElementById(this.inputArea).value = this.Area;
     } else {
       this.Area = this.initialArea;
     }
@@ -404,6 +451,9 @@ var puHeatExchanger = {
       let tmpFunc = new Function("return " + this.inputDiam + ".value;");
       this.Diam = tmpFunc();
       this.Diam = Number(this.Diam ); // force any string to number
+      if (this.Diam > this.maxDiam) {this.Diam = this.maxDiam;}
+      if (this.Diam < this.minDiam) {this.Diam = this.minDiam;}
+      document.getElementById(this.inputDiam).value = this.Diam;
     } else {
       this.Diam = this.initialDiam;
     }
@@ -468,8 +518,6 @@ var puHeatExchanger = {
     // FOURTH and finally, recompute unitTimeStep with integer number unitStepRepeats
     this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
     // document.getElementById("field_output_field").innerHTML = 'this.unitStepRepeats = ' + this.unitStepRepeats;
-
-    // alert('exit updateUIparams function'); // XXX
 
   }, // end of updateUIparams()
 
@@ -555,34 +603,20 @@ var puHeatExchanger = {
       // do node at hot inlet end
       n = 0;
 
-      ThotN = Thot[n];
-      ThotNp1 = Thot[n+1];
-      ThotNm1 = this.TinHot; // SPECIAL for n=0 cell, hot inlet
-      dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
-                    + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
+      // get better steady-state energy balances with no dispersion at ends
 
-      // XXX TEST NO DISPERSION AT ENDS
+      ThotN = Thot[n];
+      ThotNm1 = this.TinHot; // SPECIAL for n=0 cell, hot inlet
       dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN);
 
       TcoldN = Tcold[n];
+      TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
       TcoldNp1 = Tcold[n+1];
       switch(this.ModelFlag) {
         case 0: // co-current
-          TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
-          dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
-                        + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
-
-          // XXX TEST NO DISPERSION AT ENDS
           dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
-
         break
         case 1: // counter-current
-          TcoldNm1 = Tcold[n]; // special for n=0 cell, cold outlet for counter-current
-          // TcoldNm1 = Tcold[n+1]; // XXX ALT SPECIAL for n=0 cell, cold outlet for counter-current - BUT get worse SS results
-          dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
-                        + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
-
-          // XXX TEST NO DISPERSION AT ENDS
           dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
       }
 
@@ -604,15 +638,17 @@ var puHeatExchanger = {
       // internal nodes
       for (n = 1; n < this.numNodes; n += 1) {
 
+        // internal nodes include dispersion terms
+
         ThotN = Thot[n];
-        ThotNp1 = Thot[n+1];
         ThotNm1 = Thot[n-1];
+        ThotNp1 = Thot[n+1];
         dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                       + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
         TcoldN = Tcold[n];
-        TcoldNp1 = Tcold[n+1];
         TcoldNm1 = Tcold[n-1];
+        TcoldNp1 = Tcold[n+1];
         switch(this.ModelFlag) {
           case 0: // co-current
             dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
@@ -643,37 +679,21 @@ var puHeatExchanger = {
 
       n = this.numNodes;
 
+      // get better steady-state energy balances with no dispersion at ends
+
       ThotN = Thot[n];
       ThotNm1 = Thot[n-1];
-      ThotNp1 = Thot[n]; // SPECIAL at hot outlet
-      // ThotNp1 = Thot[n-1]; // XXX ALT SPECIAL at hot outlet - BUT get worse SS results
-      dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
-                    + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
-
-      // XXX TEST NO DISPERSION AT ENDS
       dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN);
 
       TcoldN = Tcold[n];
       TcoldNm1 = Tcold[n-1];
+      TcoldNp1 = this.TinCold; // SPECIAL for n=numNodes cell, cold inlet for counter-current
       switch(this.ModelFlag) {
         case 0: // co-current
-          TcoldNp1 = Tcold[n]; // SPECIAL for n=numNodes cell, cold outlet for co-current
-          // TcoldNp1 = Tcold[n-1]; // XXX ALT SPECIAL for n=numNodes cell, cold outlet for co-current - BUT get worse SS results
-          dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
-                        + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
-
-          // XXX TEST NO DISPERSION AT ENDS
           dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
-
           break
         case 1: // counter-current
-          TcoldNp1 = this.TinCold; // SPECIAL for n=numNodes cell, cold inlet for counter-current
-          dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
-                        + DispColdOverDZ2 * (TcoldNp1 - 2.0 * TcoldN + TcoldNm1);
-
-          // XXX TEST NO DISPERSION AT ENDS
           dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
-
       }
 
       ThotN = ThotN + dThotDT * this.unitTimeStep;

@@ -139,6 +139,7 @@
     // CHECK FOR APPROACH TO STEADY STATE
 
     if (simParams.simTime >= simParams.oldSimTime + puHeatExchanger.residenceTime) {
+      // check in order to save CPU time when sim is at steady state
       // check for steady state by checking for any significant change in end T's
       // but wait at least one hot flow residence time after the previous check
       // to allow changes to propagate down tubes
@@ -162,11 +163,15 @@
       if (SScheck == oldSScheck) {
         // set ssFlag
         simParams.ssFlag = true;
-        puHeatExchanger.checkSSvalues();
-      }
 
-      document.getElementById("field_output_field").innerHTML = 'simTime = ' + simParams.simTime
-            + '<br>oldSScheck = ' + oldSScheck + '<br>_--SScheck = ' + SScheck + ', ssFlag = ' + simParams.ssFlag;
+              // // ACTIVATE FOR TESTING
+        // puHeatExchanger.checkSSvalues();
+
+      } // end if (SScheck == oldSScheck) 
+
+      // // ACTIVATE FOR TESTING
+      // document.getElementById("field_output_field").innerHTML = 'simTime = ' + simParams.simTime
+      //       + '<br>oldSScheck = ' + oldSScheck + '<br>_--SScheck = ' + SScheck + ', ssFlag = ' + simParams.ssFlag;
 
       // save current values as the old values
       puHeatExchanger.SScheck = SScheck;
