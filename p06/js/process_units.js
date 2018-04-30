@@ -31,7 +31,7 @@ var simParams = {
   // REDUCES CPU LOAD ONLY when return from top of process_main.js functions
   // updateProcessUnits and updateDisplay but NOT from top of unit functions here
   ssFlag : false, // steady state flag set true when sim reaches steady state
-  oldSimTime : 0, // (s), time at last check for steady state
+  // also see below in simParams the var oldSimTime
   // also see in puHeatExchanger the vars SScheck and residenceTime
 
   runningFlag : false, // set runningFlag to false initially
@@ -58,6 +58,7 @@ var simParams = {
   updateDisplayTimingMs : 50, // real time milliseconds between display updates
 
   simTime : 0, // (s), time, initialize simulation time, also see resetSimTime
+  oldSimTime : 0, // (s), used to check for steady state
 
   // LIST ACTIVE PROCESS UNITS
   // processUnits array is the list of names of active process units
@@ -104,7 +105,47 @@ var simParams = {
     // WARNING: do not change simTimeStep except immediately before or after a
     // display update in order to maintain sync between sim time and real time
     this.simTimeStep = factor * this.simTimeStep;
-  }
+  },
+
+  checkForSteadyState : function() {
+    // also see puHeatExchanger.checkSSvalues() for energy balance at SS 
+    if (this.simTime >= this.oldSimTime + puHeatExchanger.residenceTime) {
+      // check in order to save CPU time when sim is at steady state
+      // check for steady state by checking for any significant change in end T's
+      // but wait at least one hot flow residence time after the previous check
+      // to allow changes to propagate down tubes
+      // XXX is hot flow residence time a sufficient time constant - or check cold flow?
+      // create SScheck which is a 16-digit number unique to current 4 end T's
+      // NOTE: earlier try of checking for max change in dThotDT & dTcoldDT < criterion
+      // in puHeatExchanger.updateState() was not successful
+      // since those values appeared to settle down to different non-zero values
+      // that didn't appear to change with time for different input values
+      // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
+      var nn = puHeatExchanger.numNodes;
+      // Thot and Tcold arrays are globals
+      var hlt = 1.0e5 * Thot[nn].toFixed(1);
+      var hrt = 1.0e1 * Thot[0].toFixed(1);
+      var clt = 1.0e-3 * Tcold[nn].toFixed(1);
+      var crt = 1.0e-7 * Tcold[0].toFixed(1);
+      var SScheck = hlt + hrt + clt  + crt;
+      SScheck = SScheck.toFixed(8); // need because last sum operation adds significant figs
+      // note SScheck = hlt0hrt0.clt0crt0 << 16 digits, 4 each for 4 end T's
+      var oldSScheck = puHeatExchanger.SScheck;
+      if (SScheck == oldSScheck) {
+        // set ssFlag
+        simParams.ssFlag = true;
+      } // end if (SScheck == oldSScheck)
+
+      // // ACTIVATE FOR TESTING
+      // document.getElementById("field_output_field").innerHTML = 'simTime = ' + simParams.simTime
+      //       + '<br>oldSScheck = ' + oldSScheck + '<br>_--SScheck = ' + SScheck + ', ssFlag = ' + simParams.ssFlag;
+
+      // save current values as the old values
+      puHeatExchanger.SScheck = SScheck;
+      simParams.oldSimTime = simParams.simTime;
+    } // END OF if (simParams.simTime >= simParams.oldSimTime + puHeatExchanger.residenceTime)
+
+  } // END OF checkForSteadyState()
 
 }; // END var simParams
 
@@ -668,6 +709,7 @@ var puHeatExchanger = {
   }, // end updateState method
 
   checkSSvalues : function() {
+    // CHECK FOR ENERGY BALANCE ACROSS HEAT EXCHANGER AT STEADY STATE
     // Q = U*A*(dT2 - dT1)/log(dT2/dT1) FOR dT1 != dT2 (or get log = inf)
     // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
     var nn = puHeatExchanger.numNodes;
