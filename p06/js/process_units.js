@@ -152,6 +152,11 @@ var puHeatExchanger = {
   // AND INCREASE step repeats BY SAME FACTOR IF WANT SAME SIM TIME BETWEEN
   // DISPLAY UPDATES
 
+  // WARNING: the function getInputValue() below called by updateUIparams()
+  // requires a specific naming convention
+  // for the initial, min and max for each variable
+  // e.g., TinHot requires initialTinHot, minTinHot, maxTinHot
+
   // ADD INITIAL - DEFAULT VALUES FOR INPUTS
   // define "initialVarName" values for reset function and
   // so that this process unit will run if units that supply inputs and
@@ -359,32 +364,16 @@ var puHeatExchanger = {
       cla.innerHTML = '&rarr;';
     }
 
-    this.TinHot = this.getInputValue(this.inputTinHot,
-      this.TinHot, this.initialTinHot, this.minTinHot, this.maxTinHot);
-
-    this.TinCold = this.getInputValue(this.inputTinCold,
-      this.TinCold, this.initialTinCold, this.minTinCold, this.maxTinCold);
-
-    this.FlowHot = this.getInputValue(this.inputFlowHot,
-      this.FlowHot, this.initialFlowHot, this.minFlowHot, this.maxFlowHot);
-
-    this.FlowCold = this.getInputValue(this.inputFlowCold,
-      this.FlowCold, this.initialFlowCold, this.minFlowCold, this.maxFlowCold);
-
-    this.CpHot = this.getInputValue(this.inputCpHot,
-      this.CpHot, this.initialCpHot, this.minCpHot, this.maxCpHot);
-
-    this.CpCold = this.getInputValue(this.inputCpCold,
-      this.CpCold, this.initialCpCold, this.minCpCold, this.maxCpCold);
-
-    this.Ucoef = this.getInputValue(this.inputUcoef,
-      this.Ucoef, this.initialUcoef, this.minUcoef, this.maxUcoef);
-
-    this.Area = this.getInputValue(this.inputArea,
-      this.Area, this.initialArea, this.minArea, this.maxArea);
-
-    this.Diam = this.getInputValue(this.inputDiam,
-      this.Diam, this.initialDiam, this.minDiam, this.maxDiam);
+    // check input fields for new values
+    this.TinHot = this.getInputValue('TinHot', this.inputTinHot);
+    this.TinCold = this.getInputValue('TinCold', this.inputTinCold);
+    this.FlowHot = this.getInputValue('FlowHot', this.inputFlowHot);
+    this.FlowCold = this.getInputValue('FlowCold', this.inputFlowCold);
+    this.CpHot = this.getInputValue('CpHot', this.inputCpHot);
+    this.CpCold = this.getInputValue('CpCold', this.inputCpCold);
+    this.Ucoef = this.getInputValue('Ucoef', this.inputUcoef);
+    this.Area = this.getInputValue('Area', this.inputArea);
+    this.Diam = this.getInputValue('Diam', this.inputDiam);
 
     // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
     // outlet T's not defined on first entry into page
@@ -449,20 +438,35 @@ var puHeatExchanger = {
 
   }, // end of updateUIparams()
 
-  getInputValue : function(inputID, varName, initialVarName, varMin, varMax) {
-    if (document.getElementById(inputID)) {
-      let tmpFunc = new Function("return " + inputID + ".value;");
+  getInputValue : function(pVarName, pInputID) {
+    // pInputID is specified separately, e.g., this.inputTinHot = 'input_field_TinHot'
+    // requires specific naming convention for input variables
+    // next generate the initial, min and max variable names as strings from pVarName
+    var varInitialString = 'this.initial' + pVarName;
+    var varMaxString = 'this.max' + pVarName;
+    var varMinString = 'this.min' + pVarName;
+    // then need to get the numeric values associated with the strings
+    var varInitial = eval(varInitialString);
+    var varMax = eval(varMaxString);
+    var varMin = eval(varMinString);
+    // finally get the contents of the input and handle
+    if (document.getElementById(pInputID)) {
+      // the input exists so get the value and make sure it is within range
+      let tmpFunc = new Function("return " + pInputID + ".value;");
       varName = tmpFunc();
       varName = Number(varName); // force any number as string to numeric number
-      if (isNaN(varName)) {varName = initialVarName;} // handle e.g., 259x, xxx 
-      if (varName > varMax) {varName = varMax;}
+      if (isNaN(varName)) {varName = varInitial;} // handle e.g., 259x, xxx
       if (varName < varMin) {varName = varMin;}
-      document.getElementById(inputID).value = varName;
+      if (varName > varMax) {varName = varMax;}
+      document.getElementById(pInputID).value = varName;
     } else {
-      varName = initialVarName;
+      // this 'else' is in case there is no input on the web page yet
+      // in order to allow for independence and portability of this
+      // process unit
+      varName = varInitial;
     }
     return varName
-  }, // end of getInputValues()
+  }, // end of getInputValue()
 
   updateInputs : function() {
     //
