@@ -359,113 +359,32 @@ var puHeatExchanger = {
       cla.innerHTML = '&rarr;';
     }
 
-    if (document.getElementById(this.inputTinHot)) {
-      let tmpFunc = new Function("return " + this.inputTinHot + ".value;");
-      this.TinHot = tmpFunc();
-      this.TinHot = Number(this.TinHot); // force any string to number
-      if (isNaN(this.TinHot)) {this.TinHot = this.initialTinHot;}
-      if (this.TinHot > this.maxTinHot) {this.TinHot = this.maxTinHot;}
-      if (this.TinHot < this.minTinHot) {this.TinHot = this.minTinHot;}
-      document.getElementById(this.inputTinHot).value = this.TinHot;
-    } else {
-      this.TinHot = this.initialTinHot;
-    }
+    this.TinHot = this.getInputValue(this.inputTinHot,
+      this.TinHot, this.initialTinHot, this.minTinHot, this.maxTinHot);
 
-    if (document.getElementById(this.inputTinCold)) {
-      let tmpFunc = new Function("return " + this.inputTinCold + ".value;");
-      this.TinCold = tmpFunc();
-      this.TinCold = Number(this.TinCold); // force any string to number
-      if (isNaN(this.TinCold)) {this.TinCold = this.initialTinCold;}
-      if (this.TinCold > this.maxTinCold) {this.TinCold = this.maxTinCold;}
-      if (this.TinCold < this.minTinCold) {this.TinCold = this.minTinCold;}
-      document.getElementById(this.inputTinCold).value = this.TinCold;
-    } else {
-      this.TinCold = this.initialTinCold;
-    }
+    this.TinCold = this.getInputValue(this.inputTinCold,
+      this.TinCold, this.initialTinCold, this.minTinCold, this.maxTinCold);
 
-    if (document.getElementById(this.inputFlowHot)) {
-      let tmpFunc = new Function("return " + this.inputFlowHot + ".value;");
-      this.FlowHot = tmpFunc();
-      this.FlowHot = Number(this.FlowHot); // force any string to number
-      if (isNaN(this.FlowHot)) {this.FlowHot = this.initialFlowHot;}
-      if (this.FlowHot > this.maxFlowHot) {this.FlowHot = this.maxFlowHot;}
-      if (this.FlowHot < this.minFlowHot) {this.FlowHot = this.minFlowHot;}
-      document.getElementById(this.inputFlowHot).value = this.FlowHot;
-    } else {
-      this.FlowHot = this.initialFlowHot;
-    }
+    this.FlowHot = this.getInputValue(this.inputFlowHot,
+      this.FlowHot, this.initialFlowHot, this.minFlowHot, this.maxFlowHot);
 
-    if (document.getElementById(this.inputFlowCold)) {
-      let tmpFunc = new Function("return " + this.inputFlowCold + ".value;");
-      this.FlowCold = tmpFunc();
-      this.FlowCold = Number(this.FlowCold); // force any string to number
-      if (isNaN(this.FlowCold)) {this.FlowCold = this.initialFlowCold;}
-      if (this.FlowCold > this.maxFlowCold) {this.FlowCold = this.maxFlowCold;}
-      if (this.FlowCold < this.minFlowCold) {this.FlowCold = this.minFlowCold;}
-      document.getElementById(this.inputFlowCold).value = this.FlowCold;
-    } else {
-      this.FlowCold = this.initialFlowCold;
-    }
+    this.FlowCold = this.getInputValue(this.inputFlowCold,
+      this.FlowCold, this.initialFlowCold, this.minFlowCold, this.maxFlowCold);
 
-    if (document.getElementById(this.inputCpHot)) {
-      let tmpFunc = new Function("return " + this.inputCpHot + ".value;");
-      this.CpHot = tmpFunc();
-      this.CpHot = Number(this.CpHot); // force any string to number
-      if (isNaN(this.CpHot)) {this.CpHot = this.initialCpHot;}
-      if (this.CpHot > this.maxCpHot) {this.CpHot = this.maxCpHot;}
-      if (this.CpHot < this.minCpHot) {this.CpHot = this.minCpHot;}
-      document.getElementById(this.inputCpHot).value = this.CpHot;
-    } else {
-      this.CpHot = this.initialCpHot;
-    }
+    this.CpHot = this.getInputValue(this.inputCpHot,
+      this.CpHot, this.initialCpHot, this.minCpHot, this.maxCpHot);
 
-    if (document.getElementById(this.inputCpCold)) {
-      let tmpFunc = new Function("return " + this.inputCpCold + ".value;");
-      this.CpCold = tmpFunc();
-      this.CpCold = Number(this.CpCold); // force any string to number
-      if (isNaN(this.CpCold)) {this.CpCold = this.initialCpCold;}
-      if (this.CpCold > this.maxCpCold) {this.CpCold = this.maxCpCold;}
-      if (this.CpCold < this.minCpCold) {this.CpCold = this.minCpCold;}
-      document.getElementById(this.inputCpCold).value = this.CpCold;
-    } else {
-      this.CpCold = this.initialCpCold;
-    }
+    this.CpCold = this.getInputValue(this.inputCpCold,
+      this.CpCold, this.initialCpCold, this.minCpCold, this.maxCpCold);
 
-    if (document.getElementById(this.inputUcoef)) {
-      let tmpFunc = new Function("return " + this.inputUcoef+ ".value;");
-      this.Ucoef= tmpFunc();
-      this.Ucoef = Number(this.Ucoef); // force any string to number
-      if (isNaN(this.Ucoef)) {this.Ucoef = this.initialUcoef;}
-      if (this.Ucoef > this.maxUcoef) {this.Ucoef = this.maxUcoef;}
-      if (this.Ucoef < this.minUcoef) {this.Ucoef = this.minUcoef;}
-      document.getElementById(this.inputUcoef).value = this.Ucoef;
-    } else {
-      this.Ucoef= this.initialUcoef;
-    }
+    this.Ucoef = this.getInputValue(this.inputUcoef,
+      this.Ucoef, this.initialUcoef, this.minUcoef, this.maxUcoef);
 
-    if (document.getElementById(this.inputArea)) {
-      let tmpFunc = new Function("return " + this.inputArea + ".value;");
-      this.Area = tmpFunc();
-      this.Area = Number(this.Area); // force any string to number
-      if (isNaN(this.Area)) {this.Area = this.initialArea;}
-      if (this.Area > this.maxArea) {this.Area = this.maxArea;}
-      if (this.Area < this.minArea) {this.Area = this.minArea;}
-      document.getElementById(this.inputArea).value = this.Area;
-    } else {
-      this.Area = this.initialArea;
-    }
+    this.Area = this.getInputValue(this.inputArea,
+      this.Area, this.initialArea, this.minArea, this.maxArea);
 
-    if (document.getElementById(this.inputDiam)) {
-      let tmpFunc = new Function("return " + this.inputDiam + ".value;");
-      this.Diam = tmpFunc();
-      this.Diam = Number(this.Diam ); // force any string to number
-      if (isNaN(this.Diam)) {this.Diam = this.initialDiam;}
-      if (this.Diam > this.maxDiam) {this.Diam = this.maxDiam;}
-      if (this.Diam < this.minDiam) {this.Diam = this.minDiam;}
-      document.getElementById(this.inputDiam).value = this.Diam;
-    } else {
-      this.Diam = this.initialDiam;
-    }
+    this.Diam = this.getInputValue(this.inputDiam,
+      this.Diam, this.initialDiam, this.minDiam, this.maxDiam);
 
     // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
     // outlet T's not defined on first entry into page
@@ -529,6 +448,21 @@ var puHeatExchanger = {
     // document.getElementById("field_output_field").innerHTML = 'this.unitStepRepeats = ' + this.unitStepRepeats;
 
   }, // end of updateUIparams()
+
+  getInputValue : function(inputID, varName, initialVarName, varMin, varMax) {
+    if (document.getElementById(inputID)) {
+      let tmpFunc = new Function("return " + inputID + ".value;");
+      varName = tmpFunc();
+      varName = Number(varName); // force any number as string to numeric number
+      if (isNaN(varName)) {varName = initialVarName;} // handle e.g., 259x, xxx 
+      if (varName > varMax) {varName = varMax;}
+      if (varName < varMin) {varName = varMin;}
+      document.getElementById(inputID).value = varName;
+    } else {
+      varName = initialVarName;
+    }
+    return varName
+  }, // end of getInputValues()
 
   updateInputs : function() {
     //
