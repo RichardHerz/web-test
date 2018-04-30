@@ -53,7 +53,7 @@ canvas {
   display: block;
   position: relative;
   border-color: DodgerBlue;
-  left: 7px;
+  left: 5px;
   width: 368px;
   height: 80px;
   visibility: visible;
@@ -87,7 +87,7 @@ canvas {
   display: block;
   position: relative;
   border-color: DodgerBlue;
-  left: 7px;
+  left: 5px;
   /* top: 61px; */
   width: 368px;
   /* height: 375px; */
@@ -325,7 +325,7 @@ canvas {
   display: block;
   position: relative;
   border-color: DodgerBlue;
-  left: 14px;
+  left: 12px;
   /* top: 358px; */
   width: 285px;
   height: 271px;
