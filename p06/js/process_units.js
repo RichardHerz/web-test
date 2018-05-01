@@ -108,7 +108,7 @@ var simParams = {
   },
 
   checkForSteadyState : function() {
-    // also see puHeatExchanger.checkSSvalues() for energy balance at SS 
+    // also see puHeatExchanger.checkSSvalues() for energy balance at SS
     if (this.simTime >= this.oldSimTime + puHeatExchanger.residenceTime) {
       // check in order to save CPU time when sim is at steady state
       // check for steady state by checking for any significant change in end T's
@@ -167,6 +167,10 @@ var puHeatExchanger = {
   //   none
   // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
   //   e.g., inputModel01 : "radio_Model_1",
+  // WARNING: the function getInputValue() below called by updateUIparams()
+  // requires a specific naming convention
+  // for the input ID, and initial, min and max values for each variable
+  // e.g., TinHot requires inputTinHot, initialTinHot, minTinHot, maxTinHot
   inputModel00 : "radio_co-current_flow", // model 0 is co-current flow
   inputModel01 : "radio_counter-current_flow", // model 1 is counter-current flow
   inputTinHot : "input_field_TinHot", // K, hot T in
@@ -192,11 +196,6 @@ var puHeatExchanger = {
   // REDUCE size of time steps FOR NUMERICAL STABILITY BY SQUARE OF THE FACTOR
   // AND INCREASE step repeats BY SAME FACTOR IF WANT SAME SIM TIME BETWEEN
   // DISPLAY UPDATES
-
-  // WARNING: the function getInputValue() below called by updateUIparams()
-  // requires a specific naming convention
-  // for the initial, min and max for each variable
-  // e.g., TinHot requires initialTinHot, minTinHot, maxTinHot
 
   // ADD INITIAL - DEFAULT VALUES FOR INPUTS
   // define "initialVarName" values for reset function and
@@ -406,15 +405,15 @@ var puHeatExchanger = {
     }
 
     // check input fields for new values
-    this.TinHot = this.getInputValue('TinHot', this.inputTinHot);
-    this.TinCold = this.getInputValue('TinCold', this.inputTinCold);
-    this.FlowHot = this.getInputValue('FlowHot', this.inputFlowHot);
-    this.FlowCold = this.getInputValue('FlowCold', this.inputFlowCold);
-    this.CpHot = this.getInputValue('CpHot', this.inputCpHot);
-    this.CpCold = this.getInputValue('CpCold', this.inputCpCold);
-    this.Ucoef = this.getInputValue('Ucoef', this.inputUcoef);
-    this.Area = this.getInputValue('Area', this.inputArea);
-    this.Diam = this.getInputValue('Diam', this.inputDiam);
+    this.TinHot = this.getInputValue('TinHot');
+    this.TinCold = this.getInputValue('TinCold');
+    this.FlowHot = this.getInputValue('FlowHot');
+    this.FlowCold = this.getInputValue('FlowCold');
+    this.CpHot = this.getInputValue('CpHot');
+    this.CpCold = this.getInputValue('CpCold');
+    this.Ucoef = this.getInputValue('Ucoef');
+    this.Area = this.getInputValue('Area');
+    this.Diam = this.getInputValue('Diam');
 
     // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
     // outlet T's not defined on first entry into page
@@ -455,8 +454,6 @@ var puHeatExchanger = {
     // residence time used for timing checks for steady state
     this.residenceTime = Length / VelocHot;
 
-    // alert('residence time = ' + Length / VelocHot);
-
     // UPDATE UNIT TIME STEP AND UNIT REPEATS
 
     // FIRST, compute spaceTime = residence time between two nodes in hot tube, also
@@ -479,27 +476,28 @@ var puHeatExchanger = {
 
   }, // end of updateUIparams()
 
-  getInputValue : function(pVarName, pInputID) {
-    // pInputID is specified separately, e.g., this.inputTinHot = 'input_field_TinHot'
+  getInputValue : function(pVarName) {
     // requires specific naming convention for input variables
-    // next generate the initial, min and max variable names as strings from pVarName
+    // first, generate the initial, min and max variable names as strings from pVarName
+    var varInputIDstring = 'this.input' + pVarName;
     var varInitialString = 'this.initial' + pVarName;
     var varMaxString = 'this.max' + pVarName;
     var varMinString = 'this.min' + pVarName;
-    // then need to get the numeric values associated with the strings
+    // then need to get the values associated with the strings
+    var varInputID = eval(varInputIDstring);
     var varInitial = eval(varInitialString);
     var varMax = eval(varMaxString);
     var varMin = eval(varMinString);
-    // finally get the contents of the input and handle
-    if (document.getElementById(pInputID)) {
+    // second, get the contents of the input and handle
+    if (document.getElementById(varInputID)) {
       // the input exists so get the value and make sure it is within range
-      let tmpFunc = new Function("return " + pInputID + ".value;");
+      let tmpFunc = new Function("return " + varInputID + ".value;");
       varName = tmpFunc();
       varName = Number(varName); // force any number as string to numeric number
       if (isNaN(varName)) {varName = varInitial;} // handle e.g., 259x, xxx
       if (varName < varMin) {varName = varMin;}
       if (varName > varMax) {varName = varMax;}
-      document.getElementById(pInputID).value = varName;
+      document.getElementById(varInputID).value = varName;
     } else {
       // this 'else' is in case there is no input on the web page yet
       // in order to allow for independence and portability of this
