@@ -55,32 +55,15 @@ canvas {
   border-color: DodgerBlue;
   left: 5px;
   width: 368px;
-  height: 80px;
+  height: 122px;
   visibility: visible;
   border-width: 1px;
-  background-color: rgb(255,255,255);
-  border-style: dotted;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-}
-
-#field_output_field {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  width: 368px;
-  height: 80px;
-  border-width: 1px;
-  visibility: visible;
   background-color: rgb(255,255,255);
   border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
-  font-size: 16px;
 }
 
 #div_simFrame {
@@ -95,7 +78,7 @@ canvas {
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -116,7 +99,7 @@ canvas {
   background-color: rgb(0,253,255);
   border-style: outset;
   opacity: 1;
-  border-style: dotted;
+  border-style: none;
   border-color: DodgerBlue;
   LCthreeD: true;
   LCshowBorder: true;
@@ -396,7 +379,7 @@ canvas {
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -430,7 +413,7 @@ border-style: solid;
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -464,7 +447,7 @@ border-style: solid;
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -498,7 +481,7 @@ border-style: solid;
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -532,7 +515,7 @@ border-style: solid;
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -566,7 +549,7 @@ border-style: solid;
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -600,7 +583,7 @@ border-style: solid;
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -634,7 +617,7 @@ border-style: solid;
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -668,7 +651,7 @@ border-style: solid;
   border-width: 1px;
   visibility: visible;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -729,10 +712,10 @@ border-style: solid;
 
 /* example @media for responsive design */
 /* requires meta viewport element in HTML head */
-@media(max-width: 640px) {
-  /* change the following when the screen width is <= 640px */
-  /* #div_controller {
-    top: 600px;
-    left: 20px;
-   } */
+@media(min-width: 640px) {
+  #div_input_fields_group {
+    position: absolute;
+    top: 141px;
+    left: 400px;
+  }
 }
