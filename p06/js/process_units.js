@@ -69,16 +69,16 @@ var simParams = {
   ],
 
   updateRunCount : function() {
-    // // need literal "field_run_counter" below - this.runCounterFieldID does NOT work
-    // //
-    // // WARNING: runLoggerURL logger script checks for "rxn-diff" literal
-    // //
-    // $.post(this.runLoggerURL,{webAppNumber: "6, heat exchanger"})
-    //   .done(
-    //     function(data) {
-    //       // document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>";
-    //     } // END OF function(data)
-    //   ) // END OF .done(
+    // need literal "field_run_counter" below - this.runCounterFieldID does NOT work
+    //
+    // WARNING: runLoggerURL logger script checks for "rxn-diff" literal
+    //
+    $.post(this.runLoggerURL,{webAppNumber: "6, heat exchanger"})
+      .done(
+        function(data) {
+          // document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>";
+        } // END OF function(data)
+      ) // END OF .done(
   }, // END OF updateRunCount
 
   updateCurrentRunCountDisplay : function() {
