@@ -73,8 +73,8 @@ var simParams = {
     //
     // WARNING: runLoggerURL logger script checks for "rxn-diff" literal
     //
-    // $.post(this.runLoggerURL,{webAppNumber: "2, rxn-diff"}) .done(function(data) {
-      // document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>"; } );
+    $.post(this.runLoggerURL,{webAppNumber: "6, heat exchanger"}) .done(function(data) {
+      document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>"; } );
   },
 
   updateCurrentRunCountDisplay : function() {
