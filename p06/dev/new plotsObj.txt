@@ -1,2 +1,28 @@
-  plotsObj[0]['plotLegendShow'] = 0;  // Boolean, '' or 0 for no show, 1 or "show"
-  plotsObj[0]['plotGridBgColor'] = 'white';
+CHANGES IN process_plot_info.js 
+
+
+  plotsObj[0]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 or "show"
+  plotsObj[0]['plotGridBgColor'] = 'white'; 
+  
+  
+CHANGES IN PLOTTING FUNCTION process_plotter.js 
+  
+    var plotLegendPosition = plotsObj[pNumber]['plotLegendPosition'];
+    var plotLegendShow = plotsObj[pNumber]['plotLegendShow']; // Boolean 0,1
+    var plotGridBgColor = plotsObj[pNumber]['plotGridBgColor'];
+
+    var options = {
+      // axisLabels REQUIRES LIBRARY flot.axislabels.js, SEE
+      //     https://github.com/markrcote/flot-axislabels
+      axisLabels : {show: true},
+      xaxes: [ { show: xShow, min: xMin, max: xMax, axisLabel: xLabel } ],    yaxes: [
+      // yaxis object listed first is "yaxis: 1" in dataToPlot, second is 2
+      {position: 'right', min: yRightMin, max: yRightMax, axisLabel: yRightLabel },
+      {position: 'left', min: yLeftMin, max: yLeftMax, axisLabel: yLeftLabel },
+    ],
+    legend: { position: plotLegendPosition },
+    legend: { show: plotLegendShow },
+    grid: { backgroundColor: plotGridBgColor }
+  }; 
+  
+  
