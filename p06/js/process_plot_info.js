@@ -56,7 +56,12 @@ var plotsObj = new Object();
   plotsObj[0]['plotLegendPosition'] = "se";
   plotsObj[0]['plotLegendShow'] = 0;  // Boolean, '' or 0 for no show, 1 or "show"
   plotsObj[0]['plotGridBgColor'] = 'white';
-  plotsObj[0]['plotDataSeriesColors'] = ['red','blue']; // optional, in variable order 0, 1, etc.
+  // colors can be specified rgb, rgba, hex, and color names 
+  // for flot.js colors, only basic color names appear to work, e.g., blue, red
+  // for all html color names to hex see http://www.color-hex.com
+  // for all color names to hex see https://www.w3schools.com/colors/colors_picker.asp
+  plotsObj[0]['plotDataSeriesColors'] = ['#ff6347','#1e90ff']; // optional, in variable order 0, 1, etc.
+  // ['#ff6347','#1e90ff'] is Tomato and DodgerBlue
   plotsObj[0]['var'] = new Array();
     plotsObj[0]['var'][0] = 0; // values are curve data number to be put on plot
     plotsObj[0]['var'][1] = 1; // listed in order of varLabel order, etc.
