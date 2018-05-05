@@ -142,6 +142,7 @@ function plotPlotData(pData,pNumber) {
     var plotLegendPosition = plotsObj[pNumber]['plotLegendPosition'];
     var plotLegendShow = plotsObj[pNumber]['plotLegendShow']; // Boolean 0,1
     var plotGridBgColor = plotsObj[pNumber]['plotGridBgColor'];
+    var plotDataSeriesColors = plotsObj[pNumber]['plotDataSeriesColors'];
 
     var options = {
       // axisLabels REQUIRES LIBRARY flot.axislabels.js, SEE
@@ -154,7 +155,8 @@ function plotPlotData(pData,pNumber) {
     ],
     legend: { position: plotLegendPosition },
     legend: { show: plotLegendShow },
-    grid: { backgroundColor: plotGridBgColor }
+    grid: { backgroundColor: plotGridBgColor },
+    colors: plotDataSeriesColors
   };
 
   // check if want to reverse data left-right on x-axis

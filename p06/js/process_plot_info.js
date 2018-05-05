@@ -56,6 +56,7 @@ var plotsObj = new Object();
   plotsObj[0]['plotLegendPosition'] = "se";
   plotsObj[0]['plotLegendShow'] = 0;  // Boolean, '' or 0 for no show, 1 or "show"
   plotsObj[0]['plotGridBgColor'] = 'white';
+  plotsObj[0]['plotDataSeriesColors'] = ['red','blue']; // optional, in variable order 0, 1, etc.
   plotsObj[0]['var'] = new Array();
     plotsObj[0]['var'][0] = 0; // values are curve data number to be put on plot
     plotsObj[0]['var'][1] = 1; // listed in order of varLabel order, etc.
