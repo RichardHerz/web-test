@@ -5,6 +5,9 @@
   https://www.gnu.org/licenses/gpl-3.0.en.html
 */
 
+// SEE PLOT DEFINITIONS IN FILE process_plot_info.js
+// SEE DATA ARRAY INITIALIZATION IN FILE process_plot_info.js 
+
 // declare plot array used below in function plotPlotData
 // does not work when declared inside function plotPlotData...
 var plot = [];
@@ -14,6 +17,7 @@ var plot = [];
 function getPlotData(plotsObjNum) {
 
   // input argument plotsObjNum refers to plot number in object plotsObj
+  // which is defined in file process_plot_info.js
 
   var v = 0; // used as index to select the variable
   var p = 0; // used as index to select data point pair

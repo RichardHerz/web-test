@@ -221,6 +221,7 @@ var puHeatExchanger = {
   // SET MIN AND MAX FOR INPUTS
   // here set range so solution stable when only one variable changed in
   // min-max range at default conditions
+  // NOTE: these min-max may be used in plot definitions in process_plot_info.js
 
   minTinHot : 300.0, // K, hot T in
   minTinCold : 300.0, // K, cold T in
@@ -228,12 +229,12 @@ var puHeatExchanger = {
   minFlowCold : 0.15, // kg/s
   minCpHot : 1, // kJ/kg/K, hot flow heat capacity
   minCpCold : 1, // kJ/kg/K, cold flow heat capacity
-  minUcoef : 0.0, // kW/m2/K, U, heat transfer coefficient, allow zero min
+  minUcoef : 0.0, // kW/m2/K, U, heat transfer coefficient, allow zero
   minArea : 1, // m2, heat transfer surface area
   minDiam : 0.05, // m, tube diameter
 
-  maxTinHot : 380.0, // K, hot T in
-  maxTinCold : 380.0, // K, cold T in
+  maxTinHot : 370.0, // K, hot T in
+  maxTinCold : 370.0, // K, cold T in
   maxFlowHot : 4, // kg/s
   maxFlowCold : 4, // kg/s
   maxCpHot : 10, // kJ/kg/K, hot flow heat capacity

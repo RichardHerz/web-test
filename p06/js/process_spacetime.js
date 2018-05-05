@@ -5,44 +5,8 @@
   https://www.gnu.org/licenses/gpl-3.0.en.html
 */
 
-function initSpaceTimeArray(numVars,numTimePts,numSpacePts) {
-  // returns 3D array to hold data for multiple variables for SPACE-TIME plots
-  // returns array with all elements for plot filled with zero
-  //    index 1 specifies the variable [0 to numVars-1]
-  //    index 2 specifies the time point [0 to & including numTimePoints]
-  //    index 3 specifies the space point [0 to & including numSpacePoints]
-  //    the element value at plotDataStub[v][t][s] will be the conc or rate
-  //      to be shown for that variable at that time at that space location
-  var v;
-  var s;
-  var t;
-  var plotDataStub = new Array();
-  for (v = 0; v < numVars; v += 1) {
-    plotDataStub[v] = new Array();
-      for (t = 0; t <= numTimePts; t += 1) { // NOTE = AT t <=
-      plotDataStub[v][t] = new Array();
-      for (s = 0; s <= numSpacePts; s += 1) { // NOTE = AT s <=
-        plotDataStub[v][t][s] = 0;
-      }
-    }
-  }
-  // document.getElementById("dev01").innerHTML = "hello";
-  return plotDataStub;
-} // end function initSpaceTimeArray
-
-// create array to hold space-time plot data
-// these become global vars used in other script files
-var numSpaceTimeVars = 2;
-// HEAT EXCHANGER - SPECIAL - does not scroll with time so not space-time plot
-// time axis replaced by position in exchanger
-// space axis shows one value
-var numTimePts = puHeatExchanger.numNodes;
-var numSpacePts = 0; // 0 for one, number is numSpacePts + 1
-// numTimePts should equal numPlotPts on strip chart plots
-// numSpacePts should equal puCatalystLayer.numNodes
-// see file process_plot_info.js
-// if want square canvas 'pixels' set time/space pt ratio = canvas width/height ratio
-var spaceTimeData = initSpaceTimeArray(numSpaceTimeVars,numTimePts,numSpacePts);
+// SEE PLOT DEFINITIONS IN FILE process_plot_info.js
+// SEE DATA ARRAY INITIALIZATION IN FILE process_plot_info.js
 
 function jetColorMap(n) {
   // input n should be value between 0 and 1
@@ -92,20 +56,22 @@ function jetColorMap(n) {
   return [r,g,b];
 } // end of function jetColorMap
 
-function plotSpaceTimeHot() {
-  var canvas = document.getElementById('canvas_CANVAS_hot');
+function plotSpaceTimePlot(pNumber) {
+  //
+  // input argument pNumber refers to plot info in child pNumber
+  // of object plotsObj which is defined in file process_plot_info.js
+  // see https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial
+
+  var canvasID = plotsObj[pNumber]['canvas'];
+  var canvas = document.getElementById(canvasID);
   var context = canvas.getContext('2d');
-  // // test with example from
-  // //   https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial
-  // context.fillStyle = 'rgb(200,0,0)';
-  // context.fillRect(10,10,50,50);
-  // context.fillStyle = 'rgba(0,0,200,0.5)';
-  // context.fillRect(30,30,50,50);
-  // get data from array spaceTimeData and plot
-  var v = 0; // v is the index number of the variable to plot, 0 is first
+  // get data from global array spaceTimeData and plot
+  // v is the index number of the variable to plot in array spaceTimeData
+  // where 0 is first, 1 is second, etc.
+  var v = plotsObj[pNumber]['var'];
+  var scaledVarVal; // holds variable value scaled 0-1 by minVarVal & maxVarVal
   var t;
   var s;
-  var Temperature;
   var r;
   var g;
   var b;
@@ -121,17 +87,15 @@ function plotSpaceTimeHot() {
   var tColor5 = ')';
   var tPixels = canvas.width;
   var sPixels = canvas.height;
-  // numTimePts and numStripPts are globals defined above in this file
+  // numTimePts and numSpacePts are globals defined above in this file
   var tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point
   var sPixelsPerPoint = sPixels/(numSpacePts+1); // pixels per point
-  // do not use Tin's for max and min here because want to change in middle of run
-  var maxTemp = plotsObj[0]['yLeftAxisMax'];
-  var minTemp = plotsObj[0]['yLeftAxisMin'];
-
+  var minVarVal = plotsObj[pNumber]['varValueMin'];
+  var maxVarVal = plotsObj[pNumber]['varValueMax'];
   for (t = 0; t <= numTimePts; t += 1) { // NOTE = at t <=
     for (s = 0; s <= numSpacePts; s += 1) { // NOTE = AT s <=
-      Temperature = (spaceTimeData[v][t][s] - minTemp) / (maxTemp - minTemp);
-      jet = jetColorMap(Temperature); // Temperature should be scaled 0 to 1
+      scaledVarVal = (spaceTimeData[v][t][s] - minVarVal) / (maxVarVal - minVarVal);
+      jet = jetColorMap(scaledVarVal); // scaledVarVal should be scaled 0 to 1
       r = jet[0];
       g = jet[1];
       b = jet[2];
@@ -140,124 +104,17 @@ function plotSpaceTimeHot() {
       tColor3 = g.toString();
       tColor4 = b.toString();
       tColor = tColor1.concat(tColor2,',',tColor3,',',tColor4,tColor5);
-      // document.getElementById("dev01").innerHTML = jetColorMap(1);
       context.fillStyle = tColor;
-      // swap directions in plot from that in spaceTimeData array
-      x = tPixelsPerPoint * (numTimePts - t);
-      y = sPixelsPerPoint * (numSpacePts - s);
+      if (plotsObj[1]['xAxisReversed']) {
+        // swap directions in plot from that in spaceTimeData array
+        x = tPixelsPerPoint * (numTimePts - t);
+        y = sPixelsPerPoint * (numSpacePts - s);
+      } else {
+        x = tPixelsPerPoint * t;
+        y = sPixelsPerPoint * s;
+      }
+      // draw colored rectangle on canvas to represent this data point
       context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
     } // end of inner FOR repeat
   } // end of outer FOR repeat
-} // end of function plotSpaceTimeHot
-
-function plotSpaceTimeCold() {
-  var canvas = document.getElementById('canvas_CANVAS_cold');
-  var context = canvas.getContext('2d');
-  // // test with example from
-  // //   https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial
-  // context.fillStyle = 'rgb(200,0,0)';
-  // context.fillRect(10,10,50,50);
-  // context.fillStyle = 'rgba(0,0,200,0.5)';
-  // context.fillRect(30,30,50,50);
-  // get data from array spaceTimeData and plot
-  var v = 1; // v is the index number of the variable to plot, 0 is first
-  var t;
-  var s;
-  var Temperature;
-  var r;
-  var g;
-  var b;
-  var jet;
-  var x;
-  var y;
-  // below we have to convert computed color values
-  // to text string for fillStyle below, so get pieces ready
-  var tColor1 = 'rgb(';
-  var tColor2;
-  var tColor3;
-  var tColor4;
-  var tColor5 = ')';
-  var tPixels = canvas.width;
-  var sPixels = canvas.height;
-  // numTimePts and numStripPts are globals defined above in this file
-  var tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point
-  var sPixelsPerPoint = sPixels/(numSpacePts+1); // pixels per point
-  // do not use Tin's for max and min here because want to change in middle of run
-  var maxTemp = plotsObj[0]['yLeftAxisMax'];
-  var minTemp = plotsObj[0]['yLeftAxisMin'];
-  for (t = 0; t <= numTimePts; t += 1) { // NOTE = at t <=
-    for (s = 0; s <= numSpacePts; s += 1) { // NOTE = AT s <=
-      Temperature = (spaceTimeData[v][t][s] - minTemp) / (maxTemp - minTemp);
-      jet = jetColorMap(Temperature); // Temperature should be scaled 0 to 1
-      r = jet[0];
-      g = jet[1];
-      b = jet[2];
-      // we have to convert computed color values to string for fillStyle
-      tColor2 = r.toString();
-      tColor3 = g.toString();
-      tColor4 = b.toString();
-      tColor = tColor1.concat(tColor2,',',tColor3,',',tColor4,tColor5);
-      // document.getElementById("dev01").innerHTML = jetColorMap(1);
-      context.fillStyle = tColor;
-      // swap directions in plot from that in spaceTimeData array
-      x = tPixelsPerPoint * (numTimePts - t);
-      y = sPixelsPerPoint * (numSpacePts - s);
-      context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
-    } // end of inner FOR repeat
-  } // end of outer FOR repeat
-} // end of function plotSpaceTimeCold
-
-// function plotSpaceTimePlot() {
-//   var canvas = document.getElementById('canvas_CANVAS_hot');
-//   var context = canvas.getContext('2d');
-//   // // test with example from
-//   // //   https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial
-//   // context.fillStyle = 'rgb(200,0,0)';
-//   // context.fillRect(10,10,50,50);
-//   // context.fillStyle = 'rgba(0,0,200,0.5)';
-//   // context.fillRect(30,30,50,50);
-//   // get data from array spaceTimeData and plot
-//   var v = 0; // v = 0 is the index number of the variable to plot
-//   var t;
-//   var s;
-//   var rate;
-//   var r;
-//   var g;
-//   var b;
-//   var jet;
-//   var x;
-//   var y;
-//   // below we have to convert computed color values
-//   // to text string for fillStyle below, so get pieces ready
-//   var tColor1 = 'rgb(';
-//   var tColor2;
-//   var tColor3;
-//   var tColor4;
-//   var tColor5 = ')';
-//   var tPixels = canvas.width;
-//   var sPixels = canvas.height;
-//   // numTimePts and numStripPts are globals defined above in this file
-//   var tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point
-//   var sPixelsPerPoint = sPixels/(numSpacePts+1); // pixels per point
-//   var maxRate = 1/puCatalystLayer.model/puCatalystLayer.model; // 1/1/1 or 1/2/2
-//   for (t = 0; t <= numTimePts; t += 1) { // NOTE = at t <=
-//     for (s = 0; s <= numSpacePts; s += 1) { // NOTE = AT s <=
-//       rate = spaceTimeData[v][t][s] / maxRate;
-//       jet = jetColorMap(rate); // rate should be scaled 0 to 1
-//       r = jet[0];
-//       g = jet[1];
-//       b = jet[2];
-//       // we have to convert computed color values to string for fillStyle
-//       tColor2 = r.toString();
-//       tColor3 = g.toString();
-//       tColor4 = b.toString();
-//       tColor = tColor1.concat(tColor2,',',tColor3,',',tColor4,tColor5);
-//       // document.getElementById("dev01").innerHTML = jetColorMap(1);
-//       context.fillStyle = tColor;
-//       // swap directions in plot from that in spaceTimeData array
-//       x = tPixelsPerPoint * (numTimePts - t);
-//       y = sPixelsPerPoint * (numSpacePts - s);
-//       context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
-//     } // end of inner FOR repeat
-//   } // end of outer FOR repeat
-// } // end of function plotSpaceTimePlot
+} // end of function plotSpaceTimePlot

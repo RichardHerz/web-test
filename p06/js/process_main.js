@@ -136,7 +136,7 @@
 
     } // end function fUpdateState
 
-    // XXX NEW 
+    // XXX NEW
     // check and set simParams.ssFlag to true if at steady state
     simParams.checkForSteadyState();
 
@@ -167,20 +167,20 @@
       tmpFunc();
       }
 
-    // GET AND PLOT ALL PLOTS defined in plotsObj in process_plot_info
-    // plots are specified in object plotsObj in file process_plot_info.js
+    // GET AND PLOT ALL PLOTS defined in object plotsObj in process_plot_info.js
     var npl = Object.keys(plotsObj).length; // number of plots
     var p; // used as index
     var data;
     for (p = 0; p < npl; p += 1) {
-      data = getPlotData(p);
-      plotPlotData(data,p);
+      if (plotsObj[p]['type'] == 'canvas') {
+        // space-time, color-canvas plot
+        plotSpaceTimePlot(p); // defined in file process_spacetime.js
+      } else {
+        // profile (static x,y) or strip chart (scolling x,y)
+        data = getPlotData(p); // defined in file process_plotter.js
+        plotPlotData(data,p); // defined in file process_plotter.js
+      }
     }
-
-    // NEW - plot space-time plots - NEW
-    // XXX need to combine so one function handles multiple SpaceTime plots
-    plotSpaceTimeHot();
-    plotSpaceTimeCold();
 
     // RETURN REAL TIME OF THIS DISPLAY UPDATE (milliseconds)
     var thisDate = new Date();
