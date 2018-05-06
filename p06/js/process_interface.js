@@ -5,9 +5,7 @@
   https://www.gnu.org/licenses/gpl-3.0.en.html
 */
 
-// ----------------- HANDLE UI CONTROLS ----------------------
-//
-// THIS FILE USES OBJECT simParams in file process_units.js
+// ----------- HANDLE UI CONTROLS & INPUT FIELDS ------------------
 
 // HANDLE RUN-PAUSE BUTTON CLICK
 function runThisLab() {
@@ -42,3 +40,35 @@ function resetThisLab() {
   eval(runButtonID + '.value = "Run"');
   // do NOT update process nor display again here (will take one step)
 } // END OF function resetThisLab
+
+// GET INPUT VALUES FROM INPUT FIELDS - CALLED IN UNITS updateUIparams()
+function getInputValue(pUnitName,pVarName) {
+  // requires specific naming convention for input variables
+  // first, generate the initial, min and max variable names as strings
+  var varInputIDstring = pUnitName + '.input' + pVarName;
+  var varInitialString = pUnitName + '.initial' + pVarName;
+  var varMaxString = pUnitName + '.max' + pVarName;
+  var varMinString = pUnitName + '.min' + pVarName;
+  // then need to get the values associated with the strings
+  var varInputID = eval(varInputIDstring);
+  var varInitial = eval(varInitialString);
+  var varMax = eval(varMaxString);
+  var varMin = eval(varMinString);
+  // second, get the contents of the input and handle
+  if (document.getElementById(varInputID)) {
+    // the input exists so get the value and make sure it is within range
+    let tmpFunc = new Function("return " + varInputID + ".value;");
+    varName = tmpFunc();
+    varName = Number(varName); // force any number as string to numeric number
+    if (isNaN(varName)) {varName = varInitial;} // handle e.g., 259x, xxx
+    if (varName < varMin) {varName = varMin;}
+    if (varName > varMax) {varName = varMax;}
+    document.getElementById(varInputID).value = varName;
+  } else {
+    // this 'else' is in case there is no input on the web page yet
+    // in order to allow for independence and portability of this
+    // process unit
+    varName = varInitial;
+  }
+  return varName
+} // end of getInputValue()

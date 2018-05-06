@@ -85,9 +85,9 @@ function plotSpaceTimePlot(pNumber) {
   var tColor3;
   var tColor4;
   var tColor5 = ')';
-  var tPixels = canvas.width;
+  var tPixels = canvas.width; // canvas width, height set in HTML canvas element
   var sPixels = canvas.height;
-  // numTimePts and numSpacePts are globals defined above in this file
+  // numTimePts and numSpacePts are globals defined in file process_plot_info.js
   var tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point
   var sPixelsPerPoint = sPixels/(numSpacePts+1); // pixels per point
   var minVarVal = plotsObj[pNumber]['varValueMin'];

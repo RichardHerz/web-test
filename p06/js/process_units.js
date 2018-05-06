@@ -185,8 +185,8 @@ var puHeatExchanger = {
   // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
   //   e.g., inputModel01 : "radio_Model_1",
   //
-  // WARNING: the function getInputValue() below called by updateUIparams()
-  // requires a specific naming convention
+  // WARNING: the function getInputValue() called by updateUIparams() below
+  // requires a specific naming convention for vars set in INPUT FIELDS
   // for the input ID, and initial, min and max values for each variable
   // e.g., TinHot requires inputTinHot, initialTinHot, minTinHot, maxTinHot
   //
@@ -212,7 +212,7 @@ var puHeatExchanger = {
   displayColdLeftArrow : '#field_cold_left_arrow', // needs # with ID
   displayColdRightArrow : '#field_cold_right_arrow', // needs # with ID
 
-  // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE -----
+  // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE... -----
   // ---- EXCEPT simParams.simTimeStep, simParams.simStepRepeats, simParams.ssFlag ----
 
   // allow this unit to take more than one step within one main loop step in updateState method
@@ -242,7 +242,7 @@ var puHeatExchanger = {
   initialDiam : 0.15, // m, tube diameter
   initialDispCoef : 0.0, // (m2/s), axial dispersion coefficient
 
-  // SET MIN AND MAX FOR INPUTS
+  // SET MIN AND MAX VALUES FOR INPUTS SET IN INPUT FIELDS 
   // here set range so solution stable when only one variable changed in
   // min-max range at default conditions
   // NOTE: these min-max may be used in plot definitions in process_plot_info.js
@@ -286,13 +286,15 @@ var puHeatExchanger = {
   SScheck : 0, // for saving steady state check number
   residenceTime : 0, // for timing checks for steady state check
 
-  // XXX WARNING: THESE DO NOT HAVE ANY EFFECT HERE WHEN
+  // XXX WARNING: SETTING TO this.initial___ HAS NO EFFECT HERE WHEN
   //     THEY ARE ALSO SET IN updateUIparams
   //     BUT WHEN NOT SET IN updateUIparams THEN setting to
   //     this.initial___ HAS NO EFFECT AND GET NaN
   // if list here must supply a value (e.g., this.initial___) but if not
-  // list here then apparently is created in updateUIparams...
-  //   e.g., Cmax : this.initialCmax,
+  //     list here then apparently is created in updateUIparams...
+  //
+  // HUH? NEED TO EXPLORE THIS....
+  //
   ModelFlag : this.initialModelFlag, // 0 is cocurrent flow, 1 is countercurrent flow
   TinHot : this.initialTinHot, // K, hot T in
   TinCold : this.initialTinCold, // K, cold T in
@@ -419,15 +421,16 @@ var puHeatExchanger = {
     }
 
     // check input fields for new values
-    this.TinHot = this.getInputValue('TinHot');
-    this.TinCold = this.getInputValue('TinCold');
-    this.FlowHot = this.getInputValue('FlowHot');
-    this.FlowCold = this.getInputValue('FlowCold');
-    this.CpHot = this.getInputValue('CpHot');
-    this.CpCold = this.getInputValue('CpCold');
-    this.Ucoef = this.getInputValue('Ucoef');
-    this.Area = this.getInputValue('Area');
-    this.Diam = this.getInputValue('Diam');
+    // function getInputValue() is defined in file process_interface.js
+    this.TinHot = getInputValue('puHeatExchanger','TinHot');
+    this.TinCold = getInputValue('puHeatExchanger','TinCold');
+    this.FlowHot = getInputValue('puHeatExchanger','FlowHot');
+    this.FlowCold = getInputValue('puHeatExchanger','FlowCold');
+    this.CpHot = getInputValue('puHeatExchanger','CpHot');
+    this.CpCold = getInputValue('puHeatExchanger','CpCold');
+    this.Ucoef = getInputValue('puHeatExchanger','Ucoef');
+    this.Area = getInputValue('puHeatExchanger','Area');
+    this.Diam = getInputValue('puHeatExchanger','Diam');
 
     // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
     // outlet T's not defined on first entry into page
@@ -502,37 +505,6 @@ var puHeatExchanger = {
     this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
   }, // end of updateUIparams()
-
-  getInputValue : function(pVarName) {
-    // requires specific naming convention for input variables
-    // first, generate the initial, min and max variable names as strings from pVarName
-    var varInputIDstring = 'this.input' + pVarName;
-    var varInitialString = 'this.initial' + pVarName;
-    var varMaxString = 'this.max' + pVarName;
-    var varMinString = 'this.min' + pVarName;
-    // then need to get the values associated with the strings
-    var varInputID = eval(varInputIDstring);
-    var varInitial = eval(varInitialString);
-    var varMax = eval(varMaxString);
-    var varMin = eval(varMinString);
-    // second, get the contents of the input and handle
-    if (document.getElementById(varInputID)) {
-      // the input exists so get the value and make sure it is within range
-      let tmpFunc = new Function("return " + varInputID + ".value;");
-      varName = tmpFunc();
-      varName = Number(varName); // force any number as string to numeric number
-      if (isNaN(varName)) {varName = varInitial;} // handle e.g., 259x, xxx
-      if (varName < varMin) {varName = varMin;}
-      if (varName > varMax) {varName = varMax;}
-      document.getElementById(varInputID).value = varName;
-    } else {
-      // this 'else' is in case there is no input on the web page yet
-      // in order to allow for independence and portability of this
-      // process unit
-      varName = varInitial;
-    }
-    return varName
-  }, // end of getInputValue()
 
   updateInputs : function() {
     //
