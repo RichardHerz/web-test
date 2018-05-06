@@ -6,7 +6,7 @@
 */
 
 // SEE PLOT DEFINITIONS IN FILE process_plot_info.js
-// SEE DATA ARRAY INITIALIZATION IN FILE process_plot_info.js 
+// SEE DATA ARRAY INITIALIZATION IN FILE process_plot_info.js
 
 // declare plot array used below in function plotPlotData
 // does not work when declared inside function plotPlotData...
@@ -187,7 +187,8 @@ function plotPlotData(pData,pNumber) {
 
 } // END OF function plotPlotData
 
-// // COPY OF FUNCTION copyData - COPY AND EDIT FOR THIS WEB LAB
+// // SAVE - COPY OF FUNCTION copyData - COPY AND EDIT FOR THIS WEB LAB
+// //
 // function copyData(){
 //
 //   // if sim is running, pause the sim

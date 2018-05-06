@@ -18,8 +18,8 @@ var numProfilePts = puHeatExchanger.numNodes;
 
 // COMMON VALUES FOR STRIP CHART PLOTS (scrolling x,y plots)
 // these vars used several places below in this file
-var numStripVars = 1;
-var numStripPts = 80;
+var numStripVars = 0;
+var numStripPts = 0;
 
 // COMMON VALUES FOR SPACE-TIME, COLOR-CANVAS PLOTS
 // if want square canvas 'pixels' set time/space pt ratio = canvas width/height ratio
@@ -197,13 +197,8 @@ var plotsObj = new Object();
   var profileData = initPlotData(numProfileVars,numProfilePts); // holds data for static profile plots
 
   // initialize strip chart data array
-  // XXX var stripData = initPlotData(numStripVars,numStripPts); // holds data for scrolling strip chart plots
-  // XXX stripData NOT USED THIS WEB LAB
+  var stripData = initPlotData(numStripVars,numStripPts); // holds data for scrolling strip chart plots
 
   // initialize space-time, color-canvas data array -
   // must follow function initSpaceTimeArray in this file
   var spaceTimeData = initSpaceTimeArray(numSpaceTimeVars,numTimePts,numSpacePts);
-  //
-  // NOTE: heat exchanger is special, not really a space-time plot
-  //       horizontal axis is position in exchanger,
-  //       one pixel of vertical axis shows temperature at that position
