@@ -6,6 +6,8 @@
 */
 
 // ----------------- HANDLE UI CONTROLS ----------------------
+//
+// THIS FILE USES OBJECT simParams in file process_units.js
 
 // HANDLE RUN-PAUSE BUTTON CLICK
 function runThisLab() {

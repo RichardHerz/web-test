@@ -39,6 +39,10 @@ var numSpacePts = 0; // 0 for one, number is numSpacePts + 1
 // defining multiple object children, where the first index
 // plotsObj[0] is the plot number index (starting at 0)
 //
+// OBJECT plotsObj uses from process unit puHeatExchanger in file
+// process_units.js the following:
+//    numNodes, minTinCold, maxTinHot
+//
 var plotsObj = new Object();
   //
   // USE THIS TO GET NUMBER OF plots, i.e., top-level children of plotsObj

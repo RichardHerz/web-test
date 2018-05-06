@@ -6,11 +6,23 @@
   https://www.gnu.org/licenses/gpl-3.0.en.html
 */
 
-// uses object simParams from file process_units.js
-
 // this file contains common simulation functions
 // see file process_units.js for simulation parameter values and
 // definitions of the process units
+//
+// uses in object simParams from file process_units.js the following:
+//    function updateCurrentRunCountDisplay()
+//    function checkForSteadyState()
+//    function updateSimTime()
+//    variables runningFlag, ssFlag, simStepRepeats, processUnits
+//    variables updateDisplayTimingMs
+//
+// uses object plotsObj defined in file process_plot_info.js
+//
+// uses in file process_plotter.js the functions
+//    getPlotData() and plotPlotData()
+//
+// uses in file process_spacetime.js the function plotSpaceTimePlot() 
 
   // DISPLAY INITIAL STATE ON OPEN WINDOW
   window.onload = openThisLab; // can NOT use = openThisLab();

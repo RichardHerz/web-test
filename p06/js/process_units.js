@@ -7,8 +7,6 @@
 
 // This file defines an object that holds simulation parameter values and
 // defines objects that represent process units
-// For functions that use these objects, see files
-// process_main.js and process_plotter.js.
 
 // ----- ARRAYS TO HOLD WORKING DATA -----------
 
@@ -25,6 +23,19 @@ var spaceData = []; // for shifting data in space-time plots
 // ----- OBJECT TO CONTAIN & SET SIMULATION & PLOT PARAMETERS ---------
 
 var simParams = {
+  //
+  // file process_main.js uses in object simParams the following:
+  //    function updateCurrentRunCountDisplay()
+  //    function checkForSteadyState()
+  //    function updateSimTime()
+  //    variables runningFlag, ssFlag, simStepRepeats, processUnits
+  //    variables updateDisplayTimingMs
+  //
+  // simParams uses the following from process unit puHeatExchanger
+  //    variables SScheck, residenceTime, numNodes
+  //
+  // simParams uses the following global variables:
+  //    Thot and Tcold used in function checkForSteadyState()
 
   // ssFlag new for process with one unit - rethink for multiple-unit processes
   // unit's updateState can set ssFlag true when unit reaches steady state
@@ -165,9 +176,14 @@ var simParams = {
 
 var puHeatExchanger = {
   //
-  // USES OBJECT simParams
+  // USES OBJECT simParam
+  //    simParams.simTimeStep, simParams.ssFlag
+  // OBJECT simParams USES the following from this process unit
+  //    variables SScheck, residenceTime, numNodes
+  // USES GLOBALS
+  //    Thot, Tcold, ThotNew, TcoldNew
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //   puController.command.value
+  //   none
   // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
   //   none
   // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
@@ -190,7 +206,7 @@ var puHeatExchanger = {
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
   //   no user entered values for this unit
   // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE EXCEPT -----
-  // ------- simParams.simTimeStep and simParams.simStepRepeats ----
+  // ---- simParams.simTimeStep, simParams.simStepRepeats, simParams.ssFlag ----
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for dt in this case in this unit's updateInputs method
