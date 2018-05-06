@@ -136,7 +136,6 @@
 
     } // end function fUpdateState
 
-    // XXX NEW
     // check and set simParams.ssFlag to true if at steady state
     simParams.checkForSteadyState();
 

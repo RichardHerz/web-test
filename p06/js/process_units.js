@@ -138,6 +138,7 @@ var simParams = {
       if (SScheck == oldSScheck) {
         // set ssFlag
         simParams.ssFlag = true;
+        // puHeatExchanger.checkSSvalues(); // WARNING - has alerts - TESTING ONLY
       } // end if (SScheck == oldSScheck)
 
       // // ACTIVATE FOR TESTING
@@ -250,10 +251,8 @@ var puHeatExchanger = {
   // WARNING: numNodes is accessed in process_plot_info.js
   numNodes : 200,
   // NOTE 20180427: discrepancy between steady-state Qcold and Qhot (from Qcold/Qhot)
-  // from array end values with dispersion
-  // is 1.19% for 200 nodes, 0.97% for 400, 0.88% for 600 nodes, 0.85% for 800 nodes
-  // but shows same output T's to one decimal place for 200-800 nodes
-  // ??? how does spaceTime canvas handle more points than pixel width?
+  // from array end values with dispersion decreases as number of nodes increases
+  // but shows same output field T's to one decimal place for 200-800 nodes
 
   // for Reynolds number Re, use kinematic viscosity from
   // https://www.engineeringtoolbox.com/water-dynamic-kinematic-viscosity-d_596.html?vA=30&units=C#
@@ -297,8 +296,6 @@ var puHeatExchanger = {
 
   reset : function() {
 
-    // alert('enter reset function'); // XXX
-
     // On 1st load or reload page, the html file fills the fields with html file
     // values and calls reset, which needs updateUIparams to get values in fields.
     // On click reset button but not reload page, unless do something else here,
@@ -337,20 +334,9 @@ var puHeatExchanger = {
       profileData[1][k][1] = 0;
     }
 
-    // XXX also need to reset strip chart data
-
-    // WARNING - if change a value to see initialization here
-    // then reset it to zero below this line or will get results at this node
-    // document.getElementById("dev01").innerHTML = "RESET time = " + simParams.simTime.toFixed(0) + "; y = " + y[0];
-
-    // alert('exit reset function'); // XXX
-
   }, // end reset
 
   updateUIparams : function() {
-
-    // alert('enter updateUIparams function'); // XXX
-
     //
     // SPECIFY REFERENCES TO HTML UI COMPONENTS ABOVE in this unit definition
     //
@@ -455,6 +441,22 @@ var puHeatExchanger = {
     var VelocHot = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
     this.DispCoef = VelocHot * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
     // document.getElementById("field_output_field").innerHTML = 'this.DispCoef = ' + this.DispCoef;
+
+    // NOTE: to see independent effect of DispCoef = 0, set heat transfer
+    // coefficient U = 0, since heat exchange contributes to "spreading" of T's
+    // NOTE: with DispCoef = 0 and U = 0 you still get effective dispersion
+    // because, at zero dispersion coefficient, the finite difference method is
+    // same numerically as a mixing-cell-in-series model.
+    // Mixing-cell-in-series provide dispersion, though dispersion with some
+    // different characteristics, e.g., no upstream information propagation.
+    // For N nodes and zero dispersion coefficient value specified,
+    // the effective dispersion coefficient = effDisp = v*L/2/(N-1)
+    // per https://classes.engineering.wustl.edu/che503/chapter%205.pdf
+    // var effDisp = VelocHot * Length / 2 / (this.numNodes + 1 - 1);
+    // alert('effDisp = ' + effDisp);
+    // alert('this.DispCoef = ' + this.DispCoef);
+    // for 200 nodes & default conditions as of 20190505, effDisp = 6e-4 (m2/s)
+    // compared to this.DispCoef = four times higher at 25.6e-4 (m2/s)
 
     // residence time used for timing checks for steady state
     this.residenceTime = Length / VelocHot;
@@ -712,6 +714,7 @@ var puHeatExchanger = {
   }, // end updateState method
 
   checkSSvalues : function() {
+    // WARNING: has alerts - may be called in simParams.checkForSteadyState()
     // CHECK FOR ENERGY BALANCE ACROSS HEAT EXCHANGER AT STEADY STATE
     // Q = U*A*(dT2 - dT1)/log(dT2/dT1) FOR dT1 != dT2 (or get log = inf)
     // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
@@ -727,62 +730,15 @@ var puHeatExchanger = {
       alert('dT1 == dT2');
       return;
     }
-    var tRHS = this.Ucoef * this.Area * (dT2 - dT1) / Math.log(dT2/dT1); // kJ/s = kW
+    var UAlogMeanDT = this.Ucoef * this.Area * (dT2 - dT1) / Math.log(dT2/dT1); // kJ/s = kW
     var Qhot = (hrt - hlt) * this.FlowHot * this.CpHot; // kJ/s = kW
-    // getting about 2.5% discrepancy that increases somewhat as
-    // the two dT's approach same values...
-    // similar discrepancy using inlet & outlet display values
     var Qcold = Math.abs((crt - clt) * this.FlowCold * this.CpCold); // abs for co- or counter-
-    var discrep = 100*(tRHS/Qhot-1);
-    var discrep2 = 100*(tRHS/Qcold-1);
+    var discrep = 100*(UAlogMeanDT/Qhot-1);
+    var discrep2 = 100*(UAlogMeanDT/Qcold-1);
     var discrep3 = 100*(Qcold/Qhot-1);
-    alert('Qhot = RHS: ' + Qhot + ' = ' + tRHS + ', discrepancy = ' + discrep.toFixed(3) + ' %');
-    alert('Qcold = RHS: ' + Qcold + ' = ' + tRHS + ', discrepancy = ' + discrep2.toFixed(3) + ' %');
+    alert('Qhot = UAlogMeanDT: ' + Qhot + ' = ' + UAlogMeanDT + ', discrepancy = ' + discrep.toFixed(3) + ' %');
+    alert('Qcold = UAlogMeanDT: ' + Qcold + ' = ' + UAlogMeanDT + ', discrepancy = ' + discrep2.toFixed(3) + ' %');
     alert('Qhot = Qcold: ' + Qhot + ' = '+ Qcold + ', discrepancy = ' + discrep3.toFixed(3) + ' %');
-    //
-    // NOTE that "no dispersion" with this finite diff model becomes same math as mixing
-    // cells in series, so there is actual dispersion since number nodes = number cells
-    // difference is that can add additioal dispersion in finite diff model to
-    // without need to change number mixing cells (nodes)
-    //
-    // maybe choose number nodes with zero additional finite diff dispersion
-    // to approximate expected turbulent dispersion at default conditions and to be
-    // not too bad in range of allowed input values (flows, tube diam, length(area))
-    //
-    // experiment conditions
-    // Fhot = 0.5, Fcold = 0.75, both Cp = 4.2, U = 0.6, A = 4, TinHot = 360,
-    // TinCold = 310, counter-current
-    //
-    // display values same with and w/o dispersion except Hot out was
-    // was 331.3 with disp and 330.9 w/o dispersion
-    // w/ disp HOT (331.3 < 360) COLD (310 > 329.3)
-    // w/o disp HOT (330.9 < 360) COLD (310 > 329.3)
-    // XXX SO DOUBLE-CHECK HOT EQUATIONS
-    //
-    // with dispersion using end array values got 2.6% in Qhot vs RHS and 1.2% in Qcold/Qhot
-    // with dispersion using end display values got 2.4% in Qhot vs RHS and 0.8% in Qcold/Qhot
-    // withOUT dispersion using end array values got 0.4% in Qhot vs RHS and 0.4% in Qcold/Qhot
-    // withOUT dispersion using end display values got 0.5% in Qhot vs RHS and 0.1% in Qcold/Qhot
-    //
-    // change ends with dispersion to "true" zero-flux BC (symm about end array values)
-    //    with dispersion using end array values got 2.9% in Qhot vs RHS and 1.3% in Qcold/Qhot
-    //    with dispersion using display values got same as above 2.4% and 0.8% (same readings)
-    //    so more error using disp with "true" zero-flux BC
-    //
-    // what about use dispersion during transient then switch to zero disp as approach SS?
-    // BAD - gives change in display values when switch then they return to same bad display values
-    //
-    // TURN OFF DISPERSION on both hot and cold at both ends (leave in middle) and get less error
-    // using array ends: Qh vs. RHS 0.78%, Qc vs. RHS 0.27%, Qh vs Qc 1.06%
-    // display values for both outlets (331.0 & 329.4) 0.1 K higher than with no dispersion
-    // using display values (not array end) for error check get
-    // Qh vs. RHS 0.49% (0.50% no disp), Qc vs. RHS 0.15% (0.61% no disp), Qh vs Qc 0.34% (0.10% no disp)
-    // so no disp at ends but disp in middle is better than full disp and about same as no disp
-    // and using display fields to compute RHS, Qhot and Qcold get same values to within 1 kW
-    // (+/- 0.2 kW) with no disp at ends vs. no disp at all
-    //
-    // (array ends: no disp Qh vs. RHS 0.38%, Qc vs. RHS 0.01%, Qh vs Qc 0.39%; 330.9 & 329.3)
-    // (array ends: full disp Qh vs. RHS 2.57%, Qc vs. RHS 1.38%, Qh vs Qc 1.18%; 331.3 & 329.3)
   },
 
   display : function() {
