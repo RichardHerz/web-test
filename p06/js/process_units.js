@@ -8,7 +8,7 @@
 // This file defines an object that holds simulation parameter values and
 // defines objects that represent process units
 
-// ----- ARRAYS TO HOLD WORKING DATA -----------
+// ----- GLOBAL ARRAYS TO HOLD WORKING DATA -----------
 
 var Thot = [];
 var Tcold = [];
@@ -152,10 +152,6 @@ var simParams = {
         // puHeatExchanger.checkSSvalues(); // WARNING - has alerts - TESTING ONLY
       } // end if (SScheck == oldSScheck)
 
-      // // ACTIVATE FOR TESTING
-      // document.getElementById("field_output_field").innerHTML = 'simTime = ' + simParams.simTime
-      //       + '<br>oldSScheck = ' + oldSScheck + '<br>_--SScheck = ' + SScheck + ', ssFlag = ' + simParams.ssFlag;
-
       // save current values as the old values
       puHeatExchanger.SScheck = SScheck;
       simParams.oldSimTime = simParams.simTime;
@@ -188,10 +184,12 @@ var puHeatExchanger = {
   //   none
   // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
   //   e.g., inputModel01 : "radio_Model_1",
+  //
   // WARNING: the function getInputValue() below called by updateUIparams()
   // requires a specific naming convention
   // for the input ID, and initial, min and max values for each variable
   // e.g., TinHot requires inputTinHot, initialTinHot, minTinHot, maxTinHot
+  //
   inputModel00 : "radio_co-current_flow", // model 0 is co-current flow
   inputModel01 : "radio_counter-current_flow", // model 1 is counter-current flow
   inputTinHot : "input_field_TinHot", // K, hot T in
@@ -203,13 +201,22 @@ var puHeatExchanger = {
   inputUcoef : "input_field_Ucoef", // kW/m2/K, U, heat transfer coefficient
   inputArea : "input_field_Area", // m2, heat transfer surface area
   inputDiam : "input_field_diam", // m, tube diameter
+
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
-  //   no user entered values for this unit
-  // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE EXCEPT -----
-  // ---- simParams.simTimeStep, simParams.simStepRepeats, simParams.ssFlag ----
+  displayHotLeftT: 'field_hot_left_T',
+  displayHotRightT: 'field_hot_right_T',
+  displayColdLeftT: 'field_cold_left_T',
+  displayColdRightT: 'field_cold_right_T',
+  displayReynoldsNumber : 'field_Reynolds',
+  displayLength : 'field_length',
+  displayColdLeftArrow : '#field_cold_left_arrow', // needs # with ID
+  displayColdRightArrow : '#field_cold_right_arrow', // needs # with ID
+
+  // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE -----
+  // ---- EXCEPT simParams.simTimeStep, simParams.simStepRepeats, simParams.ssFlag ----
 
   // allow this unit to take more than one step within one main loop step in updateState method
-  // WARNING: see special handling for dt in this case in this unit's updateInputs method
+  // WARNING: see special handling for time step in this unit's updateInputs method
   unitStepRepeats : 1,
   unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
 
@@ -395,8 +402,8 @@ var puHeatExchanger = {
     // at least for now, do not check existence of UI elements
     // Model radio buttons
     var m00 = document.querySelector('#' + this.inputModel00);
-    var cra = document.querySelector('#field_cold_right_arrow');
-    var cla = document.querySelector('#field_cold_left_arrow');
+    var cra = document.querySelector(this.displayColdRightArrow);
+    var cla = document.querySelector(this.displayColdLeftArrow);
     if (m00.checked) {
       this.ModelFlag = 0; // co-current flow
       cra.style.color = 'blue';
@@ -425,13 +432,13 @@ var puHeatExchanger = {
     // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
     // outlet T's not defined on first entry into page
     // but do not do full updateDisplay
-    document.getElementById("field_hot_right_T").innerHTML = this.TinHot + ' K';
+    document.getElementById(this.displayHotRightT).innerHTML = this.TinHot + ' K';
     switch(this.ModelFlag) {
       case 0: // co-current
-        document.getElementById("field_cold_right_T").innerHTML = this.TinCold + ' K';
+        document.getElementById(this.displayColdRightT).innerHTML = this.TinCold + ' K';
         break
       case 1: // counter-current
-        document.getElementById("field_cold_left_T").innerHTML = this.TinCold + ' K';
+        document.getElementById(this.displayColdLeftT).innerHTML = this.TinCold + ' K';
     }
 
     // update display of tube length and Reynolds number
@@ -441,12 +448,12 @@ var puHeatExchanger = {
     var Length = this.Area / this.Diam / Math.PI;
     var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
 
-    document.getElementById("field_length").innerHTML = 'L (m) = ' + Length.toFixed(1);
+    document.getElementById(this.displayLength).innerHTML = 'L (m) = ' + Length.toFixed(1);
     // note use .toFixed(n) method of object to round number to n decimal points
 
     // note Re is dimensionless Reynolds number in hot flow tube
     var Re = this.FlowHot / this.FluidDensity / this.FluidKinematicViscosity * 4 / Math.PI / this.Diam;
-    document.getElementById("field_Reynolds").innerHTML = 'Re<sub> hot-tube</sub> = ' + Re.toFixed(0);
+    document.getElementById(this.displayReynoldsNumber).innerHTML = 'Re<sub> hot-tube</sub> = ' + Re.toFixed(0);
 
     // compute axial dispersion coefficient for turbulent flow
     // Dispersion coefficient correlation for Re > 2000 from Wen & Fan as shown in
@@ -456,7 +463,6 @@ var puHeatExchanger = {
     var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
     var VelocHot = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
     this.DispCoef = VelocHot * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
-    // document.getElementById("field_output_field").innerHTML = 'this.DispCoef = ' + this.DispCoef;
 
     // NOTE: to see independent effect of DispCoef = 0, set heat transfer
     // coefficient U = 0, since heat exchange contributes to "spreading" of T's
@@ -482,7 +488,6 @@ var puHeatExchanger = {
     // FIRST, compute spaceTime = residence time between two nodes in hot tube, also
     //                          = space time of equivalent single mixing cell
     var spaceTime = (Length / this.numNodes) / VelocHot; // (s)
-    // document.getElementById("field_output_field").innerHTML = 'cell residence time = ' + spaceTime;
 
     // SECOND, estimate unitTimeStep
     // do NOT change simParams.simTimeStep here
@@ -495,7 +500,6 @@ var puHeatExchanger = {
 
     // FOURTH and finally, recompute unitTimeStep with integer number unitStepRepeats
     this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
-    // document.getElementById("field_output_field").innerHTML = 'this.unitStepRepeats = ' + this.unitStepRepeats;
 
   }, // end of updateUIparams()
 
@@ -566,10 +570,6 @@ var puHeatExchanger = {
     // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
     // STATE VARIABLE
 
-    // document.getElementById("dev01").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; y = " + inverseDz2;
-    // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; Thot[this.numNodes] = " + Thot[this.numNodes];
-    // document.getElementById("field_output_field").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; TinCold = " + this.TinCold;
-
     // from cylindrical outer Area and Diam inputs & specify cylindrical tube for hot flow
     // can compute Length and Volume
     var Length = this.Area / this.Diam / Math.PI;
@@ -633,13 +633,10 @@ var puHeatExchanger = {
       TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
       // CONSTRAIN T's TO BE IN BOUND
-      // can not use TinHot and TinCold because want to be able
-      // to change these in middle of a run
-      if (ThotN > plotsObj[0]['yLeftAxisMax']) {ThotN = plotsObj[0]['yLeftAxisMax'];}
-      if (ThotN < plotsObj[0]['yLeftAxisMin']) {ThotN = plotsObj[0]['yLeftAxisMin'];}
-      if (TcoldN > plotsObj[0]['yLeftAxisMax']) {TcoldN = plotsObj[0]['yLeftAxisMax'];}
-      if (TcoldN < plotsObj[0]['yLeftAxisMin']) {TcoldN = plotsObj[0]['yLeftAxisMin'];}
-      // XXX maybe change primary location of these values to simParams...?
+      if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
+      if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
+      if (TcoldN > this.maxTinHot) {TcoldN = this.maxTinHot;}
+      if (TcoldN < this.minTinCold) {TcoldN = this.minTinCold;}
 
       ThotNew[n] = ThotN;
       TcoldNew[n] = TcoldN;
@@ -672,12 +669,10 @@ var puHeatExchanger = {
         TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
         // CONSTRAIN T's TO BE IN BOUND
-        // can not use TinHot and TinCold because want to be able
-        // to change these in middle of a run
-        if (ThotN > plotsObj[0]['yLeftAxisMax']) {ThotN = plotsObj[0]['yLeftAxisMax'];}
-        if (ThotN < plotsObj[0]['yLeftAxisMin']) {ThotN = plotsObj[0]['yLeftAxisMin'];}
-        if (TcoldN > plotsObj[0]['yLeftAxisMax']) {TcoldN = plotsObj[0]['yLeftAxisMax'];}
-        if (TcoldN < plotsObj[0]['yLeftAxisMin']) {TcoldN = plotsObj[0]['yLeftAxisMin'];}
+        if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
+        if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
+        if (TcoldN > this.maxTinHot) {TcoldN = this.maxTinHot;}
+        if (TcoldN < this.minTinCold) {TcoldN = this.minTinCold;}
 
         ThotNew[n] = ThotN;
         TcoldNew[n] = TcoldN;
@@ -709,12 +704,10 @@ var puHeatExchanger = {
       TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
       // CONSTRAIN T's TO BE IN BOUND
-      // can not use TinHot and TinCold because want to be able
-      // to change these in middle of a run
-      if (ThotN > plotsObj[0]['yLeftAxisMax']) {ThotN = plotsObj[0]['yLeftAxisMax'];}
-      if (ThotN < plotsObj[0]['yLeftAxisMin']) {ThotN = plotsObj[0]['yLeftAxisMin'];}
-      if (TcoldN > plotsObj[0]['yLeftAxisMax']) {TcoldN = plotsObj[0]['yLeftAxisMax'];}
-      if (TcoldN < plotsObj[0]['yLeftAxisMin']) {TcoldN = plotsObj[0]['yLeftAxisMin'];}
+      if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
+      if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
+      if (TcoldN > this.maxTinHot) {TcoldN = this.maxTinHot;}
+      if (TcoldN < this.minTinCold) {TcoldN = this.minTinCold;}
 
       ThotNew[n] = ThotN;
       TcoldNew[n] = TcoldN;
@@ -762,16 +755,17 @@ var puHeatExchanger = {
     // note use .toFixed(n) method of object to round number to n decimal points
 
     var n = 0; // used as index
-    document.getElementById("field_hot_left_T").innerHTML = Thot[this.numNodes].toFixed(1) + ' K';
-    document.getElementById("field_hot_right_T").innerHTML = this.TinHot + ' K';
+
+    document.getElementById(this.displayHotLeftT).innerHTML = Thot[this.numNodes].toFixed(1) + ' K';
+    document.getElementById(this.displayHotRightT).innerHTML = this.TinHot + ' K';
     switch(this.ModelFlag) {
       case 0: // co-current
-        document.getElementById("field_cold_left_T").innerHTML = Tcold[this.numNodes].toFixed(1) + ' K';
-        document.getElementById("field_cold_right_T").innerHTML = this.TinCold + ' K';
+        document.getElementById(this.displayColdLeftT).innerHTML = Tcold[this.numNodes].toFixed(1) + ' K';
+        document.getElementById(this.displayColdRightT).innerHTML = this.TinCold + ' K';
         break
       case 1: // counter-current
-        document.getElementById("field_cold_left_T").innerHTML = this.TinCold + ' K';
-        document.getElementById("field_cold_right_T").innerHTML = Tcold[0].toFixed(1) + ' K';
+        document.getElementById(this.displayColdLeftT).innerHTML = this.TinCold + ' K';
+        document.getElementById(this.displayColdRightT).innerHTML = Tcold[0].toFixed(1) + ' K';
     }
 
     // HANDLE PROFILE PLOT DATA
