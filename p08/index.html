@@ -5,6 +5,7 @@
   <title>Web Labs at ReactorLab.net</title>
 
   <meta name='description' content='designed with lcCardLayoutToWeb project at GitHub'>
+  <meta name='description' content='PFR plug flow reactor simulation'>
 
   <!-- A VIEWPORT META LINE IN HTML HEAD IS NECESSARY FOR CSS @MEDIA TO WORK -->
   <!-- ID used to modify with Javascript after initial loading - OR EDIT HERE -->
@@ -50,15 +51,7 @@
       </div> <!-- end of div div_PLOTDIV_T_plot -->
    <canvas id="canvas_CANVAS_jacket" width="201" height="64"></canvas> <!-- canvas for colormap graphic -->
    <!-- canvas element width & height must be specified here in HTML and not in CSS -->
-   <!-- canvas for colormap graphic -->
-   <!-- canvas element width & height must be specified here in HTML and not in CSS -->
-   <!-- canvas for colormap graphic -->
-   <!-- canvas element width & height must be specified here in HTML and not in CSS -->
    <canvas id="canvas_CANVAS_reactor" width="201" height="34"></canvas> <!-- canvas for colormap graphic -->
-   <!-- canvas element width & height must be specified here in HTML and not in CSS -->
-   <!-- canvas for colormap graphic -->
-   <!-- canvas element width & height must be specified here in HTML and not in CSS -->
-   <!-- canvas for colormap graphic -->
    <!-- canvas element width & height must be specified here in HTML and not in CSS -->
    <input type="button" id="button_runButton" value="Run" value="Run" onclick="runThisLab()">
    <input type="button" id="button_resetButton" value="Reset" value="Reset" onclick="resetThisLab()">
@@ -89,7 +82,7 @@
 </div> <!-- end of div div_simFrame -->
 <div id="div_input_fields_group">
    <!-- onchange can send updateUIparams() to process_main.js to update all units *OR* send to specific units -->
-   <p id="field_k300_label">
+   <p id="field_K300_label">
       k at 300 K (m3/kg/s)
    </p>
    <input id="input_field_K300" value="0.0001" onchange="puPlugFlowReactor.updateUIparams()">
