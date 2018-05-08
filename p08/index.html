@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+
+  <title>Web Labs at ReactorLab.net</title>
+
+  <meta name='description' content='designed with lcCardLayoutToWeb project at GitHub'>
+
+  <!-- A VIEWPORT META LINE IN HTML HEAD IS NECESSARY FOR CSS @MEDIA TO WORK -->
+  <!-- ID used to modify with Javascript after initial loading - OR EDIT HERE -->
+  <!-- suggest use content width = div_simFrame width + 2 * div_simFrame left, and no scale -->
+  <meta id='meta-viewport' name='viewport' content='width=370'>
+
+  <!-- load CSS style sheets for this lab  -->
+  <link rel="stylesheet" href="css/index.css">
+
+  <!-- load main JAVASCRIPT for this lab -->
+  <script language="javascript" src="js/process_main.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_interface.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_units.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_plot_info.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_plotter.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_spacetime.js" type="text/javascript"></script>
+
+  <!-- load flot PLOTTING LIBRARY -->
+  <!-- need full jquery.js for flot.js to work -->
+
+  <!--<script language="javascript" src="js/jquery/jquery.js" type="text/javascript"></script>-->
+  <!--<script language="javascript" src="js/jquery/jquery.flot.js" type="text/javascript"></script>-->
+  <!--<script language="javascript" src="js/jquery/jquery.flot.axislabels.js" type="text/javascript"></script>-->
+
+  <script language="javascript" src="js/jquery/new_jquery/jquery-3.3.1.min.js" type="text/javascript"></script>
+  <script language="javascript" src="js/jquery/new_jquery/jquery.flot.min-0.8.3.js" type="text/javascript"></script>
+  <script language="javascript" src="js/jquery/new_jquery/jquery.flot.axislabels-20141122.js" type="text/javascript"></script>
+
+</head>
+<body>
+  <div id="div_page_header">
+    <p>
+    <a href="http://reactorlab.net/web-labs/">Back</a> to Web Labs at ReactorLab.net
+    <p><b><i>Plug Flow Reactor</i></b></p>
+    <p>
+      Click the Run button to start.
+      Change an input value, then hit the Enter key or click out of the field.
+      <a href = "images/pfr_eqns.pdf" target="new">More info</a>
+    </p>
+  </div> <!-- end of div div_page_header -->
+<div id="div_simFrame">
+      <div id="div_PLOTDIV_T_plot">
+      </div> <!-- end of div div_PLOTDIV_T_plot -->
+   <canvas id="canvas_CANVAS_jacket" width="201" height="64"></canvas> <!-- canvas for colormap graphic -->
+   <!-- canvas element width & height must be specified here in HTML and not in CSS -->
+   <!-- canvas for colormap graphic -->
+   <!-- canvas element width & height must be specified here in HTML and not in CSS -->
+   <!-- canvas for colormap graphic -->
+   <!-- canvas element width & height must be specified here in HTML and not in CSS -->
+   <canvas id="canvas_CANVAS_reactor" width="201" height="34"></canvas> <!-- canvas for colormap graphic -->
+   <!-- canvas element width & height must be specified here in HTML and not in CSS -->
+   <!-- canvas for colormap graphic -->
+   <!-- canvas element width & height must be specified here in HTML and not in CSS -->
+   <!-- canvas for colormap graphic -->
+   <!-- canvas element width & height must be specified here in HTML and not in CSS -->
+   <input type="button" id="button_runButton" value="Run" value="Run" onclick="runThisLab()">
+   <input type="button" id="button_resetButton" value="Reset" value="Reset" onclick="resetThisLab()">
+   <p id="field_reactor_right_arrow">
+      &rarr;
+   </p>
+   <p id="field_jacket_right_arrow">
+      &larr;
+   </p>
+   <p id="field_reactor_left_arrow">
+      &rarr;
+   </p>
+   <p id="field_jacket_left_arrow">
+      &larr;
+   </p>
+   <p id="field_jacket_left_T">
+      333 K
+   </p>
+   <p id="field_jacket_right_T">
+      333 K
+   </p>
+   <p id="field_reactor_left_T">
+      333 K
+   </p>
+   <p id="field_reactor_right_T">
+      333 K
+   </p>
+</div> <!-- end of div div_simFrame -->
+<div id="div_input_fields_group">
+   <!-- onchange can send updateUIparams() to process_main.js to update all units *OR* send to specific units -->
+   <p id="field_k300_label">
+      k at 300 K (m3/kg/s)
+   </p>
+   <input id="input_field_K300" value="0.0001" onchange="puPlugFlowReactor.updateUIparams()">
+   <p id="field_Ea_label">
+      Ea (kJ/mol)
+   </p>
+   <input id="input_field_Ea" value="100" onchange="puPlugFlowReactor.updateUIparams()">
+   <p id="field_H_label">
+      &#8710;H (kJ/mol)
+   </p>
+   <input id="input_field_DelH" value="-125" onchange="puPlugFlowReactor.updateUIparams()">
+   <p id="field_Wcat_label">
+      Wcat (kg)
+   </p>
+   <input id="input_field_Wcat" value="0.1" onchange="puPlugFlowReactor.updateUIparams()">
+   <p id="field_CAin_label">
+      CA-in (mol/m3)
+   </p>
+   <input id="input_field_CAin" value="500" onchange="puPlugFlowReactor.updateUIparams()">
+   <p id="field_flowrate_label">
+      Flow rate (m3/s)
+   </p>
+   <input id="input_field_Flowrate" value="0.004" onchange="puPlugFlowReactor.updateUIparams()">
+   <p id="field_Tin_label">
+      Tin (K)
+   </p>
+   <input id="input_field_Tin" value="350" onchange="puPlugFlowReactor.updateUIparams()">
+   <p id="field_UA_label">
+      UA (kW/K)
+   </p>
+   <input id="input_field_UA" value="10" onchange="puPlugFlowReactor.updateUIparams()">
+   <p id="field_Tjacket_label">
+      Tjacket (K)
+   </p>
+   <input id="input_field_Tjacket" value="360" onchange="puPlugFlowReactor.updateUIparams()">
+</div> <!-- end of div div_input_fields_group -->
+</body>
+</html>
