@@ -170,10 +170,10 @@ var puPlugFlowReactor = {
   inputTjacket : "input_field_Tjacket",
 
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
-  displayHotLeftT: 'field_jacket_left_T',
-  displayHotRightT: 'field_jacket_right_T',
-  displayColdLeftT: 'field_reactor_left_T',
-  displayColdRightT: 'field_reactor_right_T',
+  displayReactorLeftConc: 'field_reactor_left_conc',
+  displayReactorRightConc: 'field_reactor_right_conc',
+  displayReactorLeftT: 'field_reactor_left_T',
+  displayReactorRightT: 'field_reactor_right_T',
   // displayJacketLeftArrow : '#field_jacket_left_arrow', // needs # with ID
 
   // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE... -----
@@ -291,6 +291,8 @@ var puPlugFlowReactor = {
     for (k = 0; k <= this.numNodes; k += 1) {
       Trxr[k] = this.initialTin;
       TrxrNew[k] = this.initialTjacket;
+      Ca[k] = this.initialCain;
+      CaNew[k] = this.initialCain;
     }
 
     var kn = 0;
@@ -305,8 +307,8 @@ var puPlugFlowReactor = {
       profileData[0][k][0] = kn;
       profileData[1][k][0] = kn;
       // y-axis values
-      profileData[0][k][1] = 0;
-      profileData[1][k][1] = 0;
+      profileData[0][k][1] = this.initialTin;
+      profileData[1][k][1] = this.initialCain;
     }
 
   }, // end reset
@@ -453,7 +455,7 @@ var puPlugFlowReactor = {
 
     var dW = this.Wcat / this.numNodes;
     var Rg = 8.314; // ideal gas constant
-    var kT = this.Kf300; // will vary with T below
+    var kT = 0; // will vary with T below
     var EaOverRg = this.Ea / Rg; // so not compute in loop below
     var EaOverRg300 = EaOverRg / 300; // so not compute in loop below
 
@@ -599,11 +601,11 @@ var puPlugFlowReactor = {
 
     var n = 0; // used as index
 
-    // document.getElementById(this.displayHotLeftT).innerHTML = Thot[this.numNodes].toFixed(1) + ' K';
-    // document.getElementById(this.displayHotRightT).innerHTML = this.TinHot + ' K';
-    //
-    //   document.getElementById(this.displayColdLeftT).innerHTML = Tcold[this.numNodes].toFixed(1) + ' K';
-    //   document.getElementById(this.displayColdRightT).innerHTML = this.TinCold + ' K';
+    document.getElementById(this.displayReactorLeftT).innerHTML = Trxr[0].toFixed(1) + ' K';
+    document.getElementById(this.displayReactorRightT).innerHTML = Trxr[this.numNodes].toFixed(1) + ' K';
+
+    document.getElementById(this.displayReactorLeftConc).innerHTML = Ca[0].toFixed(1);
+    document.getElementById(this.displayReactorRightConc).innerHTML = Ca[this.numNodes].toFixed(1);
 
     // HANDLE PROFILE PLOT DATA
 

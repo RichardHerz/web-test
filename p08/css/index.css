@@ -232,7 +232,7 @@ canvas {
   font-size: 16px;
 }
 
-#field_jacket_left_T {
+#field_reactor_left_conc {
   position: absolute;
   left: 4px;
   top: 254px;
@@ -249,7 +249,7 @@ canvas {
   font-size: 16px;
 }
 
-#field_jacket_right_T {
+#field_reactor_right_conc {
   position: absolute;
   left: 313px;
   top: 254px;
