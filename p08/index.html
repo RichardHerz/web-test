@@ -47,7 +47,7 @@
     </p>
   </div> <!-- end of div div_page_header -->
 <div id="div_simFrame">
-      <div id="div_PLOTDIV_T_plot">
+      <div id="div_PLOTDIV_PFR_plot">
       </div> <!-- end of div div_PLOTDIV_T_plot -->
    <canvas id="canvas_CANVAS_jacket" width="201" height="64"></canvas> <!-- canvas for colormap graphic -->
    <!-- canvas element width & height must be specified here in HTML and not in CSS -->
@@ -82,15 +82,15 @@
 </div> <!-- end of div div_simFrame -->
 <div id="div_input_fields_group">
    <!-- onchange can send updateUIparams() to process_main.js to update all units *OR* send to specific units -->
-   <p id="field_K300_label">
+   <p id="field_Kf300_label">
       k at 300 K (m3/kg/s)
    </p>
-   <input id="input_field_K300" value="0.0001" onchange="puPlugFlowReactor.updateUIparams()">
+   <input id="input_field_Kf300" value="0.0001" onchange="puPlugFlowReactor.updateUIparams()">
    <p id="field_Ea_label">
       Ea (kJ/mol)
    </p>
    <input id="input_field_Ea" value="100" onchange="puPlugFlowReactor.updateUIparams()">
-   <p id="field_H_label">
+   <p id="field_DelH_label">
       &#8710;H (kJ/mol)
    </p>
    <input id="input_field_DelH" value="-125" onchange="puPlugFlowReactor.updateUIparams()">

@@ -14,7 +14,7 @@ var Trxr = [];
 var TrxrNew = []; // new values
 var Ca = []; // concentration of reactant
 var CaNew = [];
-ar tempArray = []; // for shifting data in strip chart plots
+var tempArray = []; // for shifting data in strip chart plots
 var spaceData = []; // for shifting data in space-time plots
 
 // ----- SEE process_plot_info.js FOR INITIALIZATION OF ---------------
@@ -157,15 +157,16 @@ var puPlugFlowReactor = {
   // requires a specific naming convention for vars set in INPUT FIELDS
   // for the input ID, and initial, min and max values for each variable
   // e.g., TinHot requires inputTinHot, initialTinHot, minTinHot, maxTinHot
+  // HTML field names may not match this naming convention
   //
-  inputK300 : "input_field_K300",
+  inputKf300 : "input_field_Kf300",
   inputEa : "input_field_Ea",
-  input DelH : "input_field_DelH",
+  inputDelH : "input_field_DelH",
   inputWcat : "input_field_Wcat",
   inputCain : "input_field_Cain",
   inputFlowrate : "input_field_Flowrate",
   inputTin : "input_field_Tin",
-  inputUA : "input_field_UA",
+  inputUAcoef : "input_field_UA",
   inputTjacket : "input_field_Tjacket",
 
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
@@ -193,14 +194,14 @@ var puPlugFlowReactor = {
   // so that this process unit will run if units that supply inputs and
   // html inputs are not present in order to make units more independent
 
-  initialK300 : 1.0e-4, // (m3/kg/s), rate coefficient at 300 K
+  initialKf300 : 1.0e-4, // (m3/kg/s), rate coefficient at 300 K
   initialEa : 100, // (kJ/mol), activation energy
   initialDelH : -125, // (kJ/mol), enthalpy of reaction
   initialWcat : 0.1, // (kg), weight (mass) of catalyst
   initialCain : 500, // (mol/m3), inlet reactant concentration
   initialFlowrate : 4.0e-3, // (m3/s), flow rate of reactant
   initialTin : 350, // (K), inlet T of reactant
-  initialUA : 10, // (kW/kg/K), heat transfer coefficient * area
+  initialUAcoef : 10, // (kW/kg/K), heat transfer coefficient * area
   initialTjacket: 350, // (K), jacket T
 
   // SET MIN AND MAX VALUES FOR INPUTS SET IN INPUT FIELDS
@@ -208,24 +209,24 @@ var puPlugFlowReactor = {
   // min-max range at default conditions
   // NOTE: these min-max may be used in plot definitions in process_plot_info.js
 
-  minK300 : 0, // (m3/kg/s), rate coefficient at 300 K
+  minKf300 : 0, // (m3/kg/s), rate coefficient at 300 K
   minEa : 0, // (kJ/mol), activation energy
   minDelH : -200, // (kJ/mol), enthalpy of reaction
   minWcat : 0, // (kg), weight (mass) of catalyst
   minCain : 0, // (mol/m3), inlet reactant concentration
   minFlowrate : 1.0e-6, // (m3/s), flow rate of reactant
   minTin : 250, // (K), inlet T of reactant
-  minUA : 0, // (kW/kg/K), heat transfer coefficient * area
+  minUAcoef : 0, // (kW/kg/K), heat transfer coefficient * area
   minTjacket: 250, // (K), jacket T
 
-  maxK300 : 10, // (m3/kg/s), rate coefficient at 300 K
+  maxKf300 : 10, // (m3/kg/s), rate coefficient at 300 K
   maxEa : 200, // (kJ/mol), activation energy
   maxDelH : 200, // (kJ/mol), enthalpy of reaction
   maxWcat : 100, // (kg), weight (mass) of catalyst
   maxCain : 1000, // (mol/m3), inlet reactant concentration
   maxFlowrate : 10, // (m3/s), flow rate of reactant
   maxTin : 400, // (K), inlet T of reactant
-  maxUA : 100, // (kW/kg/K), heat transfer coefficient * (area per kg cat)
+  maxUAcoef : 100, // (kW/kg/K), heat transfer coefficient * (area per kg cat)
   maxTjacket: 400, // (K), jacket T
 
   // define the main variables which will not be plotted or save-copy data
@@ -250,14 +251,14 @@ var puPlugFlowReactor = {
   //
   TinHot : this.initialTinHot, // K, hot T in
 
-  K300 : this.initialK300,
+  Kf300 : this.initialKf300,
   Ea : this.initialEa,
   DelH : this.initialDelH,
   Wcat : this.initialWcat,
   Cain : this.initialCain,
   Flowrate : this.initialFlowrate,
   Tin : this.initialTin,
-  UA : this.initialUA,
+  UAcoef : this.initialUAcoef,
   Tjacket: this.initialTjacket,
 
   // variables to be plotted are defined as objects
@@ -351,14 +352,14 @@ var puPlugFlowReactor = {
 
     // check input fields for new values
     // function getInputValue() is defined in file process_interface.js
-    this.K300 = getInputValue('puPlugFlowReactor','K300');
+    this.Kf300 = getInputValue('puPlugFlowReactor','Kf300');
     this.Ea = getInputValue('puPlugFlowReactor','Ea');
     this.DelH = getInputValue('puPlugFlowReactor','DelH');
     this.Wcat = getInputValue('puPlugFlowReactor','Wcat');
     this.Cain = getInputValue('puPlugFlowReactor','Cain');
     this.Flowrate = getInputValue('puPlugFlowReactor','Flowrate');
     this.Tin = getInputValue('puPlugFlowReactor','Tin');
-    this.UA = getInputValue('puPlugFlowReactor','UA');
+    this.UAcoef = getInputValue('puPlugFlowReactor','UAcoef');
     this.Tjacket = getInputValue('puPlugFlowReactor','Tjacket');
 
     // // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
@@ -434,24 +435,76 @@ var puPlugFlowReactor = {
 
     var i = 0; // index for step repeats
     var n = 0; // index for nodes
-    var dTrxrDT = 0.0;
-    var dCaDT = 0.0;
+    var TrxrN = 0;
+    var dTrxrDT = 0;
+    var CaN = 0;
+    var dCaDT = 0;
 
     var voidFrac = 0.3; // bed void fraction
     var densPellet = 1000; // (kg/m3), pellet density
     var densBed = (1 - voidFrac) * densPellet; // (kg/m3), bed density
 
-    var Cp = 2; // (kJ/kg/K), fluid heat capacity
+    var CpFluid = 2; // (kJ/kg/K), fluid heat capacity
     var densFluid = 1000; // (kg/m3), fluid density
+    var CpCat = 2; // (kJ/kg/K), catalyst heat capacity
+    var densCat = 1000; // (kg/m3), catalyst density
+    // assume fluid and catalyst at same T
+    var CpMean = voidFrac*CpFluid + (1-voidFrac)*CpCat;
 
-    var dW = Wcat / this.numNodes;
+    var dW = this.Wcat / this.numNodes;
     var Rg = 8.314; // ideal gas constant
-    var kT = this.K300; // will vary with T below
+    var kT = this.Kf300; // will vary with T below
     var EaOverRg = this.Ea / Rg; // so not compute in loop below
     var EaOverRg300 = EaOverRg / 300; // so not compute in loop below
 
-    var flowCoef = Flowrate * densBed / voidFrac / dW;
+    var flowCoef = this.Flowrate * densBed / voidFrac / dW;
     var rxnCoef = densBed / voidFrac;
+
+    var energyFlowCoef = densFluid * this.Flowrate * CpFluid / CpMean / dW;
+    var energyXferCoef = this.UAcoef / CpMean;
+    var energyRxnCoef = this.DelH / CpMean;
+
+    // calc adiabatic delta T, positive for negative H (exothermic)
+    var adiabDeltaT = -this.DelH * this.Cain / this.densFluid / CpFluid;
+
+    // XXX can move some to updateUIparams() - don't recompute each updateState()
+
+    // calc max possible T
+    var maxT;
+    if(this.DelH < 0) {
+      // exothermic
+      if (this.Tjacket > this.Tin) {
+        maxT = this.Tjacket + adiabDeltaT;
+      } else {
+        maxT = this.Tin + adiabDeltaT;
+      }
+    } else {
+      // endothermic
+      if (this.Tjacket > this.Tin) {
+        maxT = this.Tjacket;
+      } else {
+        maxT = this.Tin;
+      }
+    }
+
+    // calc min possible T
+    var minT;
+    if(this.DelH > 0) {
+      // endothermic
+      if (this.Tjacket < this.Tin) {
+        minT = this.Tjacket + adiabDeltaT;
+      } else {
+        minT = this.Tin + adiabDeltaT;
+      }
+    } else {
+      // exothermic
+      if (this.Tjacket < this.Tin) {
+        minT = this.Tjacket;
+      } else {
+        minT = this.Tin;
+      }
+    }
+    if (minT < 0) {minT = 0;}
 
     // this unit can take multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
@@ -459,17 +512,20 @@ var puPlugFlowReactor = {
       // do node at inlet end
       n = 0;
 
-      kT = this.K300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
+      kT = this.Kf300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
 
-      // special for n=0 is Ca[n-1] is Cain
-      dCaDT = -flowCoef * (Cain - Ca[n]) - kT * rxnCoef * Ca[n];
+      // special for n=0 is Ca[n-1] is this.Cain, Trxr[n-1] is this.Tin
+      dCaDT = -flowCoef * (this.Cain - Ca[n]) - rxnCoef * kT * Ca[n];
+      dTrxrDT = - energyFlowCoef * (this.Tin - Trxr[n])
+                + energyXferCoef * (this.Tjacket - Trxr[n])
+                - energyRxnCoef * kT * Ca[n];
 
       TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
       CaN = CaN + dCaDT * this.unitTimeStep;
 
-      // // CONSTRAIN TO BE IN BOUND
-      // if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
-      // if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
+      // CONSTRAIN TO BE IN BOUND
+      if (TrxrN > maxT) {TrxrN = maxT;}
+      if (TrxrN < minT) {TrxrN = minT;}
       if (CaN < 0.0) {CaN = 0.0;}
       if (CaN > this.Cain) {CaN = this.Cain;}
 
@@ -479,16 +535,19 @@ var puPlugFlowReactor = {
       // internal nodes
       for (n = 1; n < this.numNodes; n += 1) {
 
-        kT = this.K300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
+        kT = this.Kf300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
 
-        dCaDT = -flowCoef * (Ca[n-1] - Ca[n]) - kT * rxnCoef * Ca[n];
+        dCaDT = -flowCoef * (Ca[n-1] - Ca[n]) - rxnCoef * kT * Ca[n];
+        dTrxrDT = - energyFlowCoef * (Trxr[n-1] - Trxr[n])
+                  + energyXferCoef * (this.Tjacket - Trxr[n])
+                  - energyRxnCoef * kT * Ca[n];
 
         TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
         CaN = CaN + dCaDT * this.unitTimeStep;
 
-        // // CONSTRAIN TO BE IN BOUND
-        // if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
-        // if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
+        // CONSTRAIN TO BE IN BOUND
+        if (TrxrN > maxT) {TrxrN = maxT;}
+        if (TrxrN < minT) {TrxrN = minT;}
         if (CaN < 0.0) {CaN = 0.0;}
         if (CaN > this.Cain) {CaN = this.Cain;}
 
@@ -501,16 +560,19 @@ var puPlugFlowReactor = {
 
       n = this.numNodes;
 
-      kT = this.K300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
+      kT = this.Kf300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
 
-      dCaDT = -flowCoef * (Ca[n-1] - Ca[n]) - kT * rxnCoef * Ca[n];
+      dCaDT = -flowCoef * (Ca[n-1] - Ca[n]) - rxnCoef * kT * Ca[n];
+      dTrxrDT = - energyFlowCoef * (Trxr[n-1] - Trxr[n])
+                + energyXferCoef * (this.Tjacket - Trxr[n])
+                - energyRxnCoef * kT * Ca[n];
 
       TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
       CaN = CaN + dCaDT * this.unitTimeStep;
 
-      // // CONSTRAIN TO BE IN BOUND
-      // if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
-      // if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
+      // CONSTRAIN TO BE IN BOUND
+      if (TrxrN > maxT) {TrxrN = maxT;}
+      if (TrxrN < minT) {TrxrN = minT;}
       if (CaN < 0.0) {CaN = 0.0;}
       if (CaN > this.Cain) {CaN = this.Cain;}
 
@@ -537,17 +599,11 @@ var puPlugFlowReactor = {
 
     var n = 0; // used as index
 
-    document.getElementById(this.displayHotLeftT).innerHTML = Thot[this.numNodes].toFixed(1) + ' K';
-    document.getElementById(this.displayHotRightT).innerHTML = this.TinHot + ' K';
-    switch(this.ModelFlag) {
-      case 0: // co-current
-        document.getElementById(this.displayColdLeftT).innerHTML = Tcold[this.numNodes].toFixed(1) + ' K';
-        document.getElementById(this.displayColdRightT).innerHTML = this.TinCold + ' K';
-        break
-      case 1: // counter-current
-        document.getElementById(this.displayColdLeftT).innerHTML = this.TinCold + ' K';
-        document.getElementById(this.displayColdRightT).innerHTML = Tcold[0].toFixed(1) + ' K';
-    }
+    // document.getElementById(this.displayHotLeftT).innerHTML = Thot[this.numNodes].toFixed(1) + ' K';
+    // document.getElementById(this.displayHotRightT).innerHTML = this.TinHot + ' K';
+    //
+    //   document.getElementById(this.displayColdLeftT).innerHTML = Tcold[this.numNodes].toFixed(1) + ' K';
+    //   document.getElementById(this.displayColdRightT).innerHTML = this.TinCold + ' K';
 
     // HANDLE PROFILE PLOT DATA
 
@@ -571,7 +627,7 @@ var puPlugFlowReactor = {
     // spaceTimeData[v][t][s] - variable, time changes to space, space changes to one value
     for (n=0; n<=this.numNodes; n+=1) {
       spaceTimeData[0][n][0] = Trxr[n];
-      spaceTimeData[1][n][0] = Tjacket; // XXX should only do this once...
+      spaceTimeData[1][n][0] = this.Tjacket; // XXX should only do this once...
     }
 
   } // end display method

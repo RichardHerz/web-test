@@ -14,7 +14,7 @@
 // COMMON VALUES FOR PROFILE PLOTS (static x,y plots)
 // these vars used several places below in this file
 var numProfileVars = 2;
-var numProfilePts = puHeatExchanger.numNodes;
+var numProfilePts = puPlugFlowReactor.numNodes;
 
 // COMMON VALUES FOR STRIP CHART PLOTS (scrolling x,y plots)
 // these vars used several places below in this file
@@ -25,7 +25,7 @@ var numStripPts = 0;
 // if want square canvas 'pixels' set time/space pt ratio = canvas width/height ratio
 // these vars used several places below in this file
 var numSpaceTimeVars = 2;
-var numTimePts = puHeatExchanger.numNodes;
+var numTimePts = puPlugFlowReactor.numNodes;
 var numSpacePts = 0; // 0 for one, number is numSpacePts + 1
 
 // WE CURRENTLY USE FLOT.JS FOR PLOTTING PROFILE & STRIP PLOTS
@@ -55,25 +55,25 @@ var plotsObj = new Object();
   // plot 0 info
   plotsObj[0] = new Object();
   plotsObj[0]['type'] = 'profile';
-  plotsObj[0]['name'] = 'temperature profiles';
-  plotsObj[0]['canvas'] = '#div_PLOTDIV_T_plot'; // flot.js wants ID with prefix #
-  plotsObj[0]['numberPoints'] = puHeatExchanger.numNodes; // should match numNodes in process unit
+  plotsObj[0]['name'] = 'PFR profiles';
+  plotsObj[0]['canvas'] = '#div_PLOTDIV_PFR_plot'; // flot.js wants ID with prefix #
+  plotsObj[0]['numberPoints'] = puPlugFlowReactor.numNodes; // should match numNodes in process unit
   // plot has numberPoints + 1 pts!
-  plotsObj[0]['xAxisLabel'] = 'position in exchanger';
+  plotsObj[0]['xAxisLabel'] = 'position';
   // xAxisShow false does not show numbers, nor label, nor grid for x-axis
   // might be better to cover numbers if desire not to show numbers
   plotsObj[0]['xAxisShow'] = 1; // 0 false, 1 true
   plotsObj[0]['xAxisMin'] = 0;
   plotsObj[0]['xAxisMax'] = 1;
-  plotsObj[0]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
-  plotsObj[0]['yLeftAxisLabel'] = 'T (K)'; // or d'less (T - TinCold)/(TinHot - TinCold)
-  plotsObj[0]['yLeftAxisMin'] = puHeatExchanger.minTinCold;
-  plotsObj[0]['yLeftAxisMax'] = puHeatExchanger.maxTinHot;
-  plotsObj[0]['yRightAxisLabel'] = 'yRight';
+  plotsObj[0]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
+  plotsObj[0]['yLeftAxisLabel'] = 'Trxr (K)'; // or d'less (T - TinCold)/(TinHot - TinCold)
+  plotsObj[0]['yLeftAxisMin'] = 200;
+  plotsObj[0]['yLeftAxisMax'] = 500;
+  plotsObj[0]['yRightAxisLabel'] = 'Ca (mol/m3)';
   plotsObj[0]['yRightAxisMin'] = 0;
-  plotsObj[0]['yRightAxisMax'] = 1;
+  plotsObj[0]['yRightAxisMax'] = 1000;
   plotsObj[0]['plotLegendPosition'] = "se";
-  plotsObj[0]['plotLegendShow'] = 0;  // Boolean, '' or 0 for no show, 1 or "show"
+  plotsObj[0]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 or "show"
   plotsObj[0]['plotGridBgColor'] = 'white';
   // colors can be specified rgb, rgba, hex, and color names
   // for flot.js colors, only basic color names appear to work, e.g., white, blue, red
@@ -85,8 +85,8 @@ var plotsObj = new Object();
     plotsObj[0]['var'][0] = 0; // values are curve data number to be put on plot
     plotsObj[0]['var'][1] = 1; // listed in order of varLabel order, etc.
   plotsObj[0]['varLabel'] = new Array();
-    plotsObj[0]['varLabel'][0] = 'Thot'; // 1st var
-    plotsObj[0]['varLabel'][1] = 'Tcold';
+    plotsObj[0]['varLabel'][0] = 'Trxr'; // 1st var
+    plotsObj[0]['varLabel'][1] = 'Ca';
   plotsObj[0]['varShow'] = new Array();
     // varShow = 'show' shows curve, 'hide' hides curve but shows name in legend
     // value can be changed by javascript if want to show/hide curve with checkbox
@@ -94,7 +94,7 @@ var plotsObj = new Object();
     plotsObj[0]['varShow'][1] = 'show';
   plotsObj[0]['varYaxis'] = new Array();
     plotsObj[0]['varYaxis'][0] = 'left'; // 1st var
-    plotsObj[0]['varYaxis'][1] = 'left';
+    plotsObj[0]['varYaxis'][1] = 'right';
   plotsObj[0]['varYscaleFactor'] = new Array();
     plotsObj[0]['varYscaleFactor'][0] = 1; // 1st var
     plotsObj[0]['varYscaleFactor'][1] = 1;
@@ -104,21 +104,21 @@ var plotsObj = new Object();
   // plot 1 info
   plotsObj[1] = new Object();
   plotsObj[1]['type'] = 'canvas';
-  plotsObj[1]['name'] = 'hot side color canvas';
-  plotsObj[1]['canvas'] = 'canvas_CANVAS_hot'; // without prefix #
+  plotsObj[1]['name'] = 'reactor color canvas';
+  plotsObj[1]['canvas'] = 'canvas_CANVAS_reactor'; // without prefix #
   plotsObj[1]['var'] = 0; // variable number in array spaceTimeData, 0, 1, etc.
-  plotsObj[1]['varValueMin'] = puHeatExchanger.minTinCold;
-  plotsObj[1]['varValueMax'] = puHeatExchanger.maxTinHot;
+  plotsObj[1]['varValueMin'] = puPlugFlowReactor.minTjacket;
+  plotsObj[1]['varValueMax'] = puPlugFlowReactor.minTjacket;
   plotsObj[1]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
 
   // plot 2 info
   plotsObj[2] = new Object();
   plotsObj[2]['type'] = 'canvas';
-  plotsObj[2]['name'] = 'cold side color canvas';
-  plotsObj[2]['canvas'] = 'canvas_CANVAS_cold'; // without prefix #
+  plotsObj[2]['name'] = 'jacket color canvas';
+  plotsObj[2]['canvas'] = 'canvas_CANVAS_jacket'; // without prefix #
   plotsObj[2]['var'] = 1; // variable number in array spaceTimeData, 0, 1, etc.
-  plotsObj[2]['varValueMin'] = puHeatExchanger.minTinCold;
-  plotsObj[2]['varValueMax'] = puHeatExchanger.maxTinHot;
+  plotsObj[2]['varValueMin'] = 200;
+  plotsObj[2]['varValueMax'] = 500;
   plotsObj[2]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
 
   // DEFINE plotFlag ARRAY so don't have to generate entire
