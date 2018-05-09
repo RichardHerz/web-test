@@ -181,7 +181,7 @@ var puPlugFlowReactor = {
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for time step in this unit's updateInputs method
-  unitStepRepeats : 10,
+  unitStepRepeats : 100,
   unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
 
   // WARNING: IF INCREASE NUM NODES IN HEAT EXCHANGER BY A FACTOR THEN HAVE TO
@@ -194,15 +194,15 @@ var puPlugFlowReactor = {
   // so that this process unit will run if units that supply inputs and
   // html inputs are not present in order to make units more independent
 
-  initialKf300 : 1.0e-4, // (m3/kg/s), rate coefficient at 300 K
-  initialEa : 100, // (kJ/mol), activation energy
-  initialDelH : -125, // (kJ/mol), enthalpy of reaction
-  initialWcat : 0.1, // (kg), weight (mass) of catalyst
-  initialCain : 500, // (mol/m3), inlet reactant concentration
+  initialKf300 : 0, // (m3/kg/s), rate coefficient at 300 K
+  initialEa : 0, // (kJ/mol), activation energy
+  initialDelH : 0, // (kJ/mol), enthalpy of reaction
+  initialWcat : 200, // (kg), weight (mass) of catalyst
+  initialCain : 400, // (mol/m3), inlet reactant concentration
   initialFlowrate : 4.0e-3, // (m3/s), flow rate of reactant
-  initialTin : 350, // (K), inlet T of reactant
+  initialTin : 340, // (K), inlet T of reactant
   initialUAcoef : 10, // (kW/kg/K), heat transfer coefficient * area
-  initialTjacket: 350, // (K), jacket T
+  initialTjacket: 340, // (K), jacket T
 
   // SET MIN AND MAX VALUES FOR INPUTS SET IN INPUT FIELDS
   // here set range so solution stable when only one variable changed in
@@ -222,7 +222,7 @@ var puPlugFlowReactor = {
   maxKf300 : 10, // (m3/kg/s), rate coefficient at 300 K
   maxEa : 200, // (kJ/mol), activation energy
   maxDelH : 200, // (kJ/mol), enthalpy of reaction
-  maxWcat : 100, // (kg), weight (mass) of catalyst
+  maxWcat : 1000, // (kg), weight (mass) of catalyst
   maxCain : 1000, // (mol/m3), inlet reactant concentration
   maxFlowrate : 10, // (m3/s), flow rate of reactant
   maxTin : 400, // (K), inlet T of reactant
@@ -291,8 +291,8 @@ var puPlugFlowReactor = {
     for (k = 0; k <= this.numNodes; k += 1) {
       Trxr[k] = this.initialTin;
       TrxrNew[k] = this.initialTjacket;
-      Ca[k] = this.initialCain;
-      CaNew[k] = this.initialCain;
+      Ca[k] = 0; // this.initialCain;
+      CaNew[k] = 0; // this.initialCain;
     }
 
     var kn = 0;
@@ -516,12 +516,13 @@ var puPlugFlowReactor = {
 
       // special for n=0 is Ca[n-1] is this.Cain, Trxr[n-1] is this.Tin
       dCaDT = -flowCoef * (Ca[n] - this.Cain) - rxnCoef * kT * Ca[n];
+
       dTrxrDT = - energyFlowCoef * (Trxr[n] - this.Tin)
                 + energyXferCoef * (this.Tjacket - Trxr[n])
                 - energyRxnCoef * kT * Ca[n];
 
-      TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
-      CaN = CaN + dCaDT * this.unitTimeStep;
+      CaN = Ca[n] + dCaDT * this.unitTimeStep;
+      TrxrN = Trxr[n] + dTrxrDT * this.unitTimeStep;
 
       // CONSTRAIN TO BE IN BOUND
       if (TrxrN > maxT) {TrxrN = maxT;}
@@ -542,8 +543,8 @@ var puPlugFlowReactor = {
                   + energyXferCoef * (this.Tjacket - Trxr[n])
                   - energyRxnCoef * kT * Ca[n];
 
-        TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
-        CaN = CaN + dCaDT * this.unitTimeStep;
+        CaN = Ca[n] + dCaDT * this.unitTimeStep;
+        TrxrN = Trxr[n] + dTrxrDT * this.unitTimeStep;
 
         // CONSTRAIN TO BE IN BOUND
         if (TrxrN > maxT) {TrxrN = maxT;}
@@ -567,8 +568,8 @@ var puPlugFlowReactor = {
                 + energyXferCoef * (this.Tjacket - Trxr[n])
                 - energyRxnCoef * kT * Ca[n];
 
-      TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
-      CaN = CaN + dCaDT * this.unitTimeStep;
+      CaN = Ca[n] + dCaDT * this.unitTimeStep;
+      TrxrN = Trxr[n] + dTrxrDT * this.unitTimeStep;
 
       // CONSTRAIN TO BE IN BOUND
       if (TrxrN > maxT) {TrxrN = maxT;}
