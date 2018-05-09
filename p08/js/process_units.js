@@ -59,7 +59,7 @@ var simParams = {
   // WARNING: DO NOT CHANGE simTimeStep BETWEEN display updates
 
   simStepRepeats : 1, // integer number of unit updates between display updates
-  simTimeStep : 2, // time step value, simulation time, of main repeat
+  simTimeStep : 1, // time step value, simulation time, of main repeat
 
   // individual units may do more steps in one unit updateState()
   // see individual units for any unitTimeStep and unitStepRepeats
@@ -181,7 +181,7 @@ var puPlugFlowReactor = {
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for time step in this unit's updateInputs method
-  unitStepRepeats : 1,
+  unitStepRepeats : 10,
   unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
 
   // WARNING: IF INCREASE NUM NODES IN HEAT EXCHANGER BY A FACTOR THEN HAVE TO
@@ -442,19 +442,17 @@ var puPlugFlowReactor = {
     var CaN = 0;
     var dCaDT = 0;
 
-    var voidFrac = 0.3; // bed void fraction
-    var densPellet = 1000; // (kg/m3), pellet density
-    var densBed = (1 - voidFrac) * densPellet; // (kg/m3), bed density
-
     var CpFluid = 2; // (kJ/kg/K), fluid heat capacity
-    var densFluid = 1000; // (kg/m3), fluid density
-    var CpCat = 2; // (kJ/kg/K), catalyst heat capacity
+    var CpCat= 2; // (kJ/kg/K), catalyst heat capacity
+    var densFluid = 1000; // (kg/m3), fluid density    var CpCat = 2; // (kJ/kg/K), catalyst heat capacity
     var densCat = 1000; // (kg/m3), catalyst density
+    var voidFrac = 0.3; // bed void fraction
+    var densBed = (1 - voidFrac) * densCat; // (kg/m3), bed density
     // assume fluid and catalyst at same T
     var CpMean = voidFrac*CpFluid + (1-voidFrac)*CpCat;
 
     var dW = this.Wcat / this.numNodes;
-    var Rg = 8.314; // ideal gas constant
+    var Rg = 8.31446e-3; // (kJ/K/mol), ideal gas constant
     var kT = 0; // will vary with T below
     var EaOverRg = this.Ea / Rg; // so not compute in loop below
     var EaOverRg300 = EaOverRg / 300; // so not compute in loop below
@@ -462,12 +460,12 @@ var puPlugFlowReactor = {
     var flowCoef = this.Flowrate * densBed / voidFrac / dW;
     var rxnCoef = densBed / voidFrac;
 
-    var energyFlowCoef = densFluid * this.Flowrate * CpFluid / CpMean / dW;
+    var energyFlowCoef = this.Flowrate * densFluid * CpFluid / CpMean / dW;
     var energyXferCoef = this.UAcoef / CpMean;
     var energyRxnCoef = this.DelH / CpMean;
 
     // calc adiabatic delta T, positive for negative H (exothermic)
-    var adiabDeltaT = -this.DelH * this.Cain / this.densFluid / CpFluid;
+    var adiabDeltaT = -this.DelH * this.Cain / densFluid / CpFluid;
 
     // XXX can move some to updateUIparams() - don't recompute each updateState()
 
@@ -517,8 +515,8 @@ var puPlugFlowReactor = {
       kT = this.Kf300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
 
       // special for n=0 is Ca[n-1] is this.Cain, Trxr[n-1] is this.Tin
-      dCaDT = -flowCoef * (this.Cain - Ca[n]) - rxnCoef * kT * Ca[n];
-      dTrxrDT = - energyFlowCoef * (this.Tin - Trxr[n])
+      dCaDT = -flowCoef * (Ca[n] - this.Cain) - rxnCoef * kT * Ca[n];
+      dTrxrDT = - energyFlowCoef * (Trxr[n] - this.Tin)
                 + energyXferCoef * (this.Tjacket - Trxr[n])
                 - energyRxnCoef * kT * Ca[n];
 
@@ -539,8 +537,8 @@ var puPlugFlowReactor = {
 
         kT = this.Kf300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
 
-        dCaDT = -flowCoef * (Ca[n-1] - Ca[n]) - rxnCoef * kT * Ca[n];
-        dTrxrDT = - energyFlowCoef * (Trxr[n-1] - Trxr[n])
+        dCaDT = -flowCoef * (Ca[n] - Ca[n-1]) - rxnCoef * kT * Ca[n];
+        dTrxrDT = - energyFlowCoef * (Trxr[n] - Trxr[n-1])
                   + energyXferCoef * (this.Tjacket - Trxr[n])
                   - energyRxnCoef * kT * Ca[n];
 
@@ -564,8 +562,8 @@ var puPlugFlowReactor = {
 
       kT = this.Kf300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
 
-      dCaDT = -flowCoef * (Ca[n-1] - Ca[n]) - rxnCoef * kT * Ca[n];
-      dTrxrDT = - energyFlowCoef * (Trxr[n-1] - Trxr[n])
+      dCaDT = -flowCoef * (Ca[n] - Ca[n-1]) - rxnCoef * kT * Ca[n];
+      dTrxrDT = - energyFlowCoef * (Trxr[n] - Trxr[n-1])
                 + energyXferCoef * (this.Tjacket - Trxr[n])
                 - energyRxnCoef * kT * Ca[n];
 
