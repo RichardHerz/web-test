@@ -12,8 +12,8 @@
 
 var Trxr = [];
 var TrxrNew = []; // new values
-var Xrxr = []; // conversion of reactant
-var XrxrNew = [];
+var Ca = []; // concentration of reactant
+var CaNew = [];
 ar tempArray = []; // for shifting data in strip chart plots
 var spaceData = []; // for shifting data in space-time plots
 
@@ -162,7 +162,7 @@ var puPlugFlowReactor = {
   inputEa : "input_field_Ea",
   input DelH : "input_field_DelH",
   inputWcat : "input_field_Wcat",
-  inputCAin : "input_field_CAin",
+  inputCain : "input_field_Cain",
   inputFlowrate : "input_field_Flowrate",
   inputTin : "input_field_Tin",
   inputUA : "input_field_UA",
@@ -197,10 +197,10 @@ var puPlugFlowReactor = {
   initialEa : 100, // (kJ/mol), activation energy
   initialDelH : -125, // (kJ/mol), enthalpy of reaction
   initialWcat : 0.1, // (kg), weight (mass) of catalyst
-  initialCAin : 500, // (mol/m3), inlet reactant concentration
+  initialCain : 500, // (mol/m3), inlet reactant concentration
   initialFlowrate : 4.0e-3, // (m3/s), flow rate of reactant
   initialTin : 350, // (K), inlet T of reactant
-  initialUA : 10, // (kW/K), heat transfer coefficient * area
+  initialUA : 10, // (kW/kg/K), heat transfer coefficient * area
   initialTjacket: 350, // (K), jacket T
 
   // SET MIN AND MAX VALUES FOR INPUTS SET IN INPUT FIELDS
@@ -212,20 +212,20 @@ var puPlugFlowReactor = {
   minEa : 0, // (kJ/mol), activation energy
   minDelH : -200, // (kJ/mol), enthalpy of reaction
   minWcat : 0, // (kg), weight (mass) of catalyst
-  minCAin : 0, // (mol/m3), inlet reactant concentration
+  minCain : 0, // (mol/m3), inlet reactant concentration
   minFlowrate : 1.0e-6, // (m3/s), flow rate of reactant
   minTin : 250, // (K), inlet T of reactant
-  minUA : 0, // (kW/K), heat transfer coefficient * area
+  minUA : 0, // (kW/kg/K), heat transfer coefficient * area
   minTjacket: 250, // (K), jacket T
 
   maxK300 : 10, // (m3/kg/s), rate coefficient at 300 K
   maxEa : 200, // (kJ/mol), activation energy
   maxDelH : 200, // (kJ/mol), enthalpy of reaction
   maxWcat : 100, // (kg), weight (mass) of catalyst
-  maxCAin : 1000, // (mol/m3), inlet reactant concentration
+  maxCain : 1000, // (mol/m3), inlet reactant concentration
   maxFlowrate : 10, // (m3/s), flow rate of reactant
   maxTin : 400, // (K), inlet T of reactant
-  maxUA : 100, // (kW/K), heat transfer coefficient * area
+  maxUA : 100, // (kW/kg/K), heat transfer coefficient * (area per kg cat)
   maxTjacket: 400, // (K), jacket T
 
   // define the main variables which will not be plotted or save-copy data
@@ -234,9 +234,6 @@ var puPlugFlowReactor = {
   // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
   // WARNING: numNodes is accessed in process_plot_info.js
   numNodes : 200,
-
-  FluidDensity : 1000.0, // (kg/m3), fluid density specified to be that of water
-  Cp : 2.0, // (kJ/kg/K), reaction fluid heat capacity
 
   // also see simParams.ssFlag and simParams.SScheck
   SScheck : 0, // for saving steady state check number
@@ -257,7 +254,7 @@ var puPlugFlowReactor = {
   Ea : this.initialEa,
   DelH : this.initialDelH,
   Wcat : this.initialWcat,
-  CAin : this.initialCAin,
+  Cain : this.initialCain,
   Flowrate : this.initialFlowrate,
   Tin : this.initialTin,
   UA : this.initialUA,
@@ -358,7 +355,7 @@ var puPlugFlowReactor = {
     this.Ea = getInputValue('puPlugFlowReactor','Ea');
     this.DelH = getInputValue('puPlugFlowReactor','DelH');
     this.Wcat = getInputValue('puPlugFlowReactor','Wcat');
-    this.CAin = getInputValue('puPlugFlowReactor','CAin');
+    this.Cain = getInputValue('puPlugFlowReactor','Cain');
     this.Flowrate = getInputValue('puPlugFlowReactor','Flowrate');
     this.Tin = getInputValue('puPlugFlowReactor','Tin');
     this.UA = getInputValue('puPlugFlowReactor','UA');
@@ -437,11 +434,24 @@ var puPlugFlowReactor = {
 
     var i = 0; // index for step repeats
     var n = 0; // index for nodes
-    var TrxrN = 0.0;
-    var TrxrNm1 = 0.0;
-    var TrxrNp1 = 0.0;
     var dTrxrDT = 0.0;
-    var dXrxrDT = 0.0;
+    var dCaDT = 0.0;
+
+    var voidFrac = 0.3; // bed void fraction
+    var densPellet = 1000; // (kg/m3), pellet density
+    var densBed = (1 - voidFrac) * densPellet; // (kg/m3), bed density
+
+    var Cp = 2; // (kJ/kg/K), fluid heat capacity
+    var densFluid = 1000; // (kg/m3), fluid density
+
+    var dW = Wcat / this.numNodes;
+    var Rg = 8.314; // ideal gas constant
+    var kT = this.K300; // will vary with T below
+    var EaOverRg = this.Ea / Rg; // so not compute in loop below
+    var EaOverRg300 = EaOverRg / 300; // so not compute in loop below
+
+    var flowCoef = Flowrate * densBed / voidFrac / dW;
+    var rxnCoef = densBed / voidFrac;
 
     // this unit can take multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
@@ -449,32 +459,41 @@ var puPlugFlowReactor = {
       // do node at inlet end
       n = 0;
 
-      TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
-      XrxrN = XrxrN + dXrxrDT * this.unitTimeStep;
+      kT = this.K300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
 
-      // // CONSTRAIN T's TO BE IN BOUND
+      // special for n=0 is Ca[n-1] is Cain
+      dCaDT = -flowCoef * (Cain - Ca[n]) - kT * rxnCoef * Ca[n];
+
+      TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
+      CaN = CaN + dCaDT * this.unitTimeStep;
+
+      // // CONSTRAIN TO BE IN BOUND
       // if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
       // if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
-      if (XrxrN < 0.0) {XrxrN = 0.0;}
-      if (XrxrN > 1.0) {XrxrN = 1.0;}
+      if (CaN < 0.0) {CaN = 0.0;}
+      if (CaN > this.Cain) {CaN = this.Cain;}
 
       TrxrNew[n] = TrxrN;
-      XrxrNew[n] = XrxrN;
+      CaNew[n] = CaN;
 
       // internal nodes
       for (n = 1; n < this.numNodes; n += 1) {
 
-        TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
-        XrxrN = XrxrN + dXrxrDT * this.unitTimeStep;
+        kT = this.K300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
 
-        // // CONSTRAIN T's TO BE IN BOUND
+        dCaDT = -flowCoef * (Ca[n-1] - Ca[n]) - kT * rxnCoef * Ca[n];
+
+        TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
+        CaN = CaN + dCaDT * this.unitTimeStep;
+
+        // // CONSTRAIN TO BE IN BOUND
         // if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
         // if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
-        if (XrxrN < 0.0) {XrxrN = 0.0;}
-        if (XrxrN > 1.0) {XrxrN = 1.0;}
+        if (CaN < 0.0) {CaN = 0.0;}
+        if (CaN > this.Cain) {CaN = this.Cain;}
 
         TrxrNew[n] = TrxrN;
-        XrxrNew[n] = XrxrN;
+        CaNew[n] = CaN;
 
       } // end repeat through internal nodes
 
@@ -482,23 +501,27 @@ var puPlugFlowReactor = {
 
       n = this.numNodes;
 
-      TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
-      XrxrN = XrxrN + dXrxrDT * this.unitTimeStep;
+      kT = this.K300 * Math.exp(EaOverRg300 - EaOverRg/Trxr[n]);
 
-      // // CONSTRAIN T's TO BE IN BOUND
+      dCaDT = -flowCoef * (Ca[n-1] - Ca[n]) - kT * rxnCoef * Ca[n];
+
+      TrxrN = TrxrN + dTrxrDT * this.unitTimeStep;
+      CaN = CaN + dCaDT * this.unitTimeStep;
+
+      // // CONSTRAIN TO BE IN BOUND
       // if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
       // if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
-      if (XrxrN < 0.0) {XrxrN = 0.0;}
-      if (XrxrN > 1.0) {XrxrN = 1.0;}
+      if (CaN < 0.0) {CaN = 0.0;}
+      if (CaN > this.Cain) {CaN = this.Cain;}
 
       TrxrNew[n] = TrxrN;
-      XrxrNew[n] = XrxrN;
+      CaNew[n] = CaN;
 
       // finished updating all nodes
 
       // copy new to current
       Trxr = TrxrNew;
-      Xrxr = XrxrNew;
+      Ca = CaNew;
 
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 
@@ -536,7 +559,7 @@ var puPlugFlowReactor = {
 
     for (n=0; n<=this.numNodes; n+=1) {
       profileData[0][n][1] = Trxr[n];
-      profileData[1][n][1] = Xrxr[n];
+      profileData[1][n][1] = Ca[n];
     }
 
     // HANDLE SPACE-TIME DATA >> HERE IS HOT AND COLD SIDES OF EXCHANGER
