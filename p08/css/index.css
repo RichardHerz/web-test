@@ -89,10 +89,9 @@ canvas {
   display: block;
   position: absolute;
   /* left: 39px; */
-  left: 37px;
+  left: 34px;
   top: 30px;
-  /* width: 255px; */
-  width: 275px;
+  width: 297px;
   height: 224px;
   visibility: visible;
   border-width: 1px;

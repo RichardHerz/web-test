@@ -194,15 +194,15 @@ var puPlugFlowReactor = {
   // so that this process unit will run if units that supply inputs and
   // html inputs are not present in order to make units more independent
 
-  initialKf300 : 0, // (m3/kg/s), rate coefficient at 300 K
-  initialEa : 0, // (kJ/mol), activation energy
-  initialDelH : 0, // (kJ/mol), enthalpy of reaction
-  initialWcat : 200, // (kg), weight (mass) of catalyst
-  initialCain : 400, // (mol/m3), inlet reactant concentration
+  initialKf300 : 1.0e-7, // (m3/kg/s), rate coefficient at 300 K
+  initialEa : 100, // (kJ/mol), activation energy
+  initialDelH : -125, // (kJ/mol), enthalpy of reaction
+  initialWcat : 100, // (kg), weight (mass) of catalyst
+  initialCain : 500, // (mol/m3), inlet reactant concentration
   initialFlowrate : 4.0e-3, // (m3/s), flow rate of reactant
-  initialTin : 340, // (K), inlet T of reactant
-  initialUAcoef : 10, // (kW/kg/K), heat transfer coefficient * area
-  initialTjacket: 340, // (K), jacket T
+  initialTin : 350, // (K), inlet T of reactant
+  initialUAcoef : 0.1, // (kW/kg/K), heat transfer coefficient * area
+  initialTjacket: 360, // (K), jacket T
 
   // SET MIN AND MAX VALUES FOR INPUTS SET IN INPUT FIELDS
   // here set range so solution stable when only one variable changed in
@@ -214,7 +214,7 @@ var puPlugFlowReactor = {
   minDelH : -200, // (kJ/mol), enthalpy of reaction
   minWcat : 0, // (kg), weight (mass) of catalyst
   minCain : 0, // (mol/m3), inlet reactant concentration
-  minFlowrate : 1.0e-6, // (m3/s), flow rate of reactant
+  minFlowrate : 0.0, // (m3/s), flow rate of reactant
   minTin : 250, // (K), inlet T of reactant
   minUAcoef : 0, // (kW/kg/K), heat transfer coefficient * area
   minTjacket: 250, // (K), jacket T
@@ -444,11 +444,12 @@ var puPlugFlowReactor = {
 
     var CpFluid = 2; // (kJ/kg/K), fluid heat capacity
     var CpCat= 2; // (kJ/kg/K), catalyst heat capacity
-    var densFluid = 1000; // (kg/m3), fluid density    var CpCat = 2; // (kJ/kg/K), catalyst heat capacity
+    var densFluid = 1000; // (kg/m3), fluid density
+    var CpCat = 2; // (kJ/kg/K), catalyst heat capacity
     var densCat = 1000; // (kg/m3), catalyst density
     var voidFrac = 0.3; // bed void fraction
     var densBed = (1 - voidFrac) * densCat; // (kg/m3), bed density
-    // assume fluid and catalyst at same T
+    // assume fluid and catalyst at same T at each position in reactor 
     var CpMean = voidFrac*CpFluid + (1-voidFrac)*CpCat;
 
     var dW = this.Wcat / this.numNodes;

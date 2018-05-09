@@ -67,13 +67,13 @@ var plotsObj = new Object();
   plotsObj[0]['xAxisMax'] = 1;
   plotsObj[0]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
   plotsObj[0]['yLeftAxisLabel'] = 'Trxr (K)'; // or d'less (T - TinCold)/(TinHot - TinCold)
-  plotsObj[0]['yLeftAxisMin'] = 200;
-  plotsObj[0]['yLeftAxisMax'] = 500;
+  plotsObj[0]['yLeftAxisMin'] = 345;
+  plotsObj[0]['yLeftAxisMax'] = 380;
   plotsObj[0]['yRightAxisLabel'] = 'Ca (mol/m3)';
   plotsObj[0]['yRightAxisMin'] = 0;
-  plotsObj[0]['yRightAxisMax'] = 1000;
-  plotsObj[0]['plotLegendPosition'] = "se";
+  plotsObj[0]['yRightAxisMax'] = 500;
   plotsObj[0]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 or "show"
+  plotsObj[0]['plotLegendPosition'] = 'nw';
   plotsObj[0]['plotGridBgColor'] = 'white';
   // colors can be specified rgb, rgba, hex, and color names
   // for flot.js colors, only basic color names appear to work, e.g., white, blue, red
@@ -107,9 +107,9 @@ var plotsObj = new Object();
   plotsObj[1]['name'] = 'reactor color canvas';
   plotsObj[1]['canvas'] = 'canvas_CANVAS_reactor'; // without prefix #
   plotsObj[1]['var'] = 0; // variable number in array spaceTimeData, 0, 1, etc.
-  plotsObj[1]['varValueMin'] = puPlugFlowReactor.minTjacket;
-  plotsObj[1]['varValueMax'] = puPlugFlowReactor.minTjacket;
-  plotsObj[1]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
+  plotsObj[1]['varValueMin'] = 340;
+  plotsObj[1]['varValueMax'] = 380;
+  plotsObj[1]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
 
   // plot 2 info
   plotsObj[2] = new Object();
@@ -117,9 +117,9 @@ var plotsObj = new Object();
   plotsObj[2]['name'] = 'jacket color canvas';
   plotsObj[2]['canvas'] = 'canvas_CANVAS_jacket'; // without prefix #
   plotsObj[2]['var'] = 1; // variable number in array spaceTimeData, 0, 1, etc.
-  plotsObj[2]['varValueMin'] = 200;
-  plotsObj[2]['varValueMax'] = 500;
-  plotsObj[2]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
+  plotsObj[2]['varValueMin'] = 340;
+  plotsObj[2]['varValueMax'] = 380;
+  plotsObj[2]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
 
   // DEFINE plotFlag ARRAY so don't have to generate entire
   // profile or strip plot everytime want to just change data and not axes, etc.

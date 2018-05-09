@@ -152,13 +152,14 @@ function plotPlotData(pData,pNumber) {
       // axisLabels REQUIRES LIBRARY flot.axislabels.js, SEE
       //     https://github.com/markrcote/flot-axislabels
       axisLabels : {show: true},
-      xaxes: [ { show: xShow, min: xMin, max: xMax, axisLabel: xLabel } ],    yaxes: [
+      xaxes: [ { show: xShow, min: xMin, max: xMax, axisLabel: xLabel } ],
+      yaxes: [
       // yaxis object listed first is "yaxis: 1" in dataToPlot, second is 2
-      {position: 'right', min: yRightMin, max: yRightMax, axisLabel: yRightLabel },
-      {position: 'left', min: yLeftMin, max: yLeftMax, axisLabel: yLeftLabel },
-    ],
-    legend: { position: plotLegendPosition },
+        {position: 'right', min: yRightMin, max: yRightMax, axisLabel: yRightLabel },
+        {position: 'left', min: yLeftMin, max: yLeftMax, axisLabel: yLeftLabel },
+      ],
     legend: { show: plotLegendShow },
+    legend: { position: plotLegendPosition },
     grid: { backgroundColor: plotGridBgColor },
     colors: plotDataSeriesColors
   };
