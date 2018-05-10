@@ -43,7 +43,7 @@ var simParams = {
   // updateProcessUnits and updateDisplay but NOT from top of unit functions here
   ssFlag : false, // steady state flag set true when sim reaches steady state
   // also see below in simParams the var oldSimTime
-  // also see in puHeatExchanger the vars SScheck and residenceTime
+  // also see in process unit the vars SScheck and residenceTime
 
   runningFlag : false, // set runningFlag to false initially
   runButtonID : "button_runButton", // for functions to run, reset, copy data
@@ -122,13 +122,43 @@ var simParams = {
     this.simTimeStep = factor * this.simTimeStep;
   },
 
+  // checkForSteadyState : function() {
+  //   // required - called by process_main.js
+  //   // use OS Activity Monitor of CPU load to see effect of this
+  //   // not implemented here
+  // } // END OF checkForSteadyState()
+
   checkForSteadyState : function() {
     // required - called by process_main.js
-    // not implemented here
+    // use OS Activity Monitor of CPU load to see effect of this
+    if (this.simTime >= this.oldSimTime + puPlugFlowReactor.residenceTime) {
+      // check in order to save CPU time when sim is at steady state
+      // check for SS by checking for any significant change in array end values
+      // but wait at least one residence time after the previous check
+      // to allow changes to propagate down reactor
+      // create SScheck which is a 16-digit number unique to current 4 end T's
+      // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
+      var nn = puPlugFlowReactor.numNodes;
+      // Trxr and Ca arrays are globals
+      var hlt = 1.0e5 * Trxr[nn].toFixed(1);
+      var hrt = 1.0e1 * Trxr[0].toFixed(1);
+      var clt = 1.0e-3 * Ca[nn].toFixed(1);
+      var crt = 1.0e-7 * Ca[0].toFixed(1);
+      var SScheck = hlt + hrt + clt + crt;
+      SScheck = SScheck.toFixed(8); // need because last sum operation adds significant figs
+      // note SScheck = hlt0hrt0.clt0crt0 << 16 digits, 4 each for 4 end values
+      var oldSScheck = puPlugFlowReactor.SScheck;
+      if (SScheck == oldSScheck) {
+        // set ssFlag
+        simParams.ssFlag = true;
+      } // end if (SScheck == oldSScheck)
+      // save current values as the old values
+      puPlugFlowReactor.SScheck = SScheck;
+      simParams.oldSimTime = simParams.simTime;
+    } // END OF if (simParams.simTime >= simParams.oldSimTime + puPlugFlowReactor.residenceTime)
   } // END OF checkForSteadyState()
 
 }; // END var simParams
-
 
 // ------------ PROCESS UNIT OBJECT DEFINITIONS ----------------------
 
@@ -237,7 +267,7 @@ var puPlugFlowReactor = {
   numNodes : 200,
 
   // also see simParams.ssFlag and simParams.SScheck
-  SScheck : 0, // for saving steady state check number
+  SScheck : 0, // for saving steady state check number of array end values
   residenceTime : 0, // for timing checks for steady state check
 
   // XXX WARNING: SETTING TO this.initial___ HAS NO EFFECT HERE WHEN
@@ -264,10 +294,11 @@ var puPlugFlowReactor = {
   // max and min Trxr need to be accessible in updateUIparams()
   minTrxr : 200, // (K), changed below
   maxTrxr : 500, // (K), changed below
-  // fluid Cp and dens need to be accessible in updateUIparams()
+  // fluid Cp and both dens need to be accessible in updateUIparams()
   // Cp and dens for catalyst set in updateState()
   CpFluid : 2, // (kJ/kg/K)
   densFluid : 1000, // (kg/m3)
+  densCat : 1000, // (kg/m3)
 
   // variables to be plotted are defined as objects
   // with the properties: value, name, label, symbol, dimensional units
@@ -294,7 +325,7 @@ var puPlugFlowReactor = {
     // this.errorIntegral = this.initialErrorIntegral;
 
     simParams.ssFlag = false;
-    this.SScheck = 0;
+    this.SScheck = 0; // rest steady state check number of array end values
 
     for (k = 0; k <= this.numNodes; k += 1) {
       Trxr[k] = this.initialTin;
@@ -435,7 +466,8 @@ var puPlugFlowReactor = {
     // }
 
     // residence time used for timing checks for steady state
-    this.residenceTime = 10; // XXX check this if implement
+    // use this for now but should consider voidFrac and Cp's...
+    this.residenceTime = this.Wcat / this.densCat / this.Flowrate;
 
     // // UPDATE UNIT TIME STEP AND UNIT REPEATS
     //
@@ -500,12 +532,11 @@ var puPlugFlowReactor = {
     var CaN = 0;
     var dCaDT = 0;
 
-    // CpFluid and densFluid are properties of puPlugFlowReactor
+    // CpFluid, densFluid, densCat are properties of puPlugFlowReactor
     var CpCat= 2; // (kJ/kg/K), catalyst heat capacity
     var CpCat = 2; // (kJ/kg/K), catalyst heat capacity
-    var densCat = 1000; // (kg/m3), catalyst density
     var voidFrac = 0.3; // bed void fraction
-    var densBed = (1 - voidFrac) * densCat; // (kg/m3), bed density
+    var densBed = (1 - voidFrac) * this.densCat; // (kg/m3), bed density
     // assume fluid and catalyst at same T at each position in reactor
     var CpMean = voidFrac * this.CpFluid + (1 - voidFrac) * CpCat;
 
