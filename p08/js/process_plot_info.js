@@ -67,11 +67,11 @@ var plotsObj = new Object();
   plotsObj[0]['xAxisMax'] = 1;
   plotsObj[0]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
   plotsObj[0]['yLeftAxisLabel'] = 'Trxr (K)'; // or d'less (T - TinCold)/(TinHot - TinCold)
-  plotsObj[0]['yLeftAxisMin'] = 345;
-  plotsObj[0]['yLeftAxisMax'] = 380;
+  plotsObj[0]['yLeftAxisMin'] = puPlugFlowReactor.minTrxr;
+  plotsObj[0]['yLeftAxisMax'] = puPlugFlowReactor.maxTrxr;
   plotsObj[0]['yRightAxisLabel'] = 'Ca (mol/m3)';
   plotsObj[0]['yRightAxisMin'] = 0;
-  plotsObj[0]['yRightAxisMax'] = 500;
+  plotsObj[0]['yRightAxisMax'] = puPlugFlowReactor.Cain;
   plotsObj[0]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 or "show"
   plotsObj[0]['plotLegendPosition'] = 'nw';
   plotsObj[0]['plotGridBgColor'] = 'white';
@@ -107,8 +107,8 @@ var plotsObj = new Object();
   plotsObj[1]['name'] = 'reactor color canvas';
   plotsObj[1]['canvas'] = 'canvas_CANVAS_reactor'; // without prefix #
   plotsObj[1]['var'] = 0; // variable number in array spaceTimeData, 0, 1, etc.
-  plotsObj[1]['varValueMin'] = 340;
-  plotsObj[1]['varValueMax'] = 380;
+  plotsObj[1]['varValueMin'] = puPlugFlowReactor.minTrxr;
+  plotsObj[1]['varValueMax'] = puPlugFlowReactor.maxTrxr;
   plotsObj[1]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
 
   // plot 2 info
@@ -117,8 +117,8 @@ var plotsObj = new Object();
   plotsObj[2]['name'] = 'jacket color canvas';
   plotsObj[2]['canvas'] = 'canvas_CANVAS_jacket'; // without prefix #
   plotsObj[2]['var'] = 1; // variable number in array spaceTimeData, 0, 1, etc.
-  plotsObj[2]['varValueMin'] = 340;
-  plotsObj[2]['varValueMax'] = 380;
+  plotsObj[2]['varValueMin'] = puPlugFlowReactor.minTrxr;
+  plotsObj[2]['varValueMax'] = puPlugFlowReactor.maxTrxr;
   plotsObj[2]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
 
   // DEFINE plotFlag ARRAY so don't have to generate entire

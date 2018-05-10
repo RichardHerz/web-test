@@ -261,6 +261,14 @@ var puPlugFlowReactor = {
   UAcoef : this.initialUAcoef,
   Tjacket: this.initialTjacket,
 
+  // max and min Trxr need to be accessible in updateUIparams()
+  minTrxr : 200, // (K), changed below
+  maxTrxr : 500, // (K), changed below
+  // fluid Cp and dens need to be accessible in updateUIparams()
+  // Cp and dens for catalyst set in updateState()
+  CpFluid : 2, // (kJ/kg/K)
+  densFluid : 1000, // (kg/m3)
+
   // variables to be plotted are defined as objects
   // with the properties: value, name, label, symbol, dimensional units
   // name used for copy-save data column headers, label for plot legend
@@ -364,6 +372,56 @@ var puPlugFlowReactor = {
     this.UAcoef = getInputValue('puPlugFlowReactor','UAcoef');
     this.Tjacket = getInputValue('puPlugFlowReactor','Tjacket');
 
+    // calc adiabatic delta T, positive for negative H (exothermic)
+    var adiabDeltaT = -this.DelH * this.Cain / this.densFluid / this.CpFluid;
+
+    // calc max possible T
+    if(this.DelH < 0) {
+      // exothermic
+      if (this.Tjacket > this.Tin) {
+        this.maxTrxr = this.Tjacket + adiabDeltaT;
+      } else {
+        this.maxTrxr = this.Tin + adiabDeltaT;
+      }
+    } else {
+      // endothermic
+      if (this.Tjacket > this.Tin) {
+        this.maxTrxr = this.Tjacket;
+      } else {
+        this.maxTrxr = this.Tin;
+      }
+    }
+
+    // calc min possible T
+    if(this.DelH > 0) {
+      // endothermic
+      if (this.Tjacket < this.Tin) {
+        this.minTrxr = this.Tjacket + adiabDeltaT;
+      } else {
+        this.minTrxr = this.Tin + adiabDeltaT;
+      }
+    } else {
+      // exothermic
+      if (this.Tjacket < this.Tin) {
+        this.minTrxr = this.Tjacket;
+      } else {
+        this.minTrxr = this.Tin;
+      }
+    }
+    if (this.minTrxr < 0) {minT = 0;}
+
+    // adjust axis of profile plot
+    plotFlag[0] = 0; // so axes will refresh
+    plotsObj[0]['yLeftAxisMin'] = this.minTrxr;
+    plotsObj[0]['yLeftAxisMax'] = this.maxTrxr;
+    plotsObj[0]['yRightAxisMin'] = 0;
+    plotsObj[0]['yRightAxisMax'] = this.Cain;
+    // adjust color span of spaceTime, color canvas plots
+    plotsObj[1]['varValueMin'] = this.minTrxr;
+    plotsObj[1]['varValueMax'] = this.maxTrxr;
+    plotsObj[2]['varValueMin'] = this.minTrxr;
+    plotsObj[2]['varValueMax'] = this.maxTrxr;
+
     // // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
     // // outlet T's not defined on first entry into page
     // // but do not do full updateDisplay
@@ -442,15 +500,14 @@ var puPlugFlowReactor = {
     var CaN = 0;
     var dCaDT = 0;
 
-    var CpFluid = 2; // (kJ/kg/K), fluid heat capacity
+    // CpFluid and densFluid are properties of puPlugFlowReactor
     var CpCat= 2; // (kJ/kg/K), catalyst heat capacity
-    var densFluid = 1000; // (kg/m3), fluid density
     var CpCat = 2; // (kJ/kg/K), catalyst heat capacity
     var densCat = 1000; // (kg/m3), catalyst density
     var voidFrac = 0.3; // bed void fraction
     var densBed = (1 - voidFrac) * densCat; // (kg/m3), bed density
-    // assume fluid and catalyst at same T at each position in reactor 
-    var CpMean = voidFrac*CpFluid + (1-voidFrac)*CpCat;
+    // assume fluid and catalyst at same T at each position in reactor
+    var CpMean = voidFrac * this.CpFluid + (1 - voidFrac) * CpCat;
 
     var dW = this.Wcat / this.numNodes;
     var Rg = 8.31446e-3; // (kJ/K/mol), ideal gas constant
@@ -461,51 +518,9 @@ var puPlugFlowReactor = {
     var flowCoef = this.Flowrate * densBed / voidFrac / dW;
     var rxnCoef = densBed / voidFrac;
 
-    var energyFlowCoef = this.Flowrate * densFluid * CpFluid / CpMean / dW;
+    var energyFlowCoef = this.Flowrate * this.densFluid * this.CpFluid / CpMean / dW;
     var energyXferCoef = this.UAcoef / CpMean;
     var energyRxnCoef = this.DelH / CpMean;
-
-    // calc adiabatic delta T, positive for negative H (exothermic)
-    var adiabDeltaT = -this.DelH * this.Cain / densFluid / CpFluid;
-
-    // XXX can move some to updateUIparams() - don't recompute each updateState()
-
-    // calc max possible T
-    var maxT;
-    if(this.DelH < 0) {
-      // exothermic
-      if (this.Tjacket > this.Tin) {
-        maxT = this.Tjacket + adiabDeltaT;
-      } else {
-        maxT = this.Tin + adiabDeltaT;
-      }
-    } else {
-      // endothermic
-      if (this.Tjacket > this.Tin) {
-        maxT = this.Tjacket;
-      } else {
-        maxT = this.Tin;
-      }
-    }
-
-    // calc min possible T
-    var minT;
-    if(this.DelH > 0) {
-      // endothermic
-      if (this.Tjacket < this.Tin) {
-        minT = this.Tjacket + adiabDeltaT;
-      } else {
-        minT = this.Tin + adiabDeltaT;
-      }
-    } else {
-      // exothermic
-      if (this.Tjacket < this.Tin) {
-        minT = this.Tjacket;
-      } else {
-        minT = this.Tin;
-      }
-    }
-    if (minT < 0) {minT = 0;}
 
     // this unit can take multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
@@ -526,8 +541,8 @@ var puPlugFlowReactor = {
       TrxrN = Trxr[n] + dTrxrDT * this.unitTimeStep;
 
       // CONSTRAIN TO BE IN BOUND
-      if (TrxrN > maxT) {TrxrN = maxT;}
-      if (TrxrN < minT) {TrxrN = minT;}
+      if (TrxrN > this.maxTrxr) {TrxrN = this.maxTrxr;}
+      if (TrxrN < this.minTrxr) {TrxrN = this.minTrxr;}
       if (CaN < 0.0) {CaN = 0.0;}
       if (CaN > this.Cain) {CaN = this.Cain;}
 
@@ -548,8 +563,8 @@ var puPlugFlowReactor = {
         TrxrN = Trxr[n] + dTrxrDT * this.unitTimeStep;
 
         // CONSTRAIN TO BE IN BOUND
-        if (TrxrN > maxT) {TrxrN = maxT;}
-        if (TrxrN < minT) {TrxrN = minT;}
+        if (TrxrN > this.maxTrxr) {TrxrN = this.maxTrxr;}
+        if (TrxrN < this.minTrxr) {TrxrN = this.minTrxr;}
         if (CaN < 0.0) {CaN = 0.0;}
         if (CaN > this.Cain) {CaN = this.Cain;}
 
@@ -573,8 +588,8 @@ var puPlugFlowReactor = {
       TrxrN = Trxr[n] + dTrxrDT * this.unitTimeStep;
 
       // CONSTRAIN TO BE IN BOUND
-      if (TrxrN > maxT) {TrxrN = maxT;}
-      if (TrxrN < minT) {TrxrN = minT;}
+      if (TrxrN > this.maxTrxr) {TrxrN = this.maxTrxr;}
+      if (TrxrN < this.minTrxr) {TrxrN = this.minTrxr;}
       if (CaN < 0.0) {CaN = 0.0;}
       if (CaN > this.Cain) {CaN = this.Cain;}
 
