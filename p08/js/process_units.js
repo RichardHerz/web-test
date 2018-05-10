@@ -66,7 +66,7 @@ var simParams = {
 
   // set updateDisplayTimingMs to 50 ms because runs too fast on fast desktop
   // and 50 ms gives about same speed as 0 ms on my laptop
-  updateDisplayTimingMs : 50, // real time milliseconds between display updates
+  updateDisplayTimingMs : 100, // real time milliseconds between display updates
 
   simTime : 0, // (s), time, initialize simulation time, also see resetSimTime
   oldSimTime : 0, // (s), used to check for steady state
@@ -327,8 +327,14 @@ var puPlugFlowReactor = {
     simParams.ssFlag = false;
     this.SScheck = 0; // rest steady state check number of array end values
 
+    document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
+    document.getElementById(this.displayReactorRightT).innerHTML = this.Tjacket.toFixed(1) + ' K';
+
+    document.getElementById(this.displayReactorLeftConc).innerHTML = this.Cain.toFixed(1);
+    document.getElementById(this.displayReactorRightConc).innerHTML = 0.0 + ' mol/m<sup>3</sup>';
+
     for (k = 0; k <= this.numNodes; k += 1) {
-      Trxr[k] = this.initialTin;
+      Trxr[k] = this.initialTjacket; // or initialTin ?
       TrxrNew[k] = this.initialTjacket;
       Ca[k] = 0; // this.initialCain;
       CaNew[k] = 0; // this.initialCain;
@@ -453,17 +459,10 @@ var puPlugFlowReactor = {
     plotsObj[2]['varValueMin'] = this.minTrxr;
     plotsObj[2]['varValueMax'] = this.maxTrxr;
 
-    // // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
-    // // outlet T's not defined on first entry into page
-    // // but do not do full updateDisplay
-    // document.getElementById(this.displayHotRightT).innerHTML = this.TinHot + ' K';
-    // switch(this.ModelFlag) {
-    //   case 0: // co-current
-    //     document.getElementById(this.displayColdRightT).innerHTML = this.TinCold + ' K';
-    //     break
-    //   case 1: // counter-current
-    //     document.getElementById(this.displayColdLeftT).innerHTML = this.TinCold + ' K';
-    // }
+    // also update ONLY inlet values at inlet of reactor in case sim is paused
+    // but do not do full updateDisplay
+    document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
+    document.getElementById(this.displayReactorLeftConc).innerHTML = this.Cain.toFixed(1);
 
     // residence time used for timing checks for steady state
     // use this for now but should consider voidFrac and Cp's...
@@ -647,11 +646,11 @@ var puPlugFlowReactor = {
 
     var n = 0; // used as index
 
-    document.getElementById(this.displayReactorLeftT).innerHTML = Trxr[0].toFixed(1) + ' K';
+    document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
     document.getElementById(this.displayReactorRightT).innerHTML = Trxr[this.numNodes].toFixed(1) + ' K';
 
-    document.getElementById(this.displayReactorLeftConc).innerHTML = Ca[0].toFixed(1);
-    document.getElementById(this.displayReactorRightConc).innerHTML = Ca[this.numNodes].toFixed(1);
+    document.getElementById(this.displayReactorLeftConc).innerHTML = this.Cain.toFixed(1);
+    document.getElementById(this.displayReactorRightConc).innerHTML = Ca[this.numNodes].toFixed(1) + ' mol/m<sup>3</sup>';;
 
     // HANDLE PROFILE PLOT DATA
 

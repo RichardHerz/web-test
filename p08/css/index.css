@@ -74,7 +74,7 @@ canvas {
   /* top: 61px; */
   width: 368px;
   /* height: 375px; */
-  height: 340px;
+  height: 344px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
@@ -166,24 +166,7 @@ canvas {
 #field_reactor_right_arrow {
   position: absolute;
   left: 285px;
-  top: 275px;
-  width: 23px;
-  height: 22px;
-  border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-  border-style: none;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
-#field_jacket_right_arrow {
-  position: absolute;
-  left: 285px;
-  top: 240px;
+  top: 270px;
   width: 23px;
   height: 22px;
   border-width: 1px;
@@ -199,25 +182,8 @@ canvas {
 
 #field_reactor_left_arrow {
   position: absolute;
-  left: 59px;
-  top: 275px;
-  width: 23px;
-  height: 22px;
-  border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-  border-style: none;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
-#field_jacket_left_arrow {
-  position: absolute;
-  left: 59px;
-  top: 240px;
+  left: 60px;
+  top: 270px;
   width: 23px;
   height: 22px;
   border-width: 1px;
@@ -250,9 +216,9 @@ canvas {
 
 #field_reactor_right_conc {
   position: absolute;
-  left: 313px;
+  left: 310px;
   top: 254px;
-  width: 55px;
+  width: 95px;
   height: 22px;
   border-width: 1px;
   visibility: visible;
@@ -268,7 +234,7 @@ canvas {
 #field_reactor_left_T {
   position: absolute;
   left: 4px;
-  top: 289px;
+  top: 283px;
   width: 55px;
   height: 22px;
   border-width: 1px;
@@ -284,8 +250,8 @@ canvas {
 
 #field_reactor_right_T {
   position: absolute;
-  left: 313px;
-  top: 289px;
+  left: 310px;
+  top: 283px;
   width: 55px;
   height: 22px;
   border-width: 1px;
@@ -299,6 +265,23 @@ canvas {
   font-size: 16px;
 }
 
+#field_color_canvas_label {
+  position: absolute;
+  left: 83px;
+  top: 312px;
+  width: 200px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 14px;
+}
+
 #div_input_fields_group {
   display: block;
   position: relative;
@@ -306,7 +289,8 @@ canvas {
   left: 13px;
   /* top: 367px; */
   width: 285px;
-  height: 275px;
+  /* height: 275px; */
+  height: 270px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);

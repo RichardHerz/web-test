@@ -58,14 +58,8 @@
    <p id="field_reactor_right_arrow">
       &rarr;
    </p>
-   <p id="field_jacket_right_arrow">
-      &larr;
-   </p>
    <p id="field_reactor_left_arrow">
       &rarr;
-   </p>
-   <p id="field_jacket_left_arrow">
-      &larr;
    </p>
    <p id="field_reactor_left_conc">
       334 K
@@ -79,11 +73,14 @@
    <p id="field_reactor_right_T">
       337 K
    </p>
+   <p id='field_color_canvas_label'>
+     Temperature color plot
+   </p>
 </div> <!-- end of div div_simFrame -->
 <div id="div_input_fields_group">
    <!-- onchange can send updateUIparams() to process_main.js to update all units *OR* send to specific units -->
    <p id="field_Kf300_label">
-      k at 300 K (m3/kg/s)
+      k at 300 K (m<sup>3</sup>/kg/s)
    </p>
    <input id="input_field_Kf300" value="1.0e-7" onchange="puPlugFlowReactor.updateUIparams()">
    <p id="field_Ea_label">
@@ -99,11 +96,11 @@
    </p>
    <input id="input_field_Wcat" value="100" onchange="puPlugFlowReactor.updateUIparams()">
    <p id="field_Cain_label">
-      Ca-in (mol/m3)
+      Ca-in (mol/m<sup>3</sup>)
    </p>
    <input id="input_field_Cain" value="500" onchange="puPlugFlowReactor.updateUIparams()">
    <p id="field_flowrate_label">
-      Flow rate (m3/s)
+      Flow rate (m<sup>3</sup>/s)
    </p>
    <input id="input_field_Flowrate" value="0.004" onchange="puPlugFlowReactor.updateUIparams()">
    <p id="field_Tin_label">
