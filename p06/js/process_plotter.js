@@ -211,7 +211,7 @@ function copyData(plotIndex){
   var tVarLabelLen = plotsObj[plotIndex]['varLabel'].length; // length for loops below
 
   tText = '<p>Copy and paste these data into a text file for loading into your analysis program.</p>';
-  tText += '<p> Take a screen capture of lab window to save input values</p>'
+  tText += '<p> Take a screen capture of lab window to save input values</p>';
   tText += '<p>' + plotsObj[plotIndex]['title'] + '</p>';
 
   // column headers
