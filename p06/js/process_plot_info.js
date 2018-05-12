@@ -55,11 +55,12 @@ var plotsObj = new Object();
   // plot 0 info
   plotsObj[0] = new Object();
   plotsObj[0]['type'] = 'profile';
-  plotsObj[0]['name'] = 'temperature profiles';
+  plotsObj[0]['title'] = 'Temperature Profiles';
   plotsObj[0]['canvas'] = '#div_PLOTDIV_T_plot'; // flot.js wants ID with prefix #
   plotsObj[0]['numberPoints'] = puHeatExchanger.numNodes; // should match numNodes in process unit
   // plot has numberPoints + 1 pts!
   plotsObj[0]['xAxisLabel'] = 'position in exchanger';
+  plotsObj[0]['xAxisTableLabel'] = 'Position'; // label for copy data table
   // xAxisShow false does not show numbers, nor label, nor grid for x-axis
   // might be better to cover numbers if desire not to show numbers
   plotsObj[0]['xAxisShow'] = 1; // 0 false, 1 true
@@ -82,13 +83,18 @@ var plotsObj = new Object();
   plotsObj[0]['plotDataSeriesColors'] = ['#ff6347','#1e90ff']; // optional, in variable order 0, 1, etc.
   // ['#ff6347','#1e90ff'] is Tomato and DodgerBlue
   plotsObj[0]['var'] = new Array();
+    // VALUES are data array var # to be put on plot & legend + those only in data table
+    // these values may not start at 0, e.g., one plot has 0,1, another has 2,3
     plotsObj[0]['var'][0] = 0; // values are curve data number to be put on plot
     plotsObj[0]['var'][1] = 1; // listed in order of varLabel order, etc.
   plotsObj[0]['varLabel'] = new Array();
+    // list labels in 'varLabel' in order of corresonding 'var' VALUES above
     plotsObj[0]['varLabel'][0] = 'Thot'; // 1st var
     plotsObj[0]['varLabel'][1] = 'Tcold';
   plotsObj[0]['varShow'] = new Array();
-    // varShow = 'show' shows curve, 'hide' hides curve but shows name in legend
+    // values are 'show' to show on plot and legend,
+    // 'tabled' to not show on plot nor legend but list in copy data table
+    // and any other value, e.g., 'hide' to not show on plot but do show in legend
     // value can be changed by javascript if want to show/hide curve with checkbox
     plotsObj[0]['varShow'][0] = 'show'; // 1st var
     plotsObj[0]['varShow'][1] = 'show';
@@ -104,7 +110,7 @@ var plotsObj = new Object();
   // plot 1 info
   plotsObj[1] = new Object();
   plotsObj[1]['type'] = 'canvas';
-  plotsObj[1]['name'] = 'hot side color canvas';
+  plotsObj[1]['title'] = 'hot side color canvas';
   plotsObj[1]['canvas'] = 'canvas_CANVAS_hot'; // without prefix #
   plotsObj[1]['var'] = 0; // variable number in array spaceTimeData, 0, 1, etc.
   plotsObj[1]['varValueMin'] = puHeatExchanger.minTinCold;
@@ -114,7 +120,7 @@ var plotsObj = new Object();
   // plot 2 info
   plotsObj[2] = new Object();
   plotsObj[2]['type'] = 'canvas';
-  plotsObj[2]['name'] = 'cold side color canvas';
+  plotsObj[2]['title'] = 'cold side color canvas';
   plotsObj[2]['canvas'] = 'canvas_CANVAS_cold'; // without prefix #
   plotsObj[2]['var'] = 1; // variable number in array spaceTimeData, 0, 1, etc.
   plotsObj[2]['varValueMin'] = puHeatExchanger.minTinCold;

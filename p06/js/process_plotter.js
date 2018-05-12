@@ -109,7 +109,7 @@ function plotPlotData(pData,pNumber) {
     // e.g., { data: y1Data, label: y1DataLabel, yaxis: 1 }
     let newobj = {};
     if (vShow[k] === 'show') {
-      // XXX THIS CHECK OF "SHOW" COULD BE MOVED UP INTO
+      // NOTE: THIS CHECK OF "SHOW" COULD BE MOVED UP INTO
       // getPlotData FUNCTION WHERE DATA SELECTED TO PLOT
       // SINCE BOTH FUNCTIONS ARE CALLED EACH PLOT UPDATE...
       // pData is not full profileData nor full stripData
@@ -120,6 +120,8 @@ function plotPlotData(pData,pNumber) {
       newobj.label = vLabel[k];
       if (yAxis[k] === 'right') {newobj.yaxis = 1;} else {newobj.yaxis = 2;}
       dataToPlot[k] = newobj;
+    } else if (vShow[k] == 'tabled') {
+      // do not plot this variable and do not add to legend
     } else {
       // do not plot this variable
       // *BUT* need to add a single point in case no vars on this axis to show
@@ -188,61 +190,105 @@ function plotPlotData(pData,pNumber) {
 
 } // END OF function plotPlotData
 
-// // SAVE - COPY OF FUNCTION copyData - COPY AND EDIT FOR THIS WEB LAB
-// //
-// function copyData(){
-//
-//   // if sim is running, pause the sim
-//   // copy grabs what is showing on plot when copy button clicked
-//   // so want user to be able to take screenshot to compare with data copied
-//   var runningFlag = simParams.runningFlag;
-//   if (runningFlag) {
-//     runThisLab(); // toggles running state
-//   }
-//
-//   var p = 0; // plot index
-//   var v; // variable index
-//   var k; // points index
-//   var tText; // we will put the data into this variable
-//   var tItemDelimiter = ', &nbsp;'
-//
-//   tText = '<p>Copy and paste these data into a text file for loading into your analysis program.</p>';
-//
-//   // column headers
-//   tText += '<p>';
-//   tText += 'Time' + tItemDelimiter;
-//   tText += plotsObj[0]['varLabel'][0] + tItemDelimiter +
-//            plotsObj[0]['varLabel'][1] + tItemDelimiter +
-//            plotsObj[0]['varLabel'][2] + tItemDelimiter +
-//            plotsObj[0]['varLabel'][3];
-//   tText += '</p>';
-//
-//   // data values must be numbers for .toFixed(2) to work, use Number() conversion
-//   // when getting values from input fields
-//   //    index 1 specifies the variable [0 to numVars-1],
-//   //    index 2 specifies the data point pair [0 to & including numPlotPoints]
-//   //    index 3 specifies x or y in x,y data point pair [0 & 1]
-//
-//   tText += '<p>';
-//   for (k = 0; k <= plotsObj[p]['numberPoints']; k += 1){
-//   // or use next line to reverse order
-//   // for (k = plotsObj[p]['numberPoints']; k >= 0; k -= 1){
-//     tText += stripData[0][k][0].toFixed(2) + tItemDelimiter + // [k][0] is x value (time)
-//              stripData[0][k][1].toFixed(2) + tItemDelimiter + // [k][1] is y value
-//              stripData[1][k][1].toFixed(2) + tItemDelimiter +
-//              stripData[2][k][1].toFixed(2) + tItemDelimiter +
-//              stripData[3][k][1].toFixed(2) +
-//              '<br>'; // use <br> not <p> or get empty line between each row
-//   }
-//   tText += '</p>';
-//
-//   // for window.open, see http://www.w3schools.com/jsref/met_win_open.asp
-//   dataWindow = window.open('', 'Copy data',
-//         'height=600, left=20, resizable=1, scrollbars=1, top=40, width=600');
-//   dataWindow.document.writeln('<html><head><title>Copy data</title></head>' +
-//          '<body>' +
-//          tText +
-//          '</body></html>');
-//   dataWindow.document.close();
-//
-//  } // end of function copyData
+function copyData(plotIndex){
+  // plotIndex is the index of the plotsObj object of the desired plot to copy
+  // as specified in process_plot_info.js
+
+  // if sim is running, pause the sim
+  // copy grabs what is showing on plot when copy button clicked
+  // so want user to be able to take screenshot to compare with data copied
+  var runningFlag = simParams.runningFlag;
+  if (runningFlag) {
+    runThisLab(); // toggles running state
+  }
+
+  var n; // index
+  var v; // variable index
+  var k; // points index
+  var varIndex; // index of selected variable in data array
+  var tText; // we will put the data into this variable
+  var tItemDelimiter = ', &nbsp;'
+  var tVarLabelLen = plotsObj[plotIndex]['varLabel'].length; // length for loops below
+
+  tText = '<p>Copy and paste these data into a text file for loading into your analysis program.</p>';
+  tText += '<p> Take a screen capture of lab window to save input values</p>'
+  tText += '<p>' + plotsObj[plotIndex]['title'] + '</p>';
+
+  // column headers
+  tText += '<p>';
+  // first, x-axis variable name for table
+  tText += plotsObj[plotIndex]['xAxisTableLabel'] + tItemDelimiter;
+  // then other column names for y-axis variables
+  for (v = 0; v < tVarLabelLen; v += 1) {
+    tText += plotsObj[plotIndex]['varLabel'][v];
+    if (v < (tVarLabelLen - 1)) {
+      tText += tItemDelimiter;
+    }
+  }
+  tText += '</p>';
+
+  // XXX BUT NEED TO HANDLE RANGE OF NUMBERS FOR WHICH .toFixed(2) WON'T WORK
+  // maybe write function like RL's sciConv()...
+
+  // data values must be numbers for .toFixed(2) to work, use Number() conversion
+  // when getting values from input fields
+  //    index 1 specifies the variable [0 to numVars-1],
+  //    index 2 specifies the data point pair [0 to & including numPlotPoints]
+  //    index 3 specifies x or y in x,y data point pair [0 & 1]
+
+// initiate string that holds the data table
+  tText += '<p>';
+
+// there are two types of plots with separate data arrays: strip and profile
+
+  if (plotsObj[plotIndex]['type'] == 'strip') {
+    for (k = 0; k <= plotsObj[plotIndex]['numberPoints']; k += 1) {
+    // or use next line to reverse top-bottom order of rows in table
+    // for (k = plotsObj[plotIndex]['numberPoints']; k >= 0; k -= 1){
+      // get varIndex = value of 'var' VALUE which is variable index in data array
+      varIndex = plotsObj[plotIndex]['var'][0];
+      tText += stripData[varIndex][k][0].toFixed(2) + tItemDelimiter // [k][0] is x value
+        for (v = 0; v < tVarLabelLen; v += 1) {
+          varIndex = plotsObj[plotIndex]['var'][v];
+          tText += stripData[varIndex][k][1].toFixed(2); // [k][1] is y value
+          if (v < (tVarLabelLen - 1)) {
+            tText += tItemDelimiter;
+          }
+        }
+      tText += '<br>'; // use <br> not <p> or get empty line between each row
+    }
+  } else if (plotsObj[plotIndex]['type'] == 'profile') {
+    // NOTE: below same as IF above except change stripData to profileData in two places
+    for (k = 0; k <= plotsObj[plotIndex]['numberPoints']; k += 1) {
+    // or use next line to reverse top-bottom order of rows in table
+    // for (k = plotsObj[plotIndex]['numberPoints']; k >= 0; k -= 1){
+      // get varIndex = value of 'var' VALUE which is variable index in data array
+      varIndex = plotsObj[plotIndex]['var'][0];
+      tText += profileData[varIndex][k][0].toFixed(2) + tItemDelimiter // [k][0] is x value
+        for (v = 0; v < tVarLabelLen; v += 1) {
+          varIndex = plotsObj[plotIndex]['var'][v];
+          tText += profileData[varIndex][k][1].toFixed(2); // [k][1] is y value
+          if (v < (tVarLabelLen - 1)) {
+            tText += tItemDelimiter;
+          }
+        }
+      tText += '<br>'; // use <br> not <p> or get empty line between each row
+    }
+  } else {
+    alert('unknown plot type');
+    return;
+  }
+
+  // terminate string that holds the data table
+  tText += '</p>';
+
+  // for window.open, see http://www.w3schools.com/jsref/met_win_open.asp
+  dataWindow = window.open('', 'Copy data',
+        'height=600, left=20, resizable=1, scrollbars=1, top=40, width=600');
+  dataWindow.document.writeln('<html><head><title>Copy data</title></head>' +
+         '<body>' +
+         tText +
+         '</body></html>');
+  dataWindow.document.close();
+
+ } // end of function copyData
