@@ -1,0 +1,84 @@
+<html>
+<body>
+<p> test page </p>
+
+<script>
+alert('hello world');
+
+var unit01 = {
+
+numVars : 3,
+numPts : 4,
+
+// initialize 3D array to hold this unit's x,y time series data
+// DID NOT WORK: myData : initPlotData(this.numVars,this.numPts)
+// where initPlotData is a function external to this object unit01
+myData : null, // later, create array by calling this.fInitDataArray()
+
+fInitDataArray : function() {
+  // initPlotData is a function external to this object unit01
+  this.myData = initPlotData(this.numVars,this.numPts);
+},
+
+fAddData : function(v,p,x,y) {
+  // v = variable, p = point, x = x-axis value, y = y-axis value
+  this.myData[v][p][0] = x;
+  this.myData[v][p][1] = y;
+},
+
+fUpdate : function() {
+  // change arbitrary elements as test
+  this.fAddData(0,1,0,0.1);
+  this.fAddData(2,2,0.3,0.4);
+},
+
+} // end of object unit01
+
+function initPlotData(numVars,numPlotPoints) {
+  // returns 3D array to hold x,y scatter plot data for multiple variables
+  // inputs are list of variables and # of x,y point pairs per variable
+  // returns array with all elements for plot filled with zero
+  // index 1 specifies the variable [0 to numVars-1],
+  // index 2 specifies the data point pair [0 to & including numPlotPoints]
+  // index 3 specifies x or y in x,y data point pair [0 & 1]
+  var v;
+  var p;
+  var plotDataStub = new Array();
+  for (v = 0; v < numVars; v += 1) {
+  plotDataStub[v] = new Array();
+  for (p = 0; p <= numPlotPoints; p += 1) { // NOTE = AT p <=
+  plotDataStub[v][p] = new Array();
+  plotDataStub[v][p][0] = 0;
+  plotDataStub[v][p][1] = 1;
+  }
+  }
+  return plotDataStub;
+}
+
+function fGetUnitData(pUnitName,pVarNum) {
+  let tempString = pUnitName + '.myData[' + pVarNum + '];';
+  let tempArray = eval(tempString);
+  return tempArray;
+}
+
+// or put call to fInitDataArray in unit01's internal reset function
+unit01.fInitDataArray();
+
+alert('before fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
+alert('before fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
+
+unit01.fUpdate();
+
+alert('after fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
+alert('after fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
+
+let tArray = fGetUnitData('unit01',2);
+alert('tArray = ' + tArray);
+
+alert('tArray[2][0] = ' + tArray[2][0]);
+alert('tArray[2][1] = ' + tArray[2][1]); 
+
+</script>
+
+</body>
+</html>
