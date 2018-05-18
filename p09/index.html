@@ -1,0 +1,39 @@
+<html>
+<body>
+<p> test page </p>
+
+<script>
+alert('hello world');
+
+var unit01 = {
+
+myData : new Array(),
+
+fInitData : function() {
+  this.myData[0] = [11,12]; // myData[0][0] = 11, myData[0][1] = 12
+},
+
+fAddData : function(x,y) {
+  // appends new 2-column row to end of myData
+  let tempArray = this.myData;
+  tempArray.push([x,y]);
+  this.myData = tempArray;
+},
+
+fUpdate : function() {
+  this.fAddData(21,22);
+  this.fAddData(31,32);
+},
+
+}
+
+unit01.fInitData(); // needs to be outside unit01
+unit01.fUpdate();
+
+alert('myData[2][0] = ' + unit01.myData[2][0]); // says 31
+alert('myData[2][1] = ' + unit01.myData[2][1]); // says 32
+
+</script>
+
+</body>
+</html>
