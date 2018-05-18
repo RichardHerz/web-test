@@ -1,7 +1,7 @@
 <html>
 <body>
-  <p> VERSION 1 - access 2D array from 3D data in unit by unit name
-  and var # - see fGetUnitData() below - USE eval() - Javascript</p>
+<p> VERSION 3 - access 2D array from 3D data in unit by unit name
+and var # - see fGetUnitData() below - USE TEMP FUNCTION - Javascript</p>
 
 <script>
 alert('hello world');
@@ -36,30 +36,34 @@ fUpdate : function() {
 } // end of object unit01
 
 function initPlotData(numVars,numPlotPoints) {
-  // returns 3D array to hold x,y scatter plot data for multiple variables
-  // inputs are list of variables and # of x,y point pairs per variable
-  // returns array with all elements for plot filled with zero
-  // index 1 specifies the variable [0 to numVars-1],
-  // index 2 specifies the data point pair [0 to & including numPlotPoints]
-  // index 3 specifies x or y in x,y data point pair [0 & 1]
-  var v;
-  var p;
-  var plotDataStub = new Array();
-  for (v = 0; v < numVars; v += 1) {
-  plotDataStub[v] = new Array();
-  for (p = 0; p <= numPlotPoints; p += 1) { // NOTE = AT p <=
-  plotDataStub[v][p] = new Array();
-  plotDataStub[v][p][0] = 0;
-  plotDataStub[v][p][1] = 1;
-  }
-  }
-  return plotDataStub;
+// returns 3D array to hold x,y scatter plot data for multiple variables
+// inputs are list of variables and # of x,y point pairs per variable
+// returns array with all elements for plot filled with zero
+// index 1 specifies the variable [0 to numVars-1],
+// index 2 specifies the data point pair [0 to & including numPlotPoints]
+// index 3 specifies x or y in x,y data point pair [0 & 1]
+var v;
+var p;
+var plotDataStub = new Array();
+for (v = 0; v < numVars; v += 1) {
+plotDataStub[v] = new Array();
+for (p = 0; p <= numPlotPoints; p += 1) { // NOTE = AT p <=
+plotDataStub[v][p] = new Array();
+plotDataStub[v][p][0] = 0;
+plotDataStub[v][p][1] = 1;
+}
+}
+return plotDataStub;
 }
 
 function fGetUnitData(pUnitName,pVarNum) {
-  let tempString = pUnitName + '.myData[' + pVarNum + '];';
-  let tempArray = eval(tempString);
-  return tempArray;
+  // this uses a temporary function rather than eval()
+  // but seems to look and do same this that eval() does...
+  let tempArray = new Function('return ' + pUnitName + '.myData[' + pVarNum + '];');
+  return tempArray();
+  // VERSUS using eval()
+  // let tempString = pUnitName + '.myData[' + pVarNum + '];';
+  // let tempArray = eval(tempString);
 }
 
 // or put call to fInitDataArray in unit01's internal reset function
