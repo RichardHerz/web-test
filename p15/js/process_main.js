@@ -121,8 +121,11 @@
       return;
     }
 
-    var unitList = simParams.processUnits;
-    var tmpFunc = new Function();
+    // get list of process units // XXX NEW 
+    // var unitList = simParams.processUnits;
+    var unitList = Object.keys(processUnits); // XXX NEW
+
+    var tmpFunc = new Function
 
     // FIRST, have all units update their input connection values
     unitList.forEach(fUpdateInputs);
@@ -136,13 +139,13 @@
     function fUpdateState(unitName) {
 
       if (resetFlag) {
-        tmpFunc = new Function('processUnits[' + unitName + '].reset();');
+        tmpFunc = new Function("processUnits['" + unitName + "'].reset();");
         tmpFunc();
       } else {
 
         // XXX NEW PUT updateState INTO ELSE rather than execute every time
 
-        tmpFunc = new Function('processUnits[' + unitName + '].updateState();');
+        tmpFunc = new Function("processUnits['" + unitName + "'].updateState();");
         tmpFunc();
       }
 
@@ -171,10 +174,10 @@
     unitList.forEach(fDisplay);
     function fDisplay(unitName) {
       if (resetFlag) {
-        var tmpFunc = new Function('processUnits[' + unitName + '].reset();');
+        var tmpFunc = new Function("processUnits['" + unitName + "'].reset();");
         tmpFunc();
       }
-      var tmpFunc = new Function('processUnits[' + unitName + '].display();');
+      var tmpFunc = new Function("processUnits['" + unitName + "'].display();");
       tmpFunc();
       }
 
@@ -210,7 +213,7 @@
 
     unitList.forEach(fUpdateUIparams);
     function fUpdateUIparams(unitName) {
-      var tmpFunc = new Function('processUnits[' + unitName + '].updateUIparams();');
+      var tmpFunc = new Function("processUnits['" + unitName + "'].updateUIparams();");
       tmpFunc();
     }
 
