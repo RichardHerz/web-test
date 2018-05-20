@@ -8,6 +8,8 @@
   <p>But does this leave child in memory too?</p>
   <p>I can set it to null after putting into parent, but
   does JS garbage collection free memory?</p>
+  <p>See <a href="https://javascript.info/garbage-collection">https://javascript.info/garbage-collection</a>
+  </p>
 
 <script>
 
@@ -19,11 +21,12 @@
     myParent['child01'] = child01;
     myParent['child02'] = child02;
 
-    alert("myParent['child02']['name'] = " + myParent['child02']['name'] );
     alert("child02['name'] = " + child02['name'] );
+    alert("myParent['child02']['name'] = " + myParent['child02']['name'] );
 
     child02 = 0;
-    alert("after zeroing, child02['name'] = " + child02['name'] );
+    alert("after zeroing child02, child02['name'] = " + child02['name'] );
+    alert("after zeroing child02, myParent['child02']['name'] = " + myParent['child02']['name'] );
 
 </script>
 
