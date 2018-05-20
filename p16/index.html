@@ -1,0 +1,32 @@
+<html>
+<body>
+
+  <p>Test of adding child objects to a parent object.</p>
+  <p>This should allow defining process units in separate files,
+    then adding them to parent processUnits object.
+  </p>
+  <p>But does this leave child in memory too?</p>
+  <p>I can set it to null after putting into parent, but
+  does JS garbage collection free memory?</p>
+
+<script>
+
+    var myParent ={};
+
+    var child01 = {name : 'joe', age : 10};
+    var child02 = {name : 'ann', age : 12};
+
+    myParent['child01'] = child01;
+    myParent['child02'] = child02;
+
+    alert("myParent['child02']['name'] = " + myParent['child02']['name'] );
+    alert("child02['name'] = " + child02['name'] );
+
+    child02 = 0;
+    alert("after zeroing, child02['name'] = " + child02['name'] );
+
+</script>
+
+
+</body>
+</html>
