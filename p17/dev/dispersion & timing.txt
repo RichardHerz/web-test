@@ -1,0 +1,22 @@
+did experiment with co-current flow and same inlet T's and got plot showing T propagation down tube but no color change in hot nor cold color canvases 
+
+---------
+
+using mixing cells creates a spread in residence time, unlike plug flow
+
+so is similar to axial conduction (not described) or axial dispersion of energy in turbulent fluid (which happens) 
+
+but number of mixing cells that accurately reflect axial dispersion should be estimated by equation - probably a function of Reynolds number 
+
+noticed this with U=0 such that no heat exchange but get spread in fluid T down tube 
+
+SEE THIS REF FOR estimate of Peclet number for turbulent mixing 
+
+https://classes.engineering.wustl.edu/che503/chapter%205.pdf  
+
+then see a paper "comparison of tanks-in-series and axial dispersion models for an electrochemical reactor" whose abstract has Pe = 2*(N - 1) 
+
+SHOULD I USE ACTUAL FINITE DIFFERENCE MODEL OF PLUG FLOW WITH A DISPERSION COEFFICIENT RATHER THAN MIXING CELL???
+
+---------
+
