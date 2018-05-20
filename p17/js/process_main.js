@@ -124,6 +124,11 @@
     // get list of process units
     var unitList = Object.keys(processUnits);
 
+    // NOTE: if number units rather than name units, e.g., processUnits[0]
+    // as in plotsObj plot children in process_plot_info.js,
+    // then could get length as below and use for repeat to call functions
+    // and not need temp functions to construct name
+
     var tmpFunc = new Function
 
     // FIRST, have all units update their input connection values
@@ -168,6 +173,11 @@
     }
 
     var unitList = Object.keys(processUnits);
+
+    // NOTE: if number units rather than name units, e.g., processUnits[0]
+    // as in plotsObj plot children in process_plot_info.js,
+    // then could get length as below and use for repeat to call functions
+    // and not need temp functions to construct name 
 
     // display all units but do not step
     unitList.forEach(fDisplay);
