@@ -8,18 +8,6 @@
 // This file defines an object that holds simulation parameter values and
 // defines objects that represent process units
 
-// ----- GLOBAL ARRAYS TO HOLD WORKING DATA -----------
-
-var Thot = [];
-var Tcold = [];
-var ThotNew = []; // new values
-var TcoldNew = []; // new values
-var tempArray = []; // for shifting data in strip chart plots
-var spaceData = []; // for shifting data in space-time plots
-
-// ----- SEE process_plot_info.js FOR INITIALIZATION OF ---------------
-// ----- OTHER DATA ARRAYS --------------------------------------------
-
 // ----- OBJECT TO CONTAIN & SET SIMULATION & PLOT PARAMETERS ---------
 
 var simParams = {
