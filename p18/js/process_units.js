@@ -259,8 +259,9 @@ processUnits[0] = {
   Tcold : [],
   ThotNew : [], // 'New' hold intermediate values during updateState
   TcoldNew : [],
-  tempArray : [], // for shifting data in strip chart plots
-  spaceData : [], // for shifting data in space-time plots
+  profileData : [], // for profile plots
+  // stripData : [], // not used in this unit, for strip chart plots
+  spaceTimeData : [], // for color canvas plots
 
   // define the main variables which will not be plotted or save-copy data
   //   none here
@@ -336,22 +337,35 @@ processUnits[0] = {
       this.TcoldNew[k] = this.initialTinCold;
     }
 
+    // initialize profile data array - must follow function initPlotData in this file
+    // initPlotData(numProfileVars,numProfilePts)
+    this.profileData = initPlotData(2,this.numNodes); // holds data for static profile plots
+
+    // // initialize strip chart data array
+    // // initPlotData(numStripVars,numStripPts)
+    // this.stripData = initPlotData(numStripVars,numStripPts); // holds data for scrolling strip chart plots
+
+    // initialize space-time, color-canvas data array -
+    // initSpaceTimeArray(numSpaceTimeVars,numTimePts,numSpacePts)
+    // WARNING: numSpacePts = 0 for one, number is numSpacePts + 1
+    this.spaceTimeData = initSpaceTimeArray(2,this.numNodes,0);
+
     var kn = 0;
     for (k=0; k<=this.numNodes; k+=1) {
       kn = k/this.numNodes;
       // x-axis values
       // x-axis values will not change during sim
-      // XXX change to get number vars for this plotsObj variable
+      // XXX change to get number vars for this array
       //     so can put in repeat - or better yet, a function
       //     and same for y-axis below
       // first index specifies which variable
-      profileData[0][k][0] = kn;
-      profileData[1][k][0] = kn;
+      this.profileData[0][k][0] = kn;
+      this.profileData[1][k][0] = kn;
       // y-axis values
       // for heat exchanger this is dimensionless T
       // (T - TinCold) / (TinHot - TinCold)
-      profileData[0][k][1] = 0;
-      profileData[1][k][1] = 0;
+      this.profileData[0][k][1] = 0;
+      this.profileData[1][k][1] = 0;
     }
 
   }, // end reset
@@ -744,8 +758,8 @@ processUnits[0] = {
     // profileData[0][1][n] = y;
 
     for (n=0; n<=this.numNodes; n+=1) {
-      profileData[0][n][1] = this.Thot[n]; // or d'less (this.Thot[n] - this.TinCold) / (this.TinHot - this.TinCold);
-      profileData[1][n][1] = this.Tcold[n]; // or d'less (this.Tcold[n] - this.TinCold) / (this.TinHot - this.TinCold);
+      this.profileData[0][n][1] = this.Thot[n]; // or d'less (this.Thot[n] - this.TinCold) / (this.TinHot - this.TinCold);
+      this.profileData[1][n][1] = this.Tcold[n]; // or d'less (this.Tcold[n] - this.TinCold) / (this.TinHot - this.TinCold);
     }
 
     // HANDLE SPACE-TIME DATA >> HERE IS HOT AND COLD SIDES OF EXCHANGER
@@ -753,18 +767,22 @@ processUnits[0] = {
     // the data vs. node is horizontal, not vertical
     // and vertical strip is all the same
     // so when initialize spaceTimeData array, take this into account
-
-    // spaceTimeData[v][t][s] - variable, time changes to space, space changes to one value
-    for (n=0; n<=this.numNodes; n+=1) {
-      spaceTimeData[0][n][0] = this.Thot[n];
-      spaceTimeData[1][n][0] = this.Tcold[n];
-    }
-
     // FOR HEAT EXCHANGER - COLOR CANVAS DOES NOT SCROLL WITH TIME
     // SO DO NOT SHIFT AND PUSH DATA LIKE DO IN SCROLLING CANVAS
 
+    // spaceTimeData[v][t][s] - variable, time changes to space, space changes to one value
+    for (n=0; n<=this.numNodes; n+=1) {
+      this.spaceTimeData[0][n][0] = this.Thot[n];
+      this.spaceTimeData[1][n][0] = this.Tcold[n];
+    }
+
     // FOR HEAT EXCHANGER - DO NOT USE STRIP CHART YET
     // HANDLE STRIP CHART DATA
+
+    // XXX for testing, copy to global arrays that we are trying to eliminate
+    // XXX so we can still see plots 
+    profileData = this.profileData;
+    spaceTimeData = this.spaceTimeData;
 
   } // end display method
 
