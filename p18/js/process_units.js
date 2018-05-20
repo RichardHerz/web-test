@@ -131,10 +131,10 @@ var simParams = {
       // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
       var nn = processUnits[0]['numNodes'];
       // Thot and Tcold arrays are globals
-      var hlt = 1.0e5 * Thot[nn].toFixed(1);
-      var hrt = 1.0e1 * Thot[0].toFixed(1);
-      var clt = 1.0e-3 * Tcold[nn].toFixed(1);
-      var crt = 1.0e-7 * Tcold[0].toFixed(1);
+      var hlt = 1.0e5 * processUnits[0]['Thot'][nn].toFixed(1);
+      var hrt = 1.0e1 * processUnits[0]['Thot'][0].toFixed(1);
+      var clt = 1.0e-3 * processUnits[0]['Tcold'][nn].toFixed(1);
+      var crt = 1.0e-7 * processUnits[0]['Tcold'][0].toFixed(1);
       var SScheck = hlt + hrt + clt  + crt;
       SScheck = SScheck.toFixed(8); // need because last sum operation adds significant figs
       // note SScheck = hlt0hrt0.clt0crt0 << 16 digits, 4 each for 4 end T's
@@ -167,7 +167,7 @@ var processUnits = new Object();
   // contents will be only the process units as child objects
 
 processUnits[0] = {
-  unitIndex : 0, // index of this unit as child in processUnits parent object 
+  unitIndex : 0, // index of this unit as child in processUnits parent object
   // unitIndex used in this object's updateUIparams() method
   name : 'heat exchanger',
   //
@@ -266,6 +266,14 @@ processUnits[0] = {
   maxArea : 10, // m2, heat transfer surface area
   maxDiam : 0.28, // m, tube diameter
 
+  // define arrays to hold data
+  Thot : [],
+  Tcold : [],
+  ThotNew : [], // 'New' hold intermediate values during updateState
+  TcoldNew : [],
+  tempArray : [], // for shifting data in strip chart plots
+  spaceData : [], // for shifting data in space-time plots
+
   // define the main variables which will not be plotted or save-copy data
   //   none here
 
@@ -334,10 +342,10 @@ processUnits[0] = {
     this.SScheck = 0;
 
     for (k = 0; k <= this.numNodes; k += 1) {
-      Thot[k] = this.initialTinCold;
-      ThotNew[k] = this.initialTinCold;
-      Tcold[k] = this.initialTinCold;
-      TcoldNew[k] = this.initialTinCold;
+      this.Thot[k] = this.initialTinCold;
+      this.ThotNew[k] = this.initialTinCold;
+      this.Tcold[k] = this.initialTinCold;
+      this.TcoldNew[k] = this.initialTinCold;
     }
 
     var kn = 0;
@@ -585,13 +593,13 @@ processUnits[0] = {
 
       // get better steady-state energy balances with no dispersion at ends
 
-      ThotN = Thot[n];
+      ThotN = this.Thot[n];
       ThotNm1 = this.TinHot; // SPECIAL for n=0 cell, hot inlet
       dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN);
 
-      TcoldN = Tcold[n];
+      TcoldN = this.Tcold[n];
       TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
-      TcoldNp1 = Tcold[n+1];
+      TcoldNp1 = this.Tcold[n+1];
       switch(this.ModelFlag) {
         case 0: // co-current
           dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
@@ -609,23 +617,23 @@ processUnits[0] = {
       if (TcoldN > this.maxTinHot) {TcoldN = this.maxTinHot;}
       if (TcoldN < this.minTinCold) {TcoldN = this.minTinCold;}
 
-      ThotNew[n] = ThotN;
-      TcoldNew[n] = TcoldN;
+      this.ThotNew[n] = ThotN;
+      this.TcoldNew[n] = TcoldN;
 
       // internal nodes
       for (n = 1; n < this.numNodes; n += 1) {
 
         // internal nodes include dispersion terms
 
-        ThotN = Thot[n];
-        ThotNm1 = Thot[n-1];
-        ThotNp1 = Thot[n+1];
+        ThotN = this.Thot[n];
+        ThotNm1 = this.Thot[n-1];
+        ThotNp1 = this.Thot[n+1];
         dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN)
                       + DispHotOverDZ2 * (ThotNp1 - 2.0 * ThotN + ThotNm1);
 
-        TcoldN = Tcold[n];
-        TcoldNm1 = Tcold[n-1];
-        TcoldNp1 = Tcold[n+1];
+        TcoldN = this.Tcold[n];
+        TcoldNm1 = this.Tcold[n-1];
+        TcoldNp1 = this.Tcold[n+1];
         switch(this.ModelFlag) {
           case 0: // co-current
             dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN)
@@ -645,8 +653,8 @@ processUnits[0] = {
         if (TcoldN > this.maxTinHot) {TcoldN = this.maxTinHot;}
         if (TcoldN < this.minTinCold) {TcoldN = this.minTinCold;}
 
-        ThotNew[n] = ThotN;
-        TcoldNew[n] = TcoldN;
+        this.ThotNew[n] = ThotN;
+        this.TcoldNew[n] = TcoldN;
 
       } // end repeat through internal nodes
 
@@ -656,12 +664,12 @@ processUnits[0] = {
 
       // get better steady-state energy balances with no dispersion at ends
 
-      ThotN = Thot[n];
-      ThotNm1 = Thot[n-1];
+      ThotN = this.Thot[n];
+      ThotNm1 = this.Thot[n-1];
       dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN);
 
-      TcoldN = Tcold[n];
-      TcoldNm1 = Tcold[n-1];
+      TcoldN = this.Tcold[n];
+      TcoldNm1 = this.Tcold[n-1];
       TcoldNp1 = this.TinCold; // SPECIAL for n=numNodes cell, cold inlet for counter-current
       switch(this.ModelFlag) {
         case 0: // co-current
@@ -680,14 +688,14 @@ processUnits[0] = {
       if (TcoldN > this.maxTinHot) {TcoldN = this.maxTinHot;}
       if (TcoldN < this.minTinCold) {TcoldN = this.minTinCold;}
 
-      ThotNew[n] = ThotN;
-      TcoldNew[n] = TcoldN;
+      this.ThotNew[n] = ThotN;
+      this.TcoldNew[n] = TcoldN;
 
       // finished updating all nodes
 
       // copy new to current
-      Thot = ThotNew;
-      Tcold = TcoldNew;
+      this.Thot = this.ThotNew;
+      this.Tcold = this.TcoldNew;
 
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 
@@ -700,10 +708,10 @@ processUnits[0] = {
     // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
     var nn = puHeatExchanger.numNodes;
     // Thot and Tcold arrays are globals
-    var hlt = Thot[nn]; // outlet hot
-    var hrt = Thot[0]; // inlet hot
-    var clt = Tcold[nn];
-    var crt = Tcold[0];
+    var hlt = this.Thot[nn]; // outlet hot
+    var hrt = this.Thot[0]; // inlet hot
+    var clt = this.Tcold[nn];
+    var crt = this.Tcold[0];
     var dT1 = hrt - crt;
     var dT2 = hlt - clt;
     if (dT1 == dT2) {
@@ -727,16 +735,16 @@ processUnits[0] = {
 
     var n = 0; // used as index
 
-    document.getElementById(this.displayHotLeftT).innerHTML = Thot[this.numNodes].toFixed(1) + ' K';
+    document.getElementById(this.displayHotLeftT).innerHTML = this.Thot[this.numNodes].toFixed(1) + ' K';
     document.getElementById(this.displayHotRightT).innerHTML = this.TinHot + ' K';
     switch(this.ModelFlag) {
       case 0: // co-current
-        document.getElementById(this.displayColdLeftT).innerHTML = Tcold[this.numNodes].toFixed(1) + ' K';
+        document.getElementById(this.displayColdLeftT).innerHTML = this.Tcold[this.numNodes].toFixed(1) + ' K';
         document.getElementById(this.displayColdRightT).innerHTML = this.TinCold + ' K';
         break
       case 1: // counter-current
         document.getElementById(this.displayColdLeftT).innerHTML = this.TinCold + ' K';
-        document.getElementById(this.displayColdRightT).innerHTML = Tcold[0].toFixed(1) + ' K';
+        document.getElementById(this.displayColdRightT).innerHTML = this.Tcold[0].toFixed(1) + ' K';
     }
 
     // HANDLE PROFILE PLOT DATA
@@ -748,8 +756,8 @@ processUnits[0] = {
     // profileData[0][1][n] = y;
 
     for (n=0; n<=this.numNodes; n+=1) {
-      profileData[0][n][1] = Thot[n]; // or d'less (Thot[n] - this.TinCold) / (this.TinHot - this.TinCold);
-      profileData[1][n][1] = Tcold[n]; // or d'less (Tcold[n] - this.TinCold) / (this.TinHot - this.TinCold);
+      profileData[0][n][1] = this.Thot[n]; // or d'less (this.Thot[n] - this.TinCold) / (this.TinHot - this.TinCold);
+      profileData[1][n][1] = this.Tcold[n]; // or d'less (this.Tcold[n] - this.TinCold) / (this.TinHot - this.TinCold);
     }
 
     // HANDLE SPACE-TIME DATA >> HERE IS HOT AND COLD SIDES OF EXCHANGER
@@ -760,8 +768,8 @@ processUnits[0] = {
 
     // spaceTimeData[v][t][s] - variable, time changes to space, space changes to one value
     for (n=0; n<=this.numNodes; n+=1) {
-      spaceTimeData[0][n][0] = Thot[n];
-      spaceTimeData[1][n][0] = Tcold[n];
+      spaceTimeData[0][n][0] = this.Thot[n];
+      spaceTimeData[1][n][0] = this.Tcold[n];
     }
 
     // FOR HEAT EXCHANGER - COLOR CANVAS DOES NOT SCROLL WITH TIME
