@@ -71,15 +71,6 @@ var simParams = {
   simTime : 0, // (s), time, initialize simulation time, also see resetSimTime
   oldSimTime : 0, // (s), used to check for steady state
 
-  // XXX NEW - DO NOT NEED THIS WITH UNITS AS CHILD OBJECTS OF processUnits OBJECT
-  // // LIST ACTIVE PROCESS UNITS
-  // // processUnits array is the list of names of active process units
-  // // the order of units in the list is not important
-  //
-  // processUnits : [
-  //   "puHeatExchanger"
-  // ],
-
   updateRunCount : function() {
     // need literal "field_run_counter" below - this.runCounterFieldID does NOT work
     //
