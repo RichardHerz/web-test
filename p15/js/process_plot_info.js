@@ -14,7 +14,7 @@
 // COMMON VALUES FOR PROFILE PLOTS (static x,y plots)
 // these vars used several places below in this file
 var numProfileVars = 2;
-var numProfilePts = puHeatExchanger.numNodes;
+var numProfilePts = processUnits['puHeatExchanger']['numNodes'];
 
 // COMMON VALUES FOR STRIP CHART PLOTS (scrolling x,y plots)
 // these vars used several places below in this file
@@ -25,7 +25,7 @@ var numStripPts = 0;
 // if want square canvas 'pixels' set time/space pt ratio = canvas width/height ratio
 // these vars used several places below in this file
 var numSpaceTimeVars = 2;
-var numTimePts = puHeatExchanger.numNodes;
+var numTimePts = processUnits['puHeatExchanger']['numNodes'];
 var numSpacePts = 0; // 0 for one, number is numSpacePts + 1
 
 // WE CURRENTLY USE FLOT.JS FOR PLOTTING PROFILE & STRIP PLOTS
@@ -57,7 +57,7 @@ var plotsObj = new Object();
   plotsObj[0]['type'] = 'profile';
   plotsObj[0]['title'] = 'Temperature Profiles';
   plotsObj[0]['canvas'] = '#div_PLOTDIV_T_plot'; // flot.js wants ID with prefix #
-  plotsObj[0]['numberPoints'] = puHeatExchanger.numNodes; // should match numNodes in process unit
+  plotsObj[0]['numberPoints'] = processUnits['puHeatExchanger']['numNodes'];; // should match numNodes in process unit
   // plot has numberPoints + 1 pts!
   plotsObj[0]['xAxisLabel'] = 'position in exchanger';
   plotsObj[0]['xAxisTableLabel'] = 'Position'; // label for copy data table
@@ -68,8 +68,8 @@ var plotsObj = new Object();
   plotsObj[0]['xAxisMax'] = 1;
   plotsObj[0]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
   plotsObj[0]['yLeftAxisLabel'] = 'T (K)'; // or d'less (T - TinCold)/(TinHot - TinCold)
-  plotsObj[0]['yLeftAxisMin'] = puHeatExchanger.minTinCold;
-  plotsObj[0]['yLeftAxisMax'] = puHeatExchanger.maxTinHot;
+  plotsObj[0]['yLeftAxisMin'] = processUnits['puHeatExchanger']['minTinCold'];
+  plotsObj[0]['yLeftAxisMax'] = processUnits['puHeatExchanger']['maxTinHot'];
   plotsObj[0]['yRightAxisLabel'] = 'yRight';
   plotsObj[0]['yRightAxisMin'] = 0;
   plotsObj[0]['yRightAxisMax'] = 1;
@@ -113,8 +113,8 @@ var plotsObj = new Object();
   plotsObj[1]['title'] = 'hot side color canvas';
   plotsObj[1]['canvas'] = 'canvas_CANVAS_hot'; // without prefix #
   plotsObj[1]['var'] = 0; // variable number in array spaceTimeData, 0, 1, etc.
-  plotsObj[1]['varValueMin'] = puHeatExchanger.minTinCold;
-  plotsObj[1]['varValueMax'] = puHeatExchanger.maxTinHot;
+  plotsObj[1]['varValueMin'] = processUnits['puHeatExchanger']['minTinCold'];
+  plotsObj[1]['varValueMax'] = processUnits['puHeatExchanger']['maxTinHot'];
   plotsObj[1]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
 
   // plot 2 info
@@ -123,8 +123,8 @@ var plotsObj = new Object();
   plotsObj[2]['title'] = 'cold side color canvas';
   plotsObj[2]['canvas'] = 'canvas_CANVAS_cold'; // without prefix #
   plotsObj[2]['var'] = 1; // variable number in array spaceTimeData, 0, 1, etc.
-  plotsObj[2]['varValueMin'] = puHeatExchanger.minTinCold;
-  plotsObj[2]['varValueMax'] = puHeatExchanger.maxTinHot;
+  plotsObj[2]['varValueMin'] = processUnits['puHeatExchanger']['minTinCold'];
+  plotsObj[2]['varValueMax'] = processUnits['puHeatExchanger']['maxTinHot'];
   plotsObj[2]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
 
   // DEFINE plotFlag ARRAY so don't have to generate entire

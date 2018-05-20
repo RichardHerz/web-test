@@ -125,7 +125,7 @@ var simParams = {
 
   checkForSteadyState : function() {
     // also see puHeatExchanger.checkSSvalues() for energy balance at SS
-    if (this.simTime >= this.oldSimTime + puHeatExchanger.residenceTime) {
+    if (this.simTime >= this.oldSimTime + processUnits['puHeatExchanger']['residenceTime']) {
       // check in order to save CPU time when sim is at steady state
       // check for steady state by checking for any significant change in end T's
       // but wait at least one hot flow residence time after the previous check
@@ -137,7 +137,7 @@ var simParams = {
       // since those values appeared to settle down to different non-zero values
       // that didn't appear to change with time for different input values
       // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
-      var nn = puHeatExchanger.numNodes;
+      var nn = processUnits['puHeatExchanger']['numNodes'];
       // Thot and Tcold arrays are globals
       var hlt = 1.0e5 * Thot[nn].toFixed(1);
       var hrt = 1.0e1 * Thot[0].toFixed(1);
@@ -146,17 +146,17 @@ var simParams = {
       var SScheck = hlt + hrt + clt  + crt;
       SScheck = SScheck.toFixed(8); // need because last sum operation adds significant figs
       // note SScheck = hlt0hrt0.clt0crt0 << 16 digits, 4 each for 4 end T's
-      var oldSScheck = puHeatExchanger.SScheck;
+      var oldSScheck = processUnits['puHeatExchanger']['SScheck'];
       if (SScheck == oldSScheck) {
         // set ssFlag
         simParams.ssFlag = true;
-        // puHeatExchanger.checkSSvalues(); // WARNING - has alerts - TESTING ONLY
+        // processUnits['puHeatExchanger'].checkSSvalues(); // WARNING - has alerts - TESTING ONLY
       } // end if (SScheck == oldSScheck)
 
       // save current values as the old values
-      puHeatExchanger.SScheck = SScheck;
+      processUnits['puHeatExchanger']['SScheck'] = SScheck;
       simParams.oldSimTime = simParams.simTime;
-    } // END OF if (simParams.simTime >= simParams.oldSimTime + puHeatExchanger.residenceTime)
+    } // END OF if (simParams.simTime >= simParams.oldSimTime + processUnits['puHeatExchanger']['residenceTime'])
 
   } // END OF checkForSteadyState()
 
@@ -511,8 +511,6 @@ var processUnits = {
     }, // end of updateUIparams()
 
     updateInputs : function() {
-
-      alert('enter updateInputs');
       //
       // SPECIFY REFERENCES TO INPUTS ABOVE in this unit definition
       //

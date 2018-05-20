@@ -121,9 +121,8 @@
       return;
     }
 
-    // get list of process units // XXX NEW 
-    // var unitList = simParams.processUnits;
-    var unitList = Object.keys(processUnits); // XXX NEW
+    // get list of process units
+    var unitList = Object.keys(processUnits);
 
     var tmpFunc = new Function
 
@@ -168,7 +167,7 @@
       return thisMs;
     }
 
-    var unitList = simParams.processUnits;
+    var unitList = Object.keys(processUnits);
 
     // display all units but do not step
     unitList.forEach(fDisplay);
@@ -181,20 +180,20 @@
       tmpFunc();
       }
 
-    // // GET AND PLOT ALL PLOTS defined in object plotsObj in process_plot_info.js
-    // var npl = Object.keys(plotsObj).length; // number of plots
-    // var p; // used as index
-    // var data;
-    // for (p = 0; p < npl; p += 1) {
-    //   if (plotsObj[p]['type'] == 'canvas') {
-    //     // space-time, color-canvas plot
-    //     plotSpaceTimePlot(p); // defined in file process_spacetime.js
-    //   } else {
-    //     // profile (static x,y) or strip chart (scolling x,y)
-    //     data = getPlotData(p); // defined in file process_plotter.js
-    //     plotPlotData(data,p); // defined in file process_plotter.js
-    //   }
-    // }
+    // GET AND PLOT ALL PLOTS defined in object plotsObj in process_plot_info.js
+    var npl = Object.keys(plotsObj).length; // number of plots
+    var p; // used as index
+    var data;
+    for (p = 0; p < npl; p += 1) {
+      if (plotsObj[p]['type'] == 'canvas') {
+        // space-time, color-canvas plot
+        plotSpaceTimePlot(p); // defined in file process_spacetime.js
+      } else {
+        // profile (static x,y) or strip chart (scolling x,y)
+        data = getPlotData(p); // defined in file process_plotter.js
+        plotPlotData(data,p); // defined in file process_plotter.js
+      }
+    }
 
     // RETURN REAL TIME OF THIS DISPLAY UPDATE (milliseconds)
     var thisDate = new Date();
@@ -209,7 +208,7 @@
     // Alternative: in HTML input tag onchange, send unitName.updateUIparams()
     // to method updateUIparams of specific unit involved in that input.
 
-    var unitList = simParams.processUnits;
+    var unitList = Object.keys(processUnits);
 
     unitList.forEach(fUpdateUIparams);
     function fUpdateUIparams(unitName) {

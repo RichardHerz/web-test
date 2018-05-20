@@ -29,9 +29,9 @@
   <script language="javascript" src="js/process_main.js" type="text/javascript"></script>
   <script language="javascript" src="js/process_interface.js" type="text/javascript"></script>
   <script language="javascript" src="js/process_units.js" type="text/javascript"></script>
-<!-- <script language="javascript" src="js/process_plot_info.js" type="text/javascript"></script> -->
-  <!-- // <script language="javascript" src="js/process_plotter.js" type="text/javascript"></script> -->
-  <!-- // <script language="javascript" src="js/process_spacetime.js" type="text/javascript"></script> -->
+  <script language="javascript" src="js/process_plot_info.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_plotter.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_spacetime.js" type="text/javascript"></script>
 
   <!-- load flot PLOTTING LIBRARY -->
   <!-- need full jquery.js for flot.js to work -->
@@ -96,54 +96,54 @@
    <!-- onchange can send updateUIparams() to process_main.js to update all units *OR* send to specific units -->
    <div id="div_radio_button_group">
       <label id="radio_counter-current_flow_LABEL" name="radio_of_div_radio_button_group">
-            <input type="radio" id="radio_counter-current_flow" name="radio_of_div_radio_button_group" checked onchange="puHeatExchanger.updateUIparams()">
+            <input type="radio" id="radio_counter-current_flow" name="radio_of_div_radio_button_group" checked onchange="processUnits['puHeatExchanger'].updateUIparams()">
             <span id="radio_counter-current_flow_SPAN">counter-current flow</span>
       </label>
       <label id="radio_co-current_flow_LABEL" name="radio_of_div_radio_button_group">
-            <input type="radio" id="radio_co-current_flow" name="radio_of_div_radio_button_group" onchange="puHeatExchanger.updateUIparams()">
+            <input type="radio" id="radio_co-current_flow" name="radio_of_div_radio_button_group" onchange="processUnits['puHeatExchanger'].updateUIparams()">
             <span id="radio_co-current_flow_SPAN">co-current flow</span>
       </label>
    </div> <!-- end of div div_radio_button_group -->
    <p id="field_TinHot_label">
       T in hot (300-380 K)
    </p>
-   <input id="input_field_TinHot" value="360" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_TinHot" value="360" onchange="processUnits['puHeatExchanger'].updateUIparams()">
    <p id="field_TinCold_label">
       T in cold (300-380 K)
    </p>
-   <input id="input_field_TinCold" value="310" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_TinCold" value="310" onchange="processUnits['puHeatExchanger'].updateUIparams()">
    <p id="field_FlowHot_label">
       Flow hot (0.15-4 kg/s)
    </p>
-   <input id="input_field_FlowHot" value="0.5" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_FlowHot" value="0.5" onchange="processUnits['puHeatExchanger'].updateUIparams()">
    <p id="field_FlowCold_label">
       Flow cold (0.15-4 kg/s)
    </p>
-   <input id="input_field_FlowCold" value="0.75" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_FlowCold" value="0.75" onchange="processUnits['puHeatExchanger'].updateUIparams()">
    <p id="field_CpHot_label">
       Cp hot (1-10 kJ/kg/K)
    </p>
-   <input id="input_field_CpHot" value="4.2" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_CpHot" value="4.2" onchange="processUnits['puHeatExchanger'].updateUIparams()">
    <p id="field_CpCold_label">
       Cp cold (1-10 kJ/kg/K)
    </p>
-   <input id="input_field_CpCold" value="4.2" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_CpCold" value="4.2" onchange="processUnits['puHeatExchanger'].updateUIparams()">
    <p id="field_Ucoef_label">
       U (0-10 kW/m<sup shift="-4">2</sup>/K)
    </p>
-   <input id="input_field_Ucoef" value="0.6" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_Ucoef" value="0.6" onchange="processUnits['puHeatExchanger'].updateUIparams()">
    <p id="field_Area_label">
       Area (1-10 m<sup shift="-4">2</sup>)
    </p>
-   <input id="input_field_Area" value="4.0" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_Area" value="4.0" onchange="processUnits['puHeatExchanger'].updateUIparams()">
    <p id="field_diam_label">
       tube diam (0.05-0.28 m)
    </p>
-   <input id="input_field_diam" value="0.15" onchange="puHeatExchanger.updateUIparams()">
+   <input id="input_field_diam" value="0.15" onchange="processUnits['puHeatExchanger'].updateUIparams()">
    <p id="field_length">
       L (m) =
    </p>
-   <p id="field_Reynolds" onchange="puHeatExchanger.updateUIparams()">
+   <p id="field_Reynolds" onchange="processUnits['puHeatExchanger'].updateUIparams()">
       Re =
    </p>
 </div> <!-- end of div div_input_fields_group -->

@@ -44,20 +44,17 @@ function resetThisLab() {
 // GET INPUT VALUES FROM INPUT FIELDS - CALLED IN UNITS updateUIparams()
 function getInputValue(pUnitName,pVarName) {
   // requires specific naming convention for input variables
-  // first, generate the initial, min and max variable names as strings
+  // generate the names
   var tInput = 'input' + pVarName;
-  var tVal = processUnits[pUnitName][tInput];
-  alert('tVal = ' + tVal);
-  var varInputIDstring = pUnitName + '.input' + pVarName;
-  var varInitialString = pUnitName + '.initial' + pVarName;
-  var varMaxString = pUnitName + '.max' + pVarName;
-  var varMinString = pUnitName + '.min' + pVarName;
-  // then need to get the values associated with the strings
-  var varInputID = eval(varInputIDstring);
-  var varInitial = eval(varInitialString);
-  var varMax = eval(varMaxString);
-  var varMin = eval(varMinString);
-  // second, get the contents of the input and handle
+  var tInitial = 'initial' + pVarName;
+  var tMin = 'min' + pVarName;
+  var tMax = 'max' + pVarName;
+  // get the values
+  var varInputID = processUnits[pUnitName][tInput];
+  var varInitial = processUnits[pUnitName][tInitial];
+  var varMin = processUnits[pUnitName][tMin];
+  var varMax = processUnits[pUnitName][tMax];
+  // get the contents of the input and handle
   if (document.getElementById(varInputID)) {
     // the input exists so get the value and make sure it is within range
     let tmpFunc = new Function("return " + varInputID + ".value;");
