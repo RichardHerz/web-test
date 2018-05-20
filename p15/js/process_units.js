@@ -777,5 +777,5 @@ var processUnits = {
 
     } // end display method
 
-  } // END var puHeatExchanger
+  } // END var processUnits[0], Heat Exchanger
 } // END var processUnits

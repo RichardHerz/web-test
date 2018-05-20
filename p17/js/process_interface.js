@@ -34,15 +34,18 @@ function resetThisLab() {
   simParams.stopRunningFlag();
   simParams.resetSimTime();
   simParams.ssFlag = false; // unit sets true when sim reaches steady state
-  resetFlag = 1; // 0 for no reset, 1 for reset lab
-  updateProcessUnits(resetFlag);
-  updateDisplay(resetFlag);
+  // reset all units
+  var numUnits = Object.keys(processUnits).length; // number of units
+  for (n = 0; n < numUnits; n += 1) {
+    processUnits[n].reset();
+  }
+  updateDisplay();
   eval(runButtonID + '.value = "Run"');
   // do NOT update process nor display again here (will take one step)
 } // END OF function resetThisLab
 
 // GET INPUT VALUES FROM INPUT FIELDS - CALLED IN UNITS updateUIparams()
-function getInputValue(pUnitName,pVarName) {
+function getInputValue(pUnitIndex,pVarName) {
   // requires specific naming convention for input variables
   // generate the names
   var tInput = 'input' + pVarName;
@@ -50,25 +53,24 @@ function getInputValue(pUnitName,pVarName) {
   var tMin = 'min' + pVarName;
   var tMax = 'max' + pVarName;
   // get the values
-  var varInputID = processUnits[pUnitName][tInput];
-  var varInitial = processUnits[pUnitName][tInitial];
-  var varMin = processUnits[pUnitName][tMin];
-  var varMax = processUnits[pUnitName][tMax];
+  var varInputID = processUnits[pUnitIndex][tInput];
+  var varInitial = processUnits[pUnitIndex][tInitial];
+  var varMin = processUnits[pUnitIndex][tMin];
+  var varMax = processUnits[pUnitIndex][tMax];
   // get the contents of the input and handle
   if (document.getElementById(varInputID)) {
     // the input exists so get the value and make sure it is within range
-    let tmpFunc = new Function("return " + varInputID + ".value;");
-    varName = tmpFunc();
-    varName = Number(varName); // force any number as string to numeric number
-    if (isNaN(varName)) {varName = varInitial;} // handle e.g., 259x, xxx
-    if (varName < varMin) {varName = varMin;}
-    if (varName > varMax) {varName = varMax;}
-    document.getElementById(varInputID).value = varName;
+    var varValue = eval(varInputID + '.value');
+    varValue = Number(varValue); // force any number as string to numeric number
+    if (isNaN(varValue)) {varValue = varInitial;} // handle e.g., 259x, xxx
+    if (varValue < varMin) {varValue = varMin;}
+    if (varValue > varMax) {varValue = varMax;}
+    document.getElementById(varInputID).value = varValue;
   } else {
     // this 'else' is in case there is no input on the web page yet
     // in order to allow for independence and portability of this
     // process unit
-    varName = varInitial;
+    varValue = varInitial;
   }
-  return varName
+  return varValue
 } // end of getInputValue()

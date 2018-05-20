@@ -10,6 +10,8 @@
 // see file process_units.js for simulation parameter values and
 // definitions of the process units
 //
+// USES in file process_interface.js the function resetThisLab()
+//
 // USES in object simParams from file process_units.js the following:
 //    function updateCurrentRunCountDisplay()
 //    function checkForSteadyState()
@@ -28,9 +30,7 @@
   window.onload = openThisLab; // can NOT use = openThisLab();
 
   function openThisLab() {
-    var resetFlag = 1; // 0 for no reset, 1 for reset lab
-    updateProcessUnits(resetFlag);
-    updateDisplay(resetFlag);
+    resetThisLab(); // defined in file process_interface.js
     simParams.updateCurrentRunCountDisplay();
   } // END OF function openThisLab
 
@@ -44,7 +44,6 @@
     // BETWEEN updateProcessUnits YOU NEED
     // THE MORE COMPLEX TIMING METHOD USED IN dynamic-process-v2.livecode
 
-    var resetFlag = 0; // 0 for no reset, 1 for reset lab
     // updateDisplayTimingMs is real time milliseconds between display updates
     var updateDisplayTimingMs = simParams.updateDisplayTimingMs;
     var startDate = new Date(); // need this here
@@ -84,14 +83,14 @@
       // latest real time at which updateDisplay must occur in order
       // to maintain correspondence between sim time and real time
       //
-      var i;
+
       for (i = 0; i < simParams.simStepRepeats; i += 1) {
-        updateProcessUnits(resetFlag);
+        updateProcessUnits();
       }
 
       // get time at end of repeating updateProcessUnits and call
       // to updateDisplay from updateDisplay function return value
-      currentMs = updateDisplay(resetFlag);
+      currentMs = updateDisplay();
 
       // Adjust wait until next updateProcess to allow for time taken
       // to do updateProcessUnits and updateDisplay.
@@ -112,7 +111,7 @@
 
   } // END OF function runSimulation
 
-  function updateProcessUnits(resetFlag) {
+  function updateProcessUnits() {
     // DO COMPUTATIONS TO UPDATE STATE OF PROCESS
     // step all units but do not display
 
@@ -121,46 +120,24 @@
       return;
     }
 
-    // get list of process units
-    var unitList = Object.keys(processUnits);
+    var numUnits = Object.keys(processUnits).length; // number of units
 
-    // NOTE: if number units rather than name units, e.g., processUnits[0]
-    // as in plotsObj plot children in process_plot_info.js,
-    // then could get length as below and use for repeat to call functions
-    // and not need temp functions to construct name
-
-    var tmpFunc = new Function
-
-    // FIRST, have all units update their input connection values
-    unitList.forEach(fUpdateInputs);
-    function fUpdateInputs(unitName) {
-      tmpFunc = new Function("processUnits['" + unitName + "'].updateInputs();");
-      tmpFunc();
+    // FIRST, have all units update their unit input connections
+    for (n = 0; n < numUnits; n += 1) {
+      processUnits[n].updateInputs();
     }
 
     // SECOND, have all units update their state
-    unitList.forEach(fUpdateState);
-    function fUpdateState(unitName) {
-
-      if (resetFlag) {
-        tmpFunc = new Function("processUnits['" + unitName + "'].reset();");
-        tmpFunc();
-      } else {
-
-        // XXX NEW PUT updateState INTO ELSE rather than execute every time
-
-        tmpFunc = new Function("processUnits['" + unitName + "'].updateState();");
-        tmpFunc();
-      }
-
-    } // end function fUpdateState
+    for (n = 0; n < numUnits; n += 1) {
+        processUnits[n].updateState();
+    }
 
     // check and set simParams.ssFlag to true if at steady state
     simParams.checkForSteadyState();
 
   } // END OF updateProcessUnits
 
-  function updateDisplay(resetFlag) {
+  function updateDisplay() {
 
     if (simParams.ssFlag) {
       // exit if simParams.ssFlag true
@@ -172,23 +149,12 @@
       return thisMs;
     }
 
-    var unitList = Object.keys(processUnits);
-
-    // NOTE: if number units rather than name units, e.g., processUnits[0]
-    // as in plotsObj plot children in process_plot_info.js,
-    // then could get length as below and use for repeat to call functions
-    // and not need temp functions to construct name 
+    var numUnits = Object.keys(processUnits).length; // number of units
 
     // display all units but do not step
-    unitList.forEach(fDisplay);
-    function fDisplay(unitName) {
-      if (resetFlag) {
-        var tmpFunc = new Function("processUnits['" + unitName + "'].reset();");
-        tmpFunc();
-      }
-      var tmpFunc = new Function("processUnits['" + unitName + "'].display();");
-      tmpFunc();
-      }
+    for (n = 0; n < numUnits; n += 1) {
+      processUnits[n].display();
+    }
 
     // GET AND PLOT ALL PLOTS defined in object plotsObj in process_plot_info.js
     var npl = Object.keys(plotsObj).length; // number of plots
@@ -218,12 +184,9 @@
     // Alternative: in HTML input tag onchange, send unitName.updateUIparams()
     // to method updateUIparams of specific unit involved in that input.
 
-    var unitList = Object.keys(processUnits);
-
-    unitList.forEach(fUpdateUIparams);
-    function fUpdateUIparams(unitName) {
-      var tmpFunc = new Function("processUnits['" + unitName + "'].updateUIparams();");
-      tmpFunc();
+    var numUnits = Object.keys(processUnits).length; // number of units
+    for (n = 0; n < numUnits; n += 1) {
+      processUnits[n].updateUIparams();
     }
 
   }  // END OF function updateUIparams
