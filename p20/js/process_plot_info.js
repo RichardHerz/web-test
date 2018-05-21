@@ -16,7 +16,7 @@
 
 // THIS FILE USED FOR DEFINITION OF PROFILE, STRIP CHART & COLOR CANVAS PLOTS
 
-// NOTE: processUnits[0] is heat exchanger in this web lab
+// NOTE: processUnits[0] is plug flow reactor in this web lab
 //
 var unum = 0; // useful when only one unit in lab, processUnits[unum]
 
@@ -33,6 +33,7 @@ var numStripPts = 0;
 // COMMON VALUES FOR SPACE-TIME, COLOR-CANVAS PLOTS
 // if want square canvas 'pixels' set time/space pt ratio = canvas width/height ratio
 // these vars used several places below in this file
+var numSpaceTimeVars = 2;
 var numTimePts = processUnits[unum]['numNodes'];
 var numSpacePts = 1; // 1 for one, number is numSpacePts
 
@@ -59,26 +60,26 @@ var plotsObj = new Object();
   // plot 0 info
   plotsObj[0] = new Object();
   plotsObj[0]['type'] = 'profile';
-  plotsObj[0]['title'] = 'Temperature Profiles';
-  plotsObj[0]['canvas'] = '#div_PLOTDIV_T_plot'; // flot.js wants ID with prefix #
+  plotsObj[0]['title'] = 'PFR profiles';
+  plotsObj[0]['canvas'] = '#div_PLOTDIV_PFR_plot'; // flot.js wants ID with prefix #
   plotsObj[0]['numberPoints'] = processUnits[unum]['numNodes']; // should match numNodes in process unit
   // plot has numberPoints + 1 pts!
-  plotsObj[0]['xAxisLabel'] = 'position in exchanger';
+  plotsObj[0]['xAxisLabel'] = 'position';
   plotsObj[0]['xAxisTableLabel'] = 'Position'; // label for copy data table
   // xAxisShow false does not show numbers, nor label, nor grid for x-axis
   // might be better to cover numbers if desire not to show numbers
   plotsObj[0]['xAxisShow'] = 1; // 0 false, 1 true
   plotsObj[0]['xAxisMin'] = 0;
   plotsObj[0]['xAxisMax'] = 1;
-  plotsObj[0]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
-  plotsObj[0]['yLeftAxisLabel'] = 'T (K)'; // or d'less (T - TinCold)/(TinHot - TinCold)
-  plotsObj[0]['yLeftAxisMin'] = processUnits[unum]['minTinCold'];
-  plotsObj[0]['yLeftAxisMax'] = processUnits[unum]['maxTinHot'];
-  plotsObj[0]['yRightAxisLabel'] = 'yRight';
+  plotsObj[0]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
+  plotsObj[0]['yLeftAxisLabel'] = 'Trxr (K)'; // or d'less (T - TinCold)/(TinHot - TinCold)
+  plotsObj[0]['yLeftAxisMin'] = processUnits[unum]['minTrxr'];
+  plotsObj[0]['yLeftAxisMax'] = processUnits[unum]['maxTrxr'];
+  plotsObj[0]['yRightAxisLabel'] = 'Ca (mol/m3)';
   plotsObj[0]['yRightAxisMin'] = 0;
-  plotsObj[0]['yRightAxisMax'] = 1;
-  plotsObj[0]['plotLegendPosition'] = "se";
-  plotsObj[0]['plotLegendShow'] = 0;  // Boolean, '' or 0 for no show, 1 or "show"
+  plotsObj[0]['yRightAxisMax'] = processUnits[unum]['Cain'];
+  plotsObj[0]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 or "show"
+  plotsObj[0]['plotLegendPosition'] = 'nw';
   plotsObj[0]['plotGridBgColor'] = 'white';
   // colors can be specified rgb, rgba, hex, and color names
   // for flot.js colors, only basic color names appear to work, e.g., white, blue, red
@@ -86,8 +87,6 @@ var plotsObj = new Object();
   // for all color names to hex see https://www.w3schools.com/colors/colors_picker.asp
   plotsObj[0]['plotDataSeriesColors'] = ['#ff6347','#1e90ff']; // optional, in variable order 0, 1, etc.
   // ['#ff6347','#1e90ff'] is Tomato and DodgerBlue
-  // WARNING: all below with prefix 'var' must have same number of child objects,
-  // one for each curve & length used in _plotter.js
   plotsObj[0]['varUnitIndex'] = new Array();
     plotsObj[0]['varUnitIndex'][0] = unum; // value is index of unit in processUnits object
     plotsObj[0]['varUnitIndex'][1] = unum;
@@ -98,8 +97,8 @@ var plotsObj = new Object();
     plotsObj[0]['var'][1] = 1; // listed in order of varLabel order, etc.
   plotsObj[0]['varLabel'] = new Array();
     // list labels in 'varLabel' in order of corresonding 'var' VALUES above
-    plotsObj[0]['varLabel'][0] = 'Thot'; // 1st var
-    plotsObj[0]['varLabel'][1] = 'Tcold';
+    plotsObj[0]['varLabel'][0] = 'Trxr'; // 1st var
+    plotsObj[0]['varLabel'][1] = 'Ca';
   plotsObj[0]['varShow'] = new Array();
     // values are 'show' to show on plot and legend,
     // 'tabled' to not show on plot nor legend but list in copy data table
@@ -109,7 +108,7 @@ var plotsObj = new Object();
     plotsObj[0]['varShow'][1] = 'show';
   plotsObj[0]['varYaxis'] = new Array();
     plotsObj[0]['varYaxis'][0] = 'left'; // 1st var
-    plotsObj[0]['varYaxis'][1] = 'left';
+    plotsObj[0]['varYaxis'][1] = 'right';
   plotsObj[0]['varYscaleFactor'] = new Array();
     plotsObj[0]['varYscaleFactor'][0] = 1; // 1st var
     plotsObj[0]['varYscaleFactor'][1] = 1;
@@ -119,26 +118,24 @@ var plotsObj = new Object();
   // plot 1 info
   plotsObj[1] = new Object();
   plotsObj[1]['type'] = 'canvas';
-  plotsObj[1]['title'] = 'hot side color canvas';
-  plotsObj[1]['canvas'] = 'canvas_CANVAS_hot'; // without prefix #
-  // for canvas type, all data comes from one process unit and one local array
-  plotsObj[1]['varUnitIndex'] = unum; // index of unit in processUnits object
-  plotsObj[1]['var'] = 0; // variable number in array; 0, 1, etc.
-  plotsObj[1]['varValueMin'] = processUnits[unum]['minTinCold'];
-  plotsObj[1]['varValueMax'] = processUnits[unum]['maxTinHot'];
-  plotsObj[1]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
+  plotsObj[1]['title'] = 'reactor color canvas';
+  plotsObj[1]['canvas'] = 'canvas_CANVAS_reactor'; // without prefix #
+    plotsObj[1]['varUnitIndex'] = unum; // index of unit in processUnits object
+  plotsObj[1]['var'] = 0; // variable number in array spaceTimeData, 0, 1, etc.
+  plotsObj[1]['varValueMin'] = processUnits[unum]['minTrxr'];
+  plotsObj[1]['varValueMax'] = processUnits[unum]['maxTrxr'];
+  plotsObj[1]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
 
   // plot 2 info
   plotsObj[2] = new Object();
   plotsObj[2]['type'] = 'canvas';
-  plotsObj[2]['title'] = 'cold side color canvas';
-  plotsObj[2]['canvas'] = 'canvas_CANVAS_cold'; // without prefix #
-  // for canvas type, all data comes from one process unit and one local array
+  plotsObj[2]['title'] = 'jacket color canvas';
+  plotsObj[2]['canvas'] = 'canvas_CANVAS_jacket'; // without prefix #
   plotsObj[2]['varUnitIndex'] = unum; // index of unit in processUnits object
-  plotsObj[2]['var'] = 1; // variable number in array :0, 1, etc.
-  plotsObj[2]['varValueMin'] = processUnits[unum]['minTinCold'];
-  plotsObj[2]['varValueMax'] = processUnits[unum]['maxTinHot'];
-  plotsObj[2]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
+  plotsObj[2]['var'] = 1; // variable number in array spaceTimeData, 0, 1, etc.
+  plotsObj[2]['varValueMin'] = processUnits[unum]['minTrxr'];
+  plotsObj[2]['varValueMax'] = processUnits[unum]['maxTrxr'];
+  plotsObj[2]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
 
   // DEFINE plotFlag ARRAY so don't have to generate entire
   // profile or strip plot everytime want to just change data and not axes, etc.

@@ -761,7 +761,7 @@ processUnits[0] = {
       this.profileData[1][n][1] = this.Tcold[n]; // or d'less (this.Tcold[n] - this.TinCold) / (this.TinHot - this.TinCold);
     }
 
-    // HANDLE SPACE-TIME DATA >> HERE IS HOT AND COLD SIDES OF EXCHANGER
+    // HANDLE COLOR CANVAS DATA >> HERE IS HOT AND COLD SIDES OF EXCHANGER
     // FOR HEAT EXCHANGER
     // the data vs. node is horizontal, not vertical
     // and vertical strip is all the same
