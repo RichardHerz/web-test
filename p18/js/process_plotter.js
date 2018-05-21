@@ -28,46 +28,25 @@ function getPlotData(plotsObjNum) {
   // plot will have 0 to numberPoints for total of numberPoints + 1 points
   var varNumbers = plotsObj[plotsObjNum]['var'];
   var numVar = varNumbers.length;
+  var varUnitIndex;
+  var varUnitArrayName;
   var plotData = initPlotData(numVar,numPlotPoints);
-
-  // XXX NEW references to local data arrays
-  // XXX and each may have multiple values [0], [1], etc.
-  // plotsObj[0]['varUnitIndex'][0] = 0;
-  // plotsObj[0]['varUnitArrayName'][0] = 'profileData';
 
   // get data for plot
   for (v = 0; v < numVar; v += 1) {
-    // get number n of variable listed in plotsObj for profileData array
+    // get unit index and array name for this variable
+    varUnitIndex = plotsObj[plotsObjNum]['varUnitIndex'][v];
+    varUnitArrayName = plotsObj[plotsObjNum]['varUnitArrayName'][v];
+    // get number n of variable listed in unit's data array
     n = varNumbers[v];
-    for (p = 0; p <= numPlotPoints; p += 1) {
-      // note want p <= numPlotPoints so get # 0 to # numPlotPoints of points
-      // WARNING profileData and stripData are differences below in IF BLOCK
-      if (plotsObj[plotsObjNum]['type'] == 'profile') {
-        plotData[v][p][0] = profileData[n][p][0];
-        plotData[v][p][1] = profileData[n][p][1]; // <<< PROFILEdata
-      } else {
-        plotData[v][p][0] = stripData[n][p][0]; // <<< STRIPdata
-        plotData[v][p][1] = stripData[n][p][1];
-      }
-    }
+    // copy variable in array from unit
+    // need to do this separately for each variable because they
+    // may be from different units and different unit array names
+    eval('plotData['+v+'] = processUnits['+varUnitIndex+']["'+varUnitArrayName+'"]['+n+']');
+    // NOTE: if I go back to earlier scheme I might be able to use some of the
+    // strategy here in copying entire var vectors in order to eliminate
+    // some steps in this 'for' repeat...
   }
-
-  // // get data for plot
-  // for (v = 0; v < numVar; v += 1) {
-  //   // get number n of variable listed in plotsObj for profileData array
-  //   n = varNumbers[v];
-  //   for (p = 0; p <= numPlotPoints; p += 1) {
-  //     // note want p <= numPlotPoints so get # 0 to # numPlotPoints of points
-  //     // WARNING profileData and stripData are differences below in IF BLOCK
-  //     if (plotsObj[plotsObjNum]['type'] == 'profile') {
-  //       plotData[v][p][0] = profileData[n][p][0];
-  //       plotData[v][p][1] = profileData[n][p][1]; // <<< PROFILEdata
-  //     } else {
-  //       plotData[v][p][0] = stripData[n][p][0]; // <<< STRIPdata
-  //       plotData[v][p][1] = stripData[n][p][1];
-  //     }
-  //   }
-  // }
 
   // scale y-axis values if scale factor not equal to 1
   for (v = 0; v < numVar; v += 1) {
@@ -212,6 +191,7 @@ function plotPlotData(pData,pNumber) {
 
 } // END OF function plotPlotData
 
+// XXX NEEDS TO BE MODIFIED TO WORK WITH NEW PLOT INFO
 function copyData(plotIndex){
   // plotIndex is the index of the plotsObj object of the desired plot to copy
   // as specified in process_plot_info.js

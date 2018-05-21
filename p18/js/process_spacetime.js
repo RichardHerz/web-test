@@ -65,11 +65,16 @@ function plotSpaceTimePlot(pNumber) {
   var canvasID = plotsObj[pNumber]['canvas'];
   var canvas = document.getElementById(canvasID);
   var context = canvas.getContext('2d');
-  // get data from global array spaceTimeData and plot
-  // v is the index number of the variable to plot in array spaceTimeData
+
+  // copy data from one unit's array to local array spaceTimeData
+  var varUnitIndex = plotsObj[pNumber]['varUnitIndex'];
+  var varUnitArrayName = plotsObj[pNumber]['varUnitArrayName'];
+  // v is the index number of the one variable to plot on the canvas
   // where 0 is first, 1 is second, etc.
   var v = plotsObj[pNumber]['var'];
-  var scaledVarVal; // holds variable value scaled 0-1 by minVarVal & maxVarVal
+  var spaceTimeData;
+  eval('spaceTimeData = processUnits['+varUnitIndex+']["'+varUnitArrayName+'"]['+v+']');
+
   var t;
   var s;
   var r;
@@ -88,13 +93,14 @@ function plotSpaceTimePlot(pNumber) {
   var tPixels = canvas.width; // canvas width, height set in HTML canvas element
   var sPixels = canvas.height;
   // numTimePts and numSpacePts are globals defined in file process_plot_info.js
-  var tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point
-  var sPixelsPerPoint = sPixels/(numSpacePts+1); // pixels per point
+  var tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point, note +1
+  var sPixelsPerPoint = sPixels/numSpacePts; // pixels per point
   var minVarVal = plotsObj[pNumber]['varValueMin'];
   var maxVarVal = plotsObj[pNumber]['varValueMax'];
+  var scaledVarVal; // holds variable value scaled 0-1 by minVarVal & maxVarVal
   for (t = 0; t <= numTimePts; t += 1) { // NOTE = at t <=
-    for (s = 0; s <= numSpacePts; s += 1) { // NOTE = AT s <=
-      scaledVarVal = (spaceTimeData[v][t][s] - minVarVal) / (maxVarVal - minVarVal);
+    for (s = 0; s < numSpacePts; s += 1) {
+      scaledVarVal = (spaceTimeData[t][s] - minVarVal) / (maxVarVal - minVarVal);
       jet = jetColorMap(scaledVarVal); // scaledVarVal should be scaled 0 to 1
       r = jet[0];
       g = jet[1];
@@ -105,14 +111,13 @@ function plotSpaceTimePlot(pNumber) {
       tColor4 = b.toString();
       tColor = tColor1.concat(tColor2,',',tColor3,',',tColor4,tColor5);
       context.fillStyle = tColor;
-      if (plotsObj[1]['xAxisReversed']) {
+      if (plotsObj[pNumber]['xAxisReversed']) {
         // swap directions in plot from that in spaceTimeData array
         x = tPixelsPerPoint * (numTimePts - t);
-        y = sPixelsPerPoint * (numSpacePts - s);
       } else {
         x = tPixelsPerPoint * t;
-        y = sPixelsPerPoint * s;
       }
+      y = sPixelsPerPoint * s;
       // draw colored rectangle on canvas to represent this data point
       context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
     } // end of inner FOR repeat

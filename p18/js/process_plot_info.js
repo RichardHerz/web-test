@@ -28,8 +28,7 @@ var numStripPts = 0;
 // these vars used several places below in this file
 var numSpaceTimeVars = 2;
 var numTimePts = processUnits[0]['numNodes'];
-// WARNING: numSpacePts = 0 for one, number is numSpacePts + 1
-var numSpacePts = 0; // 0 for one, number is numSpacePts + 1
+var numSpacePts = 1;
 
 // WE CURRENTLY USE FLOT.JS FOR PLOTTING PROFILE & STRIP PLOTS
 // some options below such as plotDataSeriesColors are optional for flot.js
@@ -194,8 +193,8 @@ var plotsObj = new Object();
     // returns array with all elements for plot filled with zero
     //    index 1 specifies the variable [0 to numVars-1]
     //    index 2 specifies the time point [0 to & including numTimePoints]
-    //    index 3 specifies the space point [0 to & including numSpacePoints]
-    //    the element value at plotDataStub[v][t][s] will be the conc or rate
+    //    index 3 specifies the space point [0 to numSpacePts-1]
+    //    the element value at plotDataStub[v][t][s] will be the value
     //      to be shown for that variable at that time at that space location
     var v;
     var s;
@@ -205,7 +204,7 @@ var plotsObj = new Object();
       plotDataStub[v] = new Array();
         for (t = 0; t <= numTimePts; t += 1) { // NOTE = AT t <=
         plotDataStub[v][t] = new Array();
-        for (s = 0; s <= numSpacePts; s += 1) { // NOTE = AT s <=
+        for (s = 0; s < numSpacePts; s += 1) {
           plotDataStub[v][t][s] = 0;
         }
       }
@@ -213,15 +212,3 @@ var plotsObj = new Object();
     // document.getElementById("dev01").innerHTML = "hello";
     return plotDataStub;
   } // end function initSpaceTimeArray
-
-  // // XXX OLD - DELETE AFTER START USING LOCAL UNIT DATA
-  //
-  // // initialize profile data array - must follow function initPlotData in this file
-  // var profileData = initPlotData(numProfileVars,numProfilePts); // holds data for static profile plots
-  //
-  // // initialize strip chart data array
-  // var stripData = initPlotData(numStripVars,numStripPts); // holds data for scrolling strip chart plots
-  //
-  // // initialize space-time, color-canvas data array -
-  // // must follow function initSpaceTimeArray in this file
-  // var spaceTimeData = initSpaceTimeArray(numSpaceTimeVars,numTimePts,numSpacePts);
