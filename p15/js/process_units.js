@@ -172,7 +172,7 @@ var simParams = {
 // -------------------------------------------------------------------
 
 var processUnits = {
-  // contents are only the process units as child objects
+  // contents must be only the process units as child objects
 
   puHeatExchanger : {
     //

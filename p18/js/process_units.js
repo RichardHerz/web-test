@@ -152,7 +152,10 @@ var simParams = {
 // -------------------------------------------------------------------
 
 var processUnits = new Object();
-  // contents will be only the process units as child objects
+// contents must be only the process units as child objects
+// children optionally can be defined in separate script files, e.g., as puHeatExchanger,
+// then inserted into processUnits, e.g., processUnits[0] = puHeatExchanger,
+// then cleared for garbage collection, e.g., puHeatExchanger = null;
 
 processUnits[0] = {
   unitIndex : 0, // index of this unit as child in processUnits parent object
