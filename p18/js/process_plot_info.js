@@ -26,7 +26,6 @@ var numStripPts = 0;
 // COMMON VALUES FOR SPACE-TIME, COLOR-CANVAS PLOTS
 // if want square canvas 'pixels' set time/space pt ratio = canvas width/height ratio
 // these vars used several places below in this file
-var numSpaceTimeVars = 2;
 var numTimePts = processUnits[0]['numNodes'];
 var numSpacePts = 1;
 

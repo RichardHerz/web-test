@@ -343,9 +343,8 @@ processUnits[0] = {
     // // initPlotData(numStripVars,numStripPts)
     // this.stripData = initPlotData(numStripVars,numStripPts); // holds data for scrolling strip chart plots
 
-    // initialize space-time, color-canvas data array -
+    // initialize local array to hold space-time, color-canvas data -
     // initSpaceTimeArray(numSpaceTimeVars,numTimePts,numSpacePts)
-    // WARNING: numSpacePts = 0 for one, number is numSpacePts + 1
     this.spaceTimeData = initSpaceTimeArray(2,this.numNodes,0);
 
     var kn = 0;
