@@ -28,7 +28,12 @@ function getPlotData(plotsObjNum) {
   // plot will have 0 to numberPoints for total of numberPoints + 1 points
   var varNumbers = plotsObj[plotsObjNum]['var'];
   var numVar = varNumbers.length;
-  var plotData = initPlotData(numVar,numPlotPoints)
+  var plotData = initPlotData(numVar,numPlotPoints);
+
+  // XXX NEW references to local data arrays
+  // XXX and each may have multiple values [0], [1], etc.
+  // plotsObj[0]['varUnitIndex'][0] = 0;
+  // plotsObj[0]['varUnitArrayName'][0] = 'profileData';
 
   // get data for plot
   for (v = 0; v < numVar; v += 1) {
@@ -46,6 +51,23 @@ function getPlotData(plotsObjNum) {
       }
     }
   }
+
+  // // get data for plot
+  // for (v = 0; v < numVar; v += 1) {
+  //   // get number n of variable listed in plotsObj for profileData array
+  //   n = varNumbers[v];
+  //   for (p = 0; p <= numPlotPoints; p += 1) {
+  //     // note want p <= numPlotPoints so get # 0 to # numPlotPoints of points
+  //     // WARNING profileData and stripData are differences below in IF BLOCK
+  //     if (plotsObj[plotsObjNum]['type'] == 'profile') {
+  //       plotData[v][p][0] = profileData[n][p][0];
+  //       plotData[v][p][1] = profileData[n][p][1]; // <<< PROFILEdata
+  //     } else {
+  //       plotData[v][p][0] = stripData[n][p][0]; // <<< STRIPdata
+  //       plotData[v][p][1] = stripData[n][p][1];
+  //     }
+  //   }
+  // }
 
   // scale y-axis values if scale factor not equal to 1
   for (v = 0; v < numVar; v += 1) {

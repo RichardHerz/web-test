@@ -163,8 +163,6 @@ processUnits[0] = {
   //    simParams.simTimeStep, simParams.ssFlag
   // OBJECT simParams USES the following from this process unit
   //    variables SScheck, residenceTime, numNodes
-  // USES GLOBALS
-  //    Thot, Tcold, ThotNew, TcoldNew
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
   //   none
   // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
@@ -778,11 +776,6 @@ processUnits[0] = {
 
     // FOR HEAT EXCHANGER - DO NOT USE STRIP CHART YET
     // HANDLE STRIP CHART DATA
-
-    // XXX for testing, copy to global arrays that we are trying to eliminate
-    // XXX so we can still see plots 
-    profileData = this.profileData;
-    spaceTimeData = this.spaceTimeData;
 
   } // end display method
 

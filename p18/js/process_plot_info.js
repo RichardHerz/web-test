@@ -17,7 +17,6 @@
 // these vars used several places below in this file
 var numProfileVars = 2;
 var numProfilePts = processUnits[0]['numNodes'];
-// processUnits[0] is heat exchanger in this web lab
 
 // COMMON VALUES FOR STRIP CHART PLOTS (scrolling x,y plots)
 // these vars used several places below in this file
@@ -29,6 +28,7 @@ var numStripPts = 0;
 // these vars used several places below in this file
 var numSpaceTimeVars = 2;
 var numTimePts = processUnits[0]['numNodes'];
+// WARNING: numSpacePts = 0 for one, number is numSpacePts + 1
 var numSpacePts = 0; // 0 for one, number is numSpacePts + 1
 
 // WE CURRENTLY USE FLOT.JS FOR PLOTTING PROFILE & STRIP PLOTS
@@ -41,10 +41,6 @@ var numSpacePts = 0; // 0 for one, number is numSpacePts + 1
 // more than one plot can be put one one web page by
 // defining multiple object children, where the first index
 // plotsObj[0] is the plot number index (starting at 0)
-//
-// OBJECT plotsObj uses from process unit puHeatExchanger in file
-// process_units.js the following:
-//    numNodes, minTinCold, maxTinHot
 //
 var plotsObj = new Object();
   //
@@ -85,6 +81,14 @@ var plotsObj = new Object();
   // for all color names to hex see https://www.w3schools.com/colors/colors_picker.asp
   plotsObj[0]['plotDataSeriesColors'] = ['#ff6347','#1e90ff']; // optional, in variable order 0, 1, etc.
   // ['#ff6347','#1e90ff'] is Tomato and DodgerBlue
+  // WARNING: all below with prefix 'var' must have same number of child objects,
+  // one for each curve & length used in _plotter.js
+  plotsObj[0]['varUnitIndex'] = new Array();
+    plotsObj[0]['varUnitIndex'][0] = 0; // value is index of unit in processUnits object
+    plotsObj[0]['varUnitIndex'][1] = 0;
+  plotsObj[0]['varUnitArrayName'] = new Array();
+    plotsObj[0]['varUnitArrayName'][0] = 'profileData';
+    plotsObj[0]['varUnitArrayName'][1] = 'profileData';
   plotsObj[0]['var'] = new Array();
     // VALUES are data array var # to be put on plot & legend + those only in data table
     // these values may not start at 0, e.g., one plot has 0,1, another has 2,3
@@ -115,7 +119,10 @@ var plotsObj = new Object();
   plotsObj[1]['type'] = 'canvas';
   plotsObj[1]['title'] = 'hot side color canvas';
   plotsObj[1]['canvas'] = 'canvas_CANVAS_hot'; // without prefix #
-  plotsObj[1]['var'] = 0; // variable number in array spaceTimeData, 0, 1, etc.
+  // for canvas type, all data comes from one process unit and one local array
+  plotsObj[1]['varUnitIndex'] = 0; // index of unit in processUnits object
+  plotsObj[1]['varUnitArrayName'] = 'spaceTimeData';
+  plotsObj[1]['var'] = 0; // variable number in array; 0, 1, etc.
   plotsObj[1]['varValueMin'] = processUnits[0]['minTinCold'];
   plotsObj[1]['varValueMax'] = processUnits[0]['maxTinHot'];
   plotsObj[1]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
@@ -125,7 +132,10 @@ var plotsObj = new Object();
   plotsObj[2]['type'] = 'canvas';
   plotsObj[2]['title'] = 'cold side color canvas';
   plotsObj[2]['canvas'] = 'canvas_CANVAS_cold'; // without prefix #
-  plotsObj[2]['var'] = 1; // variable number in array spaceTimeData, 0, 1, etc.
+  // for canvas type, all data comes from one process unit and one local array
+  plotsObj[2]['varUnitIndex'] = 0; // index of unit in processUnits object
+  plotsObj[2]['varUnitArrayName'] = 'spaceTimeData';
+  plotsObj[2]['var'] = 1; // variable number in array :0, 1, etc.
   plotsObj[2]['varValueMin'] = processUnits[0]['minTinCold'];
   plotsObj[2]['varValueMax'] = processUnits[0]['maxTinHot'];
   plotsObj[2]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
@@ -143,6 +153,8 @@ var plotsObj = new Object();
   for (p = 1; p < npl; p += 1) {
     plotFlag.push(0);
   }
+
+  // BELOW ARE FUNCTIONS USED BY PROCESS UNITS TO INITIALIZE THEIR LOCAL DATA ARRAYS
 
   function initPlotData(numVars,numPlotPoints) {
     // returns 3D array to hold x,y scatter plot data for multiple variables
@@ -202,12 +214,14 @@ var plotsObj = new Object();
     return plotDataStub;
   } // end function initSpaceTimeArray
 
-  // initialize profile data array - must follow function initPlotData in this file
-  var profileData = initPlotData(numProfileVars,numProfilePts); // holds data for static profile plots
-
-  // initialize strip chart data array
-  var stripData = initPlotData(numStripVars,numStripPts); // holds data for scrolling strip chart plots
-
-  // initialize space-time, color-canvas data array -
-  // must follow function initSpaceTimeArray in this file
-  var spaceTimeData = initSpaceTimeArray(numSpaceTimeVars,numTimePts,numSpacePts);
+  // // XXX OLD - DELETE AFTER START USING LOCAL UNIT DATA
+  //
+  // // initialize profile data array - must follow function initPlotData in this file
+  // var profileData = initPlotData(numProfileVars,numProfilePts); // holds data for static profile plots
+  //
+  // // initialize strip chart data array
+  // var stripData = initPlotData(numStripVars,numStripPts); // holds data for scrolling strip chart plots
+  //
+  // // initialize space-time, color-canvas data array -
+  // // must follow function initSpaceTimeArray in this file
+  // var spaceTimeData = initSpaceTimeArray(numSpaceTimeVars,numTimePts,numSpacePts);
