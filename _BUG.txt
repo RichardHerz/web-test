@@ -1,0 +1,18 @@
+MAYBE A BUG IN OLD _spaceTime.js 
+
+IN _spaceTime.js SHOULD BE
+      if (plotsObj[pNumber]['xAxisReversed']) {
+BUT MAY BE
+     if (plotsObj[1][‘xAxisReversed']) {
+
+COMPLETE REVISED: 
+
+      if (plotsObj[pNumber]['xAxisReversed']) {
+        // swap directions in plot from that in spaceTimeData array
+        x = tPixelsPerPoint * (numTimePts - t);
+      } else {
+        x = tPixelsPerPoint * t;
+      }
+      y = sPixelsPerPoint * s; 
+
+
