@@ -24,7 +24,7 @@
 // USES in file process_plotter.js the functions
 //    getPlotData() and plotPlotData()
 //
-// USES in file process_spacetime.js the function plotSpaceTimePlot()
+// USES in file process_spacetime.js the function plotColorCanvasPlot()
 
   // DISPLAY INITIAL STATE ON OPEN WINDOW
   window.onload = openThisLab; // can NOT use = openThisLab();
@@ -99,10 +99,10 @@
       elapsedMs = currentMs - startMs;
       updateMs = updateDisplayTimingMs - elapsedMs;
 
-      // DISPLAY TIMING DATA DURING DEVELOPMENT - PERCENT TIME IDLE
-      var tIdleTime = 100*(1-elapsedMs/updateMs);
-      tIdleTime = Number(tIdleTime).toPrecision(2);
-      document.getElementById("field_output_field").innerHTML = "% idle = " + tIdleTime + "&nbsp;&nbsp;";
+      // // DISPLAY TIMING DATA DURING DEVELOPMENT - PERCENT TIME IDLE
+      // var tIdleTime = 100*(1-elapsedMs/updateMs);
+      // tIdleTime = Number(tIdleTime).toPrecision(2);
+      // document.getElementById("field_output_field").innerHTML = "% idle = " + tIdleTime + "&nbsp;&nbsp;";
 
       // END updateProcess WITH CALL TO ITSELF AFTER updateMs WAIT
       setTimeout(updateProcess, updateMs);  // updateMs
@@ -163,7 +163,7 @@
     for (p = 0; p < npl; p += 1) {
       if (plotsObj[p]['type'] == 'canvas') {
         // space-time, color-canvas plot
-        plotSpaceTimePlot(p); // defined in file process_spacetime.js
+        plotColorCanvasPlot(p); // defined in file process_spacetime.js
       } else {
         // profile (static x,y) or strip chart (scolling x,y)
         data = getPlotData(p); // defined in file process_plotter.js
