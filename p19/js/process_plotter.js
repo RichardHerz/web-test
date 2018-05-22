@@ -199,7 +199,8 @@ function plotPlotData(pData,pNumber) {
 
 } // END OF function plotPlotData
 
-// XXX NEEDS TO BE MODIFIED TO WORK WITH NEW PLOT INFO
+// ----- FUNCTION TO COPY DATA TO TABLE ---------
+
 function copyData(plotIndex){
   // plotIndex is the index of the plotsObj object of the desired plot to copy
   // as specified in process_plot_info.js
@@ -215,13 +216,14 @@ function copyData(plotIndex){
   var n; // index
   var v; // variable index
   var k; // points index
-  var varIndex; // index of selected variable in data array
+  var varIndex; // index of selected variable in unit local data array
+  var varUnitIndex; // index of unit from which variable is to be obtained
   var tText; // we will put the data into this variable
   var tItemDelimiter = ', &nbsp;'
   var tVarLabelLen = plotsObj[plotIndex]['varLabel'].length; // length for loops below
 
   tText = '<p>Copy and paste these data into a text file for loading into your analysis program.</p>';
-  tText += '<p> Take a screen capture of lab window to save input values</p>';
+  tText += '<p>Take a screen capture of lab window to save input values</p>';
   tText += '<p>' + plotsObj[plotIndex]['title'] + '</p>';
 
   // column headers
@@ -246,41 +248,25 @@ function copyData(plotIndex){
   //    index 2 specifies the data point pair [0 to & including numPlotPoints]
   //    index 3 specifies x or y in x,y data point pair [0 & 1]
 
-// initiate string that holds the data table
-  tText += '<p>';
+  // initiate string that holds the data table
+    tText += '<p>';
 
-// there are two types of plots with separate data arrays: strip and profile
-
-  if (plotsObj[plotIndex]['type'] == 'strip') {
+  var plotType = plotsObj[plotIndex]['type']; // profile or strip
+  var dataName = plotType + 'Data'; // profileData or stripData
+  if ((plotType == 'profile') || (plotType == 'strip')) {
+    // repeat to make each line in table for each data point
     for (k = 0; k <= plotsObj[plotIndex]['numberPoints']; k += 1) {
-    // or use next line to reverse top-bottom order of rows in table
-    // for (k = plotsObj[plotIndex]['numberPoints']; k >= 0; k -= 1){
-      // get varIndex = value of 'var' VALUE which is variable index in data array
+      // first get x value in [k][0], get it from ['var'][0]
+      // x values should be same for all units for this plot
       varIndex = plotsObj[plotIndex]['var'][0];
-      tText += stripData[varIndex][k][0].toFixed(2) + tItemDelimiter // [k][0] is x value
+      varUnitIndex = plotsObj[plotIndex]['varUnitIndex'][0];
+      tText += processUnits[varUnitIndex][dataName][varIndex][k][0].toFixed(2) + tItemDelimiter
+        // get y value for each variable in [k][1]
         for (v = 0; v < tVarLabelLen; v += 1) {
           varIndex = plotsObj[plotIndex]['var'][v];
-          tText += stripData[varIndex][k][1].toFixed(2); // [k][1] is y value
-          if (v < (tVarLabelLen - 1)) {
-            tText += tItemDelimiter;
-          }
-        }
-      tText += '<br>'; // use <br> not <p> or get empty line between each row
-    }
-  } else if (plotsObj[plotIndex]['type'] == 'profile') {
-    // NOTE: below same as IF above except change stripData to profileData in two places
-    for (k = 0; k <= plotsObj[plotIndex]['numberPoints']; k += 1) {
-    // or use next line to reverse top-bottom order of rows in table
-    // for (k = plotsObj[plotIndex]['numberPoints']; k >= 0; k -= 1){
-      // get varIndex = value of 'var' VALUE which is variable index in data array
-      varIndex = plotsObj[plotIndex]['var'][0];
-      tText += profileData[varIndex][k][0].toFixed(2) + tItemDelimiter // [k][0] is x value
-        for (v = 0; v < tVarLabelLen; v += 1) {
-          varIndex = plotsObj[plotIndex]['var'][v];
-          tText += profileData[varIndex][k][1].toFixed(2); // [k][1] is y value
-          if (v < (tVarLabelLen - 1)) {
-            tText += tItemDelimiter;
-          }
+          varUnitIndex = plotsObj[plotIndex]['varUnitIndex'][v];
+          tText += processUnits[varUnitIndex][dataName][varIndex][k][1].toFixed(2); // [k][1] is y value
+          if (v < (tVarLabelLen - 1)) {tText += tItemDelimiter;}
         }
       tText += '<br>'; // use <br> not <p> or get empty line between each row
     }
