@@ -199,7 +199,25 @@ function plotPlotData(pData,pNumber) {
 
 } // END OF function plotPlotData
 
-// ----- FUNCTION TO COPY DATA TO TABLE ---------
+// ----- FUNCTIONS TO COPY DATA TO TABLE ---------
+
+function formatNum(n) {
+  var nn = n;
+  if ((nn > 1000) || (nn < -1000)) {
+    nn = nn.toExponential(3);
+  } else if ((nn > 100) || (nn < -100)) {
+  	nn = nn.toFixed(1);
+  } else if ((nn > 10) || (nn < -10)) {
+    nn = nn.toFixed(2);
+  } else if ((nn > 1) || (nn < -1)) {
+  	nn = nn.toFixed(3);
+  } else if ((nn > 0.01) || (nn < -0.01)) {
+    nn = nn.toFixed(4);
+  } else {
+    nn = nn.toExponential(3);
+  }
+  return nn;
+}
 
 function copyData(plotIndex){
   // plotIndex is the index of the plotsObj object of the desired plot to copy
@@ -239,9 +257,6 @@ function copyData(plotIndex){
   }
   tText += '</p>';
 
-  // XXX BUT NEED TO HANDLE RANGE OF NUMBERS FOR WHICH .toFixed(2) WON'T WORK
-  // maybe write function like RL's sciConv()...
-
   // data values must be numbers for .toFixed(2) to work, use Number() conversion
   // when getting values from input fields
   //    index 1 specifies the variable [0 to numVars-1],
@@ -260,12 +275,14 @@ function copyData(plotIndex){
       // x values should be same for all units for this plot
       varIndex = plotsObj[plotIndex]['var'][0];
       varUnitIndex = plotsObj[plotIndex]['varUnitIndex'][0];
-      tText += processUnits[varUnitIndex][dataName][varIndex][k][0].toFixed(2) + tItemDelimiter
+      // tText += processUnits[varUnitIndex][dataName][varIndex][k][0].toFixed(2) + tItemDelimiter;
+      tText += formatNum(processUnits[varUnitIndex][dataName][varIndex][k][0]) + tItemDelimiter;
         // get y value for each variable in [k][1]
         for (v = 0; v < tVarLabelLen; v += 1) {
           varIndex = plotsObj[plotIndex]['var'][v];
           varUnitIndex = plotsObj[plotIndex]['varUnitIndex'][v];
-          tText += processUnits[varUnitIndex][dataName][varIndex][k][1].toFixed(2); // [k][1] is y value
+          // tText += processUnits[varUnitIndex][dataName][varIndex][k][1].toFixed(2); // [k][1] is y value
+          tText += formatNum(processUnits[varUnitIndex][dataName][varIndex][k][1]); // [k][1] is y value
           if (v < (tVarLabelLen - 1)) {tText += tItemDelimiter;}
         }
       tText += '<br>'; // use <br> not <p> or get empty line between each row
