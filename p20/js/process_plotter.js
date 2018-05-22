@@ -199,7 +199,6 @@ function plotPlotData(pData,pNumber) {
 
 } // END OF function plotPlotData
 
-// XXX NEEDS TO BE MODIFIED TO WORK WITH NEW PLOT INFO
 function copyData(plotIndex){
   // plotIndex is the index of the plotsObj object of the desired plot to copy
   // as specified in process_plot_info.js
@@ -215,7 +214,8 @@ function copyData(plotIndex){
   var n; // index
   var v; // variable index
   var k; // points index
-  var varIndex; // index of selected variable in data array
+  var varIndex; // index of selected variable in unit local data array
+  var varUnitIndex; // index of unit from which variable is to be obtained
   var tText; // we will put the data into this variable
   var tItemDelimiter = ', &nbsp;'
   var tVarLabelLen = plotsObj[plotIndex]['varLabel'].length; // length for loops below
@@ -252,15 +252,17 @@ function copyData(plotIndex){
 // there are two types of plots with separate data arrays: strip and profile
 
   if (plotsObj[plotIndex]['type'] == 'strip') {
+    // repeat to make each line in table for each data point
     for (k = 0; k <= plotsObj[plotIndex]['numberPoints']; k += 1) {
-    // or use next line to reverse top-bottom order of rows in table
-    // for (k = plotsObj[plotIndex]['numberPoints']; k >= 0; k -= 1){
-      // get varIndex = value of 'var' VALUE which is variable index in data array
+      // [k][0] is x value, get it from ['var'][0]
       varIndex = plotsObj[plotIndex]['var'][0];
-      tText += stripData[varIndex][k][0].toFixed(2) + tItemDelimiter // [k][0] is x value
+      varUnitIndex = plotsObj[plotIndex]['varUnitIndex'][0];
+      tText += processUnits[varUnitIndex]['stripData'][varIndex][k][0].toFixed(2) + tItemDelimiter
         for (v = 0; v < tVarLabelLen; v += 1) {
+          // [k][1] is y value for each ['var']
           varIndex = plotsObj[plotIndex]['var'][v];
-          tText += stripData[varIndex][k][1].toFixed(2); // [k][1] is y value
+          varUnitIndex = plotsObj[plotIndex]['varUnitIndex'][v];
+          tText += processUnits[varUnitIndex]['stripData'][varIndex][k][1].toFixed(2); // [k][1] is y value
           if (v < (tVarLabelLen - 1)) {
             tText += tItemDelimiter;
           }
@@ -269,15 +271,17 @@ function copyData(plotIndex){
     }
   } else if (plotsObj[plotIndex]['type'] == 'profile') {
     // NOTE: below same as IF above except change stripData to profileData in two places
+    // repeat to make each line in table for each data point
     for (k = 0; k <= plotsObj[plotIndex]['numberPoints']; k += 1) {
-    // or use next line to reverse top-bottom order of rows in table
-    // for (k = plotsObj[plotIndex]['numberPoints']; k >= 0; k -= 1){
-      // get varIndex = value of 'var' VALUE which is variable index in data array
+      // [k][0] is x value, get it from ['var'][0]
       varIndex = plotsObj[plotIndex]['var'][0];
-      tText += profileData[varIndex][k][0].toFixed(2) + tItemDelimiter // [k][0] is x value
+      varUnitIndex = plotsObj[plotIndex]['varUnitIndex'][0];
+      tText += processUnits[varUnitIndex]['profileData'][varIndex][k][0].toFixed(2) + tItemDelimiter
         for (v = 0; v < tVarLabelLen; v += 1) {
+          // [k][1] is y value for each ['var']
           varIndex = plotsObj[plotIndex]['var'][v];
-          tText += profileData[varIndex][k][1].toFixed(2); // [k][1] is y value
+          varUnitIndex = plotsObj[plotIndex]['varUnitIndex'][v];
+          tText += processUnits[varUnitIndex]['profileData'][varIndex][k][1].toFixed(2); // [k][1] is y value
           if (v < (tVarLabelLen - 1)) {
             tText += tItemDelimiter;
           }

@@ -54,8 +54,8 @@
    <!-- canvas element width & height must be specified here in HTML and not in CSS -->
    <canvas id="canvas_CANVAS_reactor" width="201" height="34"></canvas> <!-- canvas for colormap graphic -->
    <!-- canvas element width & height must be specified here in HTML and not in CSS -->
-   <input type="button" id="button_runButton" value="Run" value="Run" onclick="runThisLab()">
-   <input type="button" id="button_resetButton" value="Reset" value="Reset" onclick="resetThisLab()">
+   <input type="button" id="button_runButton" value="Run" onclick="runThisLab()">
+   <input type="button" id="button_resetButton" value="Reset" onclick="resetThisLab()">
    <p id="field_reactor_right_arrow">
       &rarr;
    </p>
@@ -117,5 +117,6 @@
    </p>
    <input id="input_field_Tjacket" value="360" onchange="updateUIparams()">
 </div> <!-- end of div div_input_fields_group -->
+<input type="button" id="button_copyData" value="Copy" onclick="copyData(0)">
 </body>
 </html>
