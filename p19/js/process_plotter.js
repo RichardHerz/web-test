@@ -275,13 +275,11 @@ function copyData(plotIndex){
       // x values should be same for all units for this plot
       varIndex = plotsObj[plotIndex]['var'][0];
       varUnitIndex = plotsObj[plotIndex]['varUnitIndex'][0];
-      // tText += processUnits[varUnitIndex][dataName][varIndex][k][0].toFixed(2) + tItemDelimiter;
       tText += formatNum(processUnits[varUnitIndex][dataName][varIndex][k][0]) + tItemDelimiter;
         // get y value for each variable in [k][1]
         for (v = 0; v < tVarLabelLen; v += 1) {
           varIndex = plotsObj[plotIndex]['var'][v];
           varUnitIndex = plotsObj[plotIndex]['varUnitIndex'][v];
-          // tText += processUnits[varUnitIndex][dataName][varIndex][k][1].toFixed(2); // [k][1] is y value
           tText += formatNum(processUnits[varUnitIndex][dataName][varIndex][k][1]); // [k][1] is y value
           if (v < (tVarLabelLen - 1)) {tText += tItemDelimiter;}
         }
