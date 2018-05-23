@@ -128,7 +128,7 @@ var simParams = {
       if (SScheck == oldSScheck) {
         // set ssFlag
         simParams.ssFlag = true;
-        processUnits[0].checkSSvalues(); // WARNING - has alerts - TESTING ONLY
+        // processUnits[0].checkSSvalues(); // WARNING - has alerts - TESTING ONLY
       } // end if (SScheck == oldSScheck)
 
       // save current values as the old values
