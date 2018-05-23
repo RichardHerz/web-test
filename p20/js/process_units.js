@@ -566,23 +566,26 @@ processUnits[0] = {
       // do node at inlet end
       n = 0;
 
-      kT = this.Kf300 * Math.exp(EaOverRg300 - EaOverRg/this.Trxr[n]);
+      TrxrN = this.Tin;
+      CaN = this.Cain;
 
-      // special for n=0 is this.Ca[n-1] is this.Cain, this.Trxr[n-1] is this.Tin
-      dCaDT = -flowCoef * (this.Ca[n] - this.Cain) - rxnCoef * kT * this.Ca[n];
-
-      dTrxrDT = - energyFlowCoef * (this.Trxr[n] - this.Tin)
-                + energyXferCoef * (this.Tjacket - this.Trxr[n])
-                - energyRxnCoef * kT * this.Ca[n];
-
-      CaN = this.Ca[n] + dCaDT * this.unitTimeStep;
-      TrxrN = this.Trxr[n] + dTrxrDT * this.unitTimeStep;
-
-      // CONSTRAIN TO BE IN BOUND
-      if (TrxrN > this.maxTrxr) {TrxrN = this.maxTrxr;}
-      if (TrxrN < this.minTrxr) {TrxrN = this.minTrxr;}
-      if (CaN < 0.0) {CaN = 0.0;}
-      if (CaN > this.Cain) {CaN = this.Cain;}
+      // kT = this.Kf300 * Math.exp(EaOverRg300 - EaOverRg/this.Trxr[n]);
+      //
+      // // special for n=0 is this.Ca[n-1] is this.Cain, this.Trxr[n-1] is this.Tin
+      // dCaDT = -flowCoef * (this.Ca[n] - this.Cain) - rxnCoef * kT * this.Ca[n];
+      //
+      // dTrxrDT = - energyFlowCoef * (this.Trxr[n] - this.Tin)
+      //           + energyXferCoef * (this.Tjacket - this.Trxr[n])
+      //           - energyRxnCoef * kT * this.Ca[n];
+      //
+      // CaN = this.Ca[n] + dCaDT * this.unitTimeStep;
+      // TrxrN = this.Trxr[n] + dTrxrDT * this.unitTimeStep;
+      //
+      // // CONSTRAIN TO BE IN BOUND
+      // if (TrxrN > this.maxTrxr) {TrxrN = this.maxTrxr;}
+      // if (TrxrN < this.minTrxr) {TrxrN = this.minTrxr;}
+      // if (CaN < 0.0) {CaN = 0.0;}
+      // if (CaN > this.Cain) {CaN = this.Cain;}
 
       this.TrxrNew[n] = TrxrN;
       this.CaNew[n] = CaN;

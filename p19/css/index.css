@@ -74,7 +74,7 @@ canvas {
   /* top: 61px; */
   width: 368px;
   /* height: 375px; */
-  height: 340px;
+  height: 370px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
@@ -162,6 +162,21 @@ canvas {
   background-color: rgb(255,255,255);
   border-style: outset;
   opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#button_copyData {
+  position: absolute;
+  left: 5px;
+  top: 346px;
+  width: 72px;
+  height: 23px;
+  visibility: visible;
+  /* border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: outset;
+  opacity: 1; */
   LCthreeD: true;
   LCshowBorder: true;
 }
