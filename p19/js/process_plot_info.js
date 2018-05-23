@@ -61,7 +61,7 @@ var plotsObj = new Object();
   plotsObj[0]['type'] = 'profile';
   plotsObj[0]['title'] = 'Temperature Profiles';
   plotsObj[0]['canvas'] = '#div_PLOTDIV_T_plot'; // flot.js wants ID with prefix #
-  plotsObj[0]['numberPoints'] = processUnits[unum]['numNodes']; // should match numNodes in process unit
+  plotsObj[0]['numberPoints'] = numProfilePts; 
   // plot has numberPoints + 1 pts!
   plotsObj[0]['xAxisLabel'] = 'position in exchanger';
   plotsObj[0]['xAxisTableLabel'] = 'Position'; // label for copy data table

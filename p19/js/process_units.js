@@ -115,7 +115,6 @@ var simParams = {
       // in puHeatExchanger.updateState() was not successful
       // since those values appeared to settle down to different non-zero values
       // that didn't appear to change with time for different input values
-      // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
       var nn = processUnits[0]['numNodes'];
       // Thot and Tcold arrays are globals
       var hlt = 1.0e5 * processUnits[0]['Thot'][nn].toFixed(1);
@@ -129,7 +128,7 @@ var simParams = {
       if (SScheck == oldSScheck) {
         // set ssFlag
         simParams.ssFlag = true;
-        // processUnits[0].checkSSvalues(); // WARNING - has alerts - TESTING ONLY
+        processUnits[0].checkSSvalues(); // WARNING - has alerts - TESTING ONLY
       } // end if (SScheck == oldSScheck)
 
       // save current values as the old values
@@ -592,34 +591,14 @@ processUnits[0] = {
       // do node at hot inlet end
       n = 0;
 
-      // get better steady-state energy balances with no dispersion at ends
-
-      ThotN = this.Thot[n];
-      ThotNm1 = this.TinHot; // SPECIAL for n=0 cell, hot inlet
-      dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN);
-
-      TcoldN = this.Tcold[n];
-      TcoldNm1 = this.TinCold; // special for n=0 cell, cold inlet for co-current
-      TcoldNp1 = this.Tcold[n+1];
+      this.ThotNew[0] = this.TinHot;
       switch(this.ModelFlag) {
-        case 0: // co-current
-          dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
+        case 0: // co-current, [0] is cold inlet
+          this.TcoldNew[0] = this.TcoldIn;
         break
-        case 1: // counter-current
-          dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
+        case 1: // counter-current, [0] is cold outlet
+          this.TcoldNew[0] = this.Tcold[1];
       }
-
-      ThotN = ThotN + dThotDT * this.unitTimeStep;
-      TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
-
-      // CONSTRAIN T's TO BE IN BOUND
-      if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
-      if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
-      if (TcoldN > this.maxTinHot) {TcoldN = this.maxTinHot;}
-      if (TcoldN < this.minTinCold) {TcoldN = this.minTinCold;}
-
-      this.ThotNew[n] = ThotN;
-      this.TcoldNew[n] = TcoldN;
 
       // internal nodes
       for (n = 1; n < this.numNodes; n += 1) {
@@ -663,34 +642,14 @@ processUnits[0] = {
 
       n = this.numNodes;
 
-      // get better steady-state energy balances with no dispersion at ends
-
-      ThotN = this.Thot[n];
-      ThotNm1 = this.Thot[n-1];
-      dThotDT = VelocHotOverDZ*(ThotNm1-ThotN) + XferCoefHot*(TcoldN-ThotN);
-
-      TcoldN = this.Tcold[n];
-      TcoldNm1 = this.Tcold[n-1];
-      TcoldNp1 = this.TinCold; // SPECIAL for n=numNodes cell, cold inlet for counter-current
+      this.ThotNew[n] = this.Thot[n - 1];
       switch(this.ModelFlag) {
-        case 0: // co-current
-          dTcoldDT = VelocColdOverDZ*(TcoldNm1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
-          break
-        case 1: // counter-current
-          dTcoldDT = VelocColdOverDZ*(TcoldNp1-TcoldN) + XferCoefCold*(ThotN-TcoldN);
+        case 0: // co-current, [n = this.numNodes] is cold outlet
+          this.TcoldNew[n] = this.Tcold[n-1];
+        break
+        case 1: // counter-current, [n = this.numNodes] is cold inlet
+          this.TcoldNew[n] = this.TinCold;
       }
-
-      ThotN = ThotN + dThotDT * this.unitTimeStep;
-      TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
-
-      // CONSTRAIN T's TO BE IN BOUND
-      if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
-      if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
-      if (TcoldN > this.maxTinHot) {TcoldN = this.maxTinHot;}
-      if (TcoldN < this.minTinCold) {TcoldN = this.minTinCold;}
-
-      this.ThotNew[n] = ThotN;
-      this.TcoldNew[n] = TcoldN;
 
       // finished updating all nodes
 
@@ -706,8 +665,7 @@ processUnits[0] = {
     // WARNING: has alerts - may be called in simParams.checkForSteadyState()
     // CHECK FOR ENERGY BALANCE ACROSS HEAT EXCHANGER AT STEADY STATE
     // Q = U*A*(dT2 - dT1)/log(dT2/dT1) FOR dT1 != dT2 (or get log = inf)
-    // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
-    var nn = puHeatExchanger.numNodes;
+    var nn = this.numNodes;
     // Thot and Tcold arrays are globals
     var hlt = this.Thot[nn]; // outlet hot
     var hrt = this.Thot[0]; // inlet hot
