@@ -178,6 +178,22 @@ processUnits[0] = {
   //
   inputModel00 : "radio_co-current_flow", // model 0 is co-current flow
   inputModel01 : "radio_counter-current_flow", // model 1 is counter-current flow
+
+  //----------- START NEW VARIABLES DEVELOPMENT ------------------
+
+  dataHeaders : [], // variable names
+  dataInputs : [], // input field ID's
+  dataUnits : [],
+  dataMin : [],
+  dataMax : [],
+  dataInitial : [],
+  profileData : [], // for profile plots, plot script requires this name
+  stripData : [], // for strip chart plots, plot script requires this name
+  colorCanvasData : [], // for color canvas plots, plot script requires this name
+
+
+  //----------- END NEW VARIABLES DEVELOPMENT ------------------
+
   inputTinHot : "input_field_TinHot", // K, hot T in
   inputTinCold : "input_field_TinCold", // K, cold T in
   inputFlowHot : "input_field_FlowHot", // kg/s
@@ -258,9 +274,9 @@ processUnits[0] = {
   Tcold : [],
   ThotNew : [], // 'New' hold intermediate values during updateState
   TcoldNew : [],
-  profileData : [], // for profile plots, plot script requires this name
-  // stripData : [], // not used here, for strip chart plots, plot script requires this name
-  colorCanvasData : [], // for color canvas plots, plot script requires this name
+  // profileData : [], // for profile plots, plot script requires this name
+  // // stripData : [], // not used here, for strip chart plots, plot script requires this name
+  // colorCanvasData : [], // for color canvas plots, plot script requires this name
 
   // define the main variables which will not be plotted or save-copy data
   //   none here
@@ -313,6 +329,56 @@ processUnits[0] = {
   //   symbol : "y",
   //   units  : "(d'less)"
   // },
+
+  initialize : function() { // XXX NEW
+    // dataHeaders : [], // variable names
+    // dataInputs : [], // input field ID's
+    // dataUnits : [],
+    // dataMin : [],
+    // dataMax : [],
+    // dataInitial : [],
+    //
+    // FlowCold : this.initialFlowCold, // dm3/s
+    // CpHot : this.initialCpHot, // kJ/dm3/K, hot flow heat capacity
+    // CpCold : this.initialCpCold, // kJ/dm3/K, cold flow heat capacity
+    // Ucoef : this.initialUcoef, // J/s/K/m2, U, heat transfer coefficient
+    // Area : this.initialArea, // m2, heat transfer surface area
+    // Diam : this.initialDiam, // m, tube diameter
+    // DispCoef : this.initialDispCoef, // (m2/s), axial dispersion coefficient
+    //
+    let v = 0; // v is current variable number
+    dataHeaders[v] = 'TinHot';
+    dataInputs[v] = 'input_field_TinHot';
+    dataUnits[v] = 'K';
+    dataMin[v] = 300;
+    dataMax[v] = 370;
+    dataInitial = 360;
+    //
+    v = 1;
+    dataHeaders[v] = 'TinCold';
+    dataInputs[v] = 'input_field_TinCold';
+    dataUnits[v] = 'K';
+    dataMin[v] = 300;
+    dataMax[v] = 370;
+    dataInitial = 310;
+    //
+    v = 2;
+    dataHeaders[v] = 'maxFlowHot';
+    dataInputs[v] = 'input_field_FlowHot';
+    dataUnits[v] = 'kg/s';
+    dataMin[v] = 0.15;
+    dataMax[v] = 4.0;
+    dataInitial = 0.5;
+    //
+    v = 3;
+    dataHeaders[v] = 'maxFlowCold';
+    dataInputs[v] = 'input_field_FlowCold';
+    dataUnits[v] = 'kg/s';
+    dataMin[v] = 0.15;
+    dataMax[v] = 4.0;
+    dataInitial = 0.75;
+    //
+  }
 
   reset : function() {
 
