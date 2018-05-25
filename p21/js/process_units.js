@@ -377,7 +377,7 @@ processUnits[0] = {
     dataMax[v] = 4.0;
     dataInitial = 0.75;
     //
-  }
+  },
 
   reset : function() {
 
