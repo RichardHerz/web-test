@@ -1,0 +1,736 @@
+sup {
+  font-size: smaller;
+}
+
+sub {
+  font-size: smaller;
+}
+
+input {
+  display: block;
+  position: absolute;
+  text-align: center;
+}
+
+input, button {
+  text-align: center;
+}
+
+/* do NOT write general style for div since interferes
+    with plotting by jquery.flot.js */
+
+p {
+  display: block;
+  text-align: left;
+}
+
+label {
+  display: block;
+  position: absolute;
+}
+
+img {
+  display: block;
+  position: absolute;
+}
+
+select {
+  display: block;
+  position: absolute;
+}
+
+canvas {
+  display: block;
+  position: absolute;
+  text-align: left;
+}
+
+::-ms-tooltip {
+  display: none;
+}
+
+#div_page_header {
+  display: block;
+  position: relative;
+  border-color: DodgerBlue;
+  left: 5px;
+  width: 368px;
+  height: 122px;
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#div_simFrame {
+  display: block;
+  position: relative;
+  border-color: DodgerBlue;
+  left: 5px;
+  /* top: 61px; */
+  width: 368px;
+  /* height: 375px; */
+  height: 370px;
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#div_PLOTDIV_T_plot {
+  display: block;
+  position: absolute;
+  /* left: 39px; */
+  left: 37px;
+  top: 30px;
+  /* width: 250px; */
+  width: 255px;
+  height: 224px;
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(0,253,255);
+  border-style: outset;
+  opacity: 1;
+  border-style: none;
+  border-color: DodgerBlue;
+  LCthreeD: true;
+  LCshowBorder: true;
+  LCvScrollbar: false;
+}
+
+#canvas_CANVAS_hot {
+  position: absolute;
+  /* left: 84px; */
+  left: 82px;
+  top: 261px;
+ /* canvas element width & height must be set in HTML and not in CSS */
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,252,0);
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#canvas_CANVAS_cold {
+  position: absolute;
+  /* left: 84px; */
+  left: 82px;
+  top: 297px;
+ /* canvas element width & height must be set in HTML and not in CSS */
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,252,0);
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#button_runButton {
+  position: absolute;
+  left: 87px;
+  top: 5px;
+  width: 72px;
+  height: 23px;
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#button_resetButton {
+  position: absolute;
+  left: 163px;
+  top: 4px;
+  width: 72px;
+  height: 23px;
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#button_copyData {
+  position: absolute;
+  left: 5px;
+  top: 346px;
+  width: 72px;
+  height: 23px;
+  visibility: visible;
+  /* border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: outset;
+  opacity: 1; */
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_cold_right_arrow {
+  position: absolute;
+  left: 285px;
+  top: 275px;
+  width: 23px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  color: orange;
+  font-size: 1.5em;
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_hot_right_arrow {
+  position: absolute;
+  left: 285px;
+  top: 240px;
+  width: 23px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  color: red;
+  font-size: 1.5em;
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_cold_left_arrow {
+  position: absolute;
+  left: 59px;
+  top: 275px;
+  width: 23px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  color: blue;
+  font-size: 1.5em;
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_hot_left_arrow {
+  position: absolute;
+  left: 59px;
+  top: 240px;
+  width: 23px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  color: orange;
+  font-size: 1.5em;
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_hot_left_T {
+  position: absolute;
+  left: 4px;
+  top: 254px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_hot_right_T {
+  position: absolute;
+  left: 313px;
+  top: 254px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_cold_right_T {
+  position: absolute;
+  left: 313px;
+  top: 289px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#field_cold_left_T {
+  position: absolute;
+  left: 4px;
+  top: 289px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#div_input_fields_group {
+  display: block;
+  position: relative;
+  border-color: DodgerBlue;
+  left: 12px;
+  /* top: 358px; */
+  width: 285px;
+  height: 271px;
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#div_radio_button_group {
+  display: block;
+  position: absolute;
+  border-color: DodgerBlue;
+  left: 57px;
+  top: 4px;
+  width: 176px;
+  height: 52px;
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#radio_counter-current_flow_LABEL {
+  display: block;
+  position: absolute;
+  width: 168px;
+  height: 23px;
+  left: 4px;
+  top: 4px;
+}
+
+#radio_counter-current_flow_SPAN {
+  margin-left: 22px;
+  line-height: 22px;
+  font-size: 16px;
+}
+
+#radio_co-current_flow_LABEL {
+  display: block;
+  position: absolute;
+  width: 168px;
+  height: 23px;
+  left: 4px;
+  top: 25px;
+}
+
+#radio_co-current_flow_SPAN {
+  margin-left: 22px;
+  line-height: 22px;
+  font-size: 16px;
+}
+
+#field_TinHot_label {
+  position: absolute;
+  left: 4px;
+  top: 42px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_TinHot {
+  position: absolute;
+  left: 190px;
+  top: 56px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_TinCold_label {
+  position: absolute;
+  left: 4px;
+  top: 68px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_TinCold {
+  position: absolute;
+  left: 190px;
+  top: 83px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_FlowHot_label {
+  position: absolute;
+  left: 4px;
+  top: 95px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_FlowHot {
+  position: absolute;
+  left: 190px;
+  top: 110px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_FlowCold_label {
+  position: absolute;
+  left: 4px;
+  top: 122px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_FlowCold {
+  position: absolute;
+  left: 190px;
+  top: 137px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_CpHot_label {
+  position: absolute;
+  left: 4px;
+  top: 149px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_CpHot {
+  position: absolute;
+  left: 190px;
+  top: 164px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_CpCold_label {
+  position: absolute;
+  left: 4px;
+  top: 176px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_CpCold {
+  position: absolute;
+  left: 190px;
+  top: 191px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_Area_label {
+  position: absolute;
+  left: 4px;
+  top: 230px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_Area {
+  position: absolute;
+  left: 190px;
+  top: 245px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_Ucoef_label {
+  position: absolute;
+  left: 4px;
+  top: 203px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_Ucoef {
+  position: absolute;
+  left: 190px;
+  top: 218px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_diam_label {
+  position: absolute;
+  left: 4px;
+  top: 257px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+#input_field_diam {
+  position: absolute;
+  left: 190px;
+  top: 272px;
+  width: 91px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_length {
+  position: absolute;
+  left: 4px;
+  top: 286px;
+  width: 131px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#field_Reynolds {
+  position: absolute;
+  left: 150px;
+  top: 285px;
+  width: 131px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+/* example @media for responsive design */
+/* requires meta viewport element in HTML head */
+@media(min-width: 640px) {
+  #div_input_fields_group {
+    position: absolute;
+    top: 141px;
+    left: 400px;
+  }
+}
