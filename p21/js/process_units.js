@@ -338,7 +338,6 @@ processUnits[0] = {
     // dataMax : [],
     // dataInitial : [],
     //
-    // FlowCold : this.initialFlowCold, // dm3/s
     // CpHot : this.initialCpHot, // kJ/dm3/K, hot flow heat capacity
     // CpCold : this.initialCpCold, // kJ/dm3/K, cold flow heat capacity
     // Ucoef : this.initialUcoef, // J/s/K/m2, U, heat transfer coefficient
