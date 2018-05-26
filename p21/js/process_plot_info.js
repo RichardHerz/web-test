@@ -48,7 +48,19 @@ var numSpacePts = 1; // 1 for one, number is numSpacePts
 // plotsObj[0] is the plot number index (starting at 0)
 //
 var plotsObj = {
-  
+
+  // after the openThisLab() function in _main.js calls method initialize()
+  // here, this object will contain a child object for each plot
+  //
+  // method initialize() is run after each process units initialize() method
+  // is run by openThisLab() so that it can use values from the units,
+  // e.g., processUnits[unum]['dataMin'][1]; // [1] is TinCold
+  //
+  // in _main.js, the function updateDisplay() uses the length of plotsObj
+  // after subtracting 1 for method initialize, in order to plot all the plots;
+  // if you add another method, you need to update the length correction
+  // in updateDisplay()
+
 initialize : function() {
   //
   // WARNING: some of these object properties may be changed during
@@ -94,10 +106,16 @@ initialize : function() {
     // these values may not start at 0, e.g., one plot has 0,1, another has 2,3
     plotsObj[0]['var'][0] = 0; // values are variable index in plot data array
     plotsObj[0]['var'][1] = 1; // listed in order of varLabel order, etc.
+    // varlabel is used in plot legend
   plotsObj[0]['varLabel'] = new Array();
     // list labels in 'varLabel' in order of corresonding 'var' VALUES above
     plotsObj[0]['varLabel'][0] = 'Thot'; // 1st var
     plotsObj[0]['varLabel'][1] = 'Tcold';
+  // varDataUnits are dimensional units used in copy data table, along with varLabel
+  plotsObj[0]['varDataUnits'] = new Array();
+    // list ['dataUnits'][#] elements in order of corresonding 'var' VALUES above
+    plotsObj[0]['varDataUnits'][0] = processUnits[unum]['dataUnits'][0]; // 1st var
+    plotsObj[0]['varDataUnits'][1] = processUnits[unum]['dataUnits'][1];
   plotsObj[0]['varShow'] = new Array();
     // values are 'show' to show on plot and legend,
     // 'tabled' to not show on plot nor legend but list in copy data table

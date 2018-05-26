@@ -184,7 +184,8 @@ processUnits[0] = {
   displayColdLeftArrow : '#field_cold_left_arrow', // needs # with ID
   displayColdRightArrow : '#field_cold_right_arrow', // needs # with ID
 
-  // define main inputs, values will be set in intialize method
+  // define main inputs
+  // values will be set in method intialize()
   TinHot : 0,
   TinCold : 0,
   FlowHot : 0,
@@ -194,15 +195,10 @@ processUnits[0] = {
   Ucoef : 0,
   Area : 0,
   Diam : 0,
-  // VarCount : 0, // number of input variables // XXX TEST
-
-  // define arrays to hold output variables
-  Thot : [],
-  Tcold : [],
-  ThotNew : [], // 'New' hold intermediate values during updateState
-  TcoldNew : [],
+  VarCount : 0, // number of input variables
 
   // define arrays to hold info for variables
+  // these will be filled with values in method initialize()
   dataHeaders : [], // variable names
   dataInputs : [], // input field ID's
   dataUnits : [],
@@ -210,7 +206,15 @@ processUnits[0] = {
   dataMax : [],
   dataInitial : [],
 
+  // define arrays to hold output variables
+  // these will be filled with initial values in method reset()
+  Thot : [],
+  Tcold : [],
+  ThotNew : [], // 'New' hold intermediate values during updateState
+  TcoldNew : [],
+
   // define arrays to hold data for plots, color canvas
+  // these will be filled with initial values in method reset()
   profileData : [], // for profile plots, plot script requires this name
   stripData : [], // for strip chart plots, plot script requires this name
   colorCanvasData : [], // for color canvas plots, plot script requires this name

@@ -251,6 +251,7 @@ function copyData(plotIndex){
   // then other column names for y-axis variables
   for (v = 0; v < tVarLabelLen; v += 1) {
     tText += plotsObj[plotIndex]['varLabel'][v];
+    tText += ' (' + plotsObj[plotIndex]['varDataUnits'][v] + ')';
     if (v < (tVarLabelLen - 1)) {
       tText += tItemDelimiter;
     }
