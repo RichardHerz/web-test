@@ -30,11 +30,13 @@
   window.onload = openThisLab; // can NOT use = openThisLab();
 
   function openThisLab() {
-    // initialize variables in each process unit 
+    // initialize variables in each process unit
     var numUnits = Object.keys(processUnits).length; // number of units
     for (n = 0; n < numUnits; n += 1) {
       processUnits[n].initialize();
     }
+    // initialize plot info after initialize units
+    plotsObj.initialize();
     resetThisLab(); // defined in file process_interface.js
     simParams.updateCurrentRunCountDisplay();
   } // END OF function openThisLab
@@ -162,10 +164,11 @@
     }
 
     // GET AND PLOT ALL PLOTS defined in object plotsObj in process_plot_info.js
-    var npl = Object.keys(plotsObj).length; // number of plots
+    var numPlots = Object.keys(plotsObj).length;
+    numPlots = numPlots - 1; // subtract method initialize(), which is counted in length
     var p; // used as index
     var data;
-    for (p = 0; p < npl; p += 1) {
+    for (p = 0; p < numPlots; p += 1) {
       if (plotsObj[p]['type'] == 'canvas') {
         // space-time, color-canvas plot
         plotColorCanvasPlot(p); // defined in file process_spacetime.js

@@ -47,9 +47,20 @@ var numSpacePts = 1; // 1 for one, number is numSpacePts
 // defining multiple object children, where the first index
 // plotsObj[0] is the plot number index (starting at 0)
 //
-var plotsObj = {
-  
-initialize : function() {
+var plotsObj = new Object();
+
+/*
+  XXX
+  need to add to plotsObj an initialize() function that defines
+  all the children, then call initialize() in _main after all units have been
+  initialized...
+  since on load, things like processUnits[unum]['dataMin'] are not set...
+*/
+
+  //
+  // USE THIS TO GET NUMBER OF plots, i.e., top-level children of plotsObj
+  //    Object.keys(plotsObj).length;
+  // except this will include any additional top level children
   //
   // WARNING: some of these object properties may be changed during
   //          operation of the program, e.g., show, scale
@@ -137,10 +148,6 @@ initialize : function() {
   plotsObj[2]['varValueMin'] = processUnits[unum]['dataMin'][1]; // [1] is TinCold
   plotsObj[2]['varValueMax'] = processUnits[unum]['dataMax'][0]; // [0] is TinHot
   plotsObj[2]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
-
-}, // end initialize method of plotsObj
-
-} // end plotsObj
 
   // DEFINE plotFlag ARRAY so don't have to generate entire
   // profile or strip plot everytime want to just change data and not axes, etc.

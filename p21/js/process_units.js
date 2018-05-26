@@ -194,7 +194,7 @@ processUnits[0] = {
   Ucoef : 0,
   Area : 0,
   Diam : 0,
-  VarCount : 0, // number of input variables
+  // VarCount : 0, // number of input variables // XXX TEST
 
   // define arrays to hold output variables
   Thot : [],
@@ -342,9 +342,6 @@ processUnits[0] = {
     this.dataHeaders[v] = 'Tcold';
     this.dataUnits[v] =  'K';
     //
-    // SET INITIAL VALUES OF INPUTS
-    //
-
   }, // END of initialize()
 
   reset : function() {
