@@ -657,7 +657,7 @@ border-style: solid;
   LCshowBorder: true;
 }
 
-#field_diam_label {
+#field_Diam_label {
   position: absolute;
   left: 4px;
   top: 257px;
@@ -675,7 +675,7 @@ border-style: solid;
   border-color: DodgerBlue;
 }
 
-#input_field_diam {
+#input_field_Diam {
   position: absolute;
   left: 190px;
   top: 272px;
