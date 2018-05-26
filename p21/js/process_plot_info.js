@@ -48,6 +48,15 @@ var numSpacePts = 1; // 1 for one, number is numSpacePts
 // plotsObj[0] is the plot number index (starting at 0)
 //
 var plotsObj = new Object();
+
+/*
+  XXX
+  need to add to plotsObj an initialize() function that defines
+  all the children, then call initialize() in _main after all units have been
+  initialized...
+  since on load, things like processUnits[unum]['dataMin'] are not set...
+*/
+
   //
   // USE THIS TO GET NUMBER OF plots, i.e., top-level children of plotsObj
   //    Object.keys(plotsObj).length;

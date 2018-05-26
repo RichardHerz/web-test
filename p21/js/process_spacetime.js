@@ -99,6 +99,7 @@ function plotColorCanvasPlot(pNumber) {
   var minVarVal = plotsObj[pNumber]['varValueMin'];
   var maxVarVal = plotsObj[pNumber]['varValueMax'];
   var scaledVarVal; // holds variable value scaled 0-1 by minVarVal & maxVarVal
+
   for (t = 0; t <= numTimePts; t += 1) { // NOTE = at t <=
     for (s = 0; s < numSpacePts; s += 1) {
       scaledVarVal = (colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
@@ -123,4 +124,5 @@ function plotColorCanvasPlot(pNumber) {
       context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
     } // end of inner FOR repeat
   } // end of outer FOR repeat
+  
 } // end of function plotColorCanvasPlot

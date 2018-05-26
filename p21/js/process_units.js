@@ -186,7 +186,7 @@ processUnits[0] = {
 
   // define main inputs, values will be set in intialize method
   TinHot : 0,
-  Tcold : 0,
+  TinCold : 0,
   FlowHot : 0,
   FlowCold : 0,
   CpHot : 0,
@@ -249,7 +249,7 @@ processUnits[0] = {
   initialize : function() {
     //
     let v = 0;
-    this.dataHeaders[v] = 'TinHot';
+    this.dataHeaders[v] = 'Thot';
     this.dataInputs[v] = 'input_field_TinHot';
     this.dataUnits[v] = 'K';
     this.dataMin[v] = 300;
@@ -258,7 +258,7 @@ processUnits[0] = {
     this.TinHot = this.dataInitial[v]; // dataInitial used in getInputValue()
     //
     v = 1;
-    this.dataHeaders[v] = 'TinCold';
+    this.dataHeaders[v] = 'Tcold';
     this.dataInputs[v] = 'input_field_TinCold';
     this.dataUnits[v] = 'K';
     this.dataMin[v] = 300;
@@ -616,6 +616,8 @@ processUnits[0] = {
     var TcoldNp1 = 0.0;
     var dThotDT = 0.0;
     var dTcoldDT = 0.0;
+    var minTinCold = this.dataMin[1];
+    var maxTinHot = this.dataMax[0];
 
     // this unit can take multiple steps within one outer main loop repeat step
     for (i=0; i<this.unitStepRepeats; i+=1) {
@@ -626,7 +628,7 @@ processUnits[0] = {
       this.ThotNew[0] = this.TinHot;
       switch(this.ModelFlag) {
         case 0: // co-current, [0] is cold inlet
-          this.TcoldNew[0] = this.TcoldIn;
+          this.TcoldNew[0] = this.TinCold;
         break
         case 1: // counter-current, [0] is cold outlet
           this.TcoldNew[0] = this.Tcold[1];
@@ -660,10 +662,10 @@ processUnits[0] = {
         TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
         // CONSTRAIN T's TO BE IN BOUND
-        if (ThotN > this.maxTinHot) {ThotN = this.maxTinHot;}
-        if (ThotN < this.minTinCold) {ThotN = this.minTinCold;}
-        if (TcoldN > this.maxTinHot) {TcoldN = this.maxTinHot;}
-        if (TcoldN < this.minTinCold) {TcoldN = this.minTinCold;}
+        if (ThotN > maxTinHot) {ThotN = maxTinHot;}
+        if (ThotN < minTinCold) {ThotN = minTinCold;}
+        if (TcoldN > maxTinHot) {TcoldN = maxTinHot;}
+        if (TcoldN < minTinCold) {TcoldN = minTinCold;}
 
         this.ThotNew[n] = ThotN;
         this.TcoldNew[n] = TcoldN;
