@@ -171,26 +171,8 @@ processUnits[0] = {
   // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
   //   e.g., inputModel01 : "radio_Model_1",
   //
-  // WARNING: the function getInputValue() called by updateUIparams() below
-  // requires a specific naming convention for vars set in INPUT FIELDS
-  // for the input ID, and initial, min and max values for each variable
-  // e.g., TinHot requires inputTinHot, initialTinHot, minTinHot, maxTinHot
-  //
   inputModel00 : "radio_co-current_flow", // model 0 is co-current flow
   inputModel01 : "radio_counter-current_flow", // model 1 is counter-current flow
-
-  // arrays to hold info for input variables to be plotted and copied to table 
-  dataHeaders : [], // variable names
-  dataInputs : [], // input field ID's
-  dataUnits : [],
-  dataMin : [],
-  dataMax : [],
-  dataInitial : [],
-
-  // arrays to hold data for plots, color canvas
-  profileData : [], // for profile plots, plot script requires this name
-  stripData : [], // for strip chart plots, plot script requires this name
-  colorCanvasData : [], // for color canvas plots, plot script requires this name
 
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
   displayHotLeftT: 'field_hot_left_T',
@@ -202,8 +184,36 @@ processUnits[0] = {
   displayColdLeftArrow : '#field_cold_left_arrow', // needs # with ID
   displayColdRightArrow : '#field_cold_right_arrow', // needs # with ID
 
-  // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE... -----
-  // ---- EXCEPT simParams.simTimeStep, simParams.simStepRepeats, simParams.ssFlag ----
+  // define main inputs, values will be set in intialize method
+  TinHot : 0,
+  Tcold : 0,
+  FlowHot : 0,
+  FlowCold : 0,
+  CpHot : 0,
+  CpCold : 0,
+  Ucoef : 0,
+  Area : 0,
+  Diam : 0,
+  VarCount : 0, // number of input variables
+
+  // define arrays to hold output variables
+  Thot : [],
+  Tcold : [],
+  ThotNew : [], // 'New' hold intermediate values during updateState
+  TcoldNew : [],
+
+  // define arrays to hold info for variables
+  dataHeaders : [], // variable names
+  dataInputs : [], // input field ID's
+  dataUnits : [],
+  dataMin : [],
+  dataMax : [],
+  dataInitial : [],
+
+  // define arrays to hold data for plots, color canvas
+  profileData : [], // for profile plots, plot script requires this name
+  stripData : [], // for strip chart plots, plot script requires this name
+  colorCanvasData : [], // for color canvas plots, plot script requires this name
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for time step in this unit's updateInputs method
@@ -215,18 +225,7 @@ processUnits[0] = {
   // AND INCREASE step repeats BY SAME FACTOR IF WANT SAME SIM TIME BETWEEN
   // DISPLAY UPDATES
 
-  // ADD INITIAL - DEFAULT VALUES FOR INPUTS
-  // define "initialVarName" values for reset function and
-  // so that this process unit will run if units that supply inputs and
-  // html inputs are not present in order to make units more independent
-
-  // define arrays to hold data
-  Thot : [],
-  Tcold : [],
-  ThotNew : [], // 'New' hold intermediate values during updateState
-  TcoldNew : [],
-
-  // define the main variables which will not be plotted or save-copy data
+  // define variables which will not be plotted nor saved in copy data table
 
   ModelFlag : 1, // 0 is cocurrent flow, 1 is countercurrent flow
 
@@ -256,6 +255,7 @@ processUnits[0] = {
     this.dataMin[v] = 300;
     this.dataMax[v] = 370;
     this.dataInitial[v] = 360;
+    this.TinHot = this.dataInitial[v]; // dataInitial used in getInputValue()
     //
     v = 1;
     this.dataHeaders[v] = 'TinCold';
@@ -264,6 +264,7 @@ processUnits[0] = {
     this.dataMin[v] = 300;
     this.dataMax[v] = 370;
     this.dataInitial[v] = 310;
+    this.TinCold =  this.dataInitial[v];
     //
     v = 2;
     this.dataHeaders[v] = 'FlowHot';
@@ -272,6 +273,7 @@ processUnits[0] = {
     this.dataMin[v] = 0.15;
     this.dataMax[v] = 4.0;
     this.dataInitial[v] = 0.5;
+    this.FlowHot = this.dataInitial[v];
     //
     v = 3;
     this.dataHeaders[v] = 'FlowCold';
@@ -280,6 +282,7 @@ processUnits[0] = {
     this.dataMin[v] = 0.15;
     this.dataMax[v] = 4.0;
     this.dataInitial[v] = 0.75;
+    this.FlowCold = this.dataInitial[v];
     //
     v = 4;
     this.dataHeaders[v] = 'CpHot';
@@ -288,6 +291,7 @@ processUnits[0] = {
     this.dataMin[v] = 1;
     this.dataMax[v] = 10;
     this.dataInitial[v] = 4.2;
+    this.CpHot = this.dataInitial[v];
     //
     v = 5;
     this.dataHeaders[v] = 'CpCold';
@@ -296,6 +300,7 @@ processUnits[0] = {
     this.dataMin[v] = 1;
     this.dataMax[v] = 10;
     this.dataInitial[v] = 4.2;
+    this.CpCold = this.dataInitial[v];
     //
     v = 6;
     this.dataHeaders[v] = 'Ucoef';
@@ -304,6 +309,7 @@ processUnits[0] = {
     this.dataMin[v] = 0;
     this.dataMax[v] = 10;
     this.dataInitial[v] = 0.6;
+    this.Ucoef = this.dataInitial[v];
     //
     v = 7;
     this.dataHeaders[v] = 'Area';
@@ -312,6 +318,7 @@ processUnits[0] = {
     this.dataMin[v] = 1;
     this.dataMax[v] = 10;
     this.dataInitial[v] = 4;
+    this.Area = this.dataInitial[v];
     //
     v = 8;
     this.dataHeaders[v] = 'Diam';
@@ -320,7 +327,24 @@ processUnits[0] = {
     this.dataMin[v] = 0.05;
     this.dataMax[v] = 0.20;
     this.dataInitial[v] = 0.15;
+    this.Diam = this.dataInitial[v];
     //
+    // END OF INPUT VARS
+    this.VarCount = v;
+    //
+    // OUTPUT VARS
+    //
+    v = 9;
+    this.dataHeaders[v] = 'Thot';
+    this.dataUnits[v] =  'K';
+    //
+    v = 10;
+    this.dataHeaders[v] = 'Tcold';
+    this.dataUnits[v] =  'K';
+    //
+    // SET INITIAL VALUES OF INPUTS
+    //
+
   }, // END of initialize()
 
   reset : function() {
@@ -332,17 +356,14 @@ processUnits[0] = {
     this.updateUIparams(); // this first, then set other values as needed
     // set state variables not set by updateUIparams to initial settings
 
-    // this.command.value = this.initialCommand;
-    // this.errorIntegral = this.initialErrorIntegral;
-
     simParams.ssFlag = false;
     this.SScheck = 0;
 
     for (k = 0; k <= this.numNodes; k += 1) {
-      this.Thot[k] = this.initialTinCold;
-      this.ThotNew[k] = this.initialTinCold;
-      this.Tcold[k] = this.initialTinCold;
-      this.TcoldNew[k] = this.initialTinCold;
+      this.Thot[k] = this.TinCold;
+      this.ThotNew[k] = this.TinCold;
+      this.Tcold[k] = this.TinCold;
+      this.TcoldNew[k] = this.TinCold;
     }
 
     // initialize profile data array - must follow function initPlotData in this file
@@ -438,15 +459,17 @@ processUnits[0] = {
 
     // check input fields for new values
     // function getInputValue() is defined in file process_interface.js
-    this.TinHot = getInputValue(this.unitIndex,'TinHot');
-    this.TinCold = getInputValue(this.unitIndex,'TinCold');
-    this.FlowHot = getInputValue(this.unitIndex,'FlowHot');
-    this.FlowCold = getInputValue(this.unitIndex,'FlowCold');
-    this.CpHot = getInputValue(this.unitIndex,'CpHot');
-    this.CpCold = getInputValue(this.unitIndex,'CpCold');
-    this.Ucoef = getInputValue(this.unitIndex,'Ucoef');
-    this.Area = getInputValue(this.unitIndex,'Area');
-    this.Diam = getInputValue(this.unitIndex,'Diam');
+    // getInputValue(unit index in processUnits, var index in input arrays)
+    var unum = this.unitIndex;
+    this.TinHot = getInputValue(unum, 0);
+    this.TinCold = getInputValue(unum, 1);
+    this.FlowHot = getInputValue(unum, 2);
+    this.FlowCold = getInputValue(unum, 3);
+    this.CpHot = getInputValue(unum, 4);
+    this.CpCold = getInputValue(unum, 5);
+    this.Ucoef = getInputValue(unum, 6);
+    this.Area = getInputValue(unum, 7);
+    this.Diam = getInputValue(unum, 8);
 
     // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
     // outlet T's not defined on first entry into page

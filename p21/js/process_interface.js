@@ -43,32 +43,56 @@ function resetThisLab() {
 } // END OF function resetThisLab
 
 // GET INPUT VALUES FROM INPUT FIELDS - CALLED IN UNITS updateUIparams()
-function getInputValue(pUnitIndex,pVarName) {
-  // requires specific naming convention for input variables
-  // generate the names
-  var tInput = 'input' + pVarName;
-  var tInitial = 'initial' + pVarName;
-  var tMin = 'min' + pVarName;
-  var tMax = 'max' + pVarName;
-  // get the values
-  var varInputID = processUnits[pUnitIndex][tInput];
-  var varInitial = processUnits[pUnitIndex][tInitial];
-  var varMin = processUnits[pUnitIndex][tMin];
-  var varMax = processUnits[pUnitIndex][tMax];
+function getInputValue(pUnitIndex,pVar) {
+  var varInputID = processUnits[pUnitIndex]['dataInputs'][pVar];
+  var varInitial = processUnits[pUnitIndex]['dataInitial'][pVar];
+  var varMin = processUnits[pUnitIndex]['dataMin'][pVar];
+  var varMax = processUnits[pUnitIndex]['dataMax'][pVar];
   // get the contents of the input and handle
   if (document.getElementById(varInputID)) {
     // the input exists so get the value and make sure it is within range
-    var varValue = eval(varInputID + '.value');
+    // var varValue = eval(varInputID + '.value');
+    var varValue = document.getElementById(varInputID).value;
     varValue = Number(varValue); // force any number as string to numeric number
     if (isNaN(varValue)) {varValue = varInitial;} // handle e.g., 259x, xxx
     if (varValue < varMin) {varValue = varMin;}
     if (varValue > varMax) {varValue = varMax;}
     document.getElementById(varInputID).value = varValue;
   } else {
-    // this 'else' is in case there is no input on the web page yet
-    // in order to allow for independence and portability of this
-    // process unit
+    // this 'else' is in case there is no input on the web page yet in order to
+    // allow for independence and portability of this process unit
     varValue = varInitial;
   }
   return varValue
 } // end of getInputValue()
+
+// // GET INPUT VALUES FROM INPUT FIELDS - CALLED IN UNITS updateUIparams()
+// function getInputValue(pUnitIndex,pVarName) {
+//   // requires specific naming convention for input variables
+//   // generate the names
+//   var tInput = 'input' + pVarName;
+//   var tInitial = 'initial' + pVarName;
+//   var tMin = 'min' + pVarName;
+//   var tMax = 'max' + pVarName;
+//   // get the values
+//   var varInputID = processUnits[pUnitIndex][tInput];
+//   var varInitial = processUnits[pUnitIndex][tInitial];
+//   var varMin = processUnits[pUnitIndex][tMin];
+//   var varMax = processUnits[pUnitIndex][tMax];
+//   // get the contents of the input and handle
+//   if (document.getElementById(varInputID)) {
+//     // the input exists so get the value and make sure it is within range
+//     var varValue = eval(varInputID + '.value');
+//     varValue = Number(varValue); // force any number as string to numeric number
+//     if (isNaN(varValue)) {varValue = varInitial;} // handle e.g., 259x, xxx
+//     if (varValue < varMin) {varValue = varMin;}
+//     if (varValue > varMax) {varValue = varMax;}
+//     document.getElementById(varInputID).value = varValue;
+//   } else {
+//     // this 'else' is in case there is no input on the web page yet
+//     // in order to allow for independence and portability of this
+//     // process unit
+//     varValue = varInitial;
+//   }
+//   return varValue
+// } // end of getInputValue()

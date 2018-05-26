@@ -30,6 +30,11 @@
   window.onload = openThisLab; // can NOT use = openThisLab();
 
   function openThisLab() {
+    // initialize variables in each process unit 
+    var numUnits = Object.keys(processUnits).length; // number of units
+    for (n = 0; n < numUnits; n += 1) {
+      processUnits[n].initialize();
+    }
     resetThisLab(); // defined in file process_interface.js
     simParams.updateCurrentRunCountDisplay();
   } // END OF function openThisLab

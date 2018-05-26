@@ -61,7 +61,7 @@ var plotsObj = new Object();
   plotsObj[0]['type'] = 'profile';
   plotsObj[0]['title'] = 'Temperature Profiles';
   plotsObj[0]['canvas'] = '#div_PLOTDIV_T_plot'; // flot.js wants ID with prefix #
-  plotsObj[0]['numberPoints'] = numProfilePts; 
+  plotsObj[0]['numberPoints'] = numProfilePts;
   // plot has numberPoints + 1 pts!
   plotsObj[0]['xAxisLabel'] = 'position in exchanger';
   plotsObj[0]['xAxisTableLabel'] = 'Position'; // label for copy data table
@@ -72,8 +72,8 @@ var plotsObj = new Object();
   plotsObj[0]['xAxisMax'] = 1;
   plotsObj[0]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
   plotsObj[0]['yLeftAxisLabel'] = 'T (K)'; // or d'less (T - TinCold)/(TinHot - TinCold)
-  plotsObj[0]['yLeftAxisMin'] = processUnits[unum]['minTinCold'];
-  plotsObj[0]['yLeftAxisMax'] = processUnits[unum]['maxTinHot'];
+  plotsObj[0]['yLeftAxisMin'] = processUnits[unum]['dataMin'][1]; // [1] is TinCold
+  plotsObj[0]['yLeftAxisMax'] = processUnits[unum]['dataMax'][0]; // [0] is TinHot
   plotsObj[0]['yRightAxisLabel'] = 'yRight';
   plotsObj[0]['yRightAxisMin'] = 0;
   plotsObj[0]['yRightAxisMax'] = 1;
@@ -94,7 +94,7 @@ var plotsObj = new Object();
   plotsObj[0]['var'] = new Array();
     // VALUES are data array var # to be put on plot & legend + those only in data table
     // these values may not start at 0, e.g., one plot has 0,1, another has 2,3
-    plotsObj[0]['var'][0] = 0; // values are curve data number to be put on plot
+    plotsObj[0]['var'][0] = 0; // values are variable index in plot data array
     plotsObj[0]['var'][1] = 1; // listed in order of varLabel order, etc.
   plotsObj[0]['varLabel'] = new Array();
     // list labels in 'varLabel' in order of corresonding 'var' VALUES above
@@ -123,9 +123,9 @@ var plotsObj = new Object();
   plotsObj[1]['canvas'] = 'canvas_CANVAS_hot'; // without prefix #
   // for canvas type, all data comes from one process unit and one local array
   plotsObj[1]['varUnitIndex'] = unum; // index of unit in processUnits object
-  plotsObj[1]['var'] = 0; // variable number in array; 0, 1, etc.
-  plotsObj[1]['varValueMin'] = processUnits[unum]['minTinCold'];
-  plotsObj[1]['varValueMax'] = processUnits[unum]['maxTinHot'];
+  plotsObj[1]['var'] = 0; // variable number in data array for plot; 0, 1, etc.
+  plotsObj[1]['varValueMin'] = processUnits[unum]['dataMin'][1]; // [1] is TinCold
+  plotsObj[1]['varValueMax'] = processUnits[unum]['dataMax'][0]; // [0] is TinHot
   plotsObj[1]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
 
   // plot 2 info
@@ -135,9 +135,9 @@ var plotsObj = new Object();
   plotsObj[2]['canvas'] = 'canvas_CANVAS_cold'; // without prefix #
   // for canvas type, all data comes from one process unit and one local array
   plotsObj[2]['varUnitIndex'] = unum; // index of unit in processUnits object
-  plotsObj[2]['var'] = 1; // variable number in array :0, 1, etc.
-  plotsObj[2]['varValueMin'] = processUnits[unum]['minTinCold'];
-  plotsObj[2]['varValueMax'] = processUnits[unum]['maxTinHot'];
+  plotsObj[2]['var'] = 1; // variable number in array for plot: 0, 1, etc.
+  plotsObj[2]['varValueMin'] = processUnits[unum]['dataMin'][1]; // [1] is TinCold
+  plotsObj[2]['varValueMax'] = processUnits[unum]['dataMax'][0]; // [0] is TinHot
   plotsObj[2]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
 
   // DEFINE plotFlag ARRAY so don't have to generate entire
