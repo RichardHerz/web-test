@@ -9,8 +9,10 @@
 // SEE DATA ARRAY INITIALIZATION IN FILE process_plot_info.js
 
 // declare plot array used below in function plotPlotData()
-// for unknown reason, declaring plot (or other name) array as local within
-// function plotPlotData() does not work
+// plot[pNumber] saves data for each plot between display updates
+// with plotFlag[] set in process_plot_info.js as a global to tell
+// whether or not to redraw axes & labels
+// since plot[] must save data between display updates, it is a global
 var plot = [];
 
 // ----- GET DATA IN FORM NEEDED FOR PLOTTING ---------
@@ -188,12 +190,13 @@ function plotPlotData(pData,pNumber) {
   }
 
   // only draw plot with axes and all options the first time /
-  // after that just setData and re-draw
+  // after that just setData and re-draw;
+  // global plot[pNumber] saves data for each plot between display updates
+  // with global plotFlag[pNumber] telling whether or not to redraw axes & labels
+  // since plot[] must save data between display updates, it is a GLOBAL
   // for example, for 4 plots on page, this ran in 60% of time for full refresh
-  // array plotFlag declared in file process_plot_info.js
+  // array plotFlag declared in file process_plot_info.js as a global
   // array plot declared above in this file as a global
-  // for unknown reason declaring array plot locally here does not work,
-  // even using different name...
   if (plotFlag[pNumber] == 0) {
     plotFlag[pNumber] = 1;
     plot[pNumber] = $.plot($(plotCanvasHtmlID), dataToPlot, options);
