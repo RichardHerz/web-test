@@ -190,7 +190,7 @@ function plotPlotData(pData,pNumber) {
   // since plot[] must save data between display updates, it is a GLOBAL
   // for example, for 4 plots on page, this ran in 60% of time for full refresh
   // see object plotArrays below for intialization of plot[] and plotFlag[]
-  
+
   if (plotArrays['plotFlag'][pNumber] == 0) {
     plotArrays['plotFlag'][pNumber] = 1;
     plotArrays['plot'][pNumber] = $.plot($(plotCanvasHtmlID), dataToPlot, options);
@@ -297,14 +297,35 @@ function copyData(plotIndex){
   var n; // index
   var v; // variable index
   var k; // points index
+  var numUnits;
+  var numVar;
   var varIndex; // index of selected variable in unit local data array
   var varUnitIndex; // index of unit from which variable is to be obtained
   var tText; // we will put the data into this variable
   var tItemDelimiter = ', &nbsp;'
   var tVarLabelLen = plotsObj[plotIndex]['varLabel'].length; // length for loops below
 
-  tText = '<p>Copy and paste these data into a text file for loading into your analysis program.</p>';
-  tText += '<p>Take a screen capture of lab window to save input values</p>';
+  tText = '<p>Web Labs at ReactorLab.net &nbsp; &gt; &nbsp;' + simParams.title + '</p>';
+
+  // list current input values
+  tText += '<p>Simulation time of data capture = ' + simParams.simTime + ' s <br>';
+  tText += 'Values of input parameters at time of data capture:<br>';
+  // list inputs for all units since, other units may affect these results
+  numUnits = Object.keys(processUnits).length;
+  for (n = 0; n < numUnits; n += 1) {
+    tText += '* ' + processUnits[n]['name'] + '<br>';
+    numVar = processUnits[n]['VarCount'];
+    for (v = 0; v <= numVar; v += 1) { // NOTE: <=
+      tText += '&nbsp; &nbsp;' + processUnits[n]['dataHeaders'][v] + ' = '
+              + processUnits[n]['dataValues'][v] + '&nbsp;'
+              + processUnits[n]['dataUnits'][v];
+      if (v < numVar) {
+        tText += '<br>';
+      }
+    }
+  }
+  tText += '</p>';
+
   tText += '<p>' + plotsObj[plotIndex]['title'] + '</p>';
 
   // column headers

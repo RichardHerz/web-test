@@ -25,6 +25,8 @@ var simParams = {
   // simParams uses the following global variables:
   //    Thot and Tcold used in function checkForSteadyState()
 
+  title : 'Heat Exchanger', // title of simulation 
+
   // ssFlag new for process with one unit - rethink for multiple-unit processes
   // unit's updateState can set ssFlag true when unit reaches steady state
   // REDUCES CPU LOAD ONLY when return from top of process_main.js functions
@@ -115,26 +117,27 @@ var simParams = {
       // in puHeatExchanger.updateState() was not successful
       // since those values appeared to settle down to different non-zero values
       // that didn't appear to change with time for different input values
-      var nn = processUnits[0]['numNodes'];
+      let unum = 0; // unit number
+      var nn = processUnits[unum]['numNodes'];
       // Thot and Tcold arrays are globals
-      var hlt = 1.0e5 * processUnits[0]['Thot'][nn].toFixed(1);
-      var hrt = 1.0e1 * processUnits[0]['Thot'][0].toFixed(1);
-      var clt = 1.0e-3 * processUnits[0]['Tcold'][nn].toFixed(1);
-      var crt = 1.0e-7 * processUnits[0]['Tcold'][0].toFixed(1);
+      var hlt = 1.0e5 * processUnits[unum]['Thot'][nn].toFixed(1);
+      var hrt = 1.0e1 * processUnits[unum]['Thot'][0].toFixed(1);
+      var clt = 1.0e-3 * processUnits[unum]['Tcold'][nn].toFixed(1);
+      var crt = 1.0e-7 * processUnits[unum]['Tcold'][0].toFixed(1);
       var SScheck = hlt + hrt + clt  + crt;
       SScheck = SScheck.toFixed(8); // need because last sum operation adds significant figs
       // note SScheck = hlt0hrt0.clt0crt0 << 16 digits, 4 each for 4 end T's
-      var oldSScheck = processUnits[0]['SScheck'];
+      var oldSScheck = processUnits[unum]['SScheck'];
       if (SScheck == oldSScheck) {
         // set ssFlag
         simParams.ssFlag = true;
-        // processUnits[0].checkSSvalues(); // WARNING - has alerts - TESTING ONLY
+        // processUnits[unum].checkSSvalues(); // WARNING - has alerts - TESTING ONLY
       } // end if (SScheck == oldSScheck)
 
       // save current values as the old values
-      processUnits[0]['SScheck'] = SScheck;
+      processUnits[unum]['SScheck'] = SScheck;
       simParams.oldSimTime = simParams.simTime;
-    } // END OF if (simParams.simTime >= simParams.oldSimTime + processUnits[0]['residenceTime'])
+    } // END OF if (simParams.simTime >= simParams.oldSimTime + processUnits[unum]['residenceTime'])
 
   } // END OF checkForSteadyState()
 
@@ -158,7 +161,7 @@ var processUnits = new Object();
 processUnits[0] = {
   unitIndex : 0, // index of this unit as child in processUnits parent object
   // unitIndex used in this object's updateUIparams() method
-  name : 'heat exchanger',
+  name : 'Heat Exchanger',
   //
   // USES OBJECT simParam
   //    simParams.simTimeStep, simParams.ssFlag
@@ -205,6 +208,7 @@ processUnits[0] = {
   dataMin : [],
   dataMax : [],
   dataInitial : [],
+  dataValues : [],
 
   // define arrays to hold output variables
   // these will be filled with initial values in method reset()
@@ -253,22 +257,24 @@ processUnits[0] = {
   initialize : function() {
     //
     let v = 0;
-    this.dataHeaders[v] = 'Thot';
+    this.dataHeaders[v] = 'TinHot';
     this.dataInputs[v] = 'input_field_TinHot';
     this.dataUnits[v] = 'K';
     this.dataMin[v] = 300;
     this.dataMax[v] = 370;
     this.dataInitial[v] = 360;
     this.TinHot = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.TinHot; // current input value for reporting
     //
     v = 1;
-    this.dataHeaders[v] = 'Tcold';
+    this.dataHeaders[v] = 'TinCold';
     this.dataInputs[v] = 'input_field_TinCold';
     this.dataUnits[v] = 'K';
     this.dataMin[v] = 300;
     this.dataMax[v] = 370;
     this.dataInitial[v] = 310;
     this.TinCold =  this.dataInitial[v];
+    this.dataValues[v] = this.TinCold;
     //
     v = 2;
     this.dataHeaders[v] = 'FlowHot';
@@ -278,6 +284,7 @@ processUnits[0] = {
     this.dataMax[v] = 4.0;
     this.dataInitial[v] = 0.5;
     this.FlowHot = this.dataInitial[v];
+    this.dataValues[v] = this.FlowHot;
     //
     v = 3;
     this.dataHeaders[v] = 'FlowCold';
@@ -287,6 +294,7 @@ processUnits[0] = {
     this.dataMax[v] = 4.0;
     this.dataInitial[v] = 0.75;
     this.FlowCold = this.dataInitial[v];
+    this.dataValues[v] = this.FlowCold;
     //
     v = 4;
     this.dataHeaders[v] = 'CpHot';
@@ -296,6 +304,7 @@ processUnits[0] = {
     this.dataMax[v] = 10;
     this.dataInitial[v] = 4.2;
     this.CpHot = this.dataInitial[v];
+    this.dataValues[v] = this.CpHot;
     //
     v = 5;
     this.dataHeaders[v] = 'CpCold';
@@ -305,6 +314,7 @@ processUnits[0] = {
     this.dataMax[v] = 10;
     this.dataInitial[v] = 4.2;
     this.CpCold = this.dataInitial[v];
+    this.dataValues[v] = this.CpCold;
     //
     v = 6;
     this.dataHeaders[v] = 'Ucoef';
@@ -314,6 +324,7 @@ processUnits[0] = {
     this.dataMax[v] = 10;
     this.dataInitial[v] = 0.6;
     this.Ucoef = this.dataInitial[v];
+    this.dataValues[v] = this.Ucoef;
     //
     v = 7;
     this.dataHeaders[v] = 'Area';
@@ -323,6 +334,7 @@ processUnits[0] = {
     this.dataMax[v] = 10;
     this.dataInitial[v] = 4;
     this.Area = this.dataInitial[v];
+    this.dataValues[v] = this.Area;
     //
     v = 8;
     this.dataHeaders[v] = 'Diam';
@@ -332,8 +344,11 @@ processUnits[0] = {
     this.dataMax[v] = 0.20;
     this.dataInitial[v] = 0.15;
     this.Diam = this.dataInitial[v];
+    this.dataValues[v] = this.Diam;
     //
     // END OF INPUT VARS
+    // record number of input variables, VarCount
+    // used, e.g., in copy data to table in _plotter.js
     this.VarCount = v;
     //
     // OUTPUT VARS

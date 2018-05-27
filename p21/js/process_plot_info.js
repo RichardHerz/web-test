@@ -50,7 +50,7 @@ var plotsObj = {
     // plot 0 info
     plotsObj[0] = new Object();
     plotsObj[0]['type'] = 'profile';
-    plotsObj[0]['title'] = 'Temperature Profiles';
+    plotsObj[0]['title'] = 'Heat Exchanger Temperature Profiles';
     plotsObj[0]['canvas'] = '#div_PLOTDIV_T_plot'; // flot.js wants ID with prefix #
     plotsObj[0]['numberPoints'] = processUnits[unum]['numNodes'];
     // plot has numberPoints + 1 pts!
