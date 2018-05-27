@@ -6,6 +6,8 @@
 */
 
 // THIS FILE USED FOR DEFINITION OF PLOTS: PROFILE, STRIP CHART, & COLOR CANVAS
+//
+// ALSO AT BOTTOM OF THIS FILE ARE FUNCTIONS TO INITIALIZE DATA ARRAYS
 
 // WARNING: in units, local data array names for plotting must be
 //          'profileData' for ['type'] = 'profile'
@@ -23,7 +25,7 @@
 // defining multiple object children, where the first index
 // plotsObj[0] is the plot number index (starting at 0)
 //
-// method initialize() below places the plot definitions into plotsObj 
+// method initialize() below places the plot definitions into plotsObj
 //
 var plotsObj = {
 

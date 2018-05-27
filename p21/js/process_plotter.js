@@ -8,8 +8,9 @@
 // SEE PLOT DEFINITIONS IN FILE process_plot_info.js
 // SEE DATA ARRAY INITIALIZATION IN FILE process_plot_info.js
 
-// declare plot array used below in function plotPlotData
-// does not work when declared inside function plotPlotData...
+// declare plot array used below in function plotPlotData()
+// for unknown reason, declaring plot (or other name) array as local within
+// function plotPlotData() does not work
 var plot = [];
 
 // ----- GET DATA IN FORM NEEDED FOR PLOTTING ---------
@@ -83,6 +84,8 @@ function plotPlotData(pData,pNumber) {
 
   // input pData holds the data to plot
   // input pNumber is number of plot as 1st index in plotsObj
+
+  // var plot = [];
 
   // get info about the variables
 
@@ -188,7 +191,9 @@ function plotPlotData(pData,pNumber) {
   // after that just setData and re-draw
   // for example, for 4 plots on page, this ran in 60% of time for full refresh
   // array plotFlag declared in file process_plot_info.js
-  // array plot declared above in this file
+  // array plot declared above in this file as a global
+  // for unknown reason declaring array plot locally here does not work,
+  // even using different name...
   if (plotFlag[pNumber] == 0) {
     plotFlag[pNumber] = 1;
     plot[pNumber] = $.plot($(plotCanvasHtmlID), dataToPlot, options);
