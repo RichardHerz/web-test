@@ -6,7 +6,6 @@
 */
 
 // SEE PLOT DEFINITIONS IN FILE process_plot_info.js
-// SEE DATA ARRAY INITIALIZATION IN FILE process_plot_info.js
 
 function jetColorMap(n) {
   // input n should be value between 0 and 1
@@ -127,3 +126,31 @@ function plotColorCanvasPlot(pNumber) {
   } // end of outer FOR repeat
 
 } // end of function plotColorCanvasPlot
+
+// ----- FUNCTION USED BY UNITS TO INITIALIZE LOCAL DATA ARRAYS -----
+
+function initColorCanvasArray(numVars,numXpts,numYpts) {
+  // returns 3D array to hold data for multiple variables for COLOR CANVAS
+  // plots, e.g., space-time plots
+  // returns array with all elements for plot filled with zero
+  //    index 1 specifies the variable [0 to numVars-1]
+  //    index 2 specifies the x-axis (time) point [0 to & INCLUDING numXpts]
+  //    index 3 specifies the y-axis (space) point [0 to numYpts-1]
+  //    the element value at plotDataStub[v][x][y] will be the value
+  //      to be shown for that variable at that x,y location
+  var v;
+  var x;
+  var y;
+  var plotDataStub = new Array();
+  for (v = 0; v < numVars; v += 1) {
+    plotDataStub[v] = new Array();
+      for (x = 0; x <= numXpts; x += 1) { // NOTE = AT <=
+      plotDataStub[v][x] = new Array();
+      for (y = 0; y < numYpts; y += 1) {
+        plotDataStub[v][x][y] = 0;
+      }
+    }
+  }
+  // document.getElementById("dev01").innerHTML = "hello";
+  return plotDataStub;
+} // end function initColorCanvasArray

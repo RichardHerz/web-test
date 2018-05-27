@@ -6,21 +6,15 @@
 */
 
 // SEE PLOT DEFINITIONS IN FILE process_plot_info.js
-// SEE DATA ARRAY INITIALIZATION IN FILE process_plot_info.js
-
-// declare plot array used below in function plotPlotData()
-// plot[pNumber] saves data for each plot between display updates
-// with plotFlag[] set in process_plot_info.js as a global to tell
-// whether or not to redraw axes & labels
-// since plot[] must save data between display updates, it is a global
-var plot = [];
 
 // ----- GET DATA IN FORM NEEDED FOR PLOTTING ---------
 
 function getPlotData(plotsObjNum) {
-
+  //
   // input argument plotsObjNum refers to plot number in object plotsObj
   // which is defined in file process_plot_info.js
+  //
+  // uses plotsObj and plotArrays objects defined in file process_plot_info.js
 
   var v = 0; // used as index to select the variable
   var p = 0; // used as index to select data point pair
@@ -191,21 +185,82 @@ function plotPlotData(pData,pNumber) {
 
   // only draw plot with axes and all options the first time /
   // after that just setData and re-draw;
-  // global plot[pNumber] saves data for each plot between display updates
-  // with global plotFlag[pNumber] telling whether or not to redraw axes & labels
+  // plot[pNumber] saves data for each plot between display updates
+  // plotFlag[pNumber] telling whether or not to redraw axes & labels
   // since plot[] must save data between display updates, it is a GLOBAL
   // for example, for 4 plots on page, this ran in 60% of time for full refresh
-  // array plotFlag declared in file process_plot_info.js as a global
-  // array plot declared above in this file as a global
-  if (plotFlag[pNumber] == 0) {
-    plotFlag[pNumber] = 1;
-    plot[pNumber] = $.plot($(plotCanvasHtmlID), dataToPlot, options);
+  // see object plotArrays below for intialization of plot[] and plotFlag[]
+  
+  if (plotArrays['plotFlag'][pNumber] == 0) {
+    plotArrays['plotFlag'][pNumber] = 1;
+    plotArrays['plot'][pNumber] = $.plot($(plotCanvasHtmlID), dataToPlot, options);
   } else {
-    plot[pNumber].setData(dataToPlot);
-    plot[pNumber].draw();
+    plotArrays['plot'][pNumber].setData(dataToPlot);
+    plotArrays['plot'][pNumber].draw();
   }
 
 } // END OF function plotPlotData
+
+// ----- OBJECT USED TO HOLD PLOT DEFINITIONS BETWEEN DISPLAY UPDATES ---
+
+var plotArrays = {
+
+  // DEFINE plot array used to save complete description of plot between updates
+  // plot array used in function plotPlotData
+  plot : [],
+
+  // DEFINE plotFlag array so don't have to generate entire plot
+  // everytime want to just change data and not axes, etc.
+  // for example, for 4 plots on page, this ran in 60% of time for full refresh
+  // plotFlag array used in function plotPlotData
+  //
+  plotFlag : [], // tells whether or not to update only curves or complete plot
+
+  initialize : function() {
+    // uses length of plotObs so must be called after plotsObj has been initialized
+    let npl = Object.keys(plotsObj).length; // number of plots
+    this.plotFlag = [0];
+    for (p = 1; p < npl; p += 1) {
+      this.plotFlag.push(0);
+    }
+  } // END of method initialize()
+
+} // END of object plotArrays
+
+// ----- FUNCTION USED BY UNITS TO INITIALIZE LOCAL DATA ARRAYS -----
+
+function initPlotData(numVars,numPlotPoints) {
+  // returns 3D array to hold x,y scatter plot data for multiple variables
+  // inputs are list of variables and # of x,y point pairs per variable
+  // returns array with all elements for plot filled with zero
+  //    index 1 specifies the variable [0 to numVars-1],
+  //    index 2 specifies the data point pair [0 to & including numPlotPoints]
+  //    index 3 specifies x or y in x,y data point pair [0 & 1]
+  var v;
+  var p;
+  var plotDataStub = new Array();
+  for (v = 0; v < numVars; v += 1) {
+    plotDataStub[v] = new Array();
+    for (p = 0; p <= numPlotPoints; p += 1) { // NOTE = AT p <=
+      plotDataStub[v][p] = new Array();
+      plotDataStub[v][p][0] = 0;
+      plotDataStub[v][p][1] = 0;
+    }
+  }
+  return plotDataStub;
+  // Note above initialize values for
+  //    plotDataStub [0 to numVars-1] [0 to numPlotPoints] [0 & 1]
+  // If want later outside this constructor to add new elements,
+  // then you can do easily for 3rd index, e.g.,
+  //    plotDataStub [v] [p] [2] = 0;
+  // But can NOT do assignment for [v] [p+1] [0] since p+1 element does not yet
+  // exist, where here p = numPlotPoints+1.
+  // Would have to first create new p+1 array
+  //    plotDataStub [v] [p+1] = new Array();
+  // Then can do
+  //    plotDataStub [v] [p+1] [0] = 0;
+  //    plotDataStub [v] [p+1] [1] = 0; // etc.
+} // end function initPlotData
 
 // ----- FUNCTIONS TO COPY DATA TO TABLE ---------
 

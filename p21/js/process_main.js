@@ -22,7 +22,7 @@
 // USES object plotsObj defined in file process_plot_info.js
 //
 // USES in file process_plotter.js the functions
-//    getPlotData() and plotPlotData()
+//    getPlotData(), plotPlotData(), plotArrays.initialize()
 //
 // USES in file process_spacetime.js the function plotColorCanvasPlot()
 
@@ -35,8 +35,10 @@
     for (n = 0; n < numUnits; n += 1) {
       processUnits[n].initialize();
     }
-    // initialize plot info after initialize units
+    // initialize plotObj to define plots after initialize units
     plotsObj.initialize();
+    // initialize plot arrays after initialize plotsObj
+    plotArrays.initialize();
     resetThisLab(); // defined in file process_interface.js
     simParams.updateCurrentRunCountDisplay();
   } // END OF function openThisLab
