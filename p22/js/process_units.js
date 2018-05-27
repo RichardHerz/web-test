@@ -25,6 +25,8 @@ var simParams = {
   // simParams uses the following global variables:
   //    Thot and Tcold used in function checkForSteadyState()
 
+  title : 'Packed Bed PFR with Heat Exchange', // title of simulation
+
   // ssFlag new for process with one unit - rethink for multiple-unit processes
   // unit's updateState can set ssFlag true when unit reaches steady state
   // REDUCES CPU LOAD ONLY when return from top of process_main.js functions
@@ -132,6 +134,7 @@ var simParams = {
         // set ssFlag
         simParams.ssFlag = true;
       } // end if (SScheck == oldSScheck)
+
       // save current values as the old values
       processUnits[0].SScheck = SScheck;
       simParams.oldSimTime = simParams.simTime;
@@ -157,7 +160,7 @@ var processUnits = new Object();
 processUnits[0] = {
   unitIndex : 0, // index of this unit as child in processUnits parent object
   // unitIndex used in this object's updateUIparams() method
-  name : 'plug flow reactor',
+  name : 'Plug Flow Reactor',
   //
   // USES OBJECT simParam
   //    simParams.simTimeStep, simParams.ssFlag
@@ -193,8 +196,46 @@ processUnits[0] = {
   displayReactorRightT: 'field_reactor_right_T',
   // displayJacketLeftArrow : '#field_jacket_left_arrow', // needs # with ID
 
-  // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE... -----
-  // ---- EXCEPT simParams.simTimeStep, simParams.simStepRepeats, simParams.ssFlag ----
+  // define main inputs
+  // values will be set in method intialize()
+  Kf300 : 0,
+  Ea : 0,
+  DelH : 0,
+  Wcat : 0,
+  Cain : 0,
+  Flowrate : 0,
+  Tin : 0,
+  UAcoef : 0,
+  Tjacket : 0,
+
+  // define arrays to hold info for variables
+  // these will be filled with values in method initialize()
+  dataHeaders : [], // variable names
+  dataInputs : [], // input field ID's
+  dataUnits : [],
+  dataMin : [],
+  dataMax : [],
+  dataInitial : [],
+  dataValues : [],
+
+  // define arrays to hold output variables
+  // these will be filled with initial values in method reset()
+  Thot : [],
+  Tcold : [],
+  ThotNew : [], // 'New' hold intermediate values during updateState
+  TcoldNew : [],
+
+  // define arrays to hold data
+  Trxr : [],
+  Ca : [],
+  TrxrNew : [], // 'New' hold intermediate values during updateState
+  CaNew : [],
+
+  // define arrays to hold data for plots, color canvas
+  // these will be filled with initial values in method reset()
+  profileData : [], // for profile plots, plot script requires this name
+  stripData : [], // for strip chart plots, plot script requires this name
+  colorCanvasData : [], // for color canvas plots, plot script requires this name
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for time step in this unit's updateInputs method
@@ -206,56 +247,7 @@ processUnits[0] = {
   // AND INCREASE step repeats BY SAME FACTOR IF WANT SAME SIM TIME BETWEEN
   // DISPLAY UPDATES
 
-  // ADD INITIAL - DEFAULT VALUES FOR INPUTS
-  // define "initialVarName" values for reset function and
-  // so that this process unit will run if units that supply inputs and
-  // html inputs are not present in order to make units more independent
-
-  initialKf300 : 1.0e-7, // (m3/kg/s), rate coefficient at 300 K
-  initialEa : 100, // (kJ/mol), activation energy
-  initialDelH : -125, // (kJ/mol), enthalpy of reaction
-  initialWcat : 100, // (kg), weight (mass) of catalyst
-  initialCain : 500, // (mol/m3), inlet reactant concentration
-  initialFlowrate : 4.0e-3, // (m3/s), flow rate of reactant
-  initialTin : 350, // (K), inlet T of reactant
-  initialUAcoef : 0.1, // (kW/kg/K), heat transfer coefficient * area
-  initialTjacket: 360, // (K), jacket T
-
-  // SET MIN AND MAX VALUES FOR INPUTS SET IN INPUT FIELDS
-  // here set range so solution stable when only one variable changed in
-  // min-max range at default conditions
-  // NOTE: these min-max may be used in plot definitions in process_plot_info.js
-
-  minKf300 : 0, // (m3/kg/s), rate coefficient at 300 K
-  minEa : 0, // (kJ/mol), activation energy
-  minDelH : -200, // (kJ/mol), enthalpy of reaction
-  minWcat : 0, // (kg), weight (mass) of catalyst
-  minCain : 0, // (mol/m3), inlet reactant concentration
-  minFlowrate : 0.0, // (m3/s), flow rate of reactant
-  minTin : 250, // (K), inlet T of reactant
-  minUAcoef : 0, // (kW/kg/K), heat transfer coefficient * area
-  minTjacket: 250, // (K), jacket T
-
-  maxKf300 : 10, // (m3/kg/s), rate coefficient at 300 K
-  maxEa : 200, // (kJ/mol), activation energy
-  maxDelH : 200, // (kJ/mol), enthalpy of reaction
-  maxWcat : 1000, // (kg), weight (mass) of catalyst
-  maxCain : 1000, // (mol/m3), inlet reactant concentration
-  maxFlowrate : 10, // (m3/s), flow rate of reactant
-  maxTin : 400, // (K), inlet T of reactant
-  maxUAcoef : 100, // (kW/kg/K), heat transfer coefficient * (area per kg cat)
-  maxTjacket: 400, // (K), jacket T
-
-  // define arrays to hold data
-  Trxr : [],
-  Ca : [],
-  TrxrNew : [], // 'New' hold intermediate values during updateState
-  CaNew : [],
-  profileData : [], // for profile plots, plot script requires this name
-  // stripData : [], // not used here, for strip chart plots, plot script requires this name
-  colorCanvasData : [], // for color canvas plots, plot script requires this name
-
-  // define the main variables which will not be plotted or save-copy data
+  // define variables which will not be plotted nor saved in copy data table
   //   none here
 
   // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
@@ -266,27 +258,6 @@ processUnits[0] = {
   SScheck : 0, // for saving steady state check number of array end values
   residenceTime : 0, // for timing checks for steady state check
 
-  // XXX WARNING: SETTING TO this.initial___ HAS NO EFFECT HERE WHEN
-  //     THEY ARE ALSO SET IN updateUIparams
-  //     BUT WHEN NOT SET IN updateUIparams THEN setting to
-  //     this.initial___ HAS NO EFFECT AND GET NaN
-  // if list here must supply a value (e.g., this.initial___) but if not
-  //     list here then apparently is created in updateUIparams...
-  //
-  // HUH? NEED TO EXPLORE THIS....
-  //
-  TinHot : this.initialTinHot, // K, hot T in
-
-  Kf300 : this.initialKf300,
-  Ea : this.initialEa,
-  DelH : this.initialDelH,
-  Wcat : this.initialWcat,
-  Cain : this.initialCain,
-  Flowrate : this.initialFlowrate,
-  Tin : this.initialTin,
-  UAcoef : this.initialUAcoef,
-  Tjacket: this.initialTjacket,
-
   // max and min Trxr need to be accessible in updateUIparams()
   minTrxr : 200, // (K), changed below
   maxTrxr : 500, // (K), changed below
@@ -296,17 +267,107 @@ processUnits[0] = {
   densFluid : 1000, // (kg/m3)
   densCat : 1000, // (kg/m3)
 
-  // variables to be plotted are defined as objects
-  // with the properties: value, name, label, symbol, dimensional units
-  // name used for copy-save data column headers, label for plot legend
+  initialize : function() {
+    //
+    let v = 0;
+    this.dataHeaders[v] = 'Kf300';
+    this.dataInputs[v] = 'input_field_KF300';
+    this.dataUnits[v] = 'm3/kg/s';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 10;
+    this.dataInitial[v] = 1.0e-7;
+    this.Kf300 = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Kf300; // current input value for reporting
+    //
+    let v = 1;
+    this.dataHeaders[v] = 'Ea';
+    this.dataInputs[v] = 'input_field_Ea';
+    this.dataUnits[v] = 'kJ/mol';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 200;
+    this.dataInitial[v] = 100;
+    this.Ea = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Ea; // current input value for reporting
+    //
+    let v = 2;
+    this.dataHeaders[v] = 'DelH';
+    this.dataInputs[v] = 'input_field_DelH';
+    this.dataUnits[v] = 'kJ/mol';
+    this.dataMin[v] = -200;
+    this.dataMax[v] = 200;
+    this.dataInitial[v] = -125;
+    this.DelH = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.DelH; // current input value for reporting
+    //
+    let v = 3;
+    this.dataHeaders[v] = 'Wcat';
+    this.dataInputs[v] = 'input_field_Wcat';
+    this.dataUnits[v] = 'kg';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 1000;
+    this.dataInitial[v] = 100;
+    this.Wcat = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Wcat; // current input value for reporting
+    //
+    let v = 4;
+    this.dataHeaders[v] = 'Cain';
+    this.dataInputs[v] = 'input_field_Cain';
+    this.dataUnits[v] = 'mol/m3';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 1000;
+    this.dataInitial[v] = 500;
+    this.Cain = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Cain; // current input value for reporting
+    //
+    let v = 5;
+    this.dataHeaders[v] = 'Flowrate';
+    this.dataInputs[v] = 'input_field_Flowrate';
+    this.dataUnits[v] = 'm3/s';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 10;
+    this.dataInitial[v] = 4.0e-3;
+    this.Flowrate = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Flowrate; // current input value for reporting
+    //
+    let v = 6;
+    this.dataHeaders[v] = 'Tin';
+    this.dataInputs[v] = 'input_field_Tin';
+    this.dataUnits[v] = 'K';
+    this.dataMin[v] = 250;
+    this.dataMax[v] = 400;
+    this.dataInitial[v] = 350;
+    this.Tin = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Tin; // current input value for reporting
+    //
+    let v = 7;
+    this.dataHeaders[v] = 'UAcoef';
+    this.dataInputs[v] = 'input_field_UAcoef';
+    this.dataUnits[v] = 'K';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 100;
+    this.dataInitial[v] = 0.1;
+    this.UAcoef = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.UAcoef; // current input value for reporting
+    //
+    let v = 8;
+    this.dataHeaders[v] = 'Tjacket';
+    this.dataInputs[v] = 'input_field_Tjacket';
+    this.dataUnits[v] = 'K';
+    this.dataMin[v] = 250;
+    this.dataMax[v] = 400;
+    this.dataInitial[v] = 360;
+    this.Tjacket = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Tjacket; // current input value for reporting
+    //
+    // END OF INPUT VARS
+    // record number of input variables, VarCount
+    // used, e.g., in copy data to table in _plotter.js
+    this.VarCount = v;
+    //
+    // OUTPUT VARS
+    //
 
-  // y : {
-  //   value  : 0,
-  //   name   : "y",
-  //   label  : "y",
-  //   symbol : "y",
-  //   units  : "(d'less)"
-  // },
+  },
 
   reset : function() {
 
