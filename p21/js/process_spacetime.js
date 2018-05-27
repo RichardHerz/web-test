@@ -93,7 +93,8 @@ function plotColorCanvasPlot(pNumber) {
   var tColor5 = ')';
   var tPixels = canvas.width; // canvas width, height set in HTML canvas element
   var sPixels = canvas.height;
-  // numTimePts and numSpacePts are globals defined in file process_plot_info.js
+  var numTimePts = plotsObj[pNumber]['varTimePts'];
+  var numSpacePts = plotsObj[pNumber]['varSpacePts'];
   var tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point, note +1
   var sPixelsPerPoint = sPixels/numSpacePts; // pixels per point
   var minVarVal = plotsObj[pNumber]['varValueMin'];
@@ -124,5 +125,5 @@ function plotColorCanvasPlot(pNumber) {
       context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
     } // end of inner FOR repeat
   } // end of outer FOR repeat
-  
+
 } // end of function plotColorCanvasPlot

@@ -5,36 +5,12 @@
   https://www.gnu.org/licenses/gpl-3.0.en.html
 */
 
-// WARNING: number plot points here should match number plot points in
-//          unit that generates the plot data
-//          where number plot points + 1 for origin are plotted
-//
-// WARNING: unit local data array names for plotting must be
+// THIS FILE USED FOR DEFINITION OF PLOTS: PROFILE, STRIP CHART, & COLOR CANVAS
+
+// WARNING: in units, local data array names for plotting must be
 //          'profileData' for ['type'] = 'profile'
 //          'stripData' for ['type'] = 'strip'
 //          'colorCanvasData' for ['type'] = 'canvas'
-
-// THIS FILE USED FOR DEFINITION OF PROFILE, STRIP CHART & COLOR CANVAS PLOTS
-
-// NOTE: processUnits[0] is heat exchanger in this web lab
-//
-var unum = 0; // useful when only one unit in lab, processUnits[unum]
-
-// COMMON VALUES FOR PROFILE PLOTS (static x,y plots)
-// these vars used several places below in this file
-var numProfileVars = 2;
-var numProfilePts = processUnits[unum]['numNodes'];
-
-// COMMON VALUES FOR STRIP CHART PLOTS (scrolling x,y plots)
-// these vars used several places below in this file
-var numStripVars = 0;
-var numStripPts = 0;
-
-// COMMON VALUES FOR SPACE-TIME, COLOR-CANVAS PLOTS
-// if want square canvas 'pixels' set time/space pt ratio = canvas width/height ratio
-// these vars used several places below in this file
-var numTimePts = processUnits[unum]['numNodes'];
-var numSpacePts = 1; // 1 for one, number is numSpacePts
 
 // WE CURRENTLY USE FLOT.JS FOR PLOTTING PROFILE & STRIP PLOTS
 // some options below such as plotDataSeriesColors are optional for flot.js
@@ -46,6 +22,8 @@ var numSpacePts = 1; // 1 for one, number is numSpacePts
 // more than one plot can be put one one web page by
 // defining multiple object children, where the first index
 // plotsObj[0] is the plot number index (starting at 0)
+//
+// method initialize() below places the plot definitions into plotsObj 
 //
 var plotsObj = {
 
@@ -66,12 +44,14 @@ initialize : function() {
   // WARNING: some of these object properties may be changed during
   //          operation of the program, e.g., show, scale
   //
+  let unum = 0; // useful when only one unit in lab, processUnits[unum]
+  //
   // plot 0 info
   plotsObj[0] = new Object();
   plotsObj[0]['type'] = 'profile';
   plotsObj[0]['title'] = 'Temperature Profiles';
   plotsObj[0]['canvas'] = '#div_PLOTDIV_T_plot'; // flot.js wants ID with prefix #
-  plotsObj[0]['numberPoints'] = numProfilePts;
+  plotsObj[0]['numberPoints'] = processUnits[unum]['numNodes'];
   // plot has numberPoints + 1 pts!
   plotsObj[0]['xAxisLabel'] = 'position in exchanger';
   plotsObj[0]['xAxisTableLabel'] = 'Position'; // label for copy data table
@@ -97,7 +77,7 @@ initialize : function() {
   plotsObj[0]['plotDataSeriesColors'] = ['#ff6347','#1e90ff']; // optional, in variable order 0, 1, etc.
   // ['#ff6347','#1e90ff'] is Tomato and DodgerBlue
   // WARNING: all below with prefix 'var' must have same number of child objects,
-  // one for each curve & length used in _plotter.js
+  // one for each variable placed on plot in _plotter.js
   plotsObj[0]['varUnitIndex'] = new Array();
     plotsObj[0]['varUnitIndex'][0] = unum; // value is index of unit in processUnits object
     plotsObj[0]['varUnitIndex'][1] = unum;
@@ -140,6 +120,9 @@ initialize : function() {
   // for canvas type, all data comes from one process unit and one local array
   plotsObj[1]['varUnitIndex'] = unum; // index of unit in processUnits object
   plotsObj[1]['var'] = 0; // variable number in data array for plot; 0, 1, etc.
+  // varTimePts & varSpacePts must match values used in unit array colorCanvasData
+  plotsObj[1]['varTimePts'] = processUnits[unum]['numNodes'];
+  plotsObj[1]['varSpacePts'] = 1;
   plotsObj[1]['varValueMin'] = processUnits[unum]['dataMin'][1]; // [1] is TinCold
   plotsObj[1]['varValueMax'] = processUnits[unum]['dataMax'][0]; // [0] is TinHot
   plotsObj[1]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
@@ -152,6 +135,9 @@ initialize : function() {
   // for canvas type, all data comes from one process unit and one local array
   plotsObj[2]['varUnitIndex'] = unum; // index of unit in processUnits object
   plotsObj[2]['var'] = 1; // variable number in array for plot: 0, 1, etc.
+  // varTimePts & varSpacePts must match values used in unit array colorCanvasData
+  plotsObj[2]['varTimePts'] = processUnits[unum]['numNodes'];
+  plotsObj[2]['varSpacePts'] = 1;
   plotsObj[2]['varValueMin'] = processUnits[unum]['dataMin'][1]; // [1] is TinCold
   plotsObj[2]['varValueMax'] = processUnits[unum]['dataMax'][0]; // [0] is TinHot
   plotsObj[2]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
