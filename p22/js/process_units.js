@@ -170,24 +170,6 @@ processUnits[0] = {
   //   none
   // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
   //   none
-  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
-  //   e.g., inputModel01 : "radio_Model_1",
-  //
-  // WARNING: the function getInputValue() called by updateUIparams() below
-  // requires a specific naming convention for vars set in INPUT FIELDS
-  // for the input ID, and initial, min and max values for each variable
-  // e.g., TinHot requires inputTinHot, initialTinHot, minTinHot, maxTinHot
-  // HTML field names may not match this naming convention
-  //
-  inputKf300 : "input_field_Kf300",
-  inputEa : "input_field_Ea",
-  inputDelH : "input_field_DelH",
-  inputWcat : "input_field_Wcat",
-  inputCain : "input_field_Cain",
-  inputFlowrate : "input_field_Flowrate",
-  inputTin : "input_field_Tin",
-  inputUAcoef : "input_field_UA",
-  inputTjacket : "input_field_Tjacket",
 
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
   displayReactorLeftConc: 'field_reactor_left_conc',
@@ -332,7 +314,7 @@ processUnits[0] = {
     //
     v = 7;
     this.dataHeaders[v] = 'UAcoef';
-    // NOTE: dataInputs example where field ID name differs from variable name 
+    // NOTE: dataInputs example where field ID name differs from variable name
     this.dataInputs[v] = 'input_field_UA';
     this.dataUnits[v] = 'kW/kg/K';
     this.dataMin[v] = 0;
