@@ -25,7 +25,7 @@ var simParams = {
   // simParams uses the following global variables:
   //    Thot and Tcold used in function checkForSteadyState()
 
-  title : 'Heat Exchanger', // title of simulation 
+  title : 'Heat Exchanger', // title of simulation
 
   // ssFlag new for process with one unit - rethink for multiple-unit processes
   // unit's updateState can set ssFlag true when unit reaches steady state
@@ -338,7 +338,7 @@ processUnits[0] = {
     //
     v = 8;
     this.dataHeaders[v] = 'Diam';
-    this.dataInputs[v] = 'input_field_diam';
+    this.dataInputs[v] = 'input_field_Diam';
     this.dataUnits[v] =  'm';
     this.dataMin[v] = 0.05;
     this.dataMax[v] = 0.20;
