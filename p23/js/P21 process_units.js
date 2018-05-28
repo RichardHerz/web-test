@@ -338,7 +338,7 @@ processUnits[0] = {
     //
     v = 8;
     this.dataHeaders[v] = 'Diam';
-    this.dataInputs[v] = 'input_field_diam';
+    this.dataInputs[v] = 'input_field_Diam';
     this.dataUnits[v] =  'm';
     this.dataMin[v] = 0.05;
     this.dataMax[v] = 0.20;
@@ -356,10 +356,14 @@ processUnits[0] = {
     v = 9;
     this.dataHeaders[v] = 'Thot';
     this.dataUnits[v] =  'K';
+    this.dataMin[v] = this.dataMin[1]; // [1] is TinCold
+    this.dataMax[v] = this.dataMax[0]; // [0] is TinHot
     //
     v = 10;
     this.dataHeaders[v] = 'Tcold';
     this.dataUnits[v] =  'K';
+    this.dataMin[v] = this.dataMin[1]; // [1] is TinCold
+    this.dataMax[v] = this.dataMax[0]; // [0] is TinHot
     //
   }, // END of initialize()
 
