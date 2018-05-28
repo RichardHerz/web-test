@@ -63,8 +63,8 @@ var plotsObj = {
     plotsObj[0]['xAxisMax'] = 1;
     plotsObj[0]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
     plotsObj[0]['yLeftAxisLabel'] = 'Trxr (K)'; // or d'less (T - TinCold)/(TinHot - TinCold)
-    plotsObj[0]['yLeftAxisMin'] = processUnits[unum]['minTrxr'];
-    plotsObj[0]['yLeftAxisMax'] = processUnits[unum]['maxTrxr'];
+    plotsObj[0]['yLeftAxisMin'] = processUnits[unum]['dataMin'][9]; // [9] is Trxr
+    plotsObj[0]['yLeftAxisMax'] = processUnits[unum]['dataMax'][9];
     plotsObj[0]['yRightAxisLabel'] = 'Ca (mol/m3)';
     plotsObj[0]['yRightAxisMin'] = 0;
     plotsObj[0]['yRightAxisMax'] = processUnits[unum]['Cain'];
@@ -92,8 +92,8 @@ var plotsObj = {
     // varDataUnits are dimensional units used in copy data table, along with varLabel
     plotsObj[0]['varDataUnits'] = new Array();
       // list ['dataUnits'][#] elements in order of corresonding 'var' VALUES above
-      plotsObj[0]['varDataUnits'][0] = processUnits[unum]['dataUnits'][0]; // 1st var
-      plotsObj[0]['varDataUnits'][1] = processUnits[unum]['dataUnits'][1];
+      plotsObj[0]['varDataUnits'][0] = processUnits[unum]['dataUnits'][9]; // 1st var
+      plotsObj[0]['varDataUnits'][1] = processUnits[unum]['dataUnits'][10];
     plotsObj[0]['varShow'] = new Array();
       // values are 'show' to show on plot and legend,
       // 'tabled' to not show on plot nor legend but list in copy data table
@@ -121,8 +121,8 @@ var plotsObj = {
     // varTimePts & varSpacePts must match values used in unit array colorCanvasData
     plotsObj[1]['varTimePts'] = processUnits[unum]['numNodes'];
     plotsObj[1]['varSpacePts'] = 1;
-    plotsObj[1]['varValueMin'] = processUnits[unum]['minTrxr'];
-    plotsObj[1]['varValueMax'] = processUnits[unum]['maxTrxr'];
+    plotsObj[1]['varValueMin'] = processUnits[unum]['dataMin'][9]; // [9] is Trxr
+    plotsObj[1]['varValueMax'] = processUnits[unum]['dataMax'][9];
     plotsObj[1]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
 
     // plot 2 info
@@ -134,10 +134,10 @@ var plotsObj = {
     plotsObj[2]['varUnitIndex'] = unum; // index of unit in processUnits object
     plotsObj[2]['var'] = 1; // variable number in array spaceTimeData, 0, 1, etc.
     // varTimePts & varSpacePts must match values used in unit array colorCanvasData
-    plotsObj[1]['varTimePts'] = processUnits[unum]['numNodes'];
-    plotsObj[1]['varSpacePts'] = 1;
-    plotsObj[2]['varValueMin'] = processUnits[unum]['minTrxr'];
-    plotsObj[2]['varValueMax'] = processUnits[unum]['maxTrxr'];
+    plotsObj[2]['varTimePts'] = processUnits[unum]['numNodes'];
+    plotsObj[2]['varSpacePts'] = 1;
+    plotsObj[2]['varValueMin'] = processUnits[unum]['dataMin'][9]; // [9] is Trxr
+    plotsObj[1]['varValueMax'] = processUnits[unum]['dataMax'][9];
     plotsObj[2]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
 
   }, // end initialize method of plotsObj

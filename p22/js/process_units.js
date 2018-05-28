@@ -220,12 +220,6 @@ processUnits[0] = {
 
   // define arrays to hold output variables
   // these will be filled with initial values in method reset()
-  Thot : [],
-  Tcold : [],
-  ThotNew : [], // 'New' hold intermediate values during updateState
-  TcoldNew : [],
-
-  // define arrays to hold data
   Trxr : [],
   Ca : [],
   TrxrNew : [], // 'New' hold intermediate values during updateState
@@ -258,9 +252,6 @@ processUnits[0] = {
   SScheck : 0, // for saving steady state check number of array end values
   residenceTime : 0, // for timing checks for steady state check
 
-  // max and min Trxr need to be accessible in updateUIparams()
-  minTrxr : 200, // (K), changed below
-  maxTrxr : 500, // (K), changed below
   // fluid Cp and both dens need to be accessible in updateUIparams()
   // Cp and dens for catalyst set in updateState()
   CpFluid : 2, // (kJ/kg/K)
@@ -279,7 +270,7 @@ processUnits[0] = {
     this.Kf300 = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Kf300; // current input value for reporting
     //
-    let v = 1;
+    v = 1;
     this.dataHeaders[v] = 'Ea';
     this.dataInputs[v] = 'input_field_Ea';
     this.dataUnits[v] = 'kJ/mol';
@@ -289,7 +280,7 @@ processUnits[0] = {
     this.Ea = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Ea; // current input value for reporting
     //
-    let v = 2;
+    v = 2;
     this.dataHeaders[v] = 'DelH';
     this.dataInputs[v] = 'input_field_DelH';
     this.dataUnits[v] = 'kJ/mol';
@@ -299,7 +290,7 @@ processUnits[0] = {
     this.DelH = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.DelH; // current input value for reporting
     //
-    let v = 3;
+    v = 3;
     this.dataHeaders[v] = 'Wcat';
     this.dataInputs[v] = 'input_field_Wcat';
     this.dataUnits[v] = 'kg';
@@ -309,7 +300,7 @@ processUnits[0] = {
     this.Wcat = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Wcat; // current input value for reporting
     //
-    let v = 4;
+    v = 4;
     this.dataHeaders[v] = 'Cain';
     this.dataInputs[v] = 'input_field_Cain';
     this.dataUnits[v] = 'mol/m3';
@@ -319,7 +310,7 @@ processUnits[0] = {
     this.Cain = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Cain; // current input value for reporting
     //
-    let v = 5;
+    v = 5;
     this.dataHeaders[v] = 'Flowrate';
     this.dataInputs[v] = 'input_field_Flowrate';
     this.dataUnits[v] = 'm3/s';
@@ -329,7 +320,7 @@ processUnits[0] = {
     this.Flowrate = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Flowrate; // current input value for reporting
     //
-    let v = 6;
+    v = 6;
     this.dataHeaders[v] = 'Tin';
     this.dataInputs[v] = 'input_field_Tin';
     this.dataUnits[v] = 'K';
@@ -339,17 +330,18 @@ processUnits[0] = {
     this.Tin = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Tin; // current input value for reporting
     //
-    let v = 7;
+    v = 7;
     this.dataHeaders[v] = 'UAcoef';
-    this.dataInputs[v] = 'input_field_UAcoef';
-    this.dataUnits[v] = 'K';
+    // NOTE: dataInputs example where field ID name differs from variable name 
+    this.dataInputs[v] = 'input_field_UA';
+    this.dataUnits[v] = 'kW/kg/K';
     this.dataMin[v] = 0;
     this.dataMax[v] = 100;
     this.dataInitial[v] = 0.1;
     this.UAcoef = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.UAcoef; // current input value for reporting
     //
-    let v = 8;
+    v = 8;
     this.dataHeaders[v] = 'Tjacket';
     this.dataInputs[v] = 'input_field_Tjacket';
     this.dataUnits[v] = 'K';
@@ -366,8 +358,19 @@ processUnits[0] = {
     //
     // OUTPUT VARS
     //
-
-  },
+    v = 9;
+    this.dataHeaders[v] = 'Trxr';
+    this.dataUnits[v] =  'K';
+    // Trxr dataMin & dataMax can be changed in updateUIparams()
+    this.dataMin[v] = 200;
+    this.dataMax[v] = 500;
+    v = 10;
+    this.dataHeaders[v] = 'Ca';
+    this.dataUnits[v] =  'mol/m3';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = this.dataMax[4]; // [4] is Cain
+    //
+  }, // END of initialize()
 
   reset : function() {
 
@@ -391,10 +394,10 @@ processUnits[0] = {
     document.getElementById(this.displayReactorRightConc).innerHTML = 0.0 + ' mol/m<sup>3</sup>';
 
     for (k = 0; k <= this.numNodes; k += 1) {
-      this.Trxr[k] = this.initialTjacket; // or initialTin ?
-      this.TrxrNew[k] = this.initialTjacket;
-      this.Ca[k] = 0; // this.initialCain;
-      this.CaNew[k] = 0; // this.initialCain;
+      this.Trxr[k] = this.dataInitial[8]; // [8] is Tjacket
+      this.TrxrNew[k] = this.dataInitial[8]; // [8] is Tjacket
+      this.Ca[k] = 0;
+      this.CaNew[k] = 0;
     }
 
     // initialize profile data array - must follow function initPlotData in this file
@@ -410,7 +413,7 @@ processUnits[0] = {
     this.colorCanvasData = initColorCanvasArray(2,this.numNodes,1);
 
     var kn = 0;
-    for (k=0; k<=this.numNodes; k+=1) {
+    for (k = 0; k <= this.numNodes; k += 1) {
       kn = k/this.numNodes;
       // x-axis values
       // x-axis values will not change during sim
@@ -421,8 +424,8 @@ processUnits[0] = {
       this.profileData[0][k][0] = kn;
       this.profileData[1][k][0] = kn;
       // y-axis values
-      this.profileData[0][k][1] = this.initialTin;
-      this.profileData[1][k][1] = this.initialCain;
+      this.profileData[0][k][1] = this.dataInitial[6]; // [6] is Tin
+      this.profileData[1][k][1] = this.dataInitial[4]; // [4] is Cain
     }
 
   }, // end reset
@@ -468,15 +471,17 @@ processUnits[0] = {
 
     // check input fields for new values
     // function getInputValue() is defined in file process_interface.js
-    this.Kf300 = getInputValue(this.unitIndex,'Kf300');
-    this.Ea = getInputValue(this.unitIndex,'Ea');
-    this.DelH = getInputValue(this.unitIndex,'DelH');
-    this.Wcat = getInputValue(this.unitIndex,'Wcat');
-    this.Cain = getInputValue(this.unitIndex,'Cain');
-    this.Flowrate = getInputValue(this.unitIndex,'Flowrate');
-    this.Tin = getInputValue(this.unitIndex,'Tin');
-    this.UAcoef = getInputValue(this.unitIndex,'UAcoef');
-    this.Tjacket = getInputValue(this.unitIndex,'Tjacket');
+    // getInputValue(unit index in processUnits, var index in input arrays)
+    var unum = this.unitIndex;
+    this.Kf300 = getInputValue(unum, 0);
+    this.Ea = getInputValue(unum, 1);
+    this.DelH = getInputValue(unum, 2);
+    this.Wcat = getInputValue(unum, 3);
+    this.Cain = getInputValue(unum, 4);
+    this.Flowrate = getInputValue(unum, 5);
+    this.Tin = getInputValue(unum, 6);
+    this.UAcoef = getInputValue(unum, 7);
+    this.Tjacket = getInputValue(unum, 8);
 
     // calc adiabatic delta T, positive for negative H (exothermic)
     var adiabDeltaT = -this.DelH * this.Cain / this.densFluid / this.CpFluid;
@@ -485,16 +490,16 @@ processUnits[0] = {
     if(this.DelH < 0) {
       // exothermic
       if (this.Tjacket > this.Tin) {
-        this.maxTrxr = this.Tjacket + adiabDeltaT;
+        this.dataMax[9] = this.Tjacket + adiabDeltaT; // [9] is Trxr
       } else {
-        this.maxTrxr = this.Tin + adiabDeltaT;
+        this.dataMax[9] = this.Tin + adiabDeltaT;
       }
     } else {
       // endothermic
       if (this.Tjacket > this.Tin) {
-        this.maxTrxr = this.Tjacket;
+        this.dataMax[9] = this.Tjacket;
       } else {
-        this.maxTrxr = this.Tin;
+        this.dataMax[9] = this.Tin;
       }
     }
 
@@ -502,31 +507,30 @@ processUnits[0] = {
     if(this.DelH > 0) {
       // endothermic
       if (this.Tjacket < this.Tin) {
-        this.minTrxr = this.Tjacket + adiabDeltaT;
+        this.dataMin[9] = this.Tjacket + adiabDeltaT; // [9] is Trxr
       } else {
-        this.minTrxr = this.Tin + adiabDeltaT;
+        this.dataMin[9] = this.Tin + adiabDeltaT;
       }
     } else {
       // exothermic
       if (this.Tjacket < this.Tin) {
-        this.minTrxr = this.Tjacket;
+        this.dataMin[9] = this.Tjacket;
       } else {
-        this.minTrxr = this.Tin;
+        this.dataMin[9] = this.Tin;
       }
     }
-    if (this.minTrxr < 0) {minT = 0;}
 
     // adjust axis of profile plot
-    plotFlag[0] = 0; // so axes will refresh
-    plotsObj[0]['yLeftAxisMin'] = this.minTrxr;
-    plotsObj[0]['yLeftAxisMax'] = this.maxTrxr;
+    plotArrays['plotFlag'][0] = 0;  // so axes will refresh
+    plotsObj[0]['yLeftAxisMin'] = this.dataMin[9]; // [9] is Trxr
+    plotsObj[0]['yLeftAxisMax'] = this.dataMax[9];
     plotsObj[0]['yRightAxisMin'] = 0;
     plotsObj[0]['yRightAxisMax'] = this.Cain;
     // adjust color span of spaceTime, color canvas plots
-    plotsObj[1]['varValueMin'] = this.minTrxr;
-    plotsObj[1]['varValueMax'] = this.maxTrxr;
-    plotsObj[2]['varValueMin'] = this.minTrxr;
-    plotsObj[2]['varValueMax'] = this.maxTrxr;
+    plotsObj[1]['varValueMin'] = this.dataMin[9]; // [9] is Trxr
+    plotsObj[1]['varValueMax'] = this.dataMax[9];
+    plotsObj[2]['varValueMin'] = this.dataMin[9];
+    plotsObj[2]['varValueMax'] = this.dataMax[9];
 
     // also update ONLY inlet values at inlet of reactor in case sim is paused
     // but do not do full updateDisplay
@@ -630,24 +634,6 @@ processUnits[0] = {
       TrxrN = this.Tin;
       CaN = this.Cain;
 
-      // kT = this.Kf300 * Math.exp(EaOverRg300 - EaOverRg/this.Trxr[n]);
-      //
-      // // special for n=0 is this.Ca[n-1] is this.Cain, this.Trxr[n-1] is this.Tin
-      // dCaDT = -flowCoef * (this.Ca[n] - this.Cain) - rxnCoef * kT * this.Ca[n];
-      //
-      // dTrxrDT = - energyFlowCoef * (this.Trxr[n] - this.Tin)
-      //           + energyXferCoef * (this.Tjacket - this.Trxr[n])
-      //           - energyRxnCoef * kT * this.Ca[n];
-      //
-      // CaN = this.Ca[n] + dCaDT * this.unitTimeStep;
-      // TrxrN = this.Trxr[n] + dTrxrDT * this.unitTimeStep;
-      //
-      // // CONSTRAIN TO BE IN BOUND
-      // if (TrxrN > this.maxTrxr) {TrxrN = this.maxTrxr;}
-      // if (TrxrN < this.minTrxr) {TrxrN = this.minTrxr;}
-      // if (CaN < 0.0) {CaN = 0.0;}
-      // if (CaN > this.Cain) {CaN = this.Cain;}
-
       this.TrxrNew[n] = TrxrN;
       this.CaNew[n] = CaN;
 
@@ -665,8 +651,8 @@ processUnits[0] = {
         TrxrN = this.Trxr[n] + dTrxrDT * this.unitTimeStep;
 
         // CONSTRAIN TO BE IN BOUND
-        if (TrxrN > this.maxTrxr) {TrxrN = this.maxTrxr;}
-        if (TrxrN < this.minTrxr) {TrxrN = this.minTrxr;}
+        if (TrxrN > this.dataMax[9]) {TrxrN = this.dataMax[9];} // [9] is Trxr
+        if (TrxrN < this.dataMin[9]) {TrxrN = this.dataMin[9];}
         if (CaN < 0.0) {CaN = 0.0;}
         if (CaN > this.Cain) {CaN = this.Cain;}
 
@@ -690,8 +676,8 @@ processUnits[0] = {
       TrxrN = this.Trxr[n] + dTrxrDT * this.unitTimeStep;
 
       // CONSTRAIN TO BE IN BOUND
-      if (TrxrN > this.maxTrxr) {TrxrN = this.maxTrxr;}
-      if (TrxrN < this.minTrxr) {TrxrN = this.minTrxr;}
+      if (TrxrN > this.dataMax[9]) {TrxrN = this.dataMax[9];} // [9] is Trxr
+      if (TrxrN < this.dataMin[9]) {TrxrN = this.dataMin[9];}
       if (CaN < 0.0) {CaN = 0.0;}
       if (CaN > this.Cain) {CaN = this.Cain;}
 
