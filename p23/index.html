@@ -118,7 +118,7 @@
    </p>
    <input id="input_field_Tjacket" value="360" onchange="updateUIparams()">
 </div> <!-- end of div div_input_fields_group -->
-<!-- ------------- HEAT EXCHANGE LAB ---------------- -->
+<!-- ***** HEAT EXCHANGE LAB BELOW ***** -->
 <div id="div_simFrameX">
       <div id="div_PLOTDIV_T_plot">
       </div> <!-- end of div div_PLOTDIV_T_plot -->
@@ -158,11 +158,11 @@
    <!-- onchange can send updateUIparams() to process_main.js to update all units *OR* send to specific units -->
    <div id="div_radio_button_group">
       <label id="radio_counter-current_flow_LABEL" name="radio_of_div_radio_button_group">
-            <input type="radio" id="radio_counter-current_flow" name="radio_of_div_radio_button_group" checked onchange="processUnits[0].updateUIparams()">
+            <input type="radio" id="radio_counter-current_flow" name="radio_of_div_radio_button_group" checked onchange="processUnits[1].updateUIparams()">
             <span id="radio_counter-current_flow_SPAN">counter-current flow</span>
       </label>
       <label id="radio_co-current_flow_LABEL" name="radio_of_div_radio_button_group">
-            <input type="radio" id="radio_co-current_flow" name="radio_of_div_radio_button_group" onchange="processUnits[0].updateUIparams()">
+            <input type="radio" id="radio_co-current_flow" name="radio_of_div_radio_button_group" onchange="processUnits[1].updateUIparams()">
             <span id="radio_co-current_flow_SPAN">co-current flow</span>
       </label>
    </div> <!-- end of div div_radio_button_group -->

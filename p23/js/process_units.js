@@ -111,34 +111,34 @@ var simParams = {
   // } // END OF checkForSteadyState()
 
   checkForSteadyState : function() {
-    // processUnits[0] is plug flow reactor in this web lab
-    // required - called by process_main.js
-    // use OS Activity Monitor of CPU load to see effect of this
-    if (this.simTime >= this.oldSimTime + processUnits[0].residenceTime) {
-      // check in order to save CPU time when sim is at steady state
-      // check for SS by checking for any significant change in array end values
-      // but wait at least one residence time after the previous check
-      // to allow changes to propagate down reactor
-      // create SScheck which is a 16-digit number unique to current 4 end T's
-      // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
-      var nn = processUnits[0].numNodes;
-      var hlt = 1.0e5 * processUnits[0]['Trxr'][nn].toFixed(1);
-      var hrt = 1.0e1 * processUnits[0]['Trxr'][0].toFixed(1);
-      var clt = 1.0e-3 * processUnits[0]['Ca'][nn].toFixed(1);
-      var crt = 1.0e-7 * processUnits[0]['Ca'][0].toFixed(1);
-      var SScheck = hlt + hrt + clt + crt;
-      SScheck = SScheck.toFixed(8); // need because last sum operation adds significant figs
-      // note SScheck = hlt0hrt0.clt0crt0 << 16 digits, 4 each for 4 end values
-      var oldSScheck = processUnits[0].SScheck;
-      if (SScheck == oldSScheck) {
-        // set ssFlag
-        simParams.ssFlag = true;
-      } // end if (SScheck == oldSScheck)
-
-      // save current values as the old values
-      processUnits[0].SScheck = SScheck;
-      simParams.oldSimTime = simParams.simTime;
-    } // END OF if (simParams.simTime >= simParams.oldSimTime + processUnits[0].residenceTime)
+    // // processUnits[0] is plug flow reactor in this web lab
+    // // required - called by process_main.js
+    // // use OS Activity Monitor of CPU load to see effect of this
+    // if (this.simTime >= this.oldSimTime + processUnits[0].residenceTime) {
+    //   // check in order to save CPU time when sim is at steady state
+    //   // check for SS by checking for any significant change in array end values
+    //   // but wait at least one residence time after the previous check
+    //   // to allow changes to propagate down reactor
+    //   // create SScheck which is a 16-digit number unique to current 4 end T's
+    //   // NOTE: these are end values in arrays, not those displayed in inlet & outlet fields
+    //   var nn = processUnits[0].numNodes;
+    //   var hlt = 1.0e5 * processUnits[0]['Trxr'][nn].toFixed(1);
+    //   var hrt = 1.0e1 * processUnits[0]['Trxr'][0].toFixed(1);
+    //   var clt = 1.0e-3 * processUnits[0]['Ca'][nn].toFixed(1);
+    //   var crt = 1.0e-7 * processUnits[0]['Ca'][0].toFixed(1);
+    //   var SScheck = hlt + hrt + clt + crt;
+    //   SScheck = SScheck.toFixed(8); // need because last sum operation adds significant figs
+    //   // note SScheck = hlt0hrt0.clt0crt0 << 16 digits, 4 each for 4 end values
+    //   var oldSScheck = processUnits[0].SScheck;
+    //   if (SScheck == oldSScheck) {
+    //     // set ssFlag
+    //     simParams.ssFlag = true;
+    //   } // end if (SScheck == oldSScheck)
+    //
+    //   // save current values as the old values
+    //   processUnits[0].SScheck = SScheck;
+    //   simParams.oldSimTime = simParams.simTime;
+    // } // END OF if (simParams.simTime >= simParams.oldSimTime + processUnits[0].residenceTime)
   } // END OF checkForSteadyState()
 
 }; // END var simParams
@@ -1028,12 +1028,14 @@ processUnits[1] = {
     var cra = document.querySelector(this.displayColdRightArrow);
     var cla = document.querySelector(this.displayColdLeftArrow);
     if (m00.checked) {
+      // alert('co-current flow');
       this.ModelFlag = 0; // co-current flow
       cra.style.color = 'blue';
       cla.style.color = 'orange';
       cra.innerHTML = '&larr;';
       cla.innerHTML = '&larr;';
     } else {
+      // alert('counter-current flow');
       this.ModelFlag = 1; // counter-current flow
       cra.style.color = 'orange';
       cla.style.color = 'blue';
