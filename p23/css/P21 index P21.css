@@ -66,7 +66,7 @@ canvas {
   LCshowBorder: false;
 }
 
-#div_simFrame {
+#div_simFrameX {
   display: block;
   position: relative;
   border-color: DodgerBlue;
@@ -136,37 +136,7 @@ canvas {
   LCshowBorder: true;
 }
 
-#button_runButton {
-  position: absolute;
-  left: 87px;
-  top: 5px;
-  width: 72px;
-  height: 23px;
-  visibility: visible;
-  border-width: 1px;
-  background-color: rgb(255,255,255);
-  border-style: outset;
-  opacity: 1;
-  LCthreeD: true;
-  LCshowBorder: true;
-}
-
-#button_resetButton {
-  position: absolute;
-  left: 163px;
-  top: 4px;
-  width: 72px;
-  height: 23px;
-  visibility: visible;
-  border-width: 1px;
-  background-color: rgb(255,255,255);
-  border-style: outset;
-  opacity: 1;
-  LCthreeD: true;
-  LCshowBorder: true;
-}
-
-#button_copyData {
+#button_copyDataX {
   position: absolute;
   left: 5px;
   top: 346px;
@@ -319,7 +289,7 @@ canvas {
   font-size: 16px;
 }
 
-#div_input_fields_group {
+#div_input_fields_groupX {
   display: block;
   position: relative;
   border-color: DodgerBlue;
@@ -728,9 +698,9 @@ border-style: solid;
 /* example @media for responsive design */
 /* requires meta viewport element in HTML head */
 @media(min-width: 640px) {
-  #div_input_fields_group {
+  /* #div_input_fields_groupX {
     position: absolute;
     top: 141px;
     left: 400px;
-  }
+  } */
 }
