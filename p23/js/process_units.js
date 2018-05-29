@@ -25,7 +25,7 @@ var simParams = {
   // simParams uses the following global variables:
   //    Thot and Tcold used in function checkForSteadyState()
 
-  title : 'Packed Bed PFR with Heat Exchange', // title of simulation
+  title : 'Packed Bed PFR + Heat Exchanger', // title of simulation
 
   // ssFlag new for process with one unit - rethink for multiple-unit processes
   // unit's updateState can set ssFlag true when unit reaches steady state
@@ -66,7 +66,7 @@ var simParams = {
     //
     // WARNING: runLoggerURL logger script checks for "rxn-diff" literal
     //
-    $.post(this.runLoggerURL,{webAppNumber: "7, Plug Flow Reactor"})
+    $.post(this.runLoggerURL,{webAppNumber: "8, Plug Flow Reactor + Heat Exchanger"})
       .done(
         function(data) {
           // document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>";
