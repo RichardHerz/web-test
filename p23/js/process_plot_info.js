@@ -45,6 +45,8 @@ var plotsObj = {
     // WARNING: some of these object properties may be changed during
     //          operation of the program, e.g., show, scale
     //
+    // --------- below are plots for the reactor ----------------
+    //
     let unum = 0; // useful when only one unit in plot, processUnits[unum]
     //
     // plot 0 info
