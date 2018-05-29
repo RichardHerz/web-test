@@ -1064,13 +1064,13 @@ processUnits[1] = {
     // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
     // outlet T's not defined on first entry into page
     // but do not do full updateDisplay
-    document.getElementById(this.displayHotRightT).innerHTML = this.TinHot + ' K';
+    document.getElementById(this.displayHotRightT).innerHTML = this.TinHot.toFixed(1) + ' K';
     switch(this.ModelFlag) {
       case 0: // co-current
-        document.getElementById(this.displayColdRightT).innerHTML = this.TinCold + ' K';
+        document.getElementById(this.displayColdRightT).innerHTML = this.TinCold.toFixed(1) + ' K';
         break
       case 1: // counter-current
-        document.getElementById(this.displayColdLeftT).innerHTML = this.TinCold + ' K';
+        document.getElementById(this.displayColdLeftT).innerHTML = this.TinCold.toFixed(1) + ' K';
     }
 
     // update display of tube length and Reynolds number
@@ -1327,10 +1327,10 @@ processUnits[1] = {
     switch(this.ModelFlag) {
       case 0: // co-current
         document.getElementById(this.displayColdLeftT).innerHTML = this.Tcold[this.numNodes].toFixed(1) + ' K';
-        document.getElementById(this.displayColdRightT).innerHTML = this.TinCold + ' K';
+        document.getElementById(this.displayColdRightT).innerHTML = this.TinCold.toFixed(1) + ' K';
         break
       case 1: // counter-current
-        document.getElementById(this.displayColdLeftT).innerHTML = this.TinCold + ' K';
+        document.getElementById(this.displayColdLeftT).innerHTML = this.TinCold.toFixed(1) + ' K';
         document.getElementById(this.displayColdRightT).innerHTML = this.Tcold[0].toFixed(1) + ' K';
     }
 
