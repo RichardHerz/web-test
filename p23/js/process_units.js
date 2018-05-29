@@ -167,9 +167,9 @@ processUnits[0] = {
   // OBJECT simParams USES the following from this process unit
   //    variables SScheck, residenceTime, numNodes
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //   none
+  //    reactor T out to heat exchanger hot in
   // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
-  //   none
+  inputTxrIn : '', // set in updateInputs
 
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
   displayReactorLeftConc: 'field_reactor_left_conc',
@@ -571,6 +571,9 @@ processUnits[0] = {
     // //   this.PV = this.initialPV;
     // }
 
+    // GET REACTOR INLET T FROM COLD OUT OF HEAT EXCHANGER
+    this.Tin = processUnits[1]['Tcold'][0];
+
   },
 
   updateState : function() {
@@ -734,7 +737,8 @@ processUnits[1] = {
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
   //   none
   // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
-  //   none
+  inputHotIn : '', // set in updateInputs
+
   // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
   //   e.g., inputModel01 : "radio_Model_1",
   //
@@ -886,7 +890,7 @@ processUnits[1] = {
     this.dataUnits[v] =  'kW/m2/K';
     this.dataMin[v] = 0;
     this.dataMax[v] = 10;
-    this.dataInitial[v] = 0.6;
+    this.dataInitial[v] = 0;
     this.Ucoef = this.dataInitial[v];
     this.dataValues[v] = this.Ucoef;
     //
@@ -1159,6 +1163,10 @@ processUnits[1] = {
     // //   this.PV = this.initialPV;
     // }
 
+    // GET HOT IN FROM OUTLET OF REACTOR
+    let nn = processUnits[0].numNodes;
+    this.TinHot = processUnits[0]['Trxr'][nn];
+
   },
 
   updateState : function() {
@@ -1315,7 +1323,7 @@ processUnits[1] = {
     var n = 0; // used as index
 
     document.getElementById(this.displayHotLeftT).innerHTML = this.Thot[this.numNodes].toFixed(1) + ' K';
-    document.getElementById(this.displayHotRightT).innerHTML = this.TinHot + ' K';
+    document.getElementById(this.displayHotRightT).innerHTML = this.TinHot.toFixed(1) + ' K';
     switch(this.ModelFlag) {
       case 0: // co-current
         document.getElementById(this.displayColdLeftT).innerHTML = this.Tcold[this.numNodes].toFixed(1) + ' K';

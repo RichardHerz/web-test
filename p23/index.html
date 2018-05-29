@@ -50,9 +50,9 @@
 <div id="div_simFrame">
       <div id="div_PLOTDIV_PFR_plot">
       </div> <!-- end of div div_PLOTDIV_T_plot -->
-   <canvas id="canvas_CANVAS_jacket" width="201" height="64"></canvas> <!-- canvas for colormap graphic -->
+   <!-- <canvas id="canvas_CANVAS_jacket" width="201" height="64"></canvas> -->
    <!-- canvas element width & height must be specified here in HTML and not in CSS -->
-   <canvas id="canvas_CANVAS_reactor" width="201" height="34"></canvas> <!-- canvas for colormap graphic -->
+   <canvas id="canvas_CANVAS_reactor" width="201" height="34"></canvas>
    <!-- canvas element width & height must be specified here in HTML and not in CSS -->
    <input type="button" id="button_runButton" value="Run" onclick="runThisLab()">
    <input type="button" id="button_resetButton" value="Reset" onclick="resetThisLab()">
@@ -112,7 +112,7 @@
    <p id="field_UA_label">
       UA (kW/kg/K)
    </p>
-   <input id="input_field_UA" value="0.1" onchange="updateUIparams()">
+   <input id="input_field_UA" value="0" onchange="updateUIparams()">
    <p id="field_Tjacket_label">
       Tjacket (K)
    </p>

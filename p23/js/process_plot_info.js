@@ -129,28 +129,28 @@ var plotsObj = {
     plotsObj[pnum]['varValueMax'] = processUnits[unum]['dataMax'][9];
     plotsObj[pnum]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
 
-    // plot 2 info
-    pnum = 2;
-    plotsObj[pnum] = new Object();
-    plotsObj[pnum]['type'] = 'canvas';
-    plotsObj[pnum]['title'] = 'jacket color canvas';
-    plotsObj[pnum]['canvas'] = 'canvas_CANVAS_jacket'; // without prefix #
-    // for canvas type, all data comes from one process unit and one local array
-    plotsObj[pnum]['varUnitIndex'] = unum; // index of unit in processUnits object
-    plotsObj[pnum]['var'] = 1; // variable number in array spaceTimeData, 0, 1, etc.
-    // varTimePts & varSpacePts must match values used in unit array colorCanvasData
-    plotsObj[pnum]['varTimePts'] = processUnits[unum]['numNodes'];
-    plotsObj[pnum]['varSpacePts'] = 1;
-    plotsObj[pnum]['varValueMin'] = processUnits[unum]['dataMin'][9]; // [9] is Trxr
-    plotsObj[pnum]['varValueMax'] = processUnits[unum]['dataMax'][9];
-    plotsObj[pnum]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
+    // // plot 2 info
+    // pnum = 2;
+    // plotsObj[pnum] = new Object();
+    // plotsObj[pnum]['type'] = 'canvas';
+    // plotsObj[pnum]['title'] = 'jacket color canvas';
+    // plotsObj[pnum]['canvas'] = 'canvas_CANVAS_jacket'; // without prefix #
+    // // for canvas type, all data comes from one process unit and one local array
+    // plotsObj[pnum]['varUnitIndex'] = unum; // index of unit in processUnits object
+    // plotsObj[pnum]['var'] = 1; // variable number in array spaceTimeData, 0, 1, etc.
+    // // varTimePts & varSpacePts must match values used in unit array colorCanvasData
+    // plotsObj[pnum]['varTimePts'] = processUnits[unum]['numNodes'];
+    // plotsObj[pnum]['varSpacePts'] = 1;
+    // plotsObj[pnum]['varValueMin'] = processUnits[unum]['dataMin'][9]; // [9] is Trxr
+    // plotsObj[pnum]['varValueMax'] = processUnits[unum]['dataMax'][9];
+    // plotsObj[pnum]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
     //
     // --------- below are plots for the heat exchanger ----------------
     //
     unum = 1; // useful when only one unit in plot, processUnits[unum]
     //
     // plot 3 info
-    pnum = 3;
+    pnum = 2;
     plotsObj[pnum] = new Object();
     plotsObj[pnum]['type'] = 'profile';
     plotsObj[pnum]['title'] = 'Heat Exchanger Temperature Profiles';
@@ -217,7 +217,7 @@ var plotsObj = {
     //    might be to have one array per variable equal to an array of info...?
 
     // plot 4 info
-    pnum = 4;
+    pnum = 3;
     plotsObj[pnum] = new Object();
     plotsObj[pnum]['type'] = 'canvas';
     plotsObj[pnum]['title'] = 'hot side color canvas';
@@ -233,7 +233,7 @@ var plotsObj = {
     plotsObj[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
 
     // plot 5 info
-    pnum = 5;
+    pnum = 4;
     plotsObj[pnum] = new Object();
     plotsObj[pnum]['type'] = 'canvas';
     plotsObj[pnum]['title'] = 'cold side color canvas';
