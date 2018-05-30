@@ -146,8 +146,8 @@ var simParams = {
 
 // ------------ PROCESS UNIT OBJECT DEFINITIONS ----------------------
 
-// EACH PROCESS UNIT DEFINITION MUST CONTAIN AT LEAST THESE 5 FUNCTIONS:
-//   reset, updateUIparams, updateInputs, updateState, display
+// EACH PROCESS UNIT DEFINITION MUST CONTAIN AT LEAST THESE 6 FUNCTIONS:
+//   initialize, reset, updateUIparams, updateInputs, updateState, display
 // WARNING: THESE FUNCTION DEFINITIONS MAY BE EMPTY BUT MUST BE PRESENT
 
 // -------------------------------------------------------------------
