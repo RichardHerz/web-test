@@ -225,7 +225,7 @@ processUnits[0] = {
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for time step in this unit's updateInputs method
-  unitStepRepeats : 1, // XXX
+  unitStepRepeats : 200, // XXX
   unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
 
   // WARNING: IF INCREASE NUM NODES IN HEAT EXCHANGER BY A FACTOR THEN HAVE TO
@@ -238,7 +238,7 @@ processUnits[0] = {
 
   // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
   // WARNING: numNodes is accessed in process_plot_info.js
-  numNodes : 10, // XXX
+  numNodes : 200, // XXX
 
   // also see simParams.ssFlag and simParams.SScheck
   SScheck : 0, // for saving steady state check number of array end values
@@ -258,7 +258,7 @@ processUnits[0] = {
     this.dataUnits[v] = 'm3/kg/s';
     this.dataMin[v] = 0;
     this.dataMax[v] = 10;
-    this.dataInitial[v] = 1.0e-12;
+    this.dataInitial[v] = 1.0e-7;
     this.Kf300 = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Kf300; // current input value for reporting
     //
@@ -268,7 +268,7 @@ processUnits[0] = {
     this.dataUnits[v] = 'kJ/mol';
     this.dataMin[v] = 0;
     this.dataMax[v] = 200;
-    this.dataInitial[v] = 0;
+    this.dataInitial[v] = 100;
     this.Ea = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Ea; // current input value for reporting
     //
@@ -317,9 +317,9 @@ processUnits[0] = {
     this.dataHeaders[v] = 'Tin'; // TinHX
     this.dataInputs[v] = 'input_field_Tin';
     this.dataUnits[v] = 'K';
-    this.dataMin[v] = 250;
-    this.dataMax[v] = 400;
-    this.dataInitial[v] = 300;
+    this.dataMin[v] = 300;
+    this.dataMax[v] = 500;
+    this.dataInitial[v] = 320;
     this.TinHX = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.TinHX; // current input value for reporting
     //
@@ -331,7 +331,7 @@ processUnits[0] = {
     this.dataUnits[v] = 'kW/kg/K';
     this.dataMin[v] = 0;
     this.dataMax[v] = 100;
-    this.dataInitial[v] = 0;
+    this.dataInitial[v] = 1;
     this.UAcoef = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.UAcoef; // current input value for reporting
     //
@@ -517,17 +517,17 @@ processUnits[0] = {
       this.dataMin[9] = this.TinHX;
     }
 
-    // adjust axis of profile plot
-    plotArrays['plotFlag'][0] = 0;  // so axes will refresh
-    plotsObj[0]['yLeftAxisMin'] = this.dataMin[9]; // [9] is Trxr
-    plotsObj[0]['yLeftAxisMax'] = this.dataMax[9];
-    plotsObj[0]['yRightAxisMin'] = 0;
-    plotsObj[0]['yRightAxisMax'] = this.Cain;
-    // adjust color span of spaceTime, color canvas plots
-    plotsObj[1]['varValueMin'] = this.dataMin[9]; // [9] is Trxr
-    plotsObj[1]['varValueMax'] = this.dataMax[9];
-    plotsObj[2]['varValueMin'] = this.dataMin[9];
-    plotsObj[2]['varValueMax'] = this.dataMax[9];
+    // // adjust axis of profile plot
+    // plotArrays['plotFlag'][0] = 0;  // so axes will refresh
+    // plotsObj[0]['yLeftAxisMin'] = this.dataMin[9]; // [9] is Trxr
+    // plotsObj[0]['yLeftAxisMax'] = this.dataMax[9];
+    // plotsObj[0]['yRightAxisMin'] = 0;
+    // plotsObj[0]['yRightAxisMax'] = this.Cain;
+    // // adjust color span of spaceTime, color canvas plots
+    // plotsObj[1]['varValueMin'] = this.dataMin[9]; // [9] is Trxr
+    // plotsObj[1]['varValueMax'] = this.dataMax[9];
+    // plotsObj[2]['varValueMin'] = this.dataMin[9];
+    // plotsObj[2]['varValueMax'] = this.dataMax[9];
 
     // also update ONLY inlet values at inlet of reactor in case sim is paused
     // but do not do full updateDisplay
@@ -829,7 +829,7 @@ processUnits[1] = {
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for time step in this unit's updateInputs method
-  unitStepRepeats : 1, // XXX
+  unitStepRepeats : 200, // XXX
   unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
 
   // WARNING: IF INCREASE NUM NODES IN HEAT EXCHANGER BY A FACTOR THEN HAVE TO
@@ -843,7 +843,7 @@ processUnits[1] = {
 
   // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
   // WARNING: numNodes is accessed in process_plot_info.js
-  numNodes : 10, // XXX
+  numNodes : 200, // XXX
   // NOTE 20180427: discrepancy between steady-state Qcold and Qhot (from Qcold/Qhot)
   // from array end values with dispersion decreases as number of nodes increases
   // but shows same output field T's to one decimal place for 200-800 nodes
@@ -979,7 +979,10 @@ processUnits[1] = {
       this.Tcold[k] = processUnits[0].TinHX;
       this.TcoldNew[k] = processUnits[0].TinHX;
       // *** FOR HX COUPLED TO RXR ***
-      this.FlowHot = processUnits[0].Flowrate;
+      this.FlowHot = processUnits[0].Flowrate; // m3/s in reactor
+      // *** reactor Flow is m3/s, whereas heat exchanger flow is kg/s ***
+      this.FlowHot = this.FluidDensity * this.FlowHot; // kg/s = kg/m3 * m3/s
+      this.FlowCold = this.FlowHot;
     }
 
   }, // END of initialize()
