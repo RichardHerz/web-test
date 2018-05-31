@@ -606,22 +606,6 @@ border-style: solid;
   border-color: DodgerBlue;
 }
 
-#input_field_Tjacket {
-  position: absolute;
-  left: 190px;
-  top: 220px;
-  width: 91px;
-  height: 21px;
-border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-border-style: solid;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: true;
-}
-
 /* ------------- HEAT EXCHANGE LAB ----------- */
 
 #div_simFrame_exchanger {

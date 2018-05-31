@@ -463,7 +463,9 @@ processUnits[0] = {
     this.Flowrate = getInputValue(unum, 5);
     this.Tin = getInputValue(unum, 6);
     this.UAcoef = getInputValue(unum, 7);
-    this.Tjacket = getInputValue(unum, 8);
+
+    // // ******* DEACTIVATE FOR ADIABATIC OPERATION ********
+    // this.Tjacket = getInputValue(unum, 8);
 
     // calc adiabatic delta T, positive for negative H (exothermic)
     var adiabDeltaT = -this.DelH * this.Cain / this.densFluid / this.CpFluid;
@@ -1025,42 +1027,46 @@ processUnits[1] = {
     // reset SScheck checksum used to check for ss
     this.SScheck = 0;
 
-    // RADIO BUTTONS & CHECK BOX
-    // at least for now, do not check existence of UI elements
-    // Model radio buttons
-    var m00 = document.querySelector('#' + this.inputModel00);
-    var cra = document.querySelector(this.displayColdRightArrow);
-    var cla = document.querySelector(this.displayColdLeftArrow);
-    if (m00.checked) {
-      // alert('co-current flow');
-      this.ModelFlag = 0; // co-current flow
-      cra.style.color = 'blue';
-      cla.style.color = 'orange';
-      cra.innerHTML = '&larr;';
-      cla.innerHTML = '&larr;';
-    } else {
-      // alert('counter-current flow');
-      this.ModelFlag = 1; // counter-current flow
-      cra.style.color = 'orange';
-      cla.style.color = 'blue';
-      cra.innerHTML = '&rarr;';
-      cla.innerHTML = '&rarr;';
-    }
+    // // ******* DEACTIVATE FOR COUPLING TO REACTOR ********
+    // // RADIO BUTTONS & CHECK BOX
+    // // at least for now, do not check existence of UI elements
+    // // Model radio buttons
+    // var m00 = document.querySelector('#' + this.inputModel00);
+    // var cra = document.querySelector(this.displayColdRightArrow);
+    // var cla = document.querySelector(this.displayColdLeftArrow);
+    // if (m00.checked) {
+    //   // alert('co-current flow');
+    //   this.ModelFlag = 0; // co-current flow
+    //   cra.style.color = 'blue';
+    //   cla.style.color = 'orange';
+    //   cra.innerHTML = '&larr;';
+    //   cla.innerHTML = '&larr;';
+    // } else {
+    //   // alert('counter-current flow');
+    //   this.ModelFlag = 1; // counter-current flow
+    //   cra.style.color = 'orange';
+    //   cla.style.color = 'blue';
+    //   cra.innerHTML = '&rarr;';
+    //   cla.innerHTML = '&rarr;';
+    // }
 
-    // check input fields for new values
-    // function getInputValue() is defined in file process_interface.js
-    // getInputValue(unit index in processUnits, var index in input arrays)
-    var unum = this.unitIndex;
-    this.TinHot = getInputValue(unum, 0);
-    this.TinCold = getInputValue(unum, 1);
-    this.FlowHot = getInputValue(unum, 2);
-    this.FlowCold = getInputValue(unum, 3);
-    this.CpHot = getInputValue(unum, 4);
-    this.CpCold = getInputValue(unum, 5);
-    this.Ucoef = getInputValue(unum, 6);
-    this.Area = getInputValue(unum, 7);
-    this.Diam = getInputValue(unum, 8);
+    // // ******* DEACTIVATE FOR COUPLING TO REACTOR ********
+    // // check input fields for new values
+    // // function getInputValue() is defined in file process_interface.js
+    // // getInputValue(unit index in processUnits, var index in input arrays)
+    // var unum = this.unitIndex;
+    // this.TinHot = getInputValue(unum, 0);
+    // this.TinCold = getInputValue(unum, 1);
+    // this.FlowHot = getInputValue(unum, 2);
+    // this.FlowCold = getInputValue(unum, 3);
+    // this.CpHot = getInputValue(unum, 4);
+    // this.CpCold = getInputValue(unum, 5);
+    // this.Ucoef = getInputValue(unum, 6);
+    // this.Area = getInputValue(unum, 7);
+    // this.Diam = getInputValue(unum, 8);
 
+    // // ******* DEACTIVATE FOR COUPLING TO REACTOR ********
+    // // ******* DO THIS IN REACTOR UNIT ********
     // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
     // outlet T's not defined on first entry into page
     // but do not do full updateDisplay
