@@ -276,7 +276,7 @@ processUnits[0] = {
     this.dataInputs[v] = 'input_field_DelH';
     this.dataUnits[v] = 'kJ/mol';
     this.dataMin[v] = -200;
-    this.dataMax[v] = 200;
+    this.dataMax[v] = 0; // *** for adiabatic RXR + HX only want exothermic, < 0
     this.dataInitial[v] = -125;
     this.DelH = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.DelH; // current input value for reporting
@@ -311,8 +311,8 @@ processUnits[0] = {
     this.Flowrate = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Flowrate; // current input value for reporting
     //
+    // *** WHEN RXR COUPLED TO HX, THIS IS Tin TO COLD SIDE HEAT EXCHANGER ***
     v = 6;
-    // **** WHEN RXR COUPLED TO HX, THIS IS Tin TO COLD SIDE HEAT EXCHANGER ***
     this.dataHeaders[v] = 'Tin'; // TinHX
     this.dataInputs[v] = 'input_field_Tin';
     this.dataUnits[v] = 'K';
@@ -322,6 +322,7 @@ processUnits[0] = {
     this.TinHX = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.TinHX; // current input value for reporting
     //
+    // *** WHEN RXR COUPLED TO HX, THIS IS UA of HEAT EXCHANGER ***
     v = 7;
     this.dataHeaders[v] = 'UAcoef';
     // NOTE: dataInputs example where field ID name differs from variable name
@@ -333,6 +334,7 @@ processUnits[0] = {
     this.UAcoef = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.UAcoef; // current input value for reporting
     //
+    // *** Tjacket not used for adiabatic reactor coupled to heat exch ***
     v = 8;
     this.dataHeaders[v] = 'Tjacket';
     this.dataInputs[v] = 'input_field_Tjacket';
@@ -346,7 +348,10 @@ processUnits[0] = {
     // END OF INPUT VARS
     // record number of input variables, VarCount
     // used, e.g., in copy data to table in _plotter.js
-    this.VarCount = v;
+
+    // *** CHANGE FROM = v TO = v-1 FOR ADIABATIC RXR COUPLED TO HX ***
+    this.VarCount = v-1;
+
     //
     // OUTPUT VARS
     //
@@ -362,6 +367,19 @@ processUnits[0] = {
     this.dataMin[v] = 0;
     this.dataMax[v] = this.dataMax[4]; // [4] is Cain
     //
+
+    // XXX TEST - copy this from reset
+    // *** heat exchanger needs reactor outlet T for HX hot inlet T ***
+    for (k = 0; k <= this.numNodes; k += 1) {
+      // **** CHANGE WHEN RXR COUPLED TO HX ****
+      this.Trxr[k] = this.dataInitial[6]; // [6] is TinHX
+      this.TrxrNew[k] = this.dataInitial[6]; // [6] is TinHX
+      // this.Trxr[k] = this.dataInitial[8]; // [8] is Tjacket
+      // this.TrxrNew[k] = this.dataInitial[8]; // [8] is Tjacket
+      this.Ca[k] = 0;
+      this.CaNew[k] = 0;
+    }
+
   }, // END of initialize()
 
   reset : function() {
@@ -489,39 +507,42 @@ processUnits[0] = {
     // calc adiabatic delta T, positive for negative H (exothermic)
     var adiabDeltaT = -this.DelH * this.Cain / this.densFluid / this.CpFluid;
 
-    // calc max possible T
-    if(this.DelH < 0) {
-      // exothermic
-      if (this.Tjacket > this.Tin) {
-        this.dataMax[9] = this.Tjacket + adiabDeltaT; // [9] is Trxr
-      } else {
-        this.dataMax[9] = this.Tin + adiabDeltaT;
-      }
-    } else {
-      // endothermic
-      if (this.Tjacket > this.Tin) {
-        this.dataMax[9] = this.Tjacket;
-      } else {
-        this.dataMax[9] = this.Tin;
-      }
-    }
-
-    // calc min possible T
-    if(this.DelH > 0) {
-      // endothermic
-      if (this.Tjacket < this.Tin) {
-        this.dataMin[9] = this.Tjacket + adiabDeltaT; // [9] is Trxr
-      } else {
-        this.dataMin[9] = this.Tin + adiabDeltaT;
-      }
-    } else {
-      // exothermic
-      if (this.Tjacket < this.Tin) {
-        this.dataMin[9] = this.Tjacket;
-      } else {
-        this.dataMin[9] = this.Tin;
-      }
-    }
+    // *** CHANGE MIN-MAX T FOR ADIABATIC REACTOR ***
+    this.dataMax[9] = this.Tin + adiabDeltaT;
+    this.dataMax[9] = this.Tin;
+    // // calc max possible T
+    // if(this.DelH < 0) {
+    //   // exothermic
+    //   if (this.Tjacket > this.Tin) {
+    //     this.dataMax[9] = this.Tjacket + adiabDeltaT; // [9] is Trxr
+    //   } else {
+    //     this.dataMax[9] = this.Tin + adiabDeltaT;
+    //   }
+    // } else {
+    //   // endothermic
+    //   if (this.Tjacket > this.Tin) {
+    //     this.dataMax[9] = this.Tjacket;
+    //   } else {
+    //     this.dataMax[9] = this.Tin;
+    //   }
+    // }
+    //
+    // // calc min possible T
+    // if(this.DelH > 0) {
+    //   // endothermic
+    //   if (this.Tjacket < this.Tin) {
+    //     this.dataMin[9] = this.Tjacket + adiabDeltaT; // [9] is Trxr
+    //   } else {
+    //     this.dataMin[9] = this.Tin + adiabDeltaT;
+    //   }
+    // } else {
+    //   // exothermic
+    //   if (this.Tjacket < this.Tin) {
+    //     this.dataMin[9] = this.Tjacket;
+    //   } else {
+    //     this.dataMin[9] = this.Tin;
+    //   }
+    // }
 
     // adjust axis of profile plot
     plotArrays['plotFlag'][0] = 0;  // so axes will refresh
@@ -537,7 +558,10 @@ processUnits[0] = {
 
     // also update ONLY inlet values at inlet of reactor in case sim is paused
     // but do not do full updateDisplay
-    document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
+
+    // *** deactivate since inlet to reactor isn't directly affected by UI update ***
+    // document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
+
     document.getElementById(this.displayReactorLeftConc).innerHTML = this.Cain.toFixed(1);
 
     // residence time used for timing checks for steady state
@@ -578,7 +602,7 @@ processUnits[0] = {
     //
     // The following TRY-CATCH structures provide for unit independence
     // such that when input doesn't exist, you get "initial" value
-
+    //
     // try {
     // //   let tmpFunc = new Function("return " + this.inputPV + ";");
     // //   this.PV = tmpFunc();
@@ -592,7 +616,7 @@ processUnits[0] = {
     // //   this.PV = this.initialPV;
     // }
 
-    // GET REACTOR INLET T FROM COLD OUT OF HEAT EXCHANGER
+    // *** GET REACTOR INLET T FROM COLD OUT OF HEAT EXCHANGER ***
     this.Tin = processUnits[1]['Tcold'][0];
 
   },
@@ -710,7 +734,10 @@ processUnits[0] = {
 
     var n = 0; // used as index
 
-    document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
+    // XXX *** change next line when rxr + hx - but maybe do this to regular rxr? 
+    // document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
+    document.getElementById(this.displayReactorLeftT).innerHTML = this.Trxr[0].toFixed(1) + ' K';
+
     document.getElementById(this.displayReactorRightT).innerHTML = this.Trxr[this.numNodes].toFixed(1) + ' K';
 
     document.getElementById(this.displayReactorLeftConc).innerHTML = this.Cain.toFixed(1);
@@ -957,6 +984,15 @@ processUnits[1] = {
     this.dataMin[v] = this.dataMin[1]; // [1] is TinCold
     this.dataMax[v] = this.dataMax[0]; // [0] is TinHot
     //
+
+    // // XXX TEST - may need when HX coupled to RXR
+    // for (k = 0; k <= this.numNodes; k += 1) {
+    //   this.Thot[k] = this.TinCold;
+    //   this.ThotNew[k] = this.TinCold;
+    //   this.Tcold[k] = this.TinCold;
+    //   this.TcoldNew[k] = this.TinCold;
+    // }
+
   }, // END of initialize()
 
   reset : function() {
@@ -1112,16 +1148,18 @@ processUnits[1] = {
     // update display of tube length and Reynolds number
 
     // from Area and Diam inputs & specify cylindrical tube
-    // can compute Length and Volume
+    // can compute Length of heat exchanger
     var Length = this.Area / this.Diam / Math.PI;
-    var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
 
-    document.getElementById(this.displayLength).innerHTML = 'L (m) = ' + Length.toFixed(1);
+    // *** deactivate for reactor coupled to heat exchanger ***
+    // document.getElementById(this.displayLength).innerHTML = 'L (m) = ' + Length.toFixed(1);
     // note use .toFixed(n) method of object to round number to n decimal points
 
     // note Re is dimensionless Reynolds number in hot flow tube
     var Re = this.FlowHot / this.FluidDensity / this.FluidKinematicViscosity * 4 / Math.PI / this.Diam;
-    document.getElementById(this.displayReynoldsNumber).innerHTML = 'Re<sub> hot-tube</sub> = ' + Re.toFixed(0);
+
+    // *** deactivate for reactor coupled to heat exchanger ***
+    // document.getElementById(this.displayReynoldsNumber).innerHTML = 'Re<sub> hot-tube</sub> = ' + Re.toFixed(0);
 
     // compute axial dispersion coefficient for turbulent flow
     // Dispersion coefficient correlation for Re > 2000 from Wen & Fan as shown in
@@ -1204,7 +1242,8 @@ processUnits[1] = {
     this.TinCold = processUnits[0].TinHX;
     this.TinHot = processUnits[0]['Trxr'][nn];
     this.FlowHot = processUnits[0].Flow; // m3/s in reactor
-    // reactor Flow is m3/s, whereas heat exchanger flow is kg/s
+
+    // *** reactor Flow is m3/s, whereas heat exchanger flow is kg/s ***
     this.FlowHot = this.FluidDensity * this.FlowHot; // kg/s = kg/m3 * m3/s
     this.FlowCold = this.FlowHot;
 
@@ -1217,11 +1256,10 @@ processUnits[1] = {
     // STATE VARIABLE
 
     // from cylindrical outer Area and Diam inputs & specify cylindrical tube for hot flow
-    // can compute Length and Volume
+    // can compute Length of exhanger
     var Length = this.Area / this.Diam / Math.PI;
 
-    // XXX check later for different Volume, Ax and Veloc for hot and cold
-    var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
+    // XXX check later for different Ax and Veloc for hot and cold
     var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
     var VelocHot = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
     // XXX assume cold uses same flow cross-sectional area as hot
