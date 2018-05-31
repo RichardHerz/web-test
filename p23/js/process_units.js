@@ -225,7 +225,7 @@ processUnits[0] = {
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for time step in this unit's updateInputs method
-  unitStepRepeats : 100,
+  unitStepRepeats : 1, // XXX
   unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
 
   // WARNING: IF INCREASE NUM NODES IN HEAT EXCHANGER BY A FACTOR THEN HAVE TO
@@ -238,7 +238,7 @@ processUnits[0] = {
 
   // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
   // WARNING: numNodes is accessed in process_plot_info.js
-  numNodes : 200,
+  numNodes : 10, // XXX
 
   // also see simParams.ssFlag and simParams.SScheck
   SScheck : 0, // for saving steady state check number of array end values
@@ -254,11 +254,11 @@ processUnits[0] = {
     //
     let v = 0;
     this.dataHeaders[v] = 'Kf300';
-    this.dataInputs[v] = 'input_field_KF300';
+    this.dataInputs[v] = 'input_field_Kf300';
     this.dataUnits[v] = 'm3/kg/s';
     this.dataMin[v] = 0;
     this.dataMax[v] = 10;
-    this.dataInitial[v] = 1.0e-7;
+    this.dataInitial[v] = 1.0e-12;
     this.Kf300 = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Kf300; // current input value for reporting
     //
@@ -268,7 +268,7 @@ processUnits[0] = {
     this.dataUnits[v] = 'kJ/mol';
     this.dataMin[v] = 0;
     this.dataMax[v] = 200;
-    this.dataInitial[v] = 100;
+    this.dataInitial[v] = 0;
     this.Ea = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Ea; // current input value for reporting
     //
@@ -319,7 +319,7 @@ processUnits[0] = {
     this.dataUnits[v] = 'K';
     this.dataMin[v] = 250;
     this.dataMax[v] = 400;
-    this.dataInitial[v] = 350;
+    this.dataInitial[v] = 300;
     this.TinHX = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.TinHX; // current input value for reporting
     //
@@ -331,7 +331,7 @@ processUnits[0] = {
     this.dataUnits[v] = 'kW/kg/K';
     this.dataMin[v] = 0;
     this.dataMax[v] = 100;
-    this.dataInitial[v] = 0.1;
+    this.dataInitial[v] = 0;
     this.UAcoef = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.UAcoef; // current input value for reporting
     //
@@ -371,13 +371,10 @@ processUnits[0] = {
 
     // *** heat exchanger needs reactor outlet T for HX hot inlet T ***
     for (k = 0; k <= this.numNodes; k += 1) {
-      // **** CHANGE WHEN RXR COUPLED TO HX ****
       this.Trxr[k] = this.dataInitial[6]; // [6] is TinHX
       this.TrxrNew[k] = this.dataInitial[6]; // [6] is TinHX
-      // this.Trxr[k] = this.dataInitial[8]; // [8] is Tjacket
-      // this.TrxrNew[k] = this.dataInitial[8]; // [8] is Tjacket
-      this.Ca[k] = 0;
-      this.CaNew[k] = 0;
+      this.Ca[k] = this.dataInitial[4]; // [4] is Cain
+      this.CaNew[k] = this.dataInitial[4]; // [4] is Cain
     }
 
   }, // END of initialize()
@@ -400,20 +397,15 @@ processUnits[0] = {
     // **** CHANGE WHEN REACTOR COUPLED TO HEAT EXCHANGER ****
     document.getElementById(this.displayReactorLeftT).innerHTML = this.TinHX.toFixed(1) + ' K';
     document.getElementById(this.displayReactorRightT).innerHTML = this.TinHX.toFixed(1) + ' K';
-    // document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
-    // document.getElementById(this.displayReactorRightT).innerHTML = this.Tjacket.toFixed(1) + ' K';
-
     document.getElementById(this.displayReactorLeftConc).innerHTML = this.Cain.toFixed(1);
-    document.getElementById(this.displayReactorRightConc).innerHTML = 0.0 + ' mol/m<sup>3</sup>';
+    document.getElementById(this.displayReactorRightConc).innerHTML = this.Cain.toFixed(1) + ' mol/m<sup>3</sup>';
 
     for (k = 0; k <= this.numNodes; k += 1) {
       // **** CHANGE WHEN RXR COUPLED TO HX ****
       this.Trxr[k] = this.dataInitial[6]; // [6] is TinHX
       this.TrxrNew[k] = this.dataInitial[6]; // [6] is TinHX
-      // this.Trxr[k] = this.dataInitial[8]; // [8] is Tjacket
-      // this.TrxrNew[k] = this.dataInitial[8]; // [8] is Tjacket
-      this.Ca[k] = 0;
-      this.CaNew[k] = 0;
+      this.Ca[k] = this.dataInitial[4]; // [4] is Cain
+      this.CaNew[k] = this.dataInitial[4]; // [4] is Cain
     }
 
     // initialize profile data array - must follow function initPlotData in this file
@@ -508,41 +500,22 @@ processUnits[0] = {
     var adiabDeltaT = -this.DelH * this.Cain / this.densFluid / this.CpFluid;
 
     // *** CHANGE MIN-MAX T FOR ADIABATIC REACTOR ***
-    this.dataMax[9] = this.Tin + adiabDeltaT;
-    this.dataMin[9] = this.Tin + adiabDeltaT;
-    // // calc max possible T
-    // if(this.DelH < 0) {
-    //   // exothermic
-    //   if (this.Tjacket > this.Tin) {
-    //     this.dataMax[9] = this.Tjacket + adiabDeltaT; // [9] is Trxr
-    //   } else {
-    //     this.dataMax[9] = this.Tin + adiabDeltaT;
-    //   }
-    // } else {
-    //   // endothermic
-    //   if (this.Tjacket > this.Tin) {
-    //     this.dataMax[9] = this.Tjacket;
-    //   } else {
-    //     this.dataMax[9] = this.Tin;
-    //   }
-    // }
-    //
-    // // calc min possible T
-    // if(this.DelH > 0) {
-    //   // endothermic
-    //   if (this.Tjacket < this.Tin) {
-    //     this.dataMin[9] = this.Tjacket + adiabDeltaT; // [9] is Trxr
-    //   } else {
-    //     this.dataMin[9] = this.Tin + adiabDeltaT;
-    //   }
-    // } else {
-    //   // exothermic
-    //   if (this.Tjacket < this.Tin) {
-    //     this.dataMin[9] = this.Tjacket;
-    //   } else {
-    //     this.dataMin[9] = this.Tin;
-    //   }
-    // }
+    // calc max possible T
+    if(this.DelH < 0) {
+      // exothermic
+      this.dataMax[9] = this.TinHX + adiabDeltaT;
+    } else {
+      // endothermic
+      this.dataMax[9] = this.TinHX;
+    }
+    // calc min possible T
+    if(this.DelH > 0) {
+      // endothermic
+      this.dataMin[9] = this.TinHX + adiabDeltaT;
+    } else {
+      // exothermic
+      this.dataMin[9] = this.TinHX;
+    }
 
     // adjust axis of profile plot
     plotArrays['plotFlag'][0] = 0;  // so axes will refresh
@@ -563,6 +536,7 @@ processUnits[0] = {
     // document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
 
     document.getElementById(this.displayReactorLeftConc).innerHTML = this.Cain.toFixed(1);
+    document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1);
 
     // residence time used for timing checks for steady state
     // use this for now but should consider voidFrac and Cp's...
@@ -665,7 +639,9 @@ processUnits[0] = {
       // do node at inlet end
       n = 0;
 
+      // TrxrN = this.TinHX; // XXX TEST
       TrxrN = this.Tin;
+
       CaN = this.Cain;
 
       this.TrxrNew[n] = TrxrN;
@@ -684,9 +660,9 @@ processUnits[0] = {
         CaN = this.Ca[n] + dCaDT * this.unitTimeStep;
         TrxrN = this.Trxr[n] + dTrxrDT * this.unitTimeStep;
 
-        // CONSTRAIN TO BE IN BOUND
-        if (TrxrN > this.dataMax[9]) {TrxrN = this.dataMax[9];} // [9] is Trxr
-        if (TrxrN < this.dataMin[9]) {TrxrN = this.dataMin[9];}
+        // XXX // CONSTRAIN TO BE IN BOUND
+        // if (TrxrN > this.dataMax[9]) {TrxrN = this.dataMax[9];} // [9] is Trxr
+        // if (TrxrN < this.dataMin[9]) {TrxrN = this.dataMin[9];}
         if (CaN < 0.0) {CaN = 0.0;}
         if (CaN > this.Cain) {CaN = this.Cain;}
 
@@ -709,9 +685,9 @@ processUnits[0] = {
       CaN = this.Ca[n] + dCaDT * this.unitTimeStep;
       TrxrN = this.Trxr[n] + dTrxrDT * this.unitTimeStep;
 
-      // CONSTRAIN TO BE IN BOUND
-      if (TrxrN > this.dataMax[9]) {TrxrN = this.dataMax[9];} // [9] is Trxr
-      if (TrxrN < this.dataMin[9]) {TrxrN = this.dataMin[9];}
+      // XXX // CONSTRAIN TO BE IN BOUND
+      // if (TrxrN > this.dataMax[9]) {TrxrN = this.dataMax[9];} // [9] is Trxr
+      // if (TrxrN < this.dataMin[9]) {TrxrN = this.dataMin[9];}
       if (CaN < 0.0) {CaN = 0.0;}
       if (CaN > this.Cain) {CaN = this.Cain;}
 
@@ -723,6 +699,11 @@ processUnits[0] = {
       // copy new to current
       this.Trxr = this.TrxrNew;
       this.Ca = this.CaNew;
+
+      // XXX
+      // for (n = 0; n <= this.numNodes; n += 1) {
+      //   alert('this.Ca[' +n+ '] & this.Trxr[' +n+ '] = ' + this.Ca[n] + ', ' + this.Trxr[n]);
+      // }
 
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 
@@ -848,7 +829,7 @@ processUnits[1] = {
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for time step in this unit's updateInputs method
-  unitStepRepeats : 1,
+  unitStepRepeats : 1, // XXX
   unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
 
   // WARNING: IF INCREASE NUM NODES IN HEAT EXCHANGER BY A FACTOR THEN HAVE TO
@@ -862,7 +843,7 @@ processUnits[1] = {
 
   // WARNING: have to check for any changes to simTimeStep and simStepRepeats if change numNodes
   // WARNING: numNodes is accessed in process_plot_info.js
-  numNodes : 200,
+  numNodes : 10, // XXX
   // NOTE 20180427: discrepancy between steady-state Qcold and Qhot (from Qcold/Qhot)
   // from array end values with dispersion decreases as number of nodes increases
   // but shows same output field T's to one decimal place for 200-800 nodes
@@ -885,7 +866,7 @@ processUnits[1] = {
     this.dataUnits[v] = 'K';
     this.dataMin[v] = 300;
     this.dataMax[v] = 370;
-    this.dataInitial[v] = 360;
+    this.dataInitial[v] = 300;
     this.TinHot = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.TinHot; // current input value for reporting
     //
@@ -895,7 +876,7 @@ processUnits[1] = {
     this.dataUnits[v] = 'K';
     this.dataMin[v] = 300;
     this.dataMax[v] = 370;
-    this.dataInitial[v] = 310;
+    this.dataInitial[v] = 300;
     this.TinCold =  this.dataInitial[v];
     this.dataValues[v] = this.TinCold;
     //
@@ -945,7 +926,7 @@ processUnits[1] = {
     this.dataUnits[v] =  'kW/m2/K';
     this.dataMin[v] = 0;
     this.dataMax[v] = 10;
-    this.dataInitial[v] = 0;
+    this.dataInitial[v] = 10;
     this.Ucoef = this.dataInitial[v];
     this.dataValues[v] = this.Ucoef;
     //
@@ -972,7 +953,8 @@ processUnits[1] = {
     // END OF INPUT VARS
     // record number of input variables, VarCount
     // used, e.g., in copy data to table in _plotter.js
-    this.VarCount = v;
+    // *** FOR HX COUPLED TO RXR, change from = v to = 5
+    this.VarCount = 5;
     //
     // OUTPUT VARS
     //
@@ -989,13 +971,16 @@ processUnits[1] = {
     this.dataMax[v] = this.dataMax[0]; // [0] is TinHot
     //
 
-    // // XXX TEST - may need when HX coupled to RXR
-    // for (k = 0; k <= this.numNodes; k += 1) {
-    //   this.Thot[k] = this.TinCold;
-    //   this.ThotNew[k] = this.TinCold;
-    //   this.Tcold[k] = this.TinCold;
-    //   this.TcoldNew[k] = this.TinCold;
-    // }
+    // *** FOR HX COUPLED TO RXR ***
+    // processUnits[0] initializes before this processUnits[1]
+    for (k = 0; k <= this.numNodes; k += 1) {
+      this.Thot[k] = processUnits[0].TinHX;
+      this.ThotNew[k] = processUnits[0].TinHX;
+      this.Tcold[k] = processUnits[0].TinHX;
+      this.TcoldNew[k] = processUnits[0].TinHX;
+      // *** FOR HX COUPLED TO RXR ***
+      this.FlowHot = processUnits[0].Flowrate;
+    }
 
   }, // END of initialize()
 
@@ -1011,12 +996,16 @@ processUnits[1] = {
     simParams.ssFlag = false;
     this.SScheck = 0;
 
-    for (k = 0; k <= this.numNodes; k += 1) {
-      this.Thot[k] = this.TinCold;
-      this.ThotNew[k] = this.TinCold;
-      this.Tcold[k] = this.TinCold;
-      this.TcoldNew[k] = this.TinCold;
-    }
+    // *** NEW FOR ADIABATIC RXR + HX ***
+    // *** GET INFO FROM REACTOR ***
+    // processUnits[0] initializes before this processUnits[1]
+    let nn = processUnits[0].numNodes;
+    this.TinCold = processUnits[0].TinHX;
+    this.TinHot = processUnits[0]['Trxr'][nn];
+    this.FlowHot = processUnits[0].Flowrate; // m3/s in reactor
+    // *** reactor Flow is m3/s, whereas heat exchanger flow is kg/s ***
+    this.FlowHot = this.FluidDensity * this.FlowHot; // kg/s = kg/m3 * m3/s
+    this.FlowCold = this.FlowHot;
 
     // initialize profile data array - must follow function initPlotData in this file
     // initPlotData(numProfileVars,numProfilePts)
@@ -1042,10 +1031,8 @@ processUnits[1] = {
       this.profileData[0][k][0] = kn;
       this.profileData[1][k][0] = kn;
       // y-axis values
-      // for heat exchanger this is dimensionless T
-      // (T - TinCold) / (TinHot - TinCold)
-      this.profileData[0][k][1] = 0;
-      this.profileData[1][k][1] = 0;
+      this.profileData[0][k][1] = processUnits[0].TinHX;
+      this.profileData[1][k][1] = processUnits[0].TinHX;
     }
 
   }, // end reset
@@ -1131,14 +1118,15 @@ processUnits[1] = {
     // outlet T's not defined on first entry into page
     // but do not do full updateDisplay
 
+    // *** NEW FOR ADIABATIC RXR + HX ***
     // *** GET INFO FROM REACTOR ***
-    let nn = processUnits[0]['numNodes'];
-    this.TinCold = processUnits[0].TinHX;
-    this.TinHot = processUnits[0]['Trxr'][nn];
-    this.FlowHot = processUnits[0].Flow; // m3/s in reactor
-    // reactor Flow is m3/s, whereas heat exchanger flow is kg/s
-    this.FlowHot = this.FluidDensity * this.FlowHot; // kg/s = kg/m3 * m3/s
-    this.FlowCold = this.FlowHot;
+  let nn = processUnits[0].numNodes;
+  this.TinCold = processUnits[0].TinHX;
+  this.TinHot = processUnits[0]['Trxr'][nn];
+  this.FlowHot = processUnits[0].Flowrate; // m3/s in reactor
+  // *** reactor Flow is m3/s, whereas heat exchanger flow is kg/s ***
+  this.FlowHot = this.FluidDensity * this.FlowHot; // kg/s = kg/m3 * m3/s
+  this.FlowCold = this.FlowHot;
 
     document.getElementById(this.displayHotRightT).innerHTML = this.TinHot.toFixed(1) + ' K';
     switch(this.ModelFlag) {
@@ -1196,25 +1184,25 @@ processUnits[1] = {
     // // residence time used for timing checks for steady state
     // this.residenceTime = Length / VelocHot;
 
-    // UPDATE UNIT TIME STEP AND UNIT REPEATS
-
     // *** DEACTIVATE FOR HX COUPLED TO RXR ***
-    this.unitTimeStep = 0.1 * simParams.simTimeStep; // XXX NEED TO CHECK THIS
-    // // FIRST, compute spaceTime = residence time between two nodes in hot tube, also
-    // //                          = space time of equivalent single mixing cell
-    // var spaceTime = (Length / this.numNodes) / VelocHot; // (s)
+    // // UPDATE UNIT TIME STEP AND UNIT REPEATS
     //
-    // // SECOND, estimate unitTimeStep
-    // // do NOT change simParams.simTimeStep here
-    // this.unitTimeStep = spaceTime / 15;
-
-    // THIRD, get integer number of unitStepRepeats
-    this.unitStepRepeats = Math.round(simParams.simTimeStep / this.unitTimeStep);
-    // min value of unitStepRepeats is 1 or get divide by zero error
-    if (this.unitStepRepeats <= 0) {this.unitStepRepeats = 1;}
-
-    // FOURTH and finally, recompute unitTimeStep with integer number unitStepRepeats
-    this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
+    // this.unitTimeStep = 0.1 * simParams.simTimeStep; // XXX NEED TO CHECK THIS
+    // // // FIRST, compute spaceTime = residence time between two nodes in hot tube, also
+    // // //                          = space time of equivalent single mixing cell
+    // // var spaceTime = (Length / this.numNodes) / VelocHot; // (s)
+    // //
+    // // // SECOND, estimate unitTimeStep
+    // // // do NOT change simParams.simTimeStep here
+    // // this.unitTimeStep = spaceTime / 15;
+    //
+    // // THIRD, get integer number of unitStepRepeats
+    // this.unitStepRepeats = Math.round(simParams.simTimeStep / this.unitTimeStep);
+    // // min value of unitStepRepeats is 1 or get divide by zero error
+    // if (this.unitStepRepeats <= 0) {this.unitStepRepeats = 1;}
+    //
+    // // FOURTH and finally, recompute unitTimeStep with integer number unitStepRepeats
+    // this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
   }, // end of updateUIparams()
 
@@ -1246,12 +1234,12 @@ processUnits[1] = {
     // //   this.PV = this.initialPV;
     // }
 
+    // *** NEW FOR ADIABATIC RXR + HX ***
     // *** GET INFO FROM REACTOR ***
-    let nn = processUnits[0]['numNodes'];
+    let nn = processUnits[0].numNodes;
     this.TinCold = processUnits[0].TinHX;
     this.TinHot = processUnits[0]['Trxr'][nn];
-    this.FlowHot = processUnits[0].Flow; // m3/s in reactor
-
+    this.FlowHot = processUnits[0].Flowrate; // m3/s in reactor
     // *** reactor Flow is m3/s, whereas heat exchanger flow is kg/s ***
     this.FlowHot = this.FluidDensity * this.FlowHot; // kg/s = kg/m3 * m3/s
     this.FlowCold = this.FlowHot;
@@ -1264,14 +1252,23 @@ processUnits[1] = {
     // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
     // STATE VARIABLE
 
+      // *** NEW FOR ADIABATIC RXR + HX ***
+      // *** GET INFO FROM REACTOR ***
+    let nn = processUnits[0].numNodes;
+    this.TinCold = processUnits[0].TinHX;
+    this.TinHot = processUnits[0]['Trxr'][nn];
+    this.FlowHot = processUnits[0].Flowrate; // m3/s in reactor
+    // *** reactor Flow is m3/s, whereas heat exchanger flow is kg/s ***
+    this.FlowHot = this.FluidDensity * this.FlowHot; // kg/s = kg/m3 * m3/s
+    this.FlowCold = this.FlowHot;
+
     // *** NEW FOR ADIABATIC RXR + HX ***
-    // we also set dispersion coeffic to zero
-    // get UA from reactor
-    var UAcoef = processUnits[0].UAcoef;
-    // pick arbitrary U and Diam so can get Length and Ax needed below
-    this.Ucoef = 1; // arbitrary
+    // WARNING: UAcoef can be zero, which interferes with HX method of getting Length
+    // pick arbitrary Diam and Area so can get Length and Ax needed below
     this.Diam = 0.1; // arbitrary
-    this.Area = UAcoef / this.Ucoef;
+    this.Area = 10; // arbitrary
+    var UAcoef = processUnits[0].UAcoef;
+    this.Ucoef = UAcoef / this.Area;
 
     // from cylindrical outer Area and Diam inputs & specify cylindrical tube for hot flow
     // can compute Length of exhanger
@@ -1292,7 +1289,7 @@ processUnits[1] = {
     var DispHot = this.DispCoef; // (m2/s), axial dispersion coefficient for turbulent flow
 
     // *** FOR RXR + HX USE DISP = 0 ***
-    DispHot = 0.0 // FOR TESTING
+    DispHot = 0.0 // XXX FOR TESTING
 
     var DispCold = DispHot; // XXX check later
     var dz = Length / this.numNodes; // (m), distance between nodes
@@ -1356,11 +1353,17 @@ processUnits[1] = {
         ThotN = ThotN + dThotDT * this.unitTimeStep;
         TcoldN = TcoldN + dTcoldDT * this.unitTimeStep;
 
-        // CONSTRAIN T's TO BE IN BOUND
-        if (ThotN > maxTinHot) {ThotN = maxTinHot;}
-        if (ThotN < minTinCold) {ThotN = minTinCold;}
-        if (TcoldN > maxTinHot) {TcoldN = maxTinHot;}
-        if (TcoldN < minTinCold) {TcoldN = minTinCold;}
+        // XXX // CONSTRAIN T's TO BE IN BOUND
+        // if (ThotN > maxTinHot) {ThotN = maxTinHot;}
+        // if (ThotN < minTinCold) {ThotN = minTinCold;}
+        // if (TcoldN > maxTinHot) {TcoldN = maxTinHot;}
+        // if (TcoldN < minTinCold) {TcoldN = minTinCold;}
+
+        // // XXX // CONSTRAIN T's TO BE IN BOUND
+        // if (ThotN > 400) {ThotN = 400;}
+        // if (ThotN < 300) {ThotN = 300;}
+        // if (TcoldN > 400) {TcoldN = 400;}
+        // if (TcoldN < 300) {TcoldN = 300;}
 
         this.ThotNew[n] = ThotN;
         this.TcoldNew[n] = TcoldN;
