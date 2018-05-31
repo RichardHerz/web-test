@@ -318,10 +318,7 @@ function copyData(plotIndex){
     for (v = 0; v <= numVar; v += 1) { // NOTE: <=
       tText += '&nbsp; &nbsp;' + processUnits[n]['dataHeaders'][v] + ' = '
               + processUnits[n]['dataValues'][v] + '&nbsp;'
-              + processUnits[n]['dataUnits'][v];
-      if (v < numVar) {
-        tText += '<br>';
-      }
+              + processUnits[n]['dataUnits'][v] + '<br>';
     }
   }
   tText += '</p>';

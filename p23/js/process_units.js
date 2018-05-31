@@ -160,7 +160,7 @@ var processUnits = new Object();
 processUnits[0] = {
   unitIndex : 0, // index of this unit as child in processUnits parent object
   // unitIndex used in this object's updateUIparams() method
-  name : 'Plug Flow Reactor',
+  name : 'Adiabatic Packed Bed PFR',
   //
   // USES OBJECT simParam
   //    simParams.simTimeStep, simParams.ssFlag
@@ -189,7 +189,8 @@ processUnits[0] = {
   Wcat : 0,
   Cain : 0,
   Flowrate : 0,
-  // **** WHEN RXR COUPLED TO HX, THIS IS Tin TO COLD SIDE HEAT EXCHANGER ***
+  // *** WHEN RXR COUPLED TO HX, THIS IS INLET T TO COLD SIDE HX ***
+  // *** WHEN RXR COUPLED TO HX, SEE Tin BELOW FOR RXR INLET T ***
   TinHX : 0, // inlet T to heat exchanger cold side
   UAcoef : 0,
   Tjacket : 0,
@@ -211,7 +212,7 @@ processUnits[0] = {
   TrxrNew : [], // 'New' hold intermediate values during updateState
   CaNew : [],
 
-  // define additional variables WHEN RXR COUPLED TO HX
+  // *** WHEN RXR COUPLED TO HX, Tin IS RXR INLET T ***
   // these will be filled with values in method initialize()
   // and updated in updateState()
   Tin : 0, //
@@ -276,7 +277,7 @@ processUnits[0] = {
     this.dataInputs[v] = 'input_field_DelH';
     this.dataUnits[v] = 'kJ/mol';
     this.dataMin[v] = -200;
-    this.dataMax[v] = 0; // *** for adiabatic RXR + HX only want exothermic, < 0
+    this.dataMax[v] = 200;
     this.dataInitial[v] = -125;
     this.DelH = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.DelH; // current input value for reporting
@@ -368,7 +369,6 @@ processUnits[0] = {
     this.dataMax[v] = this.dataMax[4]; // [4] is Cain
     //
 
-    // XXX TEST - copy this from reset
     // *** heat exchanger needs reactor outlet T for HX hot inlet T ***
     for (k = 0; k <= this.numNodes; k += 1) {
       // **** CHANGE WHEN RXR COUPLED TO HX ****
@@ -498,10 +498,10 @@ processUnits[0] = {
     this.TinHX = getInputValue(unum, 6);
     this.UAcoef = getInputValue(unum, 7);
 
-    // // ******* DEACTIVATE FOR ADIABATIC OPERATION ********
+    // // *** DEACTIVATE FOR ADIABATIC OPERATION ***
     // this.Tjacket = getInputValue(unum, 8);
 
-    // GET REACTOR INLET T FROM COLD OUT OF HEAT EXCHANGER
+    // *** GET REACTOR INLET T FROM COLD OUT OF HEAT EXCHANGER ***
     this.Tin = processUnits[1]['Tcold'][0];
 
     // calc adiabatic delta T, positive for negative H (exothermic)
@@ -509,7 +509,7 @@ processUnits[0] = {
 
     // *** CHANGE MIN-MAX T FOR ADIABATIC REACTOR ***
     this.dataMax[9] = this.Tin + adiabDeltaT;
-    this.dataMax[9] = this.Tin;
+    this.dataMin[9] = this.Tin + adiabDeltaT;
     // // calc max possible T
     // if(this.DelH < 0) {
     //   // exothermic
@@ -652,7 +652,11 @@ processUnits[0] = {
     var rxnCoef = densBed / voidFrac;
 
     var energyFlowCoef = this.Flowrate * this.densFluid * this.CpFluid / CpMean / dW;
-    var energyXferCoef = this.UAcoef / CpMean;
+
+    // *** FOR ADIABATIC RXR + HX, no heat transfer to rxr walls ***
+    var energyXferCoef = 0;
+    // var energyXferCoef = this.UAcoef / CpMean;
+
     var energyRxnCoef = this.DelH / CpMean;
 
     // this unit can take multiple steps within one outer main loop repeat step
@@ -734,7 +738,7 @@ processUnits[0] = {
 
     var n = 0; // used as index
 
-    // XXX *** change next line when rxr + hx - but maybe do this to regular rxr? 
+    // XXX *** change next line when rxr + hx - but maybe do this to regular rxr?
     // document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
     document.getElementById(this.displayReactorLeftT).innerHTML = this.Trxr[0].toFixed(1) + ' K';
 
@@ -1085,7 +1089,7 @@ processUnits[1] = {
     // reset SScheck checksum used to check for ss
     this.SScheck = 0;
 
-    // // ******* DEACTIVATE FOR COUPLING TO REACTOR ********
+    // // *** DEACTIVATE FOR HX COUPLED TO RXR ***
     // // RADIO BUTTONS & CHECK BOX
     // // at least for now, do not check existence of UI elements
     // // Model radio buttons
@@ -1108,7 +1112,7 @@ processUnits[1] = {
     //   cla.innerHTML = '&rarr;';
     // }
 
-    // // ******* DEACTIVATE FOR COUPLING TO REACTOR ********
+    // // *** DEACTIVATE FOR HX COUPLED TO RXR ***
     // // check input fields for new values
     // // function getInputValue() is defined in file process_interface.js
     // // getInputValue(unit index in processUnits, var index in input arrays)
@@ -1127,7 +1131,7 @@ processUnits[1] = {
     // outlet T's not defined on first entry into page
     // but do not do full updateDisplay
 
-    // ****** GET INFO FROM REACTOR *******
+    // *** GET INFO FROM REACTOR ***
     let nn = processUnits[0]['numNodes'];
     this.TinCold = processUnits[0].TinHX;
     this.TinHot = processUnits[0]['Trxr'][nn];
@@ -1151,24 +1155,26 @@ processUnits[1] = {
     // can compute Length of heat exchanger
     var Length = this.Area / this.Diam / Math.PI;
 
-    // *** deactivate for reactor coupled to heat exchanger ***
+    // *** DEACTIVATE FOR HX COUPLED TO RXR ***
     // document.getElementById(this.displayLength).innerHTML = 'L (m) = ' + Length.toFixed(1);
     // note use .toFixed(n) method of object to round number to n decimal points
 
     // note Re is dimensionless Reynolds number in hot flow tube
     var Re = this.FlowHot / this.FluidDensity / this.FluidKinematicViscosity * 4 / Math.PI / this.Diam;
 
-    // *** deactivate for reactor coupled to heat exchanger ***
+    // *** DEACTIVATE FOR HX COUPLED TO RXR ***
     // document.getElementById(this.displayReynoldsNumber).innerHTML = 'Re<sub> hot-tube</sub> = ' + Re.toFixed(0);
 
-    // compute axial dispersion coefficient for turbulent flow
-    // Dispersion coefficient correlation for Re > 2000 from Wen & Fan as shown in
-    // https://classes.engineering.wustl.edu/che503/Axial%20Dispersion%20Model%20Figures.pdf
-    // and
-    // https://classes.engineering.wustl.edu/che503/chapter%205.pdf
-    var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
-    var VelocHot = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
-    this.DispCoef = VelocHot * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
+    // *** DEACTIVATE FOR HX COUPLED TO RXR ***
+    this.DispCoef = 0;
+    // // compute axial dispersion coefficient for turbulent flow
+    // // Dispersion coefficient correlation for Re > 2000 from Wen & Fan as shown in
+    // // https://classes.engineering.wustl.edu/che503/Axial%20Dispersion%20Model%20Figures.pdf
+    // // and
+    // // https://classes.engineering.wustl.edu/che503/chapter%205.pdf
+    // var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
+    // var VelocHot = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
+    // this.DispCoef = VelocHot * this.Diam * (3.0e7/Math.pow(Re, 2.1) + 1.35/Math.pow(Re, 0.125)); // (m2/s)
 
     // NOTE: to see independent effect of DispCoef = 0, set heat transfer
     // coefficient U = 0, since heat exchange contributes to "spreading" of T's
@@ -1186,18 +1192,21 @@ processUnits[1] = {
     // for 200 nodes & default conditions as of 20190505, effDisp = 6e-4 (m2/s)
     // compared to this.DispCoef = four times higher at 25.6e-4 (m2/s)
 
-    // residence time used for timing checks for steady state
-    this.residenceTime = Length / VelocHot;
+    // *** DEACTIVATE FOR HX COUPLED TO RXR ***
+    // // residence time used for timing checks for steady state
+    // this.residenceTime = Length / VelocHot;
 
     // UPDATE UNIT TIME STEP AND UNIT REPEATS
 
-    // FIRST, compute spaceTime = residence time between two nodes in hot tube, also
-    //                          = space time of equivalent single mixing cell
-    var spaceTime = (Length / this.numNodes) / VelocHot; // (s)
-
-    // SECOND, estimate unitTimeStep
-    // do NOT change simParams.simTimeStep here
-    this.unitTimeStep = spaceTime / 15;
+    // *** DEACTIVATE FOR HX COUPLED TO RXR ***
+    this.unitTimeStep = 0.1 * simParams.simTimeStep; // XXX NEED TO CHECK THIS
+    // // FIRST, compute spaceTime = residence time between two nodes in hot tube, also
+    // //                          = space time of equivalent single mixing cell
+    // var spaceTime = (Length / this.numNodes) / VelocHot; // (s)
+    //
+    // // SECOND, estimate unitTimeStep
+    // // do NOT change simParams.simTimeStep here
+    // this.unitTimeStep = spaceTime / 15;
 
     // THIRD, get integer number of unitStepRepeats
     this.unitStepRepeats = Math.round(simParams.simTimeStep / this.unitTimeStep);
@@ -1237,7 +1246,7 @@ processUnits[1] = {
     // //   this.PV = this.initialPV;
     // }
 
-    // ****** GET INFO FROM REACTOR *******
+    // *** GET INFO FROM REACTOR ***
     let nn = processUnits[0]['numNodes'];
     this.TinCold = processUnits[0].TinHX;
     this.TinHot = processUnits[0]['Trxr'][nn];
@@ -1255,6 +1264,15 @@ processUnits[1] = {
     // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
     // STATE VARIABLE
 
+    // *** NEW FOR ADIABATIC RXR + HX ***
+    // we also set dispersion coeffic to zero
+    // get UA from reactor
+    var UAcoef = processUnits[0].UAcoef;
+    // pick arbitrary U and Diam so can get Length and Ax needed below
+    this.Ucoef = 1; // arbitrary
+    this.Diam = 0.1; // arbitrary
+    this.Area = UAcoef / this.Ucoef;
+
     // from cylindrical outer Area and Diam inputs & specify cylindrical tube for hot flow
     // can compute Length of exhanger
     var Length = this.Area / this.Diam / Math.PI;
@@ -1268,10 +1286,14 @@ processUnits[1] = {
     // note XferCoefHot = U * (wall area per unit length = pi * diam * L/L) / (rho * Cp * Ax)
     var XferCoefHot = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / this.CpHot / Ax;
     var XferCoefCold = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / this.CpCold / Ax;
+
     // Disp (m2/s) is axial dispersion coefficient for turbulent flow
     // this.DispCoef computed in updateUIparams()
     var DispHot = this.DispCoef; // (m2/s), axial dispersion coefficient for turbulent flow
-    // DispHot = 0.0 // FOR TESTING
+
+    // *** FOR RXR + HX USE DISP = 0 ***
+    DispHot = 0.0 // FOR TESTING
+
     var DispCold = DispHot; // XXX check later
     var dz = Length / this.numNodes; // (m), distance between nodes
     var VelocHotOverDZ = VelocHot / dz; // precompute to save time in loop
