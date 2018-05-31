@@ -30,6 +30,14 @@
   window.onload = openThisLab; // can NOT use = openThisLab();
 
   function openThisLab() {
+
+    // XXX TEST 
+    // reset variables in each process unit
+    var numUnits = Object.keys(processUnits).length; // number of units
+    for (n = 0; n < numUnits; n += 1) {
+      processUnits[n].reset();
+    }
+
     // initialize variables in each process unit
     var numUnits = Object.keys(processUnits).length; // number of units
     for (n = 0; n < numUnits; n += 1) {

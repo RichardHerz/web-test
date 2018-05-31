@@ -166,10 +166,13 @@ processUnits[0] = {
   //    simParams.simTimeStep, simParams.ssFlag
   // OBJECT simParams USES the following from this process unit
   //    variables SScheck, residenceTime, numNodes
+
+  // **** WHEN RXR COUPLED TO HX *****
+  //    all flow rates are the same in reactor and heat exchanger
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //    reactor T out to heat exchanger hot in
+  //    reactor outlet T to heat exchanger hot inlet T
   // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
-  inputTxrIn : '', // set in updateInputs
+  //    heat exchanger cold out T is reactor inlet T
 
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
   displayReactorLeftConc: 'field_reactor_left_conc',
@@ -186,7 +189,8 @@ processUnits[0] = {
   Wcat : 0,
   Cain : 0,
   Flowrate : 0,
-  Tin : 0,
+  // **** WHEN RXR COUPLED TO HX, THIS IS Tin TO COLD SIDE HEAT EXCHANGER ***
+  TinHX : 0, // inlet T to heat exchanger cold side
   UAcoef : 0,
   Tjacket : 0,
 
@@ -206,6 +210,11 @@ processUnits[0] = {
   Ca : [],
   TrxrNew : [], // 'New' hold intermediate values during updateState
   CaNew : [],
+
+  // define additional variables WHEN RXR COUPLED TO HX
+  // these will be filled with values in method initialize()
+  // and updated in updateState()
+  Tin : 0, //
 
   // define arrays to hold data for plots, color canvas
   // these will be filled with initial values in method reset()
@@ -303,14 +312,15 @@ processUnits[0] = {
     this.dataValues[v] = this.Flowrate; // current input value for reporting
     //
     v = 6;
-    this.dataHeaders[v] = 'Tin';
+    // **** WHEN RXR COUPLED TO HX, THIS IS Tin TO COLD SIDE HEAT EXCHANGER ***
+    this.dataHeaders[v] = 'Tin'; // TinHX
     this.dataInputs[v] = 'input_field_Tin';
     this.dataUnits[v] = 'K';
     this.dataMin[v] = 250;
     this.dataMax[v] = 400;
     this.dataInitial[v] = 350;
-    this.Tin = this.dataInitial[v]; // dataInitial used in getInputValue()
-    this.dataValues[v] = this.Tin; // current input value for reporting
+    this.TinHX = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.TinHX; // current input value for reporting
     //
     v = 7;
     this.dataHeaders[v] = 'UAcoef';
@@ -369,15 +379,21 @@ processUnits[0] = {
     simParams.ssFlag = false;
     this.SScheck = 0; // rest steady state check number of array end values
 
-    document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
-    document.getElementById(this.displayReactorRightT).innerHTML = this.Tjacket.toFixed(1) + ' K';
+    // **** CHANGE WHEN REACTOR COUPLED TO HEAT EXCHANGER ****
+    document.getElementById(this.displayReactorLeftT).innerHTML = this.TinHX.toFixed(1) + ' K';
+    document.getElementById(this.displayReactorRightT).innerHTML = this.TinHX.toFixed(1) + ' K';
+    // document.getElementById(this.displayReactorLeftT).innerHTML = this.Tin.toFixed(1) + ' K';
+    // document.getElementById(this.displayReactorRightT).innerHTML = this.Tjacket.toFixed(1) + ' K';
 
     document.getElementById(this.displayReactorLeftConc).innerHTML = this.Cain.toFixed(1);
     document.getElementById(this.displayReactorRightConc).innerHTML = 0.0 + ' mol/m<sup>3</sup>';
 
     for (k = 0; k <= this.numNodes; k += 1) {
-      this.Trxr[k] = this.dataInitial[8]; // [8] is Tjacket
-      this.TrxrNew[k] = this.dataInitial[8]; // [8] is Tjacket
+      // **** CHANGE WHEN RXR COUPLED TO HX ****
+      this.Trxr[k] = this.dataInitial[6]; // [6] is TinHX
+      this.TrxrNew[k] = this.dataInitial[6]; // [6] is TinHX
+      // this.Trxr[k] = this.dataInitial[8]; // [8] is Tjacket
+      // this.TrxrNew[k] = this.dataInitial[8]; // [8] is Tjacket
       this.Ca[k] = 0;
       this.CaNew[k] = 0;
     }
@@ -461,11 +477,14 @@ processUnits[0] = {
     this.Wcat = getInputValue(unum, 3);
     this.Cain = getInputValue(unum, 4);
     this.Flowrate = getInputValue(unum, 5);
-    this.Tin = getInputValue(unum, 6);
+    this.TinHX = getInputValue(unum, 6);
     this.UAcoef = getInputValue(unum, 7);
 
     // // ******* DEACTIVATE FOR ADIABATIC OPERATION ********
     // this.Tjacket = getInputValue(unum, 8);
+
+    // GET REACTOR INLET T FROM COLD OUT OF HEAT EXCHANGER
+    this.Tin = processUnits[1]['Tcold'][0];
 
     // calc adiabatic delta T, positive for negative H (exothermic)
     var adiabDeltaT = -this.DelH * this.Cain / this.densFluid / this.CpFluid;
@@ -736,10 +755,13 @@ processUnits[1] = {
   //    simParams.simTimeStep, simParams.ssFlag
   // OBJECT simParams USES the following from this process unit
   //    variables SScheck, residenceTime, numNodes
+
+  // **** WHEN HX COUPLED TO RXR *****
+  //    all flow rates are the same in reactor and heat exchanger
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //   none
+  //    heat exchanger cold outlet T is reactor inlet T
   // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
-  inputHotIn : '', // set in updateInputs
+  //    reactor outlet T is heat exchanger hot inlet T
 
   // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
   //   e.g., inputModel01 : "radio_Model_1",
@@ -1065,11 +1087,19 @@ processUnits[1] = {
     // this.Area = getInputValue(unum, 7);
     // this.Diam = getInputValue(unum, 8);
 
-    // // ******* DEACTIVATE FOR COUPLING TO REACTOR ********
-    // // ******* DO THIS IN REACTOR UNIT ********
     // also update ONLY inlet T's on ends of heat exchanger in case sim is paused
     // outlet T's not defined on first entry into page
     // but do not do full updateDisplay
+
+    // ****** GET INFO FROM REACTOR *******
+    let nn = processUnits[0]['numNodes'];
+    this.TinCold = processUnits[0].TinHX;
+    this.TinHot = processUnits[0]['Trxr'][nn];
+    this.FlowHot = processUnits[0].Flow; // m3/s in reactor
+    // reactor Flow is m3/s, whereas heat exchanger flow is kg/s
+    this.FlowHot = this.FluidDensity * this.FlowHot; // kg/s = kg/m3 * m3/s
+    this.FlowCold = this.FlowHot;
+
     document.getElementById(this.displayHotRightT).innerHTML = this.TinHot.toFixed(1) + ' K';
     switch(this.ModelFlag) {
       case 0: // co-current
@@ -1169,9 +1199,14 @@ processUnits[1] = {
     // //   this.PV = this.initialPV;
     // }
 
-    // GET HOT IN FROM OUTLET OF REACTOR
-    let nn = processUnits[0].numNodes;
+    // ****** GET INFO FROM REACTOR *******
+    let nn = processUnits[0]['numNodes'];
+    this.TinCold = processUnits[0].TinHX;
     this.TinHot = processUnits[0]['Trxr'][nn];
+    this.FlowHot = processUnits[0].Flow; // m3/s in reactor
+    // reactor Flow is m3/s, whereas heat exchanger flow is kg/s
+    this.FlowHot = this.FluidDensity * this.FlowHot; // kg/s = kg/m3 * m3/s
+    this.FlowCold = this.FlowHot;
 
   },
 
