@@ -257,7 +257,7 @@ processUnits[0] = {
     this.dataInputs[v] = 'input_field_Kf300';
     this.dataUnits[v] = 'm3/kg/s';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 10;
+    this.dataMax[v] = 1;
     this.dataInitial[v] = 1.0e-7;
     this.Kf300 = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Kf300; // current input value for reporting
@@ -267,7 +267,7 @@ processUnits[0] = {
     this.dataInputs[v] = 'input_field_Ea';
     this.dataUnits[v] = 'kJ/mol';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 200;
+    this.dataMax[v] = 100;
     this.dataInitial[v] = 100;
     this.Ea = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Ea; // current input value for reporting
@@ -276,8 +276,8 @@ processUnits[0] = {
     this.dataHeaders[v] = 'DelH';
     this.dataInputs[v] = 'input_field_DelH';
     this.dataUnits[v] = 'kJ/mol';
-    this.dataMin[v] = -200;
-    this.dataMax[v] = 200;
+    this.dataMin[v] = -150;
+    this.dataMax[v] = 150;
     this.dataInitial[v] = -125;
     this.DelH = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.DelH; // current input value for reporting
@@ -297,7 +297,7 @@ processUnits[0] = {
     this.dataInputs[v] = 'input_field_Cain';
     this.dataUnits[v] = 'mol/m3';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 1000;
+    this.dataMax[v] = 550;
     this.dataInitial[v] = 500;
     this.Cain = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Cain; // current input value for reporting
@@ -317,9 +317,9 @@ processUnits[0] = {
     this.dataHeaders[v] = 'Tin'; // TinHX
     this.dataInputs[v] = 'input_field_Tin';
     this.dataUnits[v] = 'K';
-    this.dataMin[v] = 300;
-    this.dataMax[v] = 500;
-    this.dataInitial[v] = 320;
+    this.dataMin[v] = 325;
+    this.dataMax[v] = 425;
+    this.dataInitial[v] = 325;
     this.TinHX = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.TinHX; // current input value for reporting
     //
@@ -328,10 +328,10 @@ processUnits[0] = {
     this.dataHeaders[v] = 'UAcoef';
     // NOTE: dataInputs example where field ID name differs from variable name
     this.dataInputs[v] = 'input_field_UA';
-    this.dataUnits[v] = 'kW/kg/K';
+    this.dataUnits[v] = 'kW/K';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 100;
-    this.dataInitial[v] = 1;
+    this.dataMax[v] = 60;
+    this.dataInitial[v] = 10;
     this.UAcoef = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.UAcoef; // current input value for reporting
     //
@@ -859,103 +859,118 @@ processUnits[1] = {
   residenceTime : 0, // for timing checks for steady state check
 
   initialize : function() {
-    //
+
+    // *** SPECIAL FOR HX COUPLED TO RXR ***
+    // need something here for copy data to table
+    // otherwise deactivate
+
+
     let v = 0;
-    this.dataHeaders[v] = 'TinHot';
-    this.dataInputs[v] = 'input_field_TinHot';
-    this.dataUnits[v] = 'K';
-    this.dataMin[v] = 300;
-    this.dataMax[v] = 370;
-    this.dataInitial[v] = 300;
-    this.TinHot = this.dataInitial[v]; // dataInitial used in getInputValue()
-    this.dataValues[v] = this.TinHot; // current input value for reporting
+    this.dataHeaders[v] = 'heat exchanger values listed above';
+    this.dataInputs[v] = '';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = '';
+    this.dataMax[v] = '';
+    this.dataInitial[v] = '';
+    this.TinHot = ''; // dataInitial used in getInputValue()
+    this.dataValues[v] = ''; // current input value for reporting
+
+    // let v = 0;
+    // this.dataHeaders[v] = 'TinHot';
+    // this.dataInputs[v] = 'input_field_TinHot';
+    // this.dataUnits[v] = 'K';
+    // this.dataMin[v] = 300;
+    // this.dataMax[v] = 370;
+    // this.dataInitial[v] = 300;
+    // this.TinHot = this.dataInitial[v]; // dataInitial used in getInputValue()
+    // this.dataValues[v] = this.TinHot; // current input value for reporting
     //
-    v = 1;
-    this.dataHeaders[v] = 'TinCold';
-    this.dataInputs[v] = 'input_field_TinCold';
-    this.dataUnits[v] = 'K';
-    this.dataMin[v] = 300;
-    this.dataMax[v] = 370;
-    this.dataInitial[v] = 300;
-    this.TinCold =  this.dataInitial[v];
-    this.dataValues[v] = this.TinCold;
-    //
-    v = 2;
-    this.dataHeaders[v] = 'FlowHot';
-    this.dataInputs[v] = 'input_field_FlowHot';
-    this.dataUnits[v] = 'kg/s';
-    this.dataMin[v] = 0.15;
-    this.dataMax[v] = 4.0;
-    this.dataInitial[v] = 0.5;
-    this.FlowHot = this.dataInitial[v];
-    this.dataValues[v] = this.FlowHot;
-    //
-    v = 3;
-    this.dataHeaders[v] = 'FlowCold';
-    this.dataInputs[v] = 'input_field_FlowCold';
-    this.dataUnits[v] = 'kg/s';
-    this.dataMin[v] = 0.15;
-    this.dataMax[v] = 4.0;
-    this.dataInitial[v] = 0.75;
-    this.FlowCold = this.dataInitial[v];
-    this.dataValues[v] = this.FlowCold;
-    //
-    v = 4;
-    this.dataHeaders[v] = 'CpHot';
-    this.dataInputs[v] = 'input_field_CpHot';
-    this.dataUnits[v] =  'kJ/kg/K';
-    this.dataMin[v] = 1;
-    this.dataMax[v] = 10;
-    this.dataInitial[v] = 4.2;
-    this.CpHot = this.dataInitial[v];
-    this.dataValues[v] = this.CpHot;
-    //
-    v = 5;
-    this.dataHeaders[v] = 'CpCold';
-    this.dataInputs[v] = 'input_field_CpCold';
-    this.dataUnits[v] =  'kJ/kg/K';
-    this.dataMin[v] = 1;
-    this.dataMax[v] = 10;
-    this.dataInitial[v] = 4.2;
-    this.CpCold = this.dataInitial[v];
-    this.dataValues[v] = this.CpCold;
-    //
-    v = 6;
-    this.dataHeaders[v] = 'Ucoef';
-    this.dataInputs[v] = 'input_field_Ucoef';
-    this.dataUnits[v] =  'kW/m2/K';
-    this.dataMin[v] = 0;
-    this.dataMax[v] = 10;
-    this.dataInitial[v] = 10;
-    this.Ucoef = this.dataInitial[v];
-    this.dataValues[v] = this.Ucoef;
-    //
-    v = 7;
-    this.dataHeaders[v] = 'Area';
-    this.dataInputs[v] = 'input_field_Area';
-    this.dataUnits[v] =  'm2';
-    this.dataMin[v] = 1;
-    this.dataMax[v] = 10;
-    this.dataInitial[v] = 4;
-    this.Area = this.dataInitial[v];
-    this.dataValues[v] = this.Area;
-    //
-    v = 8;
-    this.dataHeaders[v] = 'Diam';
-    this.dataInputs[v] = 'input_field_Diam';
-    this.dataUnits[v] =  'm';
-    this.dataMin[v] = 0.05;
-    this.dataMax[v] = 0.20;
-    this.dataInitial[v] = 0.15;
-    this.Diam = this.dataInitial[v];
-    this.dataValues[v] = this.Diam;
+    // v = 1;
+    // this.dataHeaders[v] = 'TinCold';
+    // this.dataInputs[v] = 'input_field_TinCold';
+    // this.dataUnits[v] = 'K';
+    // this.dataMin[v] = 300;
+    // this.dataMax[v] = 370;
+    // this.dataInitial[v] = 300;
+    // this.TinCold =  this.dataInitial[v];
+    // this.dataValues[v] = this.TinCold;
+    // //
+    // v = 2;
+    // this.dataHeaders[v] = 'FlowHot';
+    // this.dataInputs[v] = 'input_field_FlowHot';
+    // this.dataUnits[v] = 'kg/s';
+    // this.dataMin[v] = 0.15;
+    // this.dataMax[v] = 4.0;
+    // this.dataInitial[v] = 0.5;
+    // this.FlowHot = this.dataInitial[v];
+    // this.dataValues[v] = this.FlowHot;
+    // //
+    // v = 3;
+    // this.dataHeaders[v] = 'FlowCold';
+    // this.dataInputs[v] = 'input_field_FlowCold';
+    // this.dataUnits[v] = 'kg/s';
+    // this.dataMin[v] = 0.15;
+    // this.dataMax[v] = 4.0;
+    // this.dataInitial[v] = 0.75;
+    // this.FlowCold = this.dataInitial[v];
+    // this.dataValues[v] = this.FlowCold;
+    // //
+    // v = 4;
+    // this.dataHeaders[v] = 'CpHot';
+    // this.dataInputs[v] = 'input_field_CpHot';
+    // this.dataUnits[v] =  'kJ/kg/K';
+    // this.dataMin[v] = 1;
+    // this.dataMax[v] = 10;
+    // this.dataInitial[v] = 4.2;
+    // this.CpHot = this.dataInitial[v];
+    // this.dataValues[v] = this.CpHot;
+    // //
+    // v = 5;
+    // this.dataHeaders[v] = 'CpCold';
+    // this.dataInputs[v] = 'input_field_CpCold';
+    // this.dataUnits[v] =  'kJ/kg/K';
+    // this.dataMin[v] = 1;
+    // this.dataMax[v] = 10;
+    // this.dataInitial[v] = 4.2;
+    // this.CpCold = this.dataInitial[v];
+    // this.dataValues[v] = this.CpCold;
+    // //
+    // v = 6;
+    // this.dataHeaders[v] = 'Ucoef';
+    // this.dataInputs[v] = 'input_field_Ucoef';
+    // this.dataUnits[v] =  'kW/m2/K';
+    // this.dataMin[v] = 0;
+    // this.dataMax[v] = 10;
+    // this.dataInitial[v] = 10;
+    // this.Ucoef = this.dataInitial[v];
+    // this.dataValues[v] = this.Ucoef;
+    // //
+    // v = 7;
+    // this.dataHeaders[v] = 'Area';
+    // this.dataInputs[v] = 'input_field_Area';
+    // this.dataUnits[v] =  'm2';
+    // this.dataMin[v] = 1;
+    // this.dataMax[v] = 10;
+    // this.dataInitial[v] = 4;
+    // this.Area = this.dataInitial[v];
+    // this.dataValues[v] = this.Area;
+    // //
+    // v = 8;
+    // this.dataHeaders[v] = 'Diam';
+    // this.dataInputs[v] = 'input_field_Diam';
+    // this.dataUnits[v] =  'm';
+    // this.dataMin[v] = 0.05;
+    // this.dataMax[v] = 0.20;
+    // this.dataInitial[v] = 0.15;
+    // this.Diam = this.dataInitial[v];
+    // this.dataValues[v] = this.Diam;
     //
     // END OF INPUT VARS
     // record number of input variables, VarCount
     // used, e.g., in copy data to table in _plotter.js
     // *** FOR HX COUPLED TO RXR, change from = v to = 5
-    this.VarCount = 5;
-    //
+    this.VarCount = v;
+
     // OUTPUT VARS
     //
     v = 9;
@@ -1021,6 +1036,13 @@ processUnits[1] = {
     // initialize local array to hold color-canvas data, e.g., space-time data -
     // initColorCanvasArray(numVars,numXpts,numYpts)
     this.colorCanvasData = initColorCanvasArray(2,this.numNodes,1);
+
+    for (k = 0; k <= this.numNodes; k += 1) {
+      this.Thot[k] = processUnits[0]['dataInitial'][6]; // initial system inlet T
+      this.ThotNew[k] = processUnits[0]['dataInitial'][6];
+      this.Tcold[k] = processUnits[0]['dataInitial'][6];
+      this.TcoldNew[k] = processUnits[0]['dataInitial'][6];
+    }
 
     var kn = 0;
     for (k=0; k<=this.numNodes; k+=1) {
@@ -1273,6 +1295,11 @@ processUnits[1] = {
     var UAcoef = processUnits[0].UAcoef;
     this.Ucoef = UAcoef / this.Area;
 
+    // *** NEW FOR ADIABATIC RXR + HX ***
+    // fix Cp's here
+    CpHot = 4.2; // kJ/kg/K
+    CpCold = CpHot;
+
     // from cylindrical outer Area and Diam inputs & specify cylindrical tube for hot flow
     // can compute Length of exhanger
     var Length = this.Area / this.Diam / Math.PI;
@@ -1284,8 +1311,8 @@ processUnits[1] = {
     var VelocCold = this.FlowCold / this.FluidDensity / Ax; // (m/s), linear fluid velocity
 
     // note XferCoefHot = U * (wall area per unit length = pi * diam * L/L) / (rho * Cp * Ax)
-    var XferCoefHot = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / this.CpHot / Ax;
-    var XferCoefCold = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / this.CpCold / Ax;
+    var XferCoefHot = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / CpHot / Ax;
+    var XferCoefCold = this.Ucoef * Math.PI * this.Diam / this.FluidDensity / CpCold / Ax;
 
     // Disp (m2/s) is axial dispersion coefficient for turbulent flow
     // this.DispCoef computed in updateUIparams()
@@ -1412,9 +1439,12 @@ processUnits[1] = {
       alert('dT1 == dT2');
       return;
     }
+    // *** for hx coupled to rxr, fix Cp ***
+    var CpHot = 4.2; // kJ/kg/K
+    var CpCold = CpHot;
     var UAlogMeanDT = this.Ucoef * this.Area * (dT2 - dT1) / Math.log(dT2/dT1); // kJ/s = kW
-    var Qhot = (hrt - hlt) * this.FlowHot * this.CpHot; // kJ/s = kW
-    var Qcold = Math.abs((crt - clt) * this.FlowCold * this.CpCold); // abs for co- or counter-
+    var Qhot = (hrt - hlt) * this.FlowHot * CpHot; // kJ/s = kW
+    var Qcold = Math.abs((crt - clt) * this.FlowCold * CpCold); // abs for co- or counter-
     var discrep = 100*(UAlogMeanDT/Qhot-1);
     var discrep2 = 100*(UAlogMeanDT/Qcold-1);
     var discrep3 = 100*(Qcold/Qhot-1);

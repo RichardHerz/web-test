@@ -40,12 +40,12 @@
     <p>
     <a href="http://reactorlab.net/web-labs/">Back</a> to Web Labs at ReactorLab.net
     <p><b><i>Adiabatic PFR with feed-product heat exchange</i></b></p>
-    <!-- <p id="field_output_field"></p> -->
     <p>
       Click the Run button to start.
       Change an input value, then hit the Enter key or click out of the field.
       <a href = "images/pfr_eqns.pdf" target="new">More info</a>
     </p>
+    <!-- <p id="field_output_field"></p> -->
   </div> <!-- end of div div_page_header -->
   <!-- ************ REACTOR ************ -->
 <div id="div_simFrame_reactor">
@@ -144,13 +144,13 @@
    </p>
    <input id="input_field_Flowrate" value="0.004" onchange="updateUIparams()">
    <p id="field_Tin_label">
-      Tin (K)
+      System inlet T (K)
    </p>
-   <input id="input_field_Tin" value="320" onchange="updateUIparams()">
+   <input id="input_field_Tin" value="325" onchange="updateUIparams()">
    <p id="field_UA_label">
-      UA (kW/kg/K)
+      Heat exch. UA (kW/K)
    </p>
-   <input id="input_field_UA" value="1" onchange="updateUIparams()">
+   <input id="input_field_UA" value="10" onchange="updateUIparams()">
 </div> <!-- end of div div_input_fields -->
 </body>
 </html>

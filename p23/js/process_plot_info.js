@@ -66,11 +66,11 @@ var plotsObj = {
     plotsObj[pnum]['xAxisMax'] = 1;
     plotsObj[pnum]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
     plotsObj[pnum]['yLeftAxisLabel'] = 'Trxr (K)'; // or d'less (T - TinCold)/(TinHot - TinCold)
-    plotsObj[pnum]['yLeftAxisMin'] = 300; // XXX processUnits[unum]['dataMin'][9]; // [9] is Trxr
-    plotsObj[pnum]['yLeftAxisMax'] = 500; // XXX processUnits[unum]['dataMax'][9];
+    plotsObj[pnum]['yLeftAxisMin'] = 320; // XXX processUnits[unum]['dataMin'][9]; // [9] is Trxr
+    plotsObj[pnum]['yLeftAxisMax'] = 450; // XXX processUnits[unum]['dataMax'][9];
     plotsObj[pnum]['yRightAxisLabel'] = 'Ca (mol/m3)';
     plotsObj[pnum]['yRightAxisMin'] = 0;
-    plotsObj[pnum]['yRightAxisMax'] = 1000; // processUnits[unum]['Cain'];
+    plotsObj[pnum]['yRightAxisMax'] = 550; // processUnits[unum]['Cain'];
     plotsObj[pnum]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 or "show"
     plotsObj[pnum]['plotLegendPosition'] = 'nw';
     plotsObj[pnum]['plotGridBgColor'] = 'white';
@@ -125,8 +125,8 @@ var plotsObj = {
     // varTimePts & varSpacePts must match values used in unit array colorCanvasData
     plotsObj[pnum]['varTimePts'] = processUnits[unum]['numNodes'];
     plotsObj[pnum]['varSpacePts'] = 1;
-    plotsObj[pnum]['varValueMin'] = 300; // processUnits[unum]['dataMin'][9]; // [9] is Trxr
-    plotsObj[pnum]['varValueMax'] = 500; // processUnits[unum]['dataMax'][9];
+    plotsObj[pnum]['varValueMin'] = 320; // processUnits[unum]['dataMin'][9]; // [9] is Trxr
+    plotsObj[pnum]['varValueMax'] = 450; // processUnits[unum]['dataMax'][9];
     plotsObj[pnum]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
 
     // // plot 2 info
@@ -166,12 +166,12 @@ var plotsObj = {
     plotsObj[pnum]['xAxisMax'] = 1;
     plotsObj[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
     plotsObj[pnum]['yLeftAxisLabel'] = 'T (K)'; // or d'less (T - TinCold)/(TinHot - TinCold)
-    plotsObj[pnum]['yLeftAxisMin'] = 300; // processUnits[unum]['dataMin'][1]; // [1] is TinCold
-    plotsObj[pnum]['yLeftAxisMax'] = 500; // processUnits[unum]['dataMax'][0]; // [0] is TinHot
+    plotsObj[pnum]['yLeftAxisMin'] = 320; // processUnits[unum]['dataMin'][1]; // [1] is TinCold
+    plotsObj[pnum]['yLeftAxisMax'] = 450; // processUnits[unum]['dataMax'][0]; // [0] is TinHot
     plotsObj[pnum]['yRightAxisLabel'] = 'yRight';
     plotsObj[pnum]['yRightAxisMin'] = 0;
     plotsObj[pnum]['yRightAxisMax'] = 1;
-    plotsObj[pnum]['plotLegendPosition'] = "se";
+    plotsObj[pnum]['plotLegendPosition'] = "nw";
     plotsObj[pnum]['plotLegendShow'] = 0;  // Boolean, '' or 0 for no show, 1 or "show"
     plotsObj[pnum]['plotGridBgColor'] = 'white';
     // colors can be specified rgb, rgba, hex, and color names
@@ -228,8 +228,8 @@ var plotsObj = {
     // varTimePts & varSpacePts must match values used in unit array colorCanvasData
     plotsObj[pnum]['varTimePts'] = processUnits[unum]['numNodes'];
     plotsObj[pnum]['varSpacePts'] = 1;
-    plotsObj[pnum]['varValueMin'] = 300; // processUnits[unum]['dataMin'][1]; // [1] is TinCold
-    plotsObj[pnum]['varValueMax'] = 500; // processUnits[unum]['dataMax'][0]; // [0] is TinHot
+    plotsObj[pnum]['varValueMin'] = 320; // processUnits[unum]['dataMin'][1]; // [1] is TinCold
+    plotsObj[pnum]['varValueMax'] = 450; // processUnits[unum]['dataMax'][0]; // [0] is TinHot
     plotsObj[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
 
     // plot 5 info
@@ -244,8 +244,8 @@ var plotsObj = {
     // varTimePts & varSpacePts must match values used in unit array colorCanvasData
     plotsObj[pnum]['varTimePts'] = processUnits[unum]['numNodes'];
     plotsObj[pnum]['varSpacePts'] = 1;
-    plotsObj[pnum]['varValueMin'] = 300; // processUnits[unum]['dataMin'][1]; // [1] is TinCold
-    plotsObj[pnum]['varValueMax'] = 500; // processUnits[unum]['dataMax'][0]; // [0] is TinHot
+    plotsObj[pnum]['varValueMin'] = 320; // processUnits[unum]['dataMin'][1]; // [1] is TinCold
+    plotsObj[pnum]['varValueMax'] = 450; // processUnits[unum]['dataMax'][0]; // [0] is TinHot
     plotsObj[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
 
   }, // end initialize method of plotsObj
