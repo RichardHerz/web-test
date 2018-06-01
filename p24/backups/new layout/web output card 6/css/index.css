@@ -54,13 +54,13 @@ canvas {
   position: relative;
   border-color: DodgerBlue;
   left: 10px;
-  /* top: 38px; */
+  top: 38px;
   width: 514px;
   height: 685px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -234,14 +234,13 @@ canvas {
 
 #field_sys_outlet_label {
   position: absolute;
-  left: 0px;
-  top: 603px;
-  width: 100px;
+  left: 4px;
+  top: 604px;
+  width: 107px;
   height: 22px;
-  text-align: right;
   border-width: 1px;
   visibility: visible;
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   background-color: rgba(255, 255, 255, 1);
   LCvScrollbar: false;
@@ -300,7 +299,7 @@ canvas {
 #field_cold_right_arrow {
   position: absolute;
   left: 394px;
-  top: 638px;
+  top: 625px;
   width: 23px;
   height: 22px;
   border-width: 1px;
@@ -317,8 +316,8 @@ canvas {
 #field_hot_right_arrow {
   position: absolute;
   left: 394px;
-  top: 604px;
-  width: 19px;
+  top: 590px;
+  width: 23px;
   height: 22px;
   border-width: 1px;
   visibility: visible;
@@ -333,9 +332,9 @@ canvas {
 
 #field_cold_left_arrow {
   position: absolute;
-  left: 172px;
-  top: 638px;
-  width: 19px;
+  left: 168px;
+  top: 625px;
+  width: 23px;
   height: 22px;
   border-width: 1px;
   visibility: visible;
@@ -351,7 +350,7 @@ canvas {
 #field_hot_left_arrow {
   position: absolute;
   left: 168px;
-  top: 604px;
+  top: 590px;
   width: 23px;
   height: 22px;
   border-width: 1px;
@@ -452,14 +451,13 @@ canvas {
 
 #field_sys_inlet_label {
   position: absolute;
-  left: 0px;
+  left: 4px;
   top: 638px;
-  width: 100px;
+  width: 107px;
   height: 22px;
-  text-align: right;
   border-width: 1px;
   visibility: visible;
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   background-color: rgba(255, 255, 255, 1);
   LCvScrollbar: false;
@@ -470,7 +468,7 @@ canvas {
 
 #div_input_fields {
   display: block;
-  position: relative;
+  position: absolute;
   border-color: DodgerBlue;
   left: 566px;
   top: 64px;
@@ -479,7 +477,7 @@ canvas {
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -796,14 +794,4 @@ border-style: solid;
     top: 600px;
     left: 20px;
    } */
-}
-
-/* example @media for responsive design */
-/* requires meta viewport element in HTML head */
-@media(min-width: 640px) {
-  #div_input_fields {
-    position: absolute;
-    top: 150px;
-    left: 540px;
-  }
 }

@@ -49,18 +49,36 @@ canvas {
   display: none;
 }
 
-#div_simFrame {
+#div_page_header {
   display: block;
   position: relative;
   border-color: DodgerBlue;
-  left: 10px;
-  /* top: 38px; */
-  width: 514px;
-  height: 685px;
+  left: 5px;
+  width: 368px;
+  height: 122px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#div_simFrame_reactor {
+  display: block;
+  position: relative;
+  border-color: DodgerBlue;
+  left: 5px;
+  /* top: 61px; */
+  width: 380px;
+  /* height: 375px; */
+  height: 370px;
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -70,7 +88,8 @@ canvas {
 #div_PLOTDIV_PFR_plot {
   display: block;
   position: absolute;
-  left: 139px;
+  /* left: 39px; */
+  left: 34px;
   top: 30px;
   width: 297px;
   height: 224px;
@@ -79,17 +98,31 @@ canvas {
   background-color: rgb(0,253,255);
   border-style: outset;
   opacity: 1;
-  border-style: dotted;
+  border-style: none;
   border-color: DodgerBlue;
   LCthreeD: true;
   LCshowBorder: true;
   LCvScrollbar: false;
 }
 
+#canvas_CANVAS_jacket {
+  position: absolute;
+  left: 82px;
+  top: 261px;
+ /* canvas element width & height must be set in HTML and not in CSS */
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,252,0);
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
 #canvas_CANVAS_reactor {
   position: absolute;
-  left: 187px;
-  top: 287px;
+  left: 82px;
+  top: 276px;
  /* canvas element width & height must be set in HTML and not in CSS */
   visibility: visible;
   border-width: 1px;
@@ -102,7 +135,7 @@ canvas {
 
 #button_runButton {
   position: absolute;
-  left: 192px;
+  left: 87px;
   top: 5px;
   width: 72px;
   height: 23px;
@@ -117,7 +150,7 @@ canvas {
 
 #button_resetButton {
   position: absolute;
-  left: 268px;
+  left: 163px;
   top: 4px;
   width: 72px;
   height: 23px;
@@ -130,10 +163,25 @@ canvas {
   LCshowBorder: true;
 }
 
+#button_copyData_reactor {
+  position: absolute;
+  left: 5px;
+  top: 346px;
+  width: 72px;
+  height: 23px;
+  visibility: visible;
+  /* border-width: 1px;
+  background-color: rgb(255,255,255);
+  border-style: outset;
+  opacity: 1; */
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
 #field_reactor_right_arrow {
   position: absolute;
-  left: 390px;
-  top: 281px;
+  left: 285px;
+  top: 270px;
   width: 23px;
   height: 22px;
   border-width: 1px;
@@ -149,8 +197,8 @@ canvas {
 
 #field_reactor_left_arrow {
   position: absolute;
-  left: 165px;
-  top: 281px;
+  left: 60px;
+  top: 270px;
   width: 23px;
   height: 22px;
   border-width: 1px;
@@ -166,8 +214,8 @@ canvas {
 
 #field_reactor_left_conc {
   position: absolute;
-  left: 109px;
-  top: 265px;
+  left: 4px;
+  top: 254px;
   width: 55px;
   height: 22px;
   border-width: 1px;
@@ -183,8 +231,8 @@ canvas {
 
 #field_reactor_right_conc {
   position: absolute;
-  left: 415px;
-  top: 265px;
+  left: 310px;
+  top: 254px;
   width: 95px;
   height: 22px;
   border-width: 1px;
@@ -200,8 +248,8 @@ canvas {
 
 #field_reactor_left_T {
   position: absolute;
-  left: 109px;
-  top: 294px;
+  left: 4px;
+  top: 283px;
   width: 55px;
   height: 22px;
   border-width: 1px;
@@ -217,8 +265,8 @@ canvas {
 
 #field_reactor_right_T {
   position: absolute;
-  left: 415px;
-  top: 294px;
+  left: 310px;
+  top: 283px;
   width: 55px;
   height: 22px;
   border-width: 1px;
@@ -232,76 +280,11 @@ canvas {
   font-size: 16px;
 }
 
-#field_sys_outlet_label {
+#field_color_canvas_label {
   position: absolute;
-  left: 0px;
-  top: 603px;
-  width: 100px;
-  height: 22px;
-  text-align: right;
-  border-width: 1px;
-  visibility: visible;
-  border-style: dotted;
-  opacity: 1;
-  background-color: rgba(255, 255, 255, 1);
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
-#div_PLOTDIV_T_plot {
-  display: block;
-  position: absolute;
-  left: 146px;
-  top: 380px;
-  width: 255px;
-  height: 224px;
-  visibility: visible;
-  border-width: 1px;
-  background-color: rgb(0,253,255);
-  border-style: outset;
-  opacity: 1;
-  border-style: dotted;
-  border-color: DodgerBlue;
-  LCthreeD: true;
-  LCshowBorder: true;
-  LCvScrollbar: false;
-}
-
-#canvas_CANVAS_hot {
-  position: absolute;
-  left: 191px;
-  top: 611px;
- /* canvas element width & height must be set in HTML and not in CSS */
-  visibility: visible;
-  border-width: 1px;
-  background-color: rgb(255,252,0);
-  border-style: outset;
-  opacity: 1;
-  LCthreeD: true;
-  LCshowBorder: true;
-}
-
-#canvas_CANVAS_cold {
-  position: absolute;
-  left: 191px;
-  top: 647px;
- /* canvas element width & height must be set in HTML and not in CSS */
-  visibility: visible;
-  border-width: 1px;
-  background-color: rgb(255,252,0);
-  border-style: outset;
-  opacity: 1;
-  LCthreeD: true;
-  LCshowBorder: true;
-}
-
-#field_cold_right_arrow {
-  position: absolute;
-  left: 394px;
-  top: 638px;
-  width: 23px;
+  left: 83px;
+  top: 312px;
+  width: 200px;
   height: 22px;
   border-width: 1px;
   visibility: visible;
@@ -311,175 +294,22 @@ canvas {
   LCvScrollbar: false;
   LCthreeD: true;
   LCshowBorder: false;
-  font-size: 16px;
-}
-
-#field_hot_right_arrow {
-  position: absolute;
-  left: 394px;
-  top: 604px;
-  width: 19px;
-  height: 22px;
-  border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-  border-style: none;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
-#field_cold_left_arrow {
-  position: absolute;
-  left: 172px;
-  top: 638px;
-  width: 19px;
-  height: 22px;
-  border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-  border-style: none;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
-#field_hot_left_arrow {
-  position: absolute;
-  left: 168px;
-  top: 604px;
-  width: 23px;
-  height: 22px;
-  border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-  border-style: none;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
-#field_hot_left_T {
-  position: absolute;
-  left: 113px;
-  top: 604px;
-  width: 55px;
-  height: 22px;
-  border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-  border-style: none;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
-#field_hot_right_T {
-  position: absolute;
-  left: 422px;
-  top: 604px;
-  width: 55px;
-  height: 22px;
-  border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-  border-style: none;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
-#field_cold_left_T {
-  position: absolute;
-  left: 113px;
-  top: 638px;
-  width: 55px;
-  height: 22px;
-  border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-  border-style: none;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
-#field_cold_right_T {
-  position: absolute;
-  left: 422px;
-  top: 639px;
-  width: 55px;
-  height: 22px;
-  border-width: 1px;
-  visibility: visible;
-  background-color: rgb(255,255,255);
-  border-style: none;
-  opacity: 1;
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
-#field_T_color_plot_label {
-  position: absolute;
-  left: 198px;
-  top: 309px;
-  width: 202px;
-  height: 27px;
-  border-width: 1px;
-  visibility: visible;
-  border-style: none;
-  opacity: 1;
-  background-color: rgba(255, 255, 255, 1);
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
-}
-
-#field_sys_inlet_label {
-  position: absolute;
-  left: 0px;
-  top: 638px;
-  width: 100px;
-  height: 22px;
-  text-align: right;
-  border-width: 1px;
-  visibility: visible;
-  border-style: dotted;
-  opacity: 1;
-  background-color: rgba(255, 255, 255, 1);
-  LCvScrollbar: false;
-  LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 #div_input_fields {
   display: block;
   position: relative;
   border-color: DodgerBlue;
-  left: 566px;
-  top: 64px;
+  left: 13px;
+  /* top: 367px; */
   width: 285px;
-  height: 264px;
+  /* height: 275px; */
+  height: 270px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   LCthreeD: true;
@@ -625,7 +455,7 @@ border-style: solid;
 #field_Cain_label {
   position: absolute;
   left: 4px;
-  top: 107px;
+  top: 97px;
   width: 170px;
   height: 21px;
   border-width: 1px;
@@ -643,7 +473,7 @@ border-style: solid;
 #input_field_Cain {
   position: absolute;
   left: 190px;
-  top: 122px;
+  top: 112px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -659,7 +489,7 @@ border-style: solid;
 #field_flowrate_label {
   position: absolute;
   left: 4px;
-  top: 161px;
+  top: 124px;
   width: 170px;
   height: 21px;
   border-width: 1px;
@@ -677,7 +507,7 @@ border-style: solid;
 #input_field_Flowrate {
   position: absolute;
   left: 190px;
-  top: 176px;
+  top: 139px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -693,7 +523,7 @@ border-style: solid;
 #field_Tin_label {
   position: absolute;
   left: 4px;
-  top: 134px;
+  top: 151px;
   width: 170px;
   height: 21px;
   border-width: 1px;
@@ -711,7 +541,7 @@ border-style: solid;
 #input_field_Tin {
   position: absolute;
   left: 190px;
-  top: 149px;
+  top: 166px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -727,7 +557,7 @@ border-style: solid;
 #field_UA_label {
   position: absolute;
   left: 4px;
-  top: 188px;
+  top: 178px;
   width: 170px;
   height: 21px;
   border-width: 1px;
@@ -745,7 +575,7 @@ border-style: solid;
 #input_field_UA {
   position: absolute;
   left: 190px;
-  top: 203px;
+  top: 193px;
   width: 91px;
   height: 21px;
 border-width: 1px;
@@ -758,15 +588,90 @@ border-style: solid;
   LCshowBorder: true;
 }
 
-#button_copyData_reactor {
+#field_Tjacket_label {
   position: absolute;
-  left: 154px;
-  top: 237px;
-  width: 117px;
-  height: 23px;
+  left: 4px;
+  top: 205px;
+  width: 170px;
+  height: 21px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: dotted;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+  font-size: 16px;
+  border-color: DodgerBlue;
+}
+
+/* ------------- HEAT EXCHANGE LAB ----------- */
+
+#div_simFrame_exchanger {
+  display: block;
+  position: relative;
+  border-color: DodgerBlue;
+  left: 5px;
+  /* top: 61px; */
+  width: 368px;
+  /* height: 375px; */
+  height: 370px;
   visibility: visible;
   border-width: 1px;
   background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#div_PLOTDIV_T_plot {
+  display: block;
+  position: absolute;
+  /* left: 39px; */
+  left: 37px;
+  top: 30px;
+  /* width: 250px; */
+  width: 255px;
+  height: 224px;
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(0,253,255);
+  border-style: outset;
+  opacity: 1;
+  border-style: none;
+  border-color: DodgerBlue;
+  LCthreeD: true;
+  LCshowBorder: true;
+  LCvScrollbar: false;
+}
+
+#canvas_CANVAS_hot {
+  position: absolute;
+  /* left: 84px; */
+  left: 82px;
+  top: 261px;
+ /* canvas element width & height must be set in HTML and not in CSS */
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,252,0);
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#canvas_CANVAS_cold {
+  position: absolute;
+  /* left: 84px; */
+  left: 82px;
+  top: 297px;
+ /* canvas element width & height must be set in HTML and not in CSS */
+  visibility: visible;
+  border-width: 1px;
+  background-color: rgb(255,252,0);
   border-style: outset;
   opacity: 1;
   LCthreeD: true;
@@ -775,27 +680,155 @@ border-style: solid;
 
 #button_copyData_exchanger {
   position: absolute;
-  left: 19px;
-  top: 237px;
-  width: 117px;
+  left: 5px;
+  top: 346px;
+  width: 72px;
   height: 23px;
   visibility: visible;
-  border-width: 1px;
+  /* border-width: 1px;
   background-color: rgb(255,255,255);
   border-style: outset;
-  opacity: 1;
+  opacity: 1; */
   LCthreeD: true;
   LCshowBorder: true;
 }
 
-/* example @media for responsive design */
-/* requires meta viewport element in HTML head */
-@media(max-width: 640px) {
-  /* change the following when the screen width is <= 640px */
-  /* #div_controller {
-    top: 600px;
-    left: 20px;
-   } */
+#field_cold_right_arrow {
+  position: absolute;
+  left: 285px;
+  top: 275px;
+  width: 23px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  color: orange;
+  font-size: 1.5em;
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_hot_right_arrow {
+  position: absolute;
+  left: 285px;
+  top: 240px;
+  width: 23px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  color: red;
+  font-size: 1.5em;
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_cold_left_arrow {
+  position: absolute;
+  left: 59px;
+  top: 275px;
+  width: 23px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  color: blue;
+  font-size: 1.5em;
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_hot_left_arrow {
+  position: absolute;
+  left: 59px;
+  top: 240px;
+  width: 23px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  color: orange;
+  font-size: 1.5em;
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_hot_left_T {
+  position: absolute;
+  left: 4px;
+  top: 254px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_hot_right_T {
+  position: absolute;
+  left: 313px;
+  top: 254px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_cold_right_T {
+  position: absolute;
+  left: 313px;
+  top: 289px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#field_cold_left_T {
+  position: absolute;
+  left: 4px;
+  top: 289px;
+  width: 55px;
+  height: 22px;
+  border-width: 1px;
+  visibility: visible;
+  background-color: rgb(255,255,255);
+  border-style: none;
+  opacity: 1;
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
 }
 
 /* example @media for responsive design */
@@ -803,7 +836,7 @@ border-style: solid;
 @media(min-width: 640px) {
   #div_input_fields {
     position: absolute;
-    top: 150px;
-    left: 540px;
+    top: 141px;
+    left: 400px;
   }
 }
