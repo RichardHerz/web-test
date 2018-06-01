@@ -156,7 +156,8 @@ var processUnits = new Object();
   // children optionally can be defined in separate script files, e.g., as puHeatExchanger,
   // then inserted into processUnits, e.g., processUnits[0] = puHeatExchanger,
   // then cleared for garbage collection, e.g., puHeatExchanger = null;
-
+  // units defined in separate files makes them easier to edit
+  
 processUnits[0] = {
   unitIndex : 0, // index of this unit as child in processUnits parent object
   // unitIndex used in this object's updateUIparams() method
