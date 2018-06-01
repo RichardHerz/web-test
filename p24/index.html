@@ -10,7 +10,7 @@
   <!-- A VIEWPORT META LINE IN HTML HEAD IS NECESSARY FOR CSS @MEDIA TO WORK -->
   <!-- ID used to modify with Javascript after initial loading - OR EDIT HERE -->
   <!-- suggest use content width = div_simFrame width + 2 * div_simFrame left, and no scale -->
-  <meta id='meta-viewport' name='viewport' content='width=370'>
+  <meta id='meta-viewport' name='viewport' content='width=552'>
 
   <!-- load CSS style sheets for this lab  -->
   <link rel="stylesheet" href="css/index.css">
@@ -46,11 +46,13 @@
     <p>
       Click the Run button to start.
       Change an input value, then hit the Enter key or click out of the field.
-      <a href = "images/pfr_eqns.pdf" target="new">More info</a>
+      </table>
+      <a href="images/rxr_hx_info.html" target="new">More info</a>
     </p>
     <!-- <p id="field_output_field"></p> -->
   </div> <!-- end of div div_page_header -->
   <div id="div_simFrame">
+     <img id="rxr-hx-lines" src="images/rxr-hx-lines-alpha.png" alt="rxr-hx lines">
      <div id="div_PLOTDIV_PFR_plot">
      </div> <!-- end of div div_PLOTDIV_PFR_plot -->
      <!-- canvas element width & height must be specified here in HTML and not in CSS -->
@@ -75,9 +77,6 @@
      </p>
      <p id="field_reactor_right_T">
         325 K
-     </p>
-     <p id="field_sys_outlet_label">
-        System OUT
      </p>
     <div id="div_PLOTDIV_T_plot">
     </div> <!-- end of div div_PLOTDIV_T_plot -->
@@ -113,7 +112,10 @@
         Temperature color plot
      </p>
      <p id="field_sys_inlet_label">
-        System IN
+        <font color='blue'>System IN</font>
+     </p>
+     <p id="field_sys_outlet_label">
+        <font color='red'>System OUT</font>
      </p>
   </div> <!-- end of div div_simFrame -->
   <div id="div_input_fields">
