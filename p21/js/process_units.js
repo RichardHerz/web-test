@@ -506,9 +506,8 @@ processUnits[0] = {
     // update display of tube length and Reynolds number
 
     // from Area and Diam inputs & specify cylindrical tube
-    // can compute Length and Volume
+    // can compute Length
     var Length = this.Area / this.Diam / Math.PI;
-    var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
 
     document.getElementById(this.displayLength).innerHTML = 'L (m) = ' + Length.toFixed(1);
     // note use .toFixed(n) method of object to round number to n decimal points
@@ -602,11 +601,10 @@ processUnits[0] = {
     // STATE VARIABLE
 
     // from cylindrical outer Area and Diam inputs & specify cylindrical tube for hot flow
-    // can compute Length and Volume
+    // can compute Length
     var Length = this.Area / this.Diam / Math.PI;
 
-    // XXX check later for different Volume, Ax and Veloc for hot and cold
-    var Volume = Length * Math.PI * Math.pow(this.Diam, 2) / 4.0;
+    // XXX check later for different Ax and Veloc for hot and cold
     var Ax = Math.PI * Math.pow(this.Diam, 2) / 4.0; // (m2), cross-sectional area for flow
     var VelocHot = this.FlowHot / this.FluidDensity / Ax; // (m/s), linear fluid velocity
     // XXX assume cold uses same flow cross-sectional area as hot
