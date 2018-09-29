@@ -52,7 +52,7 @@ processUnits[0] = {
   // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
 
   // define main parameters
-  // values will be set in method intialize()
+  // values will be set in method initialize()
   N : 0, // (d'less), input
 
   // define arrays to hold info for variables
@@ -73,6 +73,7 @@ processUnits[0] = {
   // profileData : [], // for profile plots, plot script requires this name
   // stripData : [], // for strip chart plots, plot script requires this name
   colorCanvasData : [], // for color canvas plots, plot script requires this name
+  origColorCanvasData : [], // save orig for clearing old object positions
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for time step in this unit's updateInputs method
@@ -104,7 +105,7 @@ processUnits[0] = {
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 100;
-    this.dataInitial[v] = 20;
+    this.dataInitial[v] = 100;
     this.N = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.N; // current input value for reporting
     //
@@ -124,14 +125,49 @@ processUnits[0] = {
     // this.dataMax[v] = 500;
     //
 
-    function Ant(nn) {
-      this.x = nn * Math.random();
-      this.x = Math.round(this.x);
+    function Ant(newX, newY, newDX, newDY) {
+      this.x  = newX;
+      this.y = newY;
+      this.dx = newDX;
+      this.dy = newDY;
+      this.oldX = newX;
+      this.oldY = newY;
+      this.move = function() {
+        // save current position so can clear it on color canvas display
+        this.oldX = this.x;
+        this.oldY = this.y;
+        this.x = this.x + this.dx;
+        this.y = this.y + this.dy;
+        // bounce if hit wall
+        // XXX appears at y = 0 wall for dy = 1 can get ant
+        //      to not touch wall on bounce
+        //      to see this do not clear old positions in updateDisplay
+        // XXX and for dx or dy > 1 will bounce from orig position, not wall
+        if ((this.x < 0) || (this.x > processUnits[0].numNodes)) {
+          this.x = this.x - 2*this.dx;
+          this.dx = -this.dx;
+        }
+        if ((this.y < 0) || (this.y > processUnits[0].numNodes)) {
+          this.y = this.y - 2*this.dy;
+          this.dy = -this.dy;
+        }
+      } // END this move method
     } // END Ant constructor
 
     // make a bunch of new Ants
     for (i = 0; i < this.N; i += 1) {
-      this.ants[i] = new Ant(this.numNodes);
+      // need initial x,y,dx,dy
+      let x = Math.round(this.numNodes*Math.random());
+      let y = Math.round(this.numNodes*Math.random());
+      let dd = 4;
+      let dx = Math.round(-dd + 2 * dd * Math.random());
+      let dy = Math.round(-dd + 2 * dd * Math.random());
+      // NOTE: can get dx and/or dy = 0
+      //        so get dead obj if both = 0 or move only in one direction
+      //        reduce simParams.updateDisplayTimingMs to see this
+      //        so can either check for 0's and set to 1 or
+      //        repeat setting randomly until not 0
+      this.ants[i] = new Ant(x,y,dx,dy);
     }
 
   }, // END of initialize()
@@ -162,11 +198,23 @@ processUnits[0] = {
     // initialize local array to hold color-canvas data, e.g., space-time data -
     // plotter.initColorCanvasArray(numVars,numXpts,numYpts)
     this.colorCanvasData = plotter.initColorCanvasArray(1,this.numNodes,this.numNodes+1);
+    // also need to init the backup copy for clearing old object positions
+    this.origColorCanvasData = plotter.initColorCanvasArray(1,this.numNodes,this.numNodes+1);
 
     // INITIALIZE array colorCanvasData
     for (let r = 0; r <= this.numNodes; r += 1) {
       for (let c = 0; c <= this.numNodes; c += 1) {
         this.colorCanvasData[0][r][c] = 100*(r*c)/(this.numNodes*this.numNodes);
+      }
+    }
+    // make backup copy so can clear old object positions
+    // next line does not work because copy not made...
+    //    this.origColorCanvasData = this.colorCanvasData;
+    // since they are still the same object
+    // so need to initialize all elements separately
+    for (let r = 0; r <= this.numNodes; r += 1) {
+      for (let c = 0; c <= this.numNodes; c += 1) {
+        this.origColorCanvasData[0][r][c] = this.colorCanvasData[0][r][c];
       }
     }
 
@@ -216,28 +264,32 @@ processUnits[0] = {
 
     // have one adjustable param from HTML UI at this point, N
 
+    for (let i = 0; i < this.N; i += 1) {
+      this.ants[i].move();
+    }
 
   }, // end updateState method
 
   updateDisplay : function(){
 
-    // update array colorCanvasData
-    // for (let r = 0; r <= this.numNodes; r += 1) {
-    //   for (let c = 0; c <= this.numNodes; c += 1) {
-    //     this.colorCanvasData[0][r][c] = 100*(r*c)/(this.numNodes*this.numNodes);
-    //   }
-    // }
-    // mark ants
+    // update colorCanvasData array
     for (let i = 0; i < this.N; i += 1) {
-      let r = this.ants[i].x;
-      this.colorCanvasData[0][r][r] = 100;
+      // clear old positions
+      let r = this.ants[i].oldY;
+      let c = this.ants[i].oldX;
+      this.colorCanvasData[0][r][c] = this.origColorCanvasData[0][r][c];
+      // mark new positions
+      r = this.ants[i].y;
+      c = this.ants[i].x;
+      this.colorCanvasData[0][r][c] = 100;
     }
 
   }, // END of updateDisplay()
 
   checkForSteadyState : function() {
     // required - called by controller object
-    // if not used to check for SS, return ssFlag = true to calling unit
+    // IF NOT used to check for SS *AND* another unit IS checked,
+    // THEN return ssFlag = true to calling unit
     // returns ssFlag, true if this unit at SS, false if not
     // uses and sets this.ssCheckSum
     // this.ssCheckSum can be set by reset() and updateUIparams()
@@ -246,7 +298,8 @@ processUnits[0] = {
     // but wait at least one residence time after the previous check
     // to allow changes to propagate down unit
     //
-    let ssFlag = true;
+    // NOTE: this is the only unit, so return false
+    let ssFlag = false;
     return ssFlag;
   } // END OF checkForSteadyState()
 
