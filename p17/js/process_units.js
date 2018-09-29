@@ -94,6 +94,8 @@ processUnits[0] = {
   residenceTime : 0, // for timing checks for steady state check
   // residenceTime is set in this unit's updateUIparams()
 
+  ants : [],
+
   initialize : function() {
     //
     let v = 0;
@@ -103,8 +105,8 @@ processUnits[0] = {
     this.dataMin[v] = 0;
     this.dataMax[v] = 100;
     this.dataInitial[v] = 5;
-    this.flowRate = this.dataInitial[v]; // dataInitial used in getInputValue()
-    this.dataValues[v] = this.flowRate; // current input value for reporting
+    this.N = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.N; // current input value for reporting
     //
     // END OF INPUT VARS
     // record number of input variables, VarCount
@@ -121,6 +123,17 @@ processUnits[0] = {
     // this.dataMin[v] = 200;
     // this.dataMax[v] = 500;
     //
+
+    function Ant(nn) {
+      this.x = nn * Math.random();
+      this.x = Math.round(this.x);
+    } // END Ant constructor
+
+    // make a bunch of new Ants
+    for (i = 0; i < this.N; i += 1) {
+      this.ants[i] = new Ant(this.numNodes);
+    }
+
   }, // END of initialize()
 
   // *** NO LITERAL REFERENCES TO OTHER UNITS OR HTML ID'S BELOW THIS LINE ***
@@ -138,8 +151,6 @@ processUnits[0] = {
     // set to zero ssCheckSum used to check for steady state by this unit
     this.ssCheckSum = 0;
 
-    console.log('in reset after set ssCheckSum');
-
     // initialize profile data array
     // plotter.initPlotData(numProfileVars,numProfilePts)
     // this.profileData = plotter.initPlotData(2,this.numNodes); // holds data for static profile plots
@@ -152,9 +163,7 @@ processUnits[0] = {
     // plotter.initColorCanvasArray(numVars,numXpts,numYpts)
     this.colorCanvasData = plotter.initColorCanvasArray(1,this.numNodes,this.numNodes+1);
 
-    console.log('in reset after initColorCanvasArray');
-
-    // NEED TO INITIALIZE array colorCanvasData
+    // INITIALIZE array colorCanvasData
     for (let r = 0; r <= this.numNodes; r += 1) {
       for (let c = 0; c <= this.numNodes; c += 1) {
         this.colorCanvasData[0][r][c] = 100*(r*c)/(this.numNodes*this.numNodes);
@@ -207,16 +216,21 @@ processUnits[0] = {
 
     // have one adjustable param from HTML UI at this point, N
 
-    
+
   }, // end updateState method
 
   updateDisplay : function(){
 
     // update array colorCanvasData
-    for (let r = 0; r <= this.numNodes; r += 1) {
-      for (let c = 0; c <= this.numNodes; c += 1) {
-        this.colorCanvasData[0][r][c] = 100*(r*c)/(this.numNodes*this.numNodes);
-      }
+    // for (let r = 0; r <= this.numNodes; r += 1) {
+    //   for (let c = 0; c <= this.numNodes; c += 1) {
+    //     this.colorCanvasData[0][r][c] = 100*(r*c)/(this.numNodes*this.numNodes);
+    //   }
+    // }
+    // mark ants
+    for (let i = 0; i < this.N; i += 1) {
+      let r = this.ants[i].x;
+      this.colorCanvasData[0][r][r] = 100;
     }
 
   }, // END of updateDisplay()
