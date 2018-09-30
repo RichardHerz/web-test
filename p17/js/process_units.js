@@ -105,7 +105,7 @@ processUnits[0] = {
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 100;
-    this.dataInitial[v] = 1;
+    this.dataInitial[v] = 20;
     this.N = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.N; // current input value for reporting
     //
@@ -139,34 +139,35 @@ processUnits[0] = {
       this.oldXi = newX;
       this.oldYi = newY;
       this.move = function() {
+        let xmax = processUnits[0].numNodes;
+        let ymax = xmax;
         // save current position so can clear it on color canvas display
         this.oldXi = this.xi;
         this.oldYi = this.yi;
         // update x and y
-        this.x = this.x + this.dx;
-        this.y = this.y + this.dy;
-      // bounce if hit wall
-      // here specular reflection - real ants may not do this! 
-        // XXX appears at y = 0 wall for dy = 1 can get ant
-        //      to not touch wall on bounce
-        //      to see this do not clear old positions in updateDisplay
-        // XXX and for dx or dy > 1 will bounce from orig position, not wall
-        if ((this.x < 0) || (this.x > processUnits[0].numNodes)) {
-          this.x = this.x - 2*this.dx;
-          this.dx = -this.dx;
+        let xnew = this.x + this.dx;
+        let ynew = this.y + this.dy;
+        // bounce if hit walls
+        // here specular reflection - real ants may not do this!
+        if (xnew > xmax) {
+          xnew = 2 * xmax - xnew;
+          this.dx = -this.dx; // reverse direction
+        } else if (xnew < 0) {
+          xnew = -xnew;
+          this.dx = -this.dx; // reverse direction
         }
-        if ((this.y < 0) || (this.y > processUnits[0].numNodes)) {
-          this.y = this.y - 2*this.dy;
-          this.dy = -this.dy;
+        this.x = xnew;
+        if (ynew > ymax) {
+          ynew = 2*ymax - ynew;
+          this.dy = -this.dy; // reverse direction
+        } else if (ynew < 0) {
+          ynew = -ynew;
+          this.dy = -this.dy; // reverse direction
         }
-        // round for colorCanvasData array indexes since allow decimal dx and dy
-        this.xi = Math.round(this.x);
-        this.yi = Math.round(this.y);
-        // make sure in bounds
-        if (this.xi < 0) {this.xi = 0}
-        if (this.xi > processUnits[0].numNodes) {this.xi = processUnits[0].numNodes}
-        if (this.yi < 0) {this.yi = 0}
-        if (this.yi> processUnits[0].numNodes) {this.yi = processUnits[0].numNodes}
+        this.y = ynew;
+        // floor to integer for array indexes since allow decimal dx and dy
+        this.xi = Math.floor(this.x);
+        this.yi = Math.floor(this.y);
       } // END this move method
     } // END Ant constructor
 
