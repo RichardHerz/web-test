@@ -1,49 +1,50 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="utf-8"/>
 
-<title>** arena **</title>
+  <title>** arena **</title>
 
-<meta name='description' content='designed with lcCardLayoutToWeb project at GitHub'>
+  <meta name='description' content='designed with lcCardLayoutToWeb project at GitHub'>
 
-<!-- A VIEWPORT META LINE IN HTML HEAD IS NECESSARY FOR CSS @MEDIA TO WORK -->
-<!-- ID used to modify with Javascript after initial loading - OR EDIT HERE -->
-<!-- suggest use content width = div_simFrame width + 2 * div_simFrame left, and no scale -->
-<meta id='meta-viewport' name='viewport' content='width=650'>
+  <!-- A VIEWPORT META LINE IN HTML HEAD IS NECESSARY FOR CSS @MEDIA TO WORK -->
+  <!-- ID used to modify with Javascript after initial loading - OR EDIT HERE -->
+  <!-- suggest use content width = div_simFrame width + 2 * div_simFrame left, and no scale -->
+  <meta id='meta-viewport' name='viewport' content='width=650'>
 
-<!-- load CSS style sheets for this lab  -->
-<link rel="stylesheet" href="css/index.css">
+  <!-- load CSS style sheets for this lab  -->
+  <link rel="stylesheet" href="css/index.css">
 
-<!-- load SPECIFIC JAVASCRIPT for this lab -->
-<script language="javascript" src="js/process_sim_params.js" type="text/javascript"></script>
-<script language="javascript" src="js/process_units.js" type="text/javascript"></script>
-<script language="javascript" src="js/process_plot_info.js" type="text/javascript"></script>
+  <!-- load SPECIFIC JAVASCRIPT for this lab -->
+  <script language="javascript" src="js/process_sim_params.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_units.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_plot_info.js" type="text/javascript"></script>
 
-<!-- load COMMON JAVASCRIPT for Web Labs -->
-<script language="javascript" src="../web_labs_JS/process_controller.js" type="text/javascript"></script>
-<script language="javascript" src="../web_labs_JS/process_interface.js" type="text/javascript"></script>
-<script language="javascript" src="../web_labs_JS/process_plotter_flot.js" type="text/javascript"></script>
+  <!-- load COMMON JAVASCRIPT for Web Labs -->
+  <script language="javascript" src="../web_labs_JS/process_controller.js" type="text/javascript"></script>
+  <script language="javascript" src="../web_labs_JS/process_interface.js" type="text/javascript"></script>
+  <script language="javascript" src="../web_labs_JS/process_plotter_flot.js" type="text/javascript"></script>
 
-<!-- load JQUERY LIBRARY -->
-<script language="javascript" src="../web_labs_JS/jquery/new_jquery/jquery-3.3.1.min.js" type="text/javascript"></script>
+  <!-- load JQUERY LIBRARY -->
+  <script language="javascript" src="../web_labs_JS/jquery/new_jquery/jquery-3.3.1.min.js" type="text/javascript"></script>
 
-<!-- initialize simulation after loading of this window -->
-<script language="javascript">
-  // this works as script in html file but not in external js files
-  window.onload = controller.openThisLab; // can NOT use () after openThisLab
-</script>
+  <!-- initialize simulation after loading of this window -->
+  <script language="javascript">
+      // this works as script in html file but not in external js files
+      window.onload = controller.openThisLab; // can NOT use () after openThisLab
+  </script>
 
 </head>
-<body>
-<div id="div_simFrame">
-   <canvas id="canvas_CANVAS_arena" width="620" height="480"></canvas> <!-- canvas for colormap graphic -->
-   <!-- canvas element width & height must be specified here in HTML and not in CSS -->
-   <input type="button" id="button_runButton" value="Run" onclick="interface.runThisLab()">
-   <input type="button" id="button_resetButton" value="Reset" onclick="interface.resetThisLab()">
-   <input id="input_field_N" value="20">
-   <p id="field_input_N_LABEL">
-      input N
-   </p>
-</div> <!-- end of div div_simFrame -->
-</body>
+  <body>
+    <div id="div_simFrame">
+       <canvas id="canvas_CANVAS_arena" width="620" height="480"></canvas> <!-- canvas for colormap graphic -->
+       <!-- canvas element width & height must be specified here in HTML and not in CSS -->
+       <input type="button" id="button_runButton" value="Run" onclick="interface.runThisLab()">
+       <input type="button" id="button_resetButton" value="Reset" onclick="interface.resetThisLab()">
+       <input id="input_field_N" value="20">
+       <p id="field_input_N_LABEL">
+          input N
+       </p>
+    </div> <!-- end of div div_simFrame -->
+  </body>
 </html>

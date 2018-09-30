@@ -105,7 +105,7 @@ processUnits[0] = {
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 100;
-    this.dataInitial[v] = 100;
+    this.dataInitial[v] = 1;
     this.N = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.N; // current input value for reporting
     //
@@ -126,19 +126,27 @@ processUnits[0] = {
     //
 
     function Ant(newX, newY, newDX, newDY) {
+      // 1st 4 can be decimal to allow for more movement angles
       this.x  = newX;
       this.y = newY;
       this.dx = newDX;
       this.dy = newDY;
-      this.oldX = newX;
-      this.oldY = newY;
+      // 2nd 4 must be integer for colorCanvasData array indexes
+      // need to do rounding here because need to save old x,y to
+      // clear old position on color canvas display
+      this.xi = newX;
+      this.yi = newY;
+      this.oldXi = newX;
+      this.oldYi = newY;
       this.move = function() {
         // save current position so can clear it on color canvas display
-        this.oldX = this.x;
-        this.oldY = this.y;
+        this.oldXi = this.xi;
+        this.oldYi = this.yi;
+        // update x and y
         this.x = this.x + this.dx;
         this.y = this.y + this.dy;
-        // bounce if hit wall
+      // bounce if hit wall
+      // here specular reflection - real ants may not do this! 
         // XXX appears at y = 0 wall for dy = 1 can get ant
         //      to not touch wall on bounce
         //      to see this do not clear old positions in updateDisplay
@@ -151,23 +159,34 @@ processUnits[0] = {
           this.y = this.y - 2*this.dy;
           this.dy = -this.dy;
         }
+        // round for colorCanvasData array indexes since allow decimal dx and dy
+        this.xi = Math.round(this.x);
+        this.yi = Math.round(this.y);
+        // make sure in bounds
+        if (this.xi < 0) {this.xi = 0}
+        if (this.xi > processUnits[0].numNodes) {this.xi = processUnits[0].numNodes}
+        if (this.yi < 0) {this.yi = 0}
+        if (this.yi> processUnits[0].numNodes) {this.yi = processUnits[0].numNodes}
       } // END this move method
     } // END Ant constructor
 
     // make a bunch of new Ants
     for (i = 0; i < this.N; i += 1) {
       // need initial x,y,dx,dy
-      let x = Math.round(this.numNodes*Math.random());
-      let y = Math.round(this.numNodes*Math.random());
+      let xi = Math.round(this.numNodes*Math.random());
+      let yi = Math.round(this.numNodes*Math.random());
       let dd = 4;
-      let dx = Math.round(-dd + 2 * dd * Math.random());
-      let dy = Math.round(-dd + 2 * dd * Math.random());
+      // let dx = Math.round(-dd + 2 * dd * Math.random());
+      // let dy = Math.round(-dd + 2 * dd * Math.random());
+      // now allow decimal dx and dy to allow more angles of movement
+      let dx = -dd + 2 * dd * Math.random();
+      let dy = -dd + 2 * dd * Math.random();
       // NOTE: can get dx and/or dy = 0
       //        so get dead obj if both = 0 or move only in one direction
       //        reduce simParams.updateDisplayTimingMs to see this
       //        so can either check for 0's and set to 1 or
       //        repeat setting randomly until not 0
-      this.ants[i] = new Ant(x,y,dx,dy);
+      this.ants[i] = new Ant(xi,yi,dx,dy);
     }
 
   }, // END of initialize()
@@ -275,12 +294,12 @@ processUnits[0] = {
     // update colorCanvasData array
     for (let i = 0; i < this.N; i += 1) {
       // clear old positions
-      let r = this.ants[i].oldY;
-      let c = this.ants[i].oldX;
+      let r = this.ants[i].oldYi;
+      let c = this.ants[i].oldXi;
       this.colorCanvasData[0][r][c] = this.origColorCanvasData[0][r][c];
       // mark new positions
-      r = this.ants[i].y;
-      c = this.ants[i].x;
+      r = this.ants[i].yi;
+      c = this.ants[i].xi;
       this.colorCanvasData[0][r][c] = 100;
     }
 
