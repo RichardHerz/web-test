@@ -89,7 +89,7 @@ processUnits[0] = {
   //   none here
 
   // WARNING: numNodes is accessed in process_plot_info.js
-  numNodes : 100,
+  numNodes : 200,
 
   ssCheckSum : 0, // used to check for steady state
   residenceTime : 0, // for timing checks for steady state check
@@ -105,7 +105,7 @@ processUnits[0] = {
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 100;
-    this.dataInitial[v] = 20;
+    this.dataInitial[v] = 10;
     this.N = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.N; // current input value for reporting
     //
@@ -126,6 +126,8 @@ processUnits[0] = {
     //
 
     function Ant(newX, newY, newDX, newDY) {
+      // x = 0 is at left, xmax is at right of color canvas display
+      // y = 0 is at top, ymax is at bottom
       // 1st 4 can be decimal to allow for more movement angles
       this.x  = newX;
       this.y = newY;
@@ -140,7 +142,7 @@ processUnits[0] = {
       this.oldYi = newY;
       this.move = function() {
         let xmax = processUnits[0].numNodes;
-        let ymax = xmax;
+        let ymax = -1 + processUnits[0].numNodes;
         // save current position so can clear it on color canvas display
         this.oldXi = this.xi;
         this.oldYi = this.yi;
@@ -222,9 +224,11 @@ processUnits[0] = {
     this.origColorCanvasData = plotter.initColorCanvasArray(1,this.numNodes,this.numNodes+1);
 
     // INITIALIZE array colorCanvasData
-    for (let r = 0; r <= this.numNodes; r += 1) {
-      for (let c = 0; c <= this.numNodes; c += 1) {
-        this.colorCanvasData[0][r][c] = 100*(r*c)/(this.numNodes*this.numNodes);
+    // x = 0 is at left, xmax is at right of color canvas display
+    // y = 0 is at top, ymax is at bottom
+    for (let x = 0; x <= this.numNodes; x += 1) {
+      for (let y = 0; y <= this.numNodes; y += 1) {
+        this.colorCanvasData[0][x][y] = 100*(x*y)/(this.numNodes*this.numNodes);
       }
     }
     // make backup copy so can clear old object positions
@@ -232,9 +236,9 @@ processUnits[0] = {
     //    this.origColorCanvasData = this.colorCanvasData;
     // since they are still the same object
     // so need to initialize all elements separately
-    for (let r = 0; r <= this.numNodes; r += 1) {
-      for (let c = 0; c <= this.numNodes; c += 1) {
-        this.origColorCanvasData[0][r][c] = this.colorCanvasData[0][r][c];
+    for (let x = 0; x <= this.numNodes; x += 1) {
+      for (let y = 0; y <= this.numNodes; y += 1) {
+        this.origColorCanvasData[0][x][y] = this.colorCanvasData[0][x][y];
       }
     }
 
@@ -293,15 +297,17 @@ processUnits[0] = {
   updateDisplay : function(){
 
     // update colorCanvasData array
+    // x = 0 is at left, xmax is at right of color canvas display
+    // y = 0 is at top, ymax is at bottom
     for (let i = 0; i < this.N; i += 1) {
       // clear old positions
-      let r = this.ants[i].oldYi;
-      let c = this.ants[i].oldXi;
-      this.colorCanvasData[0][r][c] = this.origColorCanvasData[0][r][c];
+      let y = this.ants[i].oldYi;
+      let x = this.ants[i].oldXi;
+      this.colorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
       // mark new positions
-      r = this.ants[i].yi;
-      c = this.ants[i].xi;
-      this.colorCanvasData[0][r][c] = 100;
+      y = this.ants[i].yi;
+      x = this.ants[i].xi;
+      this.colorCanvasData[0][x][y] = 100;
     }
 
   }, // END of updateDisplay()
