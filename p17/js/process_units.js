@@ -226,11 +226,28 @@ processUnits[0] = {
     // INITIALIZE array colorCanvasData
     // x = 0 is at left, xmax is at right of color canvas display
     // y = 0 is at top, ymax is at bottom
-    for (let x = 0; x <= this.numNodes; x += 1) {
-      for (let y = 0; y <= this.numNodes; y += 1) {
-        this.colorCanvasData[0][x][y] = 100*(x*y)/(this.numNodes*this.numNodes);
+    let xymax = this.numNodes;
+    let xymax2 = xymax * xymax;
+    for (let x = 0; x <= xymax; x += 1) {
+      for (let y = 0; y <= xymax; y += 1) {
+        if (x < xymax - y) {
+          this.colorCanvasData[0][x][y] = 100*(xymax-x)*(xymax-y)/xymax2;
+        } else {
+          this.colorCanvasData[0][x][y] = 100*(x*y)/xymax2;
+        }
       }
     }
+
+    // // INITIALIZE array colorCanvasData
+    // // x = 0 is at left, xmax is at right of color canvas display
+    // // y = 0 is at top, ymax is at bottom
+    // let xymax = this.numNodes;
+    // let xymax2 = xymax * xymax;
+    // for (let x = 0; x <= xymax; x += 1) {
+    //   for (let y = 0; y <= xymax; y += 1) {
+    //     this.colorCanvasData[0][x][y] = 100*(x*y)/xymax2;
+    //   }
+    // }
 
     // XXX NEW - PLOT THIS
     plotter.plotColorCanvasPlot(0);

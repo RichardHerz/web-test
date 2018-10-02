@@ -467,14 +467,6 @@ let plotter = {
     let maxVarVal = plotInfo[pNumber]['varValueMax'];
     let scaledVarVal; // holds variable value scaled 0-1 by minVarVal & maxVarVal
 
-    // for (t = 0; t <= numTimePts; t += 1) { // NOTE = at t <=
-    //   for (s = 0; s < numSpacePts; s += 1) {
-
-    // for (t = tIN-1; t <= tIN+1; t += 1) { // NOTE = at t <=
-    //   if ((t < 0) || (t > numTimePts)) {continue;}
-    //   for (s = sIN-1; s <= sIN+1; s += 1) {
-    //     if ((s < 0) || (s >= numSpacePts)) {continue;}
-
     t = tIN;
     s = sIN;
 
@@ -498,13 +490,11 @@ let plotter = {
         y = sPixelsPerPoint * s;
         // draw colored rectangle on canvas to represent this data point
         if (sm == 1) {
+          // PixelsPerPoint must be >= 3 for this to work
           context.fillRect(x+1,y+1,tPixelsPerPoint-2,sPixelsPerPoint-2);
         } else {
         context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
       }
-
-    //   }
-    // }
 
     function jetColorMap(n) {
       // input n should be value between 0 and 1
