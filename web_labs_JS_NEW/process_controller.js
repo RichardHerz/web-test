@@ -196,21 +196,21 @@ let controller = {
     // UPDATE PLOTS HERE AND NOT IN PROCESS UNITS IN ORDER TO ALLOW
     // PLOTS TO CONTAIN DATA FROM MORE THAN ONE PROCESS UNIT
 
-    // GET AND PLOT ALL PLOTS defined in object plotInfo
-    let numPlots = Object.keys(plotInfo).length;
-    numPlots = numPlots - 1; // subtract method initialize(), which is counted in length
-    let p; // used as index
-    let data;
-    for (p = 0; p < numPlots; p += 1) {
-      if (plotInfo[p]['type'] == 'canvas') {
-        // space-time, color-canvas plot
-        plotter.plotColorCanvasPlot(p); // defined in file process_spacetime.js
-      } else {
-        // profile (static x,y) or strip chart (scolling x,y)
-        data = plotter.getPlotData(p);
-        plotter.plotPlotData(data,p);
-      }
-    }
+    // // GET AND PLOT ALL PLOTS defined in object plotInfo
+    // let numPlots = Object.keys(plotInfo).length;
+    // numPlots = numPlots - 1; // subtract method initialize(), which is counted in length
+    // let p; // used as index
+    // let data;
+    // for (p = 0; p < numPlots; p += 1) {
+    //   if (plotInfo[p]['type'] == 'canvas') {
+    //     // space-time, color-canvas plot
+    //     plotter.plotColorCanvasPlot(p); // defined in file process_spacetime.js
+    //   } else {
+    //     // profile (static x,y) or strip chart (scolling x,y)
+    //     data = plotter.getPlotData(p);
+    //     plotter.plotPlotData(data,p);
+    //   }
+    // }
 
     // check and set ssFlag to true if at steady state
     // do this here in updateDisplay rather than each process update

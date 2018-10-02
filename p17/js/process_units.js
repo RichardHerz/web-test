@@ -89,7 +89,7 @@ processUnits[0] = {
   //   none here
 
   // WARNING: numNodes is accessed in process_plot_info.js
-  numNodes : 200,
+  numNodes : 100,
 
   ssCheckSum : 0, // used to check for steady state
   residenceTime : 0, // for timing checks for steady state check
@@ -105,7 +105,7 @@ processUnits[0] = {
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 200;
-    this.dataInitial[v] = 200;
+    this.dataInitial[v] = 20;
     this.N = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.N; // current input value for reporting
     //
@@ -231,6 +231,10 @@ processUnits[0] = {
         this.colorCanvasData[0][x][y] = 100*(x*y)/(this.numNodes*this.numNodes);
       }
     }
+
+    // XXX NEW - PLOT THIS
+    plotter.plotColorCanvasPlot(0);
+
     // make backup copy so can clear old object positions
     // next line does not work because copy not made...
     //    this.origColorCanvasData = this.colorCanvasData;
@@ -304,10 +308,14 @@ processUnits[0] = {
       let y = this.ants[i].oldYi;
       let x = this.ants[i].oldXi;
       this.colorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
+      plotter.plotColorCanvasPixel(0,x,y,0);
+
       // mark new positions
       y = this.ants[i].yi;
       x = this.ants[i].xi;
       this.colorCanvasData[0][x][y] = 100;
+      plotter.plotColorCanvasPixel(0,x,y,1);
+
     }
 
   }, // END of updateDisplay()
