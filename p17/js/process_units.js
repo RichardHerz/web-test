@@ -74,6 +74,7 @@ processUnits[0] = {
   // stripData : [], // for strip chart plots, plot script requires this name
   colorCanvasData : [], // for color canvas plots, plot script requires this name
   origColorCanvasData : [], // save orig for clearing old object positions
+  oldColorCanvasData : [], // data at previous updateDisplay step
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for time step in this unit's updateInputs method
@@ -222,6 +223,8 @@ processUnits[0] = {
     this.colorCanvasData = plotter.initColorCanvasArray(1,this.numNodes,this.numNodes+1);
     // also need to init the backup copy for clearing old object positions
     this.origColorCanvasData = plotter.initColorCanvasArray(1,this.numNodes,this.numNodes+1);
+    // also need to init the copy for saving the previous, old object positions
+    this.oldColorCanvasData = plotter.initColorCanvasArray(1,this.numNodes,this.numNodes+1);
 
     // INITIALIZE array colorCanvasData
     // x = 0 is at left, xmax is at right of color canvas display
@@ -252,7 +255,7 @@ processUnits[0] = {
     // XXX NEW - PLOT THIS
     plotter.plotColorCanvasPlot(0);
 
-    // make backup copy so can clear old object positions
+    // make backup copies so can clear old object positions
     // next line does not work because copy not made...
     //    this.origColorCanvasData = this.colorCanvasData;
     // since they are still the same object
@@ -260,6 +263,7 @@ processUnits[0] = {
     for (let x = 0; x <= this.numNodes; x += 1) {
       for (let y = 0; y <= this.numNodes; y += 1) {
         this.origColorCanvasData[0][x][y] = this.colorCanvasData[0][x][y];
+        this.oldColorCanvasData[0][x][y] = this.colorCanvasData[0][x][y];
       }
     }
 
@@ -320,22 +324,59 @@ processUnits[0] = {
     // update colorCanvasData array
     // x = 0 is at left, xmax is at right of color canvas display
     // y = 0 is at top, ymax is at bottom
+
     for (let i = 0; i < this.N; i += 1) {
-      // clear old positions
-      let y = this.ants[i].oldYi;
+      // mark old positions in old array
       let x = this.ants[i].oldXi;
+      let y = this.ants[i].oldYi;
+      this.oldColorCanvasData[0][x][y] = this.colorCanvasData[0][x][y];
+      // reset old positions to orig in current array
+      x = this.ants[i].oldXi;
+      y = this.ants[i].oldYi;
       this.colorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
-      plotter.plotColorCanvasPixel(0,x,y,0);
-
-      // mark new positions
-      y = this.ants[i].yi;
+      // mark new positions in current array
       x = this.ants[i].xi;
+      y = this.ants[i].yi;
       this.colorCanvasData[0][x][y] = 100;
-      plotter.plotColorCanvasPixel(0,x,y,1);
+    }
 
+    // XXX should improve by saving xi, yi, oldXi, oldYi
+    // so new plotter only have to check those elements
+
+    // plotter.plotColorCanvasNEW uses both oldColor... and color... arrays
+    plotter.plotColorCanvasNEW(0);
+
+    // but now need to update old array so it has orig values at all array elements
+    for (let i = 0; i < this.N; i += 1) {
+      let x = this.ants[i].oldXi;
+      let y = this.ants[i].oldYi;
+      // save old positions
+      this.oldColorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
     }
 
   }, // END of updateDisplay()
+
+  // updateDisplay : function(){
+  //
+  //   // update colorCanvasData array
+  //   // x = 0 is at left, xmax is at right of color canvas display
+  //   // y = 0 is at top, ymax is at bottom
+  //   for (let i = 0; i < this.N; i += 1) {
+  //     // clear old positions
+  //     let y = this.ants[i].oldYi;
+  //     let x = this.ants[i].oldXi;
+  //     this.colorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
+  //     plotter.plotColorCanvasPixel(0,x,y,0);
+  //
+  //     // mark new positions
+  //     y = this.ants[i].yi;
+  //     x = this.ants[i].xi;
+  //     this.colorCanvasData[0][x][y] = 100;
+  //     plotter.plotColorCanvasPixel(0,x,y,1);
+  //
+  //   }
+
+  // }, // END of updateDisplay()
 
   checkForSteadyState : function() {
     // required - called by controller object
