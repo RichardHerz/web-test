@@ -90,7 +90,7 @@ processUnits[0] = {
   //   none here
 
   // WARNING: numNodes is accessed in process_plot_info.js
-  numNodes : 10,
+  numNodes : 100,
 
   ssCheckSum : 0, // used to check for steady state
   residenceTime : 0, // for timing checks for steady state check
@@ -101,12 +101,12 @@ processUnits[0] = {
   initialize : function() {
     //
     let v = 0;
-    this.dataHeaders[v] = 'N';
+    this.dataHeaders[v] = 'N'; // number swarm objects
     this.dataInputs[v] = 'input_field_input';
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 200;
-    this.dataInitial[v] = 2;
+    this.dataInitial[v] = 200;
     this.N = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.N; // current input value for reporting
     //
@@ -328,25 +328,17 @@ processUnits[0] = {
     // x = 0 is at left, xmax is at right of color canvas display
     // y = 0 is at top, ymax is at bottom
 
-    for (let i = 0; i < this.N; i += 1) {
-      // elements in colorCanvasData should be marked at old x,y positions
-      let x = this.ants[i].oldXi;
-      let y = this.ants[i].oldYi;
-      // transfer these values to oldColorCanvasData, which, before
-      // this repeat should have all original values of origColorCanvasData
-      this.oldColorCanvasData[0][x][y] = this.colorCanvasData[0][x][y];
-    }
-
     // WARNING: DO EACH TRANSFER IN A SEPARATE REPEAT OR
     //          CAN GET EXTRA, DEAD MARKED CELLS AFTER TWO OBJECTS SIT
     //          ON SAME CELL - THESE DEAD CELLS PERSIST UNTIL
     //          AN OBJECT PASSES OVER
 
     for (let i = 0; i < this.N; i += 1) {
-      // reset old positions to orig in current array
+      // reset old positions to original values in current array
+      // but mark with NEGATIVE number to show it should be replotted
       let x = this.ants[i].oldXi;
       let y = this.ants[i].oldYi;
-      this.colorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
+      this.colorCanvasData[0][x][y] = - this.origColorCanvasData[0][x][y];
     }
 
     for (let i = 0; i < this.N; i += 1) {
@@ -356,43 +348,33 @@ processUnits[0] = {
       this.colorCanvasData[0][x][y] = 100;
     }
 
-    // XXX should improve by saving xi, yi, oldXi, oldYi
-    // so new plotter only have to check those elements
-
-    // plotter.plotColorCanvasNEW uses both oldColor... and color... arrays
-    plotter.plotColorCanvasNEW(0);
-
+    // save oldXi, xi, oldYi, yi
+    // so new plotter only has to check those elements
+    let xLocArray = [];
+    let yLocArray = [];
     for (let i = 0; i < this.N; i += 1) {
-      // elements in oldColorCanvasData should be marked at old x,y positions
+      xLocArray.push(this.ants[i].oldXi);
+      yLocArray.push(this.ants[i].oldYi);
+      xLocArray.push(this.ants[i].xi);
+      yLocArray.push(this.ants[i].yi);
+    }
+
+    // plotter.plotColorCanvasSWARM uses colorCanvasData
+    plotter.plotColorCanvasSWARM(0,xLocArray,yLocArray);
+
+    // change negative elements at old positions (with original but negative
+    //  value) back to original positive values
+    // but DOUBLE-CHECK they are negative so don't change a new object
+    // placed at another object's old location
+    for (let i = 0; i < this.N; i += 1) {
       let x = this.ants[i].oldXi;
       let y = this.ants[i].oldYi;
-      // reset these to original
-      this.oldColorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
+      if (this.colorCanvasData[0][x][y] < 0) {
+        this.colorCanvasData[0][x][y]  = - this.colorCanvasData[0][x][y];
+      }
     }
 
   }, // END of updateDisplay()
-
-  // updateDisplay : function(){
-  //
-  //   // update colorCanvasData array
-  //   // x = 0 is at left, xmax is at right of color canvas display
-  //   // y = 0 is at top, ymax is at bottom
-  //   for (let i = 0; i < this.N; i += 1) {
-  //     // clear old positions
-  //     let y = this.ants[i].oldYi;
-  //     let x = this.ants[i].oldXi;
-  //     this.colorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
-  //     plotter.plotColorCanvasPixel(0,x,y,0);
-  //
-  //     // mark new positions
-  //     y = this.ants[i].yi;
-  //     x = this.ants[i].xi;
-  //     this.colorCanvasData[0][x][y] = 100;
-  //     plotter.plotColorCanvasPixel(0,x,y,1);
-  //
-  //   }
-
-  // }, // END of updateDisplay()
 
   checkForSteadyState : function() {
     // required - called by controller object
