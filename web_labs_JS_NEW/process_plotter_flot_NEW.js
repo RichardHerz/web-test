@@ -470,31 +470,31 @@ let plotter = {
     t = tIN;
     s = sIN;
 
-        scaledVarVal = (colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
-        jet = jetColorMap(scaledVarVal); // scaledVarVal should be scaled 0 to 1
-        r = jet[0];
-        g = jet[1];
-        b = jet[2];
-        // we have to convert computed color values to string for fillStyle
-        tColor2 = r.toString();
-        tColor3 = g.toString();
-        tColor4 = b.toString();
-        tColor = tColor1.concat(tColor2,',',tColor3,',',tColor4,tColor5);
-        context.fillStyle = tColor;
-        if (plotInfo[pNumber]['xAxisReversed']) {
-          // swap directions in plot from that in colorCanvasData array
-          x = tPixelsPerPoint * (numTimePts - t);
-        } else {
-          x = tPixelsPerPoint * t;
-        }
-        y = sPixelsPerPoint * s;
-        // draw colored rectangle on canvas to represent this data point
-        if (sm == 1) {
-          // PixelsPerPoint must be >= 3 for this to work
-          context.fillRect(x+1,y+1,tPixelsPerPoint-2,sPixelsPerPoint-2);
-        } else {
-        context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
-      }
+    scaledVarVal = (colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
+    jet = jetColorMap(scaledVarVal); // scaledVarVal should be scaled 0 to 1
+    r = jet[0];
+    g = jet[1];
+    b = jet[2];
+    // we have to convert computed color values to string for fillStyle
+    tColor2 = r.toString();
+    tColor3 = g.toString();
+    tColor4 = b.toString();
+    tColor = tColor1.concat(tColor2,',',tColor3,',',tColor4,tColor5);
+    context.fillStyle = tColor;
+    if (plotInfo[pNumber]['xAxisReversed']) {
+      // swap directions in plot from that in colorCanvasData array
+      x = tPixelsPerPoint * (numTimePts - t);
+    } else {
+      x = tPixelsPerPoint * t;
+    }
+    y = sPixelsPerPoint * s;
+    // draw colored rectangle on canvas to represent this data point
+    if (sm == 1) {
+      // PixelsPerPoint must be >= 3 for this to work
+      context.fillRect(x+1,y+1,tPixelsPerPoint-2,sPixelsPerPoint-2);
+    } else {
+    context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
+    }
 
     function jetColorMap(n) {
       // input n should be value between 0 and 1
@@ -551,6 +551,9 @@ let plotter = {
     // XXX should improve by saving xi, yi, oldXi, oldYi
     // so new plotter only have to check those elements
 
+    // xxx may be able to improve to use only one array by encoding
+    // old values as original value but negative...
+
     // USES OBJECT plotInfo
     // input argument pNumber refers to plot info in child pNumber
     // of object plotInfo
@@ -570,9 +573,6 @@ let plotter = {
 
     // next line REQUIRES unit object array to be named colorCanvasData
     let colorCanvasData = processUnits[varUnitIndex]['colorCanvasData'][v];
-
-    // // next line REQUIRES unit object array to be named origColorCanvasData
-    // let origColorCanvasData = processUnits[varUnitIndex]['origColorCanvasData'][v];
 
     // next line REQUIRES unit object array to be named oldColorCanvasData
     let oldColorCanvasData = processUnits[varUnitIndex]['oldColorCanvasData'][v];
@@ -625,7 +625,14 @@ let plotter = {
           }
           y = sPixelsPerPoint * s;
           // draw colored rectangle on canvas to represent this data point
+          if (colorCanvasData[t][s] == 100) {
+            // do this check because was getting ghosting when overwrite
+            // an old marked point 
+            // PixelsPerPoint must be >= 3 for this to work
+            context.fillRect(x+1,y+1,tPixelsPerPoint-2,sPixelsPerPoint-2);
+          } else {
           context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
+          }
         } // END if
       } // END for (s
     } // END for (t

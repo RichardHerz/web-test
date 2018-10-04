@@ -90,7 +90,7 @@ processUnits[0] = {
   //   none here
 
   // WARNING: numNodes is accessed in process_plot_info.js
-  numNodes : 100,
+  numNodes : 10,
 
   ssCheckSum : 0, // used to check for steady state
   residenceTime : 0, // for timing checks for steady state check
@@ -106,7 +106,7 @@ processUnits[0] = {
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 200;
-    this.dataInitial[v] = 20;
+    this.dataInitial[v] = 2;
     this.N = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.N; // current input value for reporting
     //
@@ -226,21 +226,24 @@ processUnits[0] = {
     // also need to init the copy for saving the previous, old object positions
     this.oldColorCanvasData = plotter.initColorCanvasArray(1,this.numNodes,this.numNodes+1);
 
+    // SYMMETRICAL ABOUT BOTH TOP-LEFT TO BTM-RIGHT DIAGONAL AND
+    //     BTM-LEFT TO TOP-RIGHT DIAGONAL
     // INITIALIZE array colorCanvasData
     // x = 0 is at left, xmax is at right of color canvas display
     // y = 0 is at top, ymax is at bottom
     let xymax = this.numNodes;
-    let xymax2 = xymax * xymax;
+    let invxymax2 = 1/(xymax * xymax);
     for (let x = 0; x <= xymax; x += 1) {
       for (let y = 0; y <= xymax; y += 1) {
         if (x < xymax - y) {
-          this.colorCanvasData[0][x][y] = 100*(xymax-x)*(xymax-y)/xymax2;
+          this.colorCanvasData[0][x][y] = 100*(xymax-x)*(xymax-y)*invxymax2;
         } else {
-          this.colorCanvasData[0][x][y] = 100*(x*y)/xymax2;
+          this.colorCanvasData[0][x][y] = 100*(x*y)*invxymax2;
         }
       }
     }
 
+    // // SYMMETRICAL ABOUT TOP-LEFT TO BTM-RIGHT DIAGONAL ONLY
     // // INITIALIZE array colorCanvasData
     // // x = 0 is at left, xmax is at right of color canvas display
     // // y = 0 is at top, ymax is at bottom
@@ -326,17 +329,30 @@ processUnits[0] = {
     // y = 0 is at top, ymax is at bottom
 
     for (let i = 0; i < this.N; i += 1) {
-      // mark old positions in old array
+      // elements in colorCanvasData should be marked at old x,y positions
       let x = this.ants[i].oldXi;
       let y = this.ants[i].oldYi;
+      // transfer these values to oldColorCanvasData, which, before
+      // this repeat should have all original values of origColorCanvasData
       this.oldColorCanvasData[0][x][y] = this.colorCanvasData[0][x][y];
+    }
+
+    // WARNING: DO EACH TRANSFER IN A SEPARATE REPEAT OR
+    //          CAN GET EXTRA, DEAD MARKED CELLS AFTER TWO OBJECTS SIT
+    //          ON SAME CELL - THESE DEAD CELLS PERSIST UNTIL
+    //          AN OBJECT PASSES OVER
+
+    for (let i = 0; i < this.N; i += 1) {
       // reset old positions to orig in current array
-      x = this.ants[i].oldXi;
-      y = this.ants[i].oldYi;
+      let x = this.ants[i].oldXi;
+      let y = this.ants[i].oldYi;
       this.colorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
+    }
+
+    for (let i = 0; i < this.N; i += 1) {
       // mark new positions in current array
-      x = this.ants[i].xi;
-      y = this.ants[i].yi;
+      let x = this.ants[i].xi;
+      let y = this.ants[i].yi;
       this.colorCanvasData[0][x][y] = 100;
     }
 
@@ -346,11 +362,11 @@ processUnits[0] = {
     // plotter.plotColorCanvasNEW uses both oldColor... and color... arrays
     plotter.plotColorCanvasNEW(0);
 
-    // but now need to update old array so it has orig values at all array elements
     for (let i = 0; i < this.N; i += 1) {
+      // elements in oldColorCanvasData should be marked at old x,y positions
       let x = this.ants[i].oldXi;
       let y = this.ants[i].oldYi;
-      // save old positions
+      // reset these to original
       this.oldColorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
     }
 
