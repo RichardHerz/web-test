@@ -74,7 +74,6 @@ processUnits[0] = {
   // stripData : [], // for strip chart plots, plot script requires this name
   colorCanvasData : [], // for color canvas plots, plot script requires this name
   origColorCanvasData : [], // save orig for clearing old object positions
-  oldColorCanvasData : [], // data at previous updateDisplay step
 
   // allow this unit to take more than one step within one main loop step in updateState method
   // WARNING: see special handling for time step in this unit's updateInputs method
@@ -223,8 +222,6 @@ processUnits[0] = {
     this.colorCanvasData = plotter.initColorCanvasArray(1,this.numNodes,this.numNodes+1);
     // also need to init the backup copy for clearing old object positions
     this.origColorCanvasData = plotter.initColorCanvasArray(1,this.numNodes,this.numNodes+1);
-    // also need to init the copy for saving the previous, old object positions
-    this.oldColorCanvasData = plotter.initColorCanvasArray(1,this.numNodes,this.numNodes+1);
 
     // SYMMETRICAL ABOUT BOTH TOP-LEFT TO BTM-RIGHT DIAGONAL AND
     //     BTM-LEFT TO TOP-RIGHT DIAGONAL
@@ -266,7 +263,6 @@ processUnits[0] = {
     for (let x = 0; x <= this.numNodes; x += 1) {
       for (let y = 0; y <= this.numNodes; y += 1) {
         this.origColorCanvasData[0][x][y] = this.colorCanvasData[0][x][y];
-        this.oldColorCanvasData[0][x][y] = this.colorCanvasData[0][x][y];
       }
     }
 
@@ -363,9 +359,10 @@ processUnits[0] = {
     plotter.plotColorCanvasSWARM(0,xLocArray,yLocArray);
 
     // change negative elements at old positions (with original but negative
-    //  value) back to original positive values
-    // but DOUBLE-CHECK they are negative so don't change a new object
+    // value) back to original positive values
+    // BUT DOUBLE-CHECK they are negative so don't change a new object
     // placed at another object's old location
+    // NEED TO DO this now because old x,y get changed before next updateDisplay
     for (let i = 0; i < this.N; i += 1) {
       let x = this.ants[i].oldXi;
       let y = this.ants[i].oldYi;
