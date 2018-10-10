@@ -17,12 +17,14 @@
 
   <!-- load SPECIFIC JAVASCRIPT for this lab -->
 
-  <!-- <script language="javascript" src="js/process_sim_params.js" type="text/javascript"></script>
+  <script language="javascript" src="js/puCSTR.js" type="text/javascript"></script>
+
+  <script language="javascript" src="js/process_sim_params.js" type="text/javascript"></script>
   <script language="javascript" src="js/process_units.js" type="text/javascript"></script>
-  <script language="javascript" src="js/process_plot_info.js" type="text/javascript"></script> -->
+  <script language="javascript" src="js/process_plot_info.js" type="text/javascript"></script>
 
   <!-- load COMMON JAVASCRIPT for Web Labs -->
-  <script language="javascript" src="../web_labs_JS_NEW/process_controller.js" type="text/javascript"></script>
+  <script language="javascript" src="../web_labs_JS_NEW/process_controller_NEW.js" type="text/javascript"></script>
   <script language="javascript" src="../web_labs_JS_NEW/process_interface.js" type="text/javascript"></script>
   <script language="javascript" src="../web_labs_JS_NEW/process_plotter_flot_NEW.js" type="text/javascript"></script>
 
@@ -37,8 +39,10 @@
 
 </head>
   <body>
-    <p><br><br>under development</p>
+    <p><br><br>under development - see browser's javascript console</p>
     <div id="div_simFrame">
+      <input type="button" id="button_runButton" value="Run" onclick="interface.runThisLab()">
+      <input type="button" id="button_resetButton" value="Reset" onclick="interface.resetThisLab()">
     </div> <!-- end of div div_simFrame -->
   </body>
 </html>

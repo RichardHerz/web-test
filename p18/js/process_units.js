@@ -19,15 +19,9 @@
 // -------------------------------------------------------------------
 
 let processUnits = new Object();
-  // contents must be only the process units as child objects
-  // children optionally can be defined in separate script files, e.g., as puHeatExchanger,
-  // then inserted into processUnits, e.g., processUnits[0] = puHeatExchanger,
-  // then cleared for garbage collection, e.g., puHeatExchanger = null;
-  // units defined in separate files makes them easier to edit
 
-// load process unit objects into this object
-// as indexed objects in order to allow object controller
-// to access them in a repeat with numeric index
+// define processUnits[0] here
+// define others in process_controller_NEW.js openThisLab()
 
 processUnits[0] = {
   //
@@ -84,6 +78,8 @@ processUnits[0] = {
   residenceTime : 0, // for timing checks for steady state check
   // residenceTime is set in this unit's updateUIparams()
 
+  conc : 100, // FEED CONC
+
   initialize : function() {
     //
     // let v = 0;
@@ -100,7 +96,7 @@ processUnits[0] = {
     // record number of input variables, VarCount
     // used, e.g., in copy data to table
     //
-    this.VarCount = v;
+    // this.VarCount = v;
     //
     // OUTPUT VARS
     //

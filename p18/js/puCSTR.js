@@ -157,6 +157,8 @@ function puCSTR(pUnitIndex) {
     let inputs = this.getInputs();
     this.concIn = inputs[0]; // conc from upstream CSTR
 
+    // console.log('updateInputs, CSTR = ' + this.unitIndex + ', concIn = ' + this.concIn);
+
   } // END of updateInputs()
 
   this.updateState = function() {
@@ -171,11 +173,13 @@ function puCSTR(pUnitIndex) {
 
     let flowrate = 1;
     let volume = 100;
-    let krate = 0.01;
+    let krate = 0.05;
 
-    let dcdt = flowrate/volume * (this.concIn - this.comc) - krate * this.conc;
+    let dcdt = flowrate/volume * (this.concIn - this.conc) - krate * this.conc;
 
     this.conc = this.conc + dcdt * this.unitTimeStep;
+
+    console.log('leave updateState, CSTR = ' + this.unitIndex + ', conc = ' + this.conc);
 
   } // END of updateState()
 
@@ -204,4 +208,4 @@ function puCSTR(pUnitIndex) {
     return ssFlag;
   } // END OF checkForSteadyState()
 
-} // END puTEMPLATE
+} // END puCSTR
