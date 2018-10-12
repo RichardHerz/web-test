@@ -53,7 +53,7 @@ let plotInfo = {
     plotInfo[pnum]['type'] = 'strip';
     plotInfo[pnum]['title'] = 'Reactor Conditions';
     plotInfo[pnum]['canvas'] = '#div_PLOTDIV_plotData'; // flot.js wants ID with prefix #
-    plotInfo[pnum]['numberPoints'] = 100;
+    plotInfo[pnum]['numberPoints'] = 400;
     // plot has numberPoints + 1 pts!
     plotInfo[pnum]['xAxisLabel'] = '< recent time | earlier time (s) >';
     plotInfo[pnum]['xAxisTableLabel'] = 'Time (s)'; // label for copy data table
@@ -61,14 +61,14 @@ let plotInfo = {
     // might be better to cover numbers if desire not to show numbers
     plotInfo[pnum]['xAxisShow'] = 1; // 0 false, 1 true
     plotInfo[pnum]['xAxisMin'] = 0;
-    plotInfo[pnum]['xAxisMax'] = 100 * simParams.simTimeStep * simParams.simStepRepeats; // numberPoints * ...
+    plotInfo[pnum]['xAxisMax'] = 400 * simParams.simTimeStep * simParams.simStepRepeats; // numberPoints * ...
     plotInfo[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
     plotInfo[pnum]['yLeftAxisLabel'] = 'Reactant Concentration';
     plotInfo[pnum]['yLeftAxisMin'] = 0;
-    plotInfo[pnum]['yLeftAxisMax'] = 400;
-    plotInfo[pnum]['yRightAxisLabel'] = 'Temperature (K)';
-    plotInfo[pnum]['yRightAxisMin'] = 300;
-    plotInfo[pnum]['yRightAxisMax'] = 400;
+    plotInfo[pnum]['yLeftAxisMax'] = 200;
+    plotInfo[pnum]['yRightAxisLabel'] = '';
+    plotInfo[pnum]['yRightAxisMin'] = 0;
+    plotInfo[pnum]['yRightAxisMax'] = 200;
     plotInfo[pnum]['plotLegendPosition'] = "ne";
     plotInfo[pnum]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 or "show"
     plotInfo[pnum]['plotGridBgColor'] = 'white';
@@ -94,10 +94,10 @@ let plotInfo = {
     //
     let vnum = 0; // 1st variable
     plotInfo[pnum]['varUnitIndex'][vnum] = 1; // value is index of unit in processUnits object
-    plotInfo[pnum]['var'][vnum] = 1; // value is variable index in plot data array
-    plotInfo[pnum]['varLabel'][vnum] = 'Reactant conc';
+    plotInfo[pnum]['var'][vnum] = 0; // value is variable index in plot data array
+    plotInfo[pnum]['varLabel'][vnum] = 'Rxr 1';
     // varDataUnits are dimensional units used in copy data table, along with varLabel
-    plotInfo[pnum]['varDataUnits'][vnum] = processUnits[1]['dataUnits'][4]; // 1st var
+    plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
     // varShow values are 'show' to show on plot and legend,
     // 'tabled' to not show on plot nor legend but list in copy data table
     // and any other value, e.g., 'hide' to not show on plot but do show in legend
@@ -107,31 +107,31 @@ let plotInfo = {
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
     vnum = 1; // 2nd variable
-    plotInfo[pnum]['varUnitIndex'][vnum] = 1;
+    plotInfo[pnum]['varUnitIndex'][vnum] = 4;
     plotInfo[pnum]['var'][vnum] = 0;
-    plotInfo[pnum]['varLabel'][vnum] = 'Reactor T';
-    plotInfo[pnum]['varDataUnits'][vnum] = processUnits[1]['dataUnits'][3];
+    plotInfo[pnum]['varLabel'][vnum] = 'Rxr 4';
+    plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][3];
     plotInfo[pnum]['varShow'][vnum] = 'show';
-    plotInfo[pnum]['varYaxis'][vnum] = 'right';
-    plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
-    //
-    vnum = 2; // 3rd variable
-    plotInfo[pnum]['varUnitIndex'][vnum] = 2;
-    plotInfo[pnum]['var'][vnum] = 0;
-    plotInfo[pnum]['varLabel'][vnum] = 'Jacket inlet T';
-    plotInfo[pnum]['varDataUnits'][vnum] = processUnits[2]['dataUnits'][0];
-    plotInfo[pnum]['varShow'][vnum] = 'show';
-    plotInfo[pnum]['varYaxis'][vnum] = 'right';
-    plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
-    //
-    vnum = 3; // 4th variable
-    plotInfo[pnum]['varUnitIndex'][vnum] = 3;
-    plotInfo[pnum]['var'][vnum] = 0;
-    plotInfo[pnum]['varLabel'][vnum] = 'Jacket T';
-    plotInfo[pnum]['varDataUnits'][vnum] = processUnits[3]['dataUnits'][1];
-    plotInfo[pnum]['varShow'][vnum] = 'tabled';
     plotInfo[pnum]['varYaxis'][vnum] = 'left';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
+    //
+    // vnum = 2; // 3rd variable
+    // plotInfo[pnum]['varUnitIndex'][vnum] = 2;
+    // plotInfo[pnum]['var'][vnum] = 0;
+    // plotInfo[pnum]['varLabel'][vnum] = 'Jacket inlet T';
+    // plotInfo[pnum]['varDataUnits'][vnum] = processUnits[2]['dataUnits'][0];
+    // plotInfo[pnum]['varShow'][vnum] = 'show';
+    // plotInfo[pnum]['varYaxis'][vnum] = 'right';
+    // plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
+    // //
+    // vnum = 3; // 4th variable
+    // plotInfo[pnum]['varUnitIndex'][vnum] = 3;
+    // plotInfo[pnum]['var'][vnum] = 0;
+    // plotInfo[pnum]['varLabel'][vnum] = 'Jacket T';
+    // plotInfo[pnum]['varDataUnits'][vnum] = processUnits[3]['dataUnits'][1];
+    // plotInfo[pnum]['varShow'][vnum] = 'tabled';
+    // plotInfo[pnum]['varYaxis'][vnum] = 'left';
+    // plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
   }, // end initialize method of plotInfo
 

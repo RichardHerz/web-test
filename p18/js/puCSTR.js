@@ -200,13 +200,13 @@ function puCSTR(pUnitIndex) {
 
     let flowrate = 1;
     let volume = 100;
-    let krate = 0.05;
+    let krate = 0.0;
 
     let dcdt = flowrate/volume * (this.concIn - this.conc) - krate * this.conc;
 
     this.conc = this.conc + dcdt * this.unitTimeStep;
 
-    console.log('leave updateState, CSTR = ' + this.unitIndex + ', conc = ' + this.conc);
+    // console.log('leave updateState, CSTR = ' + this.unitIndex + ', conc = ' + this.conc);
 
   } // END of updateState()
 

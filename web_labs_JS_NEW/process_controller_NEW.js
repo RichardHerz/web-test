@@ -48,15 +48,18 @@ let controller = {
 
     // **** START NEW ****
 
-    let num = Object.keys(processUnits).length;
-    console.log('enter processUnits.initialize(), length = ' + num);
-    for (let i = 1; i < 3; i += 1) {
-      console.log('just before create new puCSTR ' + i);
+    // let num = Object.keys(processUnits).length;
+    // console.log('enter processUnits.initialize(), length = ' + num);
+
+    let numRxrs = 4;
+    for (let i = 1; i <= numRxrs; i += 1) {
+      // console.log('just before create new puCSTR ' + i);
       processUnits[i] = new puCSTR(i);
     }
-    num = Object.keys(processUnits).length;
-    console.log('exit processUnits.initialize(), length = ' + num);
-    
+
+    // num = Object.keys(processUnits).length;
+    // console.log('exit processUnits.initialize(), length = ' + num);
+
     // **** END NEW ****
 
     // initialize variables in each process unit
@@ -211,21 +214,21 @@ let controller = {
     // UPDATE PLOTS HERE AND NOT IN PROCESS UNITS IN ORDER TO ALLOW
     // PLOTS TO CONTAIN DATA FROM MORE THAN ONE PROCESS UNIT
 
-    // // GET AND PLOT ALL PLOTS defined in object plotInfo
-    // let numPlots = Object.keys(plotInfo).length;
-    // numPlots = numPlots - 1; // subtract method initialize(), which is counted in length
-    // let p; // used as index
-    // let data;
-    // for (p = 0; p < numPlots; p += 1) {
-    //   if (plotInfo[p]['type'] == 'canvas') {
-    //     // space-time, color-canvas plot
-    //     plotter.plotColorCanvasPlot(p); // defined in file process_spacetime.js
-    //   } else {
-    //     // profile (static x,y) or strip chart (scolling x,y)
-    //     data = plotter.getPlotData(p);
-    //     plotter.plotPlotData(data,p);
-    //   }
-    // }
+    // GET AND PLOT ALL PLOTS defined in object plotInfo
+    let numPlots = Object.keys(plotInfo).length;
+    numPlots = numPlots - 1; // subtract method initialize(), which is counted in length
+    let p; // used as index
+    let data;
+    for (p = 0; p < numPlots; p += 1) {
+      if (plotInfo[p]['type'] == 'canvas') {
+        // space-time, color-canvas plot
+        plotter.plotColorCanvasPlot(p); // defined in file process_spacetime.js
+      } else {
+        // profile (static x,y) or strip chart (scolling x,y)
+        data = plotter.getPlotData(p);
+        plotter.plotPlotData(data,p);
+      }
+    }
 
     // check and set ssFlag to true if at steady state
     // do this here in updateDisplay rather than each process update
