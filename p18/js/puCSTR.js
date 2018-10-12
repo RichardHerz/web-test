@@ -15,6 +15,11 @@ function puCSTR(pUnitIndex) {
     return inputs;
   }
 
+  // define arrays to hold data for plots, color canvas
+  // these will be filled with initial values in method reset()
+  // profileData : [], // for profile plots, plot script requires this name
+  stripData : [], // for strip chart plots, plot script requires this name
+
   // // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS...
   // // SEE dataInputs array in initialize() method for input field ID's
   //
@@ -114,6 +119,28 @@ function puCSTR(pUnitIndex) {
 
     this.conc = 0;
 
+    // each unit has its own data arrays for plots and canvases
+
+    // initialize strip chart data array
+    // initPlotData(numStripVars,numStripPts)
+    let numStripVars = 1; // conc
+    let numStripPts = plotInfo[0]['numberPoints'];
+    this.stripData = plotter.initPlotData(numStripVars,numStripPts);
+
+    let kn = 0;
+    for (k = 0; k <= numStripPts; k += 1) {
+      kn = k * simParams.simTimeStep * simParams.simStepRepeats;
+      // x-axis values
+      // x-axis values will not change during sim
+      // XXX change to get number vars for this plotInfo variable
+      //     so can put in repeat - or better yet, a function
+      //     and same for y-axis below
+      // first index specifies which variable in plot data array
+      this.stripData[0][k][0] = kn;
+      // y-axis values
+      this.stripData[0][k][1] = 0;
+    }
+
     // update display
     this.updateDisplay();
 
@@ -187,6 +214,36 @@ function puCSTR(pUnitIndex) {
     // update display elements which only depend on this process unit
     // except do all plotting at main controller updateDisplay
     // since some plots may contain data from more than one process unit
+
+    // HANDLE STRIP CHART DATA
+
+    let v = 0; // used as index
+    let p = 0; // used as index
+    let numStripPoints = plotInfo[0]['numberPoints'];
+    let numStripVars = 1; // only the variables from this unit
+
+    // handle reactor conc
+    v = 0;
+    tempArray = this.stripData[v]; // work on one plot variable at a time
+    // delete first and oldest element which is an [x,y] pair array
+    tempArray.shift();
+    // add the new [x.y] pair array at end
+    tempArray.push( [ 0, this.conc] );
+    // update the variable being processed
+    this.stripData[v] = tempArray;
+
+    // re-number the x-axis values to equal time values
+    // so they stay the same after updating y-axis values
+    let timeStep = simParams.simTimeStep * simParams.simStepRepeats;
+    for (v = 0; v < numStripVars; v += 1) {
+      for (p = 0; p <= numStripPoints; p += 1) { // note = in p <= numStripPoints
+        // note want p <= numStripPoints so get # 0 to  # numStripPoints of points
+        // want next line for newest data at max time
+        this.stripData[v][p][0] = p * timeStep;
+        // want next line for newest data at zero time
+        // this.stripData[v][p][0] = (numStripPoints - p) * timeStep;
+      }
+    }
 
   } // END of updateDisplay()
 
