@@ -54,7 +54,7 @@ function puCSTR(pUnitIndex) {
   // colorCanvasData : [], // for color canvas plots, plot script requires this name
 
   // allow this unit to take more than one step within one main loop step in updateState method
-  this.unitStepRepeats = 1;
+  this.unitStepRepeats = 10;
   this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
   // define variables which will not be plotted nor saved in copy data table
@@ -200,11 +200,13 @@ function puCSTR(pUnitIndex) {
 
     let flowrate = 1;
     let volume = 100;
-    let krate = 0.0;
+    let krate = 0.001;
 
-    let dcdt = flowrate/volume * (this.concIn - this.conc) - krate * this.conc;
-
-    this.conc = this.conc + dcdt * this.unitTimeStep;
+      // this unit may take multiple steps within one outer main loop repeat step
+    for (let i = 0; i < this.unitStepRepeats; i += 1) {
+      let dcdt = flowrate/volume * (this.concIn - this.conc) - krate * this.conc;
+      this.conc = this.conc + dcdt * this.unitTimeStep;
+    }
 
     // console.log('leave updateState, CSTR = ' + this.unitIndex + ', conc = ' + this.conc);
 

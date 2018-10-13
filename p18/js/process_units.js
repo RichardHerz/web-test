@@ -125,6 +125,8 @@ processUnits[0] = {
     // set to zero ssCheckSum used to check for steady state by this unit
     this.ssCheckSum = 0;
 
+    this.conc = 100;
+
   }, // END reset method
 
   updateUIparams : function(){
@@ -168,6 +170,8 @@ processUnits[0] = {
     // WARNING: this method must NOT contain references to other units!
     //          get info from other units ONLY in updateInputs() method
     //
+
+    if (controller.simTime > 1000) {this.conc = 0;}
 
   }, // end updateState method
 
