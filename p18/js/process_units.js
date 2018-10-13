@@ -193,3 +193,10 @@ processUnits[0] = {
   } // END OF checkForSteadyState()
 
 }; // END unit 0
+
+// NOW ADD CSTRs to processUnits USING OBJECT CONSTRUCTOR IN FILE puCSTR.js
+
+let numRxrs = 4;
+for (let i = 1; i <= numRxrs; i += 1) {
+  processUnits[i] = new puCSTR(i);
+}

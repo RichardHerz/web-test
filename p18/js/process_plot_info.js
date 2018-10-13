@@ -107,6 +107,24 @@ let plotInfo = {
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
     vnum = 1; // 2nd variable
+    plotInfo[pnum]['varUnitIndex'][vnum] = 2;
+    plotInfo[pnum]['var'][vnum] = 0;
+    plotInfo[pnum]['varLabel'][vnum] = 'Rxr 2';
+    plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][3];
+    plotInfo[pnum]['varShow'][vnum] = 'show';
+    plotInfo[pnum]['varYaxis'][vnum] = 'left';
+    plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
+    //
+    vnum = 2; // 3rd variable
+    plotInfo[pnum]['varUnitIndex'][vnum] = 3;
+    plotInfo[pnum]['var'][vnum] = 0;
+    plotInfo[pnum]['varLabel'][vnum] = 'Rxr 3';
+    plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][3];
+    plotInfo[pnum]['varShow'][vnum] = 'show';
+    plotInfo[pnum]['varYaxis'][vnum] = 'left';
+    plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
+    //
+    vnum = 3; // 4th variable
     plotInfo[pnum]['varUnitIndex'][vnum] = 4;
     plotInfo[pnum]['var'][vnum] = 0;
     plotInfo[pnum]['varLabel'][vnum] = 'Rxr 4';
@@ -114,24 +132,6 @@ let plotInfo = {
     plotInfo[pnum]['varShow'][vnum] = 'show';
     plotInfo[pnum]['varYaxis'][vnum] = 'left';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
-    //
-    // vnum = 2; // 3rd variable
-    // plotInfo[pnum]['varUnitIndex'][vnum] = 2;
-    // plotInfo[pnum]['var'][vnum] = 0;
-    // plotInfo[pnum]['varLabel'][vnum] = 'Jacket inlet T';
-    // plotInfo[pnum]['varDataUnits'][vnum] = processUnits[2]['dataUnits'][0];
-    // plotInfo[pnum]['varShow'][vnum] = 'show';
-    // plotInfo[pnum]['varYaxis'][vnum] = 'right';
-    // plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
-    // //
-    // vnum = 3; // 4th variable
-    // plotInfo[pnum]['varUnitIndex'][vnum] = 3;
-    // plotInfo[pnum]['var'][vnum] = 0;
-    // plotInfo[pnum]['varLabel'][vnum] = 'Jacket T';
-    // plotInfo[pnum]['varDataUnits'][vnum] = processUnits[3]['dataUnits'][1];
-    // plotInfo[pnum]['varShow'][vnum] = 'tabled';
-    // plotInfo[pnum]['varYaxis'][vnum] = 'left';
-    // plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
   }, // end initialize method of plotInfo
 

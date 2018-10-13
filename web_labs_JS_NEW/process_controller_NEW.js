@@ -45,23 +45,7 @@ let controller = {
   ssFlag : false,
 
   openThisLab : function() {
-
-    // **** START NEW ****
-
-    // let num = Object.keys(processUnits).length;
-    // console.log('enter processUnits.initialize(), length = ' + num);
-
-    let numRxrs = 4;
-    for (let i = 1; i <= numRxrs; i += 1) {
-      // console.log('just before create new puCSTR ' + i);
-      processUnits[i] = new puCSTR(i);
-    }
-
-    // num = Object.keys(processUnits).length;
-    // console.log('exit processUnits.initialize(), length = ' + num);
-
-    // **** END NEW ****
-
+    
     // initialize variables in each process unit
     let numUnits = Object.keys(processUnits).length; // number of units
     numUnits = 2;
