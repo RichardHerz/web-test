@@ -21,7 +21,8 @@
 let processUnits = new Object();
 
 // define processUnits[0] here
-// define others in process_controller_NEW.js openThisLab()
+// below that definition, define CSTRs in series using
+// Javascript constructor method 
 
 processUnits[0] = {
   //
