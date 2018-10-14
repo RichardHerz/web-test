@@ -37,9 +37,9 @@ fUpdate : function() {
   // change arbitrary elements as test
   this.fAddData(0,1,0,0.1);
   this.fAddData(2,2,0.3,0.4);
-},
+}
 
-} // end of object unit01
+}; // end of object unit01
 
 function initPlotData(numVars,numPlotPoints) {
   // returns 3D array to hold x,y scatter plot data for multiple variables
@@ -60,13 +60,13 @@ function initPlotData(numVars,numPlotPoints) {
   }
   }
   return plotDataStub;
-}
+};
 
 function fGetUnitData(pUnitName,pVarNum) {
   let tempString = pUnitName + '.myData[' + pVarNum + '];';
   let tempArray = eval(tempString);
   return tempArray;
-}
+};
 
 // or put call to fInitDataArray in unit01's internal reset function
 unit01.fInitDataArray();

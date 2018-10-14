@@ -15,59 +15,59 @@ console.log('hello world');
 
 var myUnits = {
 
-// NOW EACH UNIT IS A CHILD OBJECT OF PARENT OBJECT OF WEB LAB
-// WHICH ALLOWS ELIMINATING USE OF eval() IN GETTING DATA FROM UNIT
+  // NOW EACH UNIT IS A CHILD OBJECT OF PARENT OBJECT OF WEB LAB
+  // WHICH ALLOWS ELIMINATING USE OF eval() IN GETTING DATA FROM UNIT
 
-unit01 : {
+  unit01 : {
 
-numVars : 3,
-numPts : 4,
+    numVars : 3,
+    numPts : 4,
 
-// initialize 3D array to hold this unit's x,y time series data
-// DID NOT WORK: myData : initPlotData(this.numVars,this.numPts)
-// where initPlotData is a function external to this object unit01
-myData : null, // later, create array by calling this.fInitDataArray()
+    // initialize 3D array to hold this unit's x,y time series data
+    // DID NOT WORK: myData : initPlotData(this.numVars,this.numPts)
+    // where initPlotData is a function external to this object unit01
+    myData : null, // later, create array by calling this.fInitDataArray()
 
-fInitDataArray : function() {
-// initPlotData is a function external to this object unit01
-this.myData = initPlotData(this.numVars,this.numPts);
-},
+    fInitDataArray : function() {
+    // initPlotData is a function external to this object unit01
+    this.myData = initPlotData(this.numVars,this.numPts);
+    },
 
-fAddData : function(v,p,x,y) {
-// v = variable, p = point, x = x-axis value, y = y-axis value
-this.myData[v][p][0] = x;
-this.myData[v][p][1] = y;
-},
+    fAddData : function(v,p,x,y) {
+    // v = variable, p = point, x = x-axis value, y = y-axis value
+    this.myData[v][p][0] = x;
+    this.myData[v][p][1] = y;
+    },
 
-fUpdate : function() {
-// change arbitrary elements as test
-this.fAddData(0,1,0,0.1);
-this.fAddData(2,2,0.3,0.4);
-},
+    fUpdate : function() {
+    // change arbitrary elements as test
+    this.fAddData(0,1,0,0.1);
+    this.fAddData(2,2,0.3,0.4);
+    }
 
-}, // end of object unit01
-} // end of object myUnits
+  } // end of object unit01
+}; // end of object myUnits
 
 function initPlotData(numVars,numPlotPoints) {
-// returns 3D array to hold x,y scatter plot data for multiple variables
-// inputs are list of variables and # of x,y point pairs per variable
-// returns array with all elements for plot filled with zero
-// index 1 specifies the variable [0 to numVars-1],
-// index 2 specifies the data point pair [0 to & including numPlotPoints]
-// index 3 specifies x or y in x,y data point pair [0 & 1]
-var v;
-var p;
-var plotDataStub = new Array();
-for (v = 0; v < numVars; v += 1) {
-plotDataStub[v] = new Array();
-for (p = 0; p <= numPlotPoints; p += 1) { // NOTE = AT p <=
-plotDataStub[v][p] = new Array();
-plotDataStub[v][p][0] = 0;
-plotDataStub[v][p][1] = 1;
-}
-}
-return plotDataStub;
-}
+  // returns 3D array to hold x,y scatter plot data for multiple variables
+  // inputs are list of variables and # of x,y point pairs per variable
+  // returns array with all elements for plot filled with zero
+  // index 1 specifies the variable [0 to numVars-1],
+  // index 2 specifies the data point pair [0 to & including numPlotPoints]
+  // index 3 specifies x or y in x,y data point pair [0 & 1]
+  var v;
+  var p;
+  var plotDataStub = new Array();
+  for (v = 0; v < numVars; v += 1) {
+    plotDataStub[v] = new Array();
+    for (p = 0; p <= numPlotPoints; p += 1) { // NOTE = AT p <=
+      plotDataStub[v][p] = new Array();
+      plotDataStub[v][p][0] = 0;
+      plotDataStub[v][p][1] = 1;
+    }
+  }
+  return plotDataStub;
+};
 
 function fGetUnitData(pUnitName,pVarNum) {
 // can avoid eval() by putting unit as child object in parent object
@@ -87,7 +87,7 @@ return tempArray;
 // ... etc....
 // AND ALSO CHECK process_interface.js
 
-} // END OF function fGetUnitData
+}; // END OF function fGetUnitData
 
 // or put call to fInitDataArray in unit01's internal reset function
 myUnits.unit01.fInitDataArray();
