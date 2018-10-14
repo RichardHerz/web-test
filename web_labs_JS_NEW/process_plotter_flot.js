@@ -271,6 +271,8 @@ let plotter = {
   // *** FUNCTIONS BELOW ARE INDEPENDENT OF FLOT.JS AND OTHER LIBRARIES ***
 
   plotColorCanvasPlot : function(pNumber) {
+    // FOR PLOT AND REPLOT OF ENTIRE CANVAS
+    // USE plotColorCanvasPixelList for plot and replot of specified pixels
     // generates color plot on html canvas element
     // USES OBJECT plotInfo
     // input argument pNumber refers to plot info in child pNumber
@@ -420,15 +422,17 @@ let plotter = {
   }, // END of function initColorCanvasArray
 
   plotColorCanvasPixelList : function(pNumber,xLocArray,yLocArray,small) {
+    // FOR REPLOT OF LIMITED NUMBER OF PIXELS ON CANVAS
+    // USE plotColorCanvasPlot for plot and replot of entire canvas
     // input argument pNumber refers to plot info in child pNumber
     //   of object plotInfo
     // input arguments xLocArray & yLocArray contain x,y and old x,y locations
     //   needing replot and must be 1-element arrays if only 1 value, not scalar
     // input argument small with value 1 (true) fills with 1 pixel smaller than
     //   original on all sides (requires orig pixels to be at least 3x3)
-    //   because was getting ghosting of dark pixels
+    //   because was getting ghosting of dark pixels in ant swarm project
     // SEE "if (colorCanvasData[t][s] < 0)" for pixels marked negative
-    //    used in ant swarm project
+    //    as used in ant swarm project
     // USES OBJECT plotInfo and PROCESS UNIT's colorCanvasData array
     // USES function jetColorMap()
     // use this to plot space-time plots as well as other color canvas plots
@@ -503,13 +507,13 @@ let plotter = {
       }
       y = sPixelsPerPoint * s;
 
-      if (small == 1) {
-      // do this check because was getting ghosting when overwrite
-      // an old marked point
-        // PixelsPerPoint must be >= 3 for this to work
+      if ((small == 1) && (tPixelsPerPoint > 2) && (sPixelsPerPoint > 2)) {
+        // PixelsPerPoint must be > 2 for this to work
+        // do this check because was getting ghosting when overwrite
+        // an old marked point
         context.fillRect(x+1,y+1,tPixelsPerPoint-2,sPixelsPerPoint-2);
       } else {
-      context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
+        context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
       }
 
     } // END for (i
