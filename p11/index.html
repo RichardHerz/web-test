@@ -1,4 +1,8 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+</head>
 <body>
   <p> 3D VERSION 2 - initialize and add data to 3D array property
   of an object - Javascript</p>
@@ -6,8 +10,10 @@
   later calling fInitDataArray() -
   version 1 had myData : initPlotData(3,4)</p>
 
+  <p>SEE OUTPUT IN JAVASCRIPT CONSOL</p>
+
 <script>
-  alert('hello world');
+  console.log('hello world');
 
   var unit01 = {
 
@@ -62,13 +68,13 @@
   // or put call to fInitDataArray in unit01's internal reset function
   unit01.fInitDataArray();
 
-  alert('before fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
-  alert('before fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
+  console.log('before fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
+  console.log('before fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
 
   unit01.fUpdate();
 
-  alert('after fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
-  alert('after fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
+  console.log('after fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
+  console.log('after fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
 
 
 </script>

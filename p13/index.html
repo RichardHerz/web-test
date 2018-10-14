@@ -1,11 +1,17 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+</head>
 <body>
 <p> VERSION 2 - access 2D array from 3D data in unit by unit name and var # -
   see fGetUnitData() below - WITHOUT USING EVAL -
   but putting unit into a parent object - Javascript</p>
 
+<p>SEE OUTPUT IN JAVASCRIPT CONSOL</p>
+
 <script>
-alert('hello world');
+console.log('hello world');
 
 var myUnits = {
 
@@ -86,19 +92,19 @@ return tempArray;
 // or put call to fInitDataArray in unit01's internal reset function
 myUnits.unit01.fInitDataArray();
 
-alert('before fUpdate, myUnits.unit01.myData[2][2][0] = ' + myUnits.unit01.myData[2][2][0]);
-alert('before fUpdate, myUnits.unit01.myData[2][2][1] = ' + myUnits.unit01.myData[2][2][1]);
+console.log('before fUpdate, myUnits.unit01.myData[2][2][0] = ' + myUnits.unit01.myData[2][2][0]);
+console.log('before fUpdate, myUnits.unit01.myData[2][2][1] = ' + myUnits.unit01.myData[2][2][1]);
 
 myUnits.unit01.fUpdate();
 
-alert('after fUpdate, myUnits.unit01.myData[2][2][0] = ' + myUnits.unit01.myData[2][2][0]);
-alert('after fUpdate, myUnits.unit01.myData[2][2][1] = ' + myUnits.unit01.myData[2][2][1]);
+console.log('after fUpdate, myUnits.unit01.myData[2][2][0] = ' + myUnits.unit01.myData[2][2][0]);
+console.log('after fUpdate, myUnits.unit01.myData[2][2][1] = ' + myUnits.unit01.myData[2][2][1]);
 
 let tArray = fGetUnitData('unit01',2);
-alert('tArray = ' + tArray);
+console.log('tArray = ' + tArray);
 
-alert('tArray[2][0] = ' + tArray[2][0]);
-alert('tArray[2][1] = ' + tArray[2][1]);
+console.log('tArray[2][0] = ' + tArray[2][0]);
+console.log('tArray[2][1] = ' + tArray[2][1]);
 
 </script>
 

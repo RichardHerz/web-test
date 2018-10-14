@@ -1,10 +1,16 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+</head>
 <body>
 <p> VERSION 3 - access 2D array from 3D data in unit by unit name
 and var # - see fGetUnitData() below - USE TEMP FUNCTION - Javascript</p>
 
+<p>SEE OUTPUT IN JAVASCRIPT CONSOL</p>
+
 <script>
-alert('hello world');
+console.log('hello world');
 
 var unit01 = {
 
@@ -69,19 +75,19 @@ function fGetUnitData(pUnitName,pVarNum) {
 // or put call to fInitDataArray in unit01's internal reset function
 unit01.fInitDataArray();
 
-alert('before fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
-alert('before fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
+console.log('before fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
+console.log('before fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
 
 unit01.fUpdate();
 
-alert('after fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
-alert('after fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
+console.log('after fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
+console.log('after fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
 
 let tArray = fGetUnitData('unit01',2);
-alert('tArray = ' + tArray);
+console.log('tArray = ' + tArray);
 
-alert('tArray[2][0] = ' + tArray[2][0]);
-alert('tArray[2][1] = ' + tArray[2][1]);
+console.log('tArray[2][0] = ' + tArray[2][0]);
+console.log('tArray[2][1] = ' + tArray[2][1]);
 
 </script>
 
