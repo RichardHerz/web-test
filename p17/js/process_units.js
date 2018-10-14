@@ -355,8 +355,11 @@ processUnits[0] = {
       yLocArray.push(this.ants[i].yi);
     }
 
-    // plotter.plotColorCanvasSWARM uses colorCanvasData
-    plotter.plotColorCanvasSWARM(0,xLocArray,yLocArray);
+    // plotter.plotColorCanvasPixelList uses colorCanvasData
+    // last (4th) input argument is "small" for replotting 1 pixel inside
+    // on all sides because of ghosting of old marked ants
+    // (requires orig pixels to be at least 3x3)
+    plotter.plotColorCanvasPixelList(0,xLocArray,yLocArray,1);
 
     // change negative elements at old positions (with original but negative
     // value) back to original positive values

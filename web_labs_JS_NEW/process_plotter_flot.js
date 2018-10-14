@@ -275,7 +275,7 @@ let plotter = {
     // USES OBJECT plotInfo
     // input argument pNumber refers to plot info in child pNumber
     // of object plotInfo
-    // USES internal function jetColorMap()
+    // USES function jetColorMap()
     // use this to plot space-time plots as well as other color canvas plots
     // see https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial
 
@@ -320,7 +320,7 @@ let plotter = {
     for (t = 0; t <= numTimePts; t += 1) { // NOTE = at t <=
       for (s = 0; s < numSpacePts; s += 1) {
         scaledVarVal = (colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
-        jet = jetColorMap(scaledVarVal); // scaledVarVal should be scaled 0 to 1
+        jet = this.jetColorMap(scaledVarVal); // scaledVarVal should be scaled 0 to 1
         r = jet[0];
         g = jet[1];
         b = jet[2];
@@ -342,55 +342,55 @@ let plotter = {
       } // end of inner FOR repeat
     } // end of outer FOR repeat
 
-    function jetColorMap(n) {
-      // input n should be value between 0 and 1
-      // rgb output array values will be 0-255 to match MATLAB's jet colormap
-      //
-      // ANOTHER WAY would be a look up table - would that be faster?
-      //
-      let r;
-      let g;
-      let b;
-      if (n<0) {n = 0;}
-      if (n>1) {n = 1;}
-      // would not need to round input to integers with IF statements
-      // EXCEPT if don't round then can get rgb values > 1.0 at end of IF
-      // so would then need to add more IF statements to check - SO ROUND NOW
-      let n64 = Math.round(1 + 63*n); // n64 = 1 when n = 0; n64 = 64 when n = 1
-      if (n64 >= 1 && n64 < 9) {
-        r = 0;
-        g = 0;
-        b = (n64-1)/7*0.4375 + 0.5625;
-      } else if (n64 >= 9 && n64 < 25) {
-        r = 0;
-        g = (n64-9)/15*0.9375 + 0.0625;
-        b = 1;
-      } else if (n64 >= 25 && n64 < 41) {
-        r = (n64-25)/15*0.9375 + 0.0625;
-        g = 1;
-        b = -(n64-25)/15*0.9375 + 0.9375;
-      } else if (n64 >= 41 && n64 < 57) {
-        r = 1;
-        g = -(n64-41)/15*0.9375 + 0.9375;
-        b = 0;
-      } else if (n64 >= 57 && n64 <= 64) {
-        r = -(n64-57)/7*0.4375 + 0.9375;
-        g = 0;
-        b = 0;
-      } else {
-        // out of bounds - give output for zero input
-        r = 0;
-        g = 0;
-        b = 0.5625;
-      } // end of IF structure
-      // but we must round output to integers after converting to 0-255
-      r = Math.round(r*255);
-      g = Math.round(g*255);
-      b = Math.round(b*255);
-      return [r,g,b];
-    } // END of function jetColorMap
-
   }, // END of function plotColorCanvasPlot
+
+  jetColorMap : function(n) {
+    // input n should be value between 0 and 1
+    // rgb output array values will be 0-255 to match MATLAB's jet colormap
+    //
+    // ANOTHER WAY would be a look up table - would that be faster?
+    //
+    let r;
+    let g;
+    let b;
+    if (n<0) {n = 0;}
+    if (n>1) {n = 1;}
+    // would not need to round input to integers with IF statements
+    // EXCEPT if don't round then can get rgb values > 1.0 at end of IF
+    // so would then need to add more IF statements to check - SO ROUND NOW
+    let n64 = Math.round(1 + 63*n); // n64 = 1 when n = 0; n64 = 64 when n = 1
+    if (n64 >= 1 && n64 < 9) {
+      r = 0;
+      g = 0;
+      b = (n64-1)/7*0.4375 + 0.5625;
+    } else if (n64 >= 9 && n64 < 25) {
+      r = 0;
+      g = (n64-9)/15*0.9375 + 0.0625;
+      b = 1;
+    } else if (n64 >= 25 && n64 < 41) {
+      r = (n64-25)/15*0.9375 + 0.0625;
+      g = 1;
+      b = -(n64-25)/15*0.9375 + 0.9375;
+    } else if (n64 >= 41 && n64 < 57) {
+      r = 1;
+      g = -(n64-41)/15*0.9375 + 0.9375;
+      b = 0;
+    } else if (n64 >= 57 && n64 <= 64) {
+      r = -(n64-57)/7*0.4375 + 0.9375;
+      g = 0;
+      b = 0;
+    } else {
+      // out of bounds - give output for zero input
+      r = 0;
+      g = 0;
+      b = 0.5625;
+    } // end of IF structure
+    // but we must round output to integers after converting to 0-255
+    r = Math.round(r*255);
+    g = Math.round(g*255);
+    b = Math.round(b*255);
+    return [r,g,b];
+  }, // END of function jetColorMap
 
   initColorCanvasArray : function(numVars,numXpts,numYpts) {
     // used by units to initialize local data arrays
@@ -417,6 +417,102 @@ let plotter = {
     }
     // document.getElementById("dev01").innerHTML = "hello";
     return plotDataStub;
-  } // END of function initColorCanvasArray
+  }, // END of function initColorCanvasArray
+
+  plotColorCanvasPixelList : function(pNumber,xLocArray,yLocArray,small) {
+    // input argument pNumber refers to plot info in child pNumber
+    //   of object plotInfo
+    // input arguments xLocArray & yLocArray contain x,y and old x,y locations
+    //   needing replot and must be 1-element arrays if only 1 value, not scalar
+    // input argument small with value 1 (true) fills with 1 pixel smaller than
+    //   original on all sides (requires orig pixels to be at least 3x3)
+    //   because was getting ghosting of dark pixels
+    // SEE "if (colorCanvasData[t][s] < 0)" for pixels marked negative
+    //    used in ant swarm project
+    // USES OBJECT plotInfo and PROCESS UNIT's colorCanvasData array
+    // USES function jetColorMap()
+    // use this to plot space-time plots as well as other color canvas plots
+    // see https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial
+
+    let canvasID = plotInfo[pNumber]['canvas'];
+    let canvas = document.getElementById(canvasID);
+    let context = canvas.getContext('2d');
+
+    // copy data from unit local array colorCanvasData to local array colorCanvasData
+    let varUnitIndex = plotInfo[pNumber]['varUnitIndex'];
+    // v is the index number of the one variable to plot on the canvas
+    // where 0 is first, 1 is second, etc.
+    let v = plotInfo[pNumber]['var'];
+
+    // next line REQUIRES unit object array to be named colorCanvasData
+    let colorCanvasData = processUnits[varUnitIndex]['colorCanvasData'][v];
+
+    let t;
+    let s;
+    let r;
+    let g;
+    let b;
+    let jet;
+    let x;
+    let y;
+    // below we have to convert computed color values
+    // to text string for fillStyle below, so get pieces ready
+    let tColor1 = 'rgb(';
+    let tColor2;
+    let tColor3;
+    let tColor4;
+    let tColor5 = ')';
+    let tPixels = canvas.width; // canvas width, height set in HTML canvas element
+    let sPixels = canvas.height;
+    let numTimePts = plotInfo[pNumber]['varTimePts'];
+    let numSpacePts = plotInfo[pNumber]['varSpacePts'];
+    let tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point, note +1
+    let sPixelsPerPoint = sPixels/numSpacePts; // pixels per point
+    let minVarVal = plotInfo[pNumber]['varValueMin'];
+    let maxVarVal = plotInfo[pNumber]['varValueMax'];
+    let scaledVarVal; // holds variable value scaled 0-1 by minVarVal & maxVarVal
+
+    // repeat through all old and new x,y locations
+    for (let i=0; i < xLocArray.length; i +=1) {
+      t = xLocArray[i];
+      s = yLocArray[i];
+
+      if (colorCanvasData[t][s] < 0) {
+        // old location with orig value but marked as negative for replot
+        scaledVarVal = ( - colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
+      } else {
+        // new location
+        scaledVarVal = (colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
+      }
+
+      jet = this.jetColorMap(scaledVarVal); // scaledVarVal should be scaled 0 to 1
+      r = jet[0];
+      g = jet[1];
+      b = jet[2];
+      // we have to convert computed color values to string for fillStyle
+      tColor2 = r.toString();
+      tColor3 = g.toString();
+      tColor4 = b.toString();
+      tColor = tColor1.concat(tColor2,',',tColor3,',',tColor4,tColor5);
+      context.fillStyle = tColor;
+      if (plotInfo[pNumber]['xAxisReversed']) {
+        // swap directions in plot from that in colorCanvasData array
+        x = tPixelsPerPoint * (numTimePts - t);
+      } else {
+        x = tPixelsPerPoint * t;
+      }
+      y = sPixelsPerPoint * s;
+
+      if (small == 1) {
+      // do this check because was getting ghosting when overwrite
+      // an old marked point
+        // PixelsPerPoint must be >= 3 for this to work
+        context.fillRect(x+1,y+1,tPixelsPerPoint-2,sPixelsPerPoint-2);
+      } else {
+      context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
+      }
+
+    } // END for (i
+  } // END of function plotColorCanvasPixelList
 
 } // END of object plotter
