@@ -252,7 +252,7 @@ processUnits[0] = {
     //   }
     // }
 
-    // XXX NEW - PLOT THIS
+    // PLOT THIS
     plotter.plotColorCanvasPlot(0);
 
     // make backup copies so can clear old object positions
@@ -331,10 +331,9 @@ processUnits[0] = {
 
     for (let i = 0; i < this.N; i += 1) {
       // reset old positions to original values in current array
-      // but mark with NEGATIVE number to show it should be replotted
       let x = this.ants[i].oldXi;
       let y = this.ants[i].oldYi;
-      this.colorCanvasData[0][x][y] = - this.origColorCanvasData[0][x][y];
+      this.colorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
     }
 
     for (let i = 0; i < this.N; i += 1) {
@@ -344,35 +343,32 @@ processUnits[0] = {
       this.colorCanvasData[0][x][y] = 100;
     }
 
-    // save oldXi, xi, oldYi, yi
-    // so new plotter only has to check those elements
-    let xLocArray = [];
-    let yLocArray = [];
-    for (let i = 0; i < this.N; i += 1) {
-      xLocArray.push(this.ants[i].oldXi);
-      yLocArray.push(this.ants[i].oldYi);
-      xLocArray.push(this.ants[i].xi);
-      yLocArray.push(this.ants[i].yi);
-    }
+    // WARNING: if plot type is canvas, then plotting of entire array
+    // will be done by controller and overwrite any plotting here
+    // if plot type is not canvas (nor profile, strip), then
+    // will use and keep plotting here
 
-    // plotter.plotColorCanvasPixelList uses colorCanvasData
-    // last (4th) input argument is "small" for replotting 1 pixel inside
-    // on all sides because of ghosting of old marked ants
-    // (requires orig pixels to be at least 3x3)
-    plotter.plotColorCanvasPixelList(0,xLocArray,yLocArray,1);
+    if (plotInfo[0]['type'] != 'canvas') {
 
-    // change negative elements at old positions (with original but negative
-    // value) back to original positive values
-    // BUT DOUBLE-CHECK they are negative so don't change a new object
-    // placed at another object's old location
-    // NEED TO DO this now because old x,y get changed before next updateDisplay
-    for (let i = 0; i < this.N; i += 1) {
-      let x = this.ants[i].oldXi;
-      let y = this.ants[i].oldYi;
-      if (this.colorCanvasData[0][x][y] < 0) {
-        this.colorCanvasData[0][x][y]  = - this.colorCanvasData[0][x][y];
+      // if plot type is not canvas and use plotter.plotColorCanvasPixelList()
+      // then save oldXi, xi, oldYi, yi
+      // so pixel list plotter only has to replot those elements
+      let xLocArray = [];
+      let yLocArray = [];
+      for (let i = 0; i < this.N; i += 1) {
+        xLocArray.push(this.ants[i].oldXi);
+        yLocArray.push(this.ants[i].oldYi);
+        xLocArray.push(this.ants[i].xi);
+        yLocArray.push(this.ants[i].yi);
       }
-    }
+
+      // plotter.plotColorCanvasPixelList uses colorCanvasData
+      // last (4th) input argument is "small" and set to 1 (true) for replotting
+      //  1 pixel inside on all sides because of ghosting of old marked ants
+      // (requires orig pixels to be at least 3x3)
+      plotter.plotColorCanvasPixelList(0,xLocArray,yLocArray,0);
+
+  }
 
   }, // END of updateDisplay()
 

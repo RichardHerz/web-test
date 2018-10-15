@@ -315,6 +315,8 @@ let plotter = {
     let numSpacePts = plotInfo[pNumber]['varSpacePts'];
     let tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point, note +1
     let sPixelsPerPoint = sPixels/numSpacePts; // pixels per point
+    // remember these pixels are HTML pixels, not screen pixels
+    // do not round these values - if round you will not fill canvas completely
     let minVarVal = plotInfo[pNumber]['varValueMin'];
     let maxVarVal = plotInfo[pNumber]['varValueMax'];
     let scaledVarVal; // holds variable value scaled 0-1 by minVarVal & maxVarVal
@@ -471,7 +473,9 @@ let plotter = {
     let numTimePts = plotInfo[pNumber]['varTimePts'];
     let numSpacePts = plotInfo[pNumber]['varSpacePts'];
     let tPixelsPerPoint = tPixels/(numTimePts+1); // pixels per point, note +1
-    let sPixelsPerPoint = sPixels/numSpacePts; // pixels per point
+    let sPixelsPerPoint = sPixels/numSpacePts; // pixels per
+    // remember these pixels are HTML pixels, not screen pixels
+    // do not round these values - if round you will not fill canvas completely
     let minVarVal = plotInfo[pNumber]['varValueMin'];
     let maxVarVal = plotInfo[pNumber]['varValueMax'];
     let scaledVarVal; // holds variable value scaled 0-1 by minVarVal & maxVarVal
@@ -480,14 +484,7 @@ let plotter = {
     for (let i=0; i < xLocArray.length; i +=1) {
       t = xLocArray[i];
       s = yLocArray[i];
-
-      if (colorCanvasData[t][s] < 0) {
-        // old location with orig value but marked as negative for replot
-        scaledVarVal = ( - colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
-      } else {
-        // new location
-        scaledVarVal = (colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
-      }
+      scaledVarVal = (colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
 
       jet = this.jetColorMap(scaledVarVal); // scaledVarVal should be scaled 0 to 1
       r = jet[0];
@@ -507,16 +504,16 @@ let plotter = {
       }
       y = sPixelsPerPoint * s;
 
-      if ((small == 1) && (tPixelsPerPoint > 2) && (sPixelsPerPoint > 2)) {
-        // PixelsPerPoint must be > 2 for this to work
+      if ((small == 1) && (tPixelsPerPoint >= 3) && (sPixelsPerPoint >= 3)) {
+        // PixelsPerPoint must be >= 3 for this to work
         // do this check because was getting ghosting when overwrite
         // an old marked point
         context.fillRect(x+1,y+1,tPixelsPerPoint-2,sPixelsPerPoint-2);
       } else {
         context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
       }
+    } // END for (let i=0; ...
 
-    } // END for (i
   } // END of function plotColorCanvasPixelList
 
 } // END of object plotter

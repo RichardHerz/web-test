@@ -47,6 +47,9 @@ let plotInfo = {
 
     let unum = 0; // useful when only one unit in plot, processUnits[unum]
 
+    // type can be 'canvas' or 'profile' or 'strip' or other
+    // if other, then plotting not called by controller and must be called by unit
+
     // plot 0 info
      pnum = 0;
     plotInfo[pnum] = new Object();
