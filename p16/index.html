@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-<meta charset="utf-8"/>
+<meta charset='utf-8'/>
 </head>
 <body>
 
@@ -12,11 +12,33 @@
   <p>But does this leave child in memory too?</p>
   <p>I can set it to null after putting into parent, but
   does JS garbage collection free memory?</p>
-  <p>See <a href="https://javascript.info/garbage-collection">https://javascript.info/garbage-collection</a>
+  <p>See <a href='https://javascript.info/garbage-collection'>https://javascript.info/garbage-collection</a>
   </p>
 
-<p>SEE OUTPUT IN JAVASCRIPT CONSOL</p>
+  <p>------- SCRIPT -----------</p>
+  <!-- ACTUAL SCRIPT IS BELOW - THIS IS FOR WEB PAGE LISTING -->
+  <code>
+        var myParent ={};
+<br>
+<br>        var child01 = {name : 'joe', age : 10};
+<br>        var child02 = {name : 'ann', age : 12};
+<br>
+<br>        myParent['child01'] = child01;
+<br>        myParent['child02'] = child02;
+<br>
+<br>        // WARNING: have to use " around strings with ' below
+<br>
+<br>        document.write("&lt;br> child02['name'] = " + child02['name'] );
+<br>        document.write("&lt;br> myParent['child02']['name'] = " + myParent['child02']['name'] );
+<br>
+<br>        child02 = 0;
+<br>        document.write("&lt;br> after zeroing child02, child02['name'] = " + child02['name'] );
+<br>        document.write("&lt;br> after zeroing child02, myParent['child02']['name'] = " + myParent['child02']['name'] );
+  </code>
 
+  <p>------- OUTPUT -----------</p>
+
+<code>
 <script>
 
     var myParent ={};
@@ -27,14 +49,17 @@
     myParent['child01'] = child01;
     myParent['child02'] = child02;
 
-    console.log("child02['name'] = " + child02['name'] );
-    console.log("myParent['child02']['name'] = " + myParent['child02']['name'] );
+    // WARNING: have to use " around strings with ' below
+
+    document.write("<br> child02['name'] = " + child02['name'] );
+    document.write("<br> myParent['child02']['name'] = " + myParent['child02']['name'] );
 
     child02 = 0;
-    console.log("after zeroing child02, child02['name'] = " + child02['name'] );
-    console.log("after zeroing child02, myParent['child02']['name'] = " + myParent['child02']['name'] );
+    document.write("<br> after zeroing child02, child02['name'] = " + child02['name'] );
+    document.write("<br> after zeroing child02, myParent['child02']['name'] = " + myParent['child02']['name'] );
 
 </script>
+</code>
 
 </body>
 </html>

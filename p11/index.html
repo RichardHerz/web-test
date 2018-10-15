@@ -10,10 +10,10 @@
   later calling fInitDataArray() -
   version 1 had myData : initPlotData(3,4)</p>
 
-  <p>SEE OUTPUT IN JAVASCRIPT CONSOL</p>
-
+  <p>------- OUTPUT -----------</p>
+<code>
 <script>
-  console.log('hello world');
+  document.write('<br> hello world');
 
   var unit01 = {
 
@@ -68,16 +68,16 @@
   // or put call to fInitDataArray in unit01's internal reset function
   unit01.fInitDataArray();
 
-  console.log('before fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
-  console.log('before fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
+  document.write('<br> before fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
+  document.write('<br> before fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
 
   unit01.fUpdate();
 
-  console.log('after fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
-  console.log('after fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
+  document.write('<br> after fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
+  document.write('<br> after fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
 
 
 </script>
-
+</code>
 </body>
 </html>

@@ -7,10 +7,10 @@
   <p> 3D VERSION 1 - initialize and add data to 3D array property
   of an object - Javascript </p>
 
-  <p>SEE OUTPUT IN JAVASCRIPT CONSOL</p>
-
+  <p>------- OUTPUT -----------</p>
+<code>
 <script>
-  console.log('hello world');
+  document.write('<br> hello world');
 
   var unit01 = {
 
@@ -57,16 +57,16 @@
     return plotDataStub;
   };
 
-  console.log('before fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
-  console.log('before fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
+  document.write('<br> before fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
+  document.write('<br> before fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
 
   unit01.fUpdate();
 
-  console.log('after fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
-  console.log('after fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
+  document.write('<br> after fUpdate, unit01.myData[2][2][0] = ' + unit01.myData[2][2][0]);
+  document.write('<br> after fUpdate, unit01.myData[2][2][1] = ' + unit01.myData[2][2][1]);
 
 
 </script>
-
+</code>
 </body>
 </html>
