@@ -53,7 +53,7 @@ let plotInfo = {
     // plot 0 info
      pnum = 0;
     plotInfo[pnum] = new Object();
-    plotInfo[pnum]['type'] = 'canvas';
+    plotInfo[pnum]['type'] = 'special';
     plotInfo[pnum]['title'] = 'arena';
     plotInfo[pnum]['canvas'] = 'canvas_CANVAS_arena'; // without prefix #
     // for canvas type, all data comes from one process unit and one local array

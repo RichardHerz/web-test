@@ -324,31 +324,56 @@ processUnits[0] = {
     // x = 0 is at left, xmax is at right of color canvas display
     // y = 0 is at top, ymax is at bottom
 
-    // WARNING: DO EACH TRANSFER IN A SEPARATE REPEAT OR
-    //          CAN GET EXTRA, DEAD MARKED CELLS AFTER TWO OBJECTS SIT
-    //          ON SAME CELL - THESE DEAD CELLS PERSIST UNTIL
-    //          AN OBJECT PASSES OVER
+    if (plotInfo[0]['type'] == 'canvas') {
 
-    for (let i = 0; i < this.N; i += 1) {
-      // reset old positions to original values in current array
-      let x = this.ants[i].oldXi;
-      let y = this.ants[i].oldYi;
-      this.colorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
-    }
+      // WARNING: if plot type is canvas, then plotting of entire array
+      // will be done by controller updateState and overwrite any plotting here
+      // if plot type is not canvas (nor profile, strip), then
+      // will use and keep plotting here and not replot in controller
 
-    for (let i = 0; i < this.N; i += 1) {
-      // mark new positions in current array
-      let x = this.ants[i].xi;
-      let y = this.ants[i].yi;
-      this.colorCanvasData[0][x][y] = 100;
-    }
+      // WARNING: DO EACH TRANSFER IN A SEPARATE REPEAT OR
+      //          CAN GET EXTRA, DEAD MARKED CELLS AFTER TWO OBJECTS SIT
+      //          ON SAME CELL - THESE DEAD CELLS PERSIST UNTIL
+      //          AN OBJECT PASSES OVER
 
-    // WARNING: if plot type is canvas, then plotting of entire array
-    // will be done by controller and overwrite any plotting here
-    // if plot type is not canvas (nor profile, strip), then
-    // will use and keep plotting here
+      for (let i = 0; i < this.N; i += 1) {
+        // reset old positions to original values in current array
+        let x = this.ants[i].oldXi;
+        let y = this.ants[i].oldYi;
+        this.colorCanvasData[0][x][y] = this.origColorCanvasData[0][x][y];
+      }
 
-    if (plotInfo[0]['type'] != 'canvas') {
+      for (let i = 0; i < this.N; i += 1) {
+        // mark new positions in current array
+        let x = this.ants[i].xi;
+        let y = this.ants[i].yi;
+        this.colorCanvasData[0][x][y] = 100;
+      }
+
+    } else {
+
+      // plot type is NOT canvas (nor profile, strip), so now
+      // will use and keep plotting here and not replot in controller
+
+      // need to repeat steps here and not put outside IF because
+      // have to be done in correct order and mark new positions after
+      // old positions marked negative
+
+      for (let i = 0; i < this.N; i += 1) {
+        // reset old positions to original values in current array
+        // but now mark with NEGATIVE number to show it should be replotted
+        // without "small" pixels
+        let x = this.ants[i].oldXi;
+        let y = this.ants[i].oldYi;
+        this.colorCanvasData[0][x][y] = - this.origColorCanvasData[0][x][y];
+      }
+
+      for (let i = 0; i < this.N; i += 1) {
+        // mark new positions in current array
+        let x = this.ants[i].xi;
+        let y = this.ants[i].yi;
+        this.colorCanvasData[0][x][y] = 100;
+      }
 
       // if plot type is not canvas and use plotter.plotColorCanvasPixelList()
       // then save oldXi, xi, oldYi, yi
@@ -364,11 +389,23 @@ processUnits[0] = {
 
       // plotter.plotColorCanvasPixelList uses colorCanvasData
       // last (4th) input argument is "small" and set to 1 (true) for replotting
-      //  1 pixel inside on all sides because of ghosting of old marked ants
+      // 1 pixel inside on all sides because of ghosting of old marked ants
       // (requires orig pixels to be at least 3x3)
-      plotter.plotColorCanvasPixelList(0,xLocArray,yLocArray,0);
+      plotter.plotColorCanvasPixelList(0,xLocArray,yLocArray,1);
 
-  }
+      // change negative elements at old positions (with original but negative
+      // value) back to original positive values
+      // but DOUBLE-CHECK they are negative so don't change a new object
+      // placed at another object's old location
+      for (let i = 0; i < this.N; i += 1) {
+        let x = this.ants[i].oldXi;
+        let y = this.ants[i].oldYi;
+        if (this.colorCanvasData[0][x][y] < 0) {
+          this.colorCanvasData[0][x][y]  = - this.colorCanvasData[0][x][y];
+        }
+      }
+
+    } // END if (plotInfo[0]['type'] == 'canvas')
 
   }, // END of updateDisplay()
 

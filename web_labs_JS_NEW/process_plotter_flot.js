@@ -484,7 +484,15 @@ let plotter = {
     for (let i=0; i < xLocArray.length; i +=1) {
       t = xLocArray[i];
       s = yLocArray[i];
-      scaledVarVal = (colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
+
+      if (colorCanvasData[t][s] < 0) {
+        // old location with orig value but marked as negative for replot
+        // so do not plot with "small" pixel below
+        scaledVarVal = ( - colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
+      } else {
+        // new location
+        scaledVarVal = (colorCanvasData[t][s] - minVarVal) / (maxVarVal - minVarVal);
+      }
 
       jet = this.jetColorMap(scaledVarVal); // scaledVarVal should be scaled 0 to 1
       r = jet[0];
@@ -504,15 +512,22 @@ let plotter = {
       }
       y = sPixelsPerPoint * s;
 
-      if ((small == 1) && (tPixelsPerPoint >= 3) && (sPixelsPerPoint >= 3)) {
-        // PixelsPerPoint must be >= 3 for this to work
-        // do this check because was getting ghosting when overwrite
-        // an old marked point
-        context.fillRect(x+1,y+1,tPixelsPerPoint-2,sPixelsPerPoint-2);
+      if (colorCanvasData[t][s] >= 0) {
+        // not marked negative for replot of original canvas data
+        // so check if want to fill this rect one pixel smaller on each side to
+        // reduce ghosting in ant swarm project when over write old marked point
+        if ((small == 1) && (tPixelsPerPoint >= 3) && (sPixelsPerPoint >= 3)) {
+          // PixelsPerPoint must be >= 3 for this to work
+          context.fillRect(x+1,y+1,tPixelsPerPoint-2,sPixelsPerPoint-2);
+        } else {
+          context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
+        }
       } else {
+        // marked negative so do replot of original data in old marked location 
         context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
       }
-    } // END for (let i=0; ...
+
+    } // END for (let i=0; i < xLocArray.length; i +=1)
 
   } // END of function plotColorCanvasPixelList
 
