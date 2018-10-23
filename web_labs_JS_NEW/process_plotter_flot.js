@@ -202,8 +202,10 @@ let plotter = {
 
     if (this.plotArrays['plotFlag'][pNumber] == 0) {
       this.plotArrays['plotFlag'][pNumber] = 1;
+      // console.log('redraw entire plot, axes, labels');
       this.plotArrays['plot'][pNumber] = $.plot($(plotCanvasHtmlID), dataToPlot, options);
     } else {
+      // console.log('redraw only data');
       this.plotArrays['plot'][pNumber].setData(dataToPlot);
       this.plotArrays['plot'][pNumber].draw();
     }
@@ -225,6 +227,7 @@ let plotter = {
     plotFlag : [], // tells whether or not to update only curves or complete plot
 
     initialize : function() {
+      // called by controller.openThisLab()
       // uses length of plotObs so must be called after plotInfo has been initialized
       let npl = Object.keys(plotInfo).length; // number of plots
       this.plotFlag = [0];
@@ -523,7 +526,7 @@ let plotter = {
           context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
         }
       } else {
-        // marked negative so do replot of original data in old marked location 
+        // marked negative so do replot of original data in old marked location
         context.fillRect(x,y,tPixelsPerPoint,sPixelsPerPoint);
       }
 
