@@ -195,6 +195,10 @@ let controller = {
     // UPDATE PLOTS HERE AND NOT IN PROCESS UNITS IN ORDER TO ALLOW
     // PLOTS TO CONTAIN DATA FROM MORE THAN ONE PROCESS UNIT
 
+    // NOTE: UNIT COMPUTATION (updateInputs, updateState) AND
+    // GETING PLOT DATA (getPlotData) IS FAST
+    // REDRAW OF THE PLOT (plotPlotData) IS SLOW STEP IN MANY SIMULATIONS
+
     // GET AND PLOT ALL PLOTS defined in object plotInfo
     let numPlots = Object.keys(plotInfo).length;
     numPlots = numPlots - 1; // subtract method initialize(), which is counted in length
