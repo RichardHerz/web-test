@@ -136,11 +136,14 @@ let controller = {
       elapsedMs = currentMs - startMs;
       updateMs = updateDisplayTimingMs - elapsedMs;
 
-      // DISPLAY TIMING DATA DURING DEVELOPMENT
-      // NEED TO EDIT INDEX.HTML TO ACTIVATE "field_output_field"
-      let idleMs = Number(updateMs).toPrecision(2);
-      document.getElementById("field_output_field").innerHTML = "idle time = " + idleMs + "&nbsp;ms";
-
+      // // DISPLAY TIMING DATA DURING DEVELOPMENT
+      // // NEED TO EDIT INDEX.HTML TO ACTIVATE "field_output_field"
+      // // first check if field exists
+      // if (document.getElementById("field_output_field")) {
+      //   let idleMs = Number(updateMs).toPrecision(2);
+      //   document.getElementById("field_output_field").innerHTML = "idle time = " + idleMs + "&nbsp;ms";
+      // }
+      
       // END updateProcess WITH CALL TO ITSELF AFTER updateMs WAIT
       setTimeout(updateProcess, updateMs);  // updateMs
 
