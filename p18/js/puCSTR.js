@@ -200,13 +200,26 @@ function puCSTR(pUnitIndex) {
 
     let flowrate = 1;
     let volume = 100;
-    let krate = 0.001;
+    let krate = 0.04;
+    let Kads = 1 * 0.0872; // 0.0872 for max conc = 100, Kads * C/2 = 4.36
 
       // this unit may take multiple steps within one outer main loop repeat step
     for (let i = 0; i < this.unitStepRepeats; i += 1) {
-      let dcdt = flowrate/volume * (this.concIn - this.conc) - krate * this.conc;
+      let C = this.conc;
+      let rxnRate = - krate * C / Math.pow((1 + Kads * C),2);
+      let dcdt = flowrate/volume * (this.concIn - this.conc) + rxnRate;
       this.conc = this.conc + dcdt * this.unitTimeStep;
     }
+
+    // let flowrate = 1;
+    // let volume = 100;
+    // let krate = 0.001;
+    //
+    //   // this unit may take multiple steps within one outer main loop repeat step
+    // for (let i = 0; i < this.unitStepRepeats; i += 1) {
+    //   let dcdt = flowrate/volume * (this.concIn - this.conc) - krate * this.conc;
+    //   this.conc = this.conc + dcdt * this.unitTimeStep;
+    // }
 
     // console.log('leave updateState, CSTR = ' + this.unitIndex + ', conc = ' + this.conc);
 

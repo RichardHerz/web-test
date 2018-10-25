@@ -146,7 +146,19 @@ let puFEED = {
     //          get info from other units ONLY in updateInputs() method
     //
 
-    if (controller.simTime > 1000) {this.conc = 0;}
+    let ttime = controller.simTime;
+
+    if (ttime <= 1000) {
+      this.conc = 50;
+    } else if  ((ttime > 1000) && (ttime <= 2000)) {
+      this.conc = 100;
+    } else if ((ttime > 2000) && (ttime <= 3000)){
+      this.conc = 50;
+    } else if ((ttime > 3000) && (ttime <= 4000)) {
+      this.conc = 100;
+    } else if ((ttime > 4000)) {
+      this.conc = 50;
+    }
 
   }, // end updateState method
 
