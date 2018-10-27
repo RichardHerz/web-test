@@ -113,9 +113,16 @@ ddnp(counter,1) = dc2;
 ddnp(counter,2) = dr2;
 [rl cl] = size(ddnp)
 plot(ddnp(:,1),ddnp(:,2),'r')
+ylabel('Rate')
+xlabel('Reactant Concentration')
 hold off
 
-% SAVE TO FILES
-save dupp.txt dupp -ascii
-save ddnp.txt ddnp -ascii
+% SAVE RATES TO FILES
+% as row vector, comma delimited for Javascript
+rUp = dupp(:,2)';
+rDown = ddnp(:,2)';
+% dmlwrite default delimiter (dlm) is comma
+dlmwrite('rateHIGH.txt',rUp)
+dlmwrite('rateLOW.txt',rDown)
+
 

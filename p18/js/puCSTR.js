@@ -54,11 +54,13 @@ function puCSTR(pUnitIndex) {
   // colorCanvasData : [], // for color canvas plots, plot script requires this name
 
   // allow this unit to take more than one step within one main loop step in updateState method
-  this.unitStepRepeats = 10;
+  this.unitStepRepeats = 1;
   this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
   // define variables which will not be plotted nor saved in copy data table
   this.conc = 0;
+  // rateBranchOLD = 1 for high, 0 for low
+  this.rateBranchOLD = 1;
 
   this.ssCheckSum = 0; // used to check for steady state
   this.residenceTime = 100; // for timing checks for steady state check
@@ -188,6 +190,63 @@ function puCSTR(pUnitIndex) {
 
   } // END of updateInputs()
 
+  // rateHIGH is high branch of reaction rate from Reactor Lab Web Labs, lab 2, rxn-diff
+  // at default conditions when entering lab
+  // rateHIGH has 71 elements corresponding to rate at conc from 0.00 to 0.70
+  // at 0.01 intervals with rate here as positive values for reactant
+  this.rateHIGH = [0,7.87e-05,0.0001574,0.0002151,0.0002728,0.0003305,0.0003704,0.0004103,0.00043873,0.00046717,0.0004956,0.00051665,0.0005377,0.0005541,0.0005705,0.0005869,0.00059876,0.00061062,0.00062248,0.00063434,0.0006462,0.00065474,0.00066328,0.00067182,0.00068036,0.0006889,0.00069548,0.00070206,0.00070864,0.00071522,0.0007218,0.00072712,0.00073244,0.00073776,0.00074308,0.0007484,0.00075284,0.00075728,0.00076172,0.00076616,0.0007706,0.0007744,0.0007782,0.000782,0.0007858,0.0007896,0.0007929,0.0007962,0.0007995,0.0008028,0.0008061,0.00080886,0.00081162,0.00081438,0.00081714,0.0008199,0.00082266,0.00082542,0.00082818,0.00083094,0.0008337,0.00083551,0.00083732,0.00083913,0.00084094,0.00084275,0.00084456,0.00084637,0.00084818,0.00084999,0.0008518];
+
+  // rateLOW is low branch of reaction rate from Reactor Lab Web Labs, lab 2, rxn-diff
+  // at default conditions when entering lab
+  // rateLOW has 55 elements corresponding to rate at conc from 0.46 to 1.00
+  // at 0.01 intervals with rate here as positive values for reactant
+  this.rateLOW = [0.0003826,0.0003473,0.0003256,0.00031045,0.0002953,0.00028487,0.00027443,0.000264,0.00025605,0.0002481,0.000242,0.0002359,0.0002298,0.0002237,0.0002176,0.0002136,0.0002096,0.0002056,0.0002016,0.0001976,0.0001936,0.0001896,0.0001856,0.0001816,0.0001776,0.00017498,0.00017236,0.00016974,0.00016712,0.0001645,0.00016188,0.00015926,0.00015664,0.00015402,0.0001514,0.0001495,0.0001476,0.0001457,0.0001438,0.0001419,0.00014,0.0001381,0.0001362,0.0001343,0.0001324,0.00013095,0.0001295,0.00012805,0.0001266,0.00012515,0.0001237,0.00012225,0.0001208,0.00011935,0.0001179];
+
+  this.getRxnRate = function(conc) {
+    // getRxnRate provides rate of formation of reactant per arbitrary mass
+    //    catalyst from Reactor Lab Web Labs, lab 2, reaction-diffusion
+    // USES this.rateBranchOLD, this.rateLOW, this.rateHIGH
+    // convert from conc 0-1 to c = 0 to 100
+    //    for use of c in array indexes
+    // return rate as negative value for reactant conversion
+    let c = Math.round(100*conc); // 0 to 100
+    if (c < 0) {
+      c = 0;
+    } else if (c > 100) {
+      c = 100;
+    }
+    // determine rate branch, high vs. low
+    let rate = 0;
+    let cLowBreak = 46;
+    let cHighBreak = 70;
+    // first do easy decisions
+    if (c < cLowBreak) {
+      // on high branch
+      rate = this.rateHIGH[c];
+      this.rateBranchOLD = 1; // 0 is low branch, 1 is high branch
+    } else if (c > cHighBreak) {
+      // on low branch
+      rate = this.rateLOW[c-cLowBreak];
+      this.rateBranchOLD = 0;
+    } else if (this.rateBranchOLD == 0) {
+      // in middle range and last on low branch, so still on low branch
+      // on low branch
+      rate = this.rateLOW[c-cLowBreak];
+      this.rateBranchOLD = 0;
+    } else if (this.rateBranchOLD == 1) {
+      // in middle range and last on high branch, so still on high rateBranch
+      rate = this.rateHIGH[c];
+      this.rateBranchOLD = 1;
+    } else {
+      // should not get here
+      rate = 0.0;
+      this.rateBranchOLD = 1;
+    }
+    // console.log('getRxnRate, unit = ' + this.unitIndex + ', c = ' + c + ', rate = ' + rate + ', branch = ' + this.rateBranchOLD);
+    // return rate as negative value for reactant conversion
+    return -rate;
+  } // END getRxnRate() method
+
   this.updateState = function() {
     //
     // BEFORE REPLACING PREVIOUS STATE VARIABLE VALUE WITH NEW VALUE, MAKE
@@ -200,24 +259,27 @@ function puCSTR(pUnitIndex) {
 
     let flowrate = 1;
     let volume = 100;
-    let krate = 0.04;
-    let Kads = 1 * 0.0872; // 0.0872 for max conc = 100, Kads * C/2 = 4.36
+    // rateMultiplier multiplies rate from getRxnRate below
+    // getRxnRate provides rate of formation of reactant per arbitrary mass
+    //    catalyst from Reactor Lab Web Labs, lab 2, reaction-diffusion
+    let rateMultiplier = 2;
 
-      // this unit may take multiple steps within one outer main loop repeat step
+    // this unit may take multiple steps within one outer main loop repeat step
     for (let i = 0; i < this.unitStepRepeats; i += 1) {
-      let C = this.conc;
-      let rxnRate = - krate * C / Math.pow((1 + Kads * C),2);
-      let dcdt = flowrate/volume * (this.concIn - this.conc) + rxnRate;
-      this.conc = this.conc + dcdt * this.unitTimeStep;
+      let conc = this.conc;
+      let rxnRate = rateMultiplier * this.getRxnRate(conc);
+      // console.log('updateState, unit = ' + this.unitIndex + ', conc = ' + conc + ', rxnRate = ' + rxnRate + ', branch = ' + this.rateBranchOLD);
+      let dcdt = flowrate/volume * (this.concIn - conc) + rxnRate;
+      this.conc = conc + dcdt * this.unitTimeStep;
     }
 
-    // let flowrate = 1;
-    // let volume = 100;
-    // let krate = 0.001;
-    //
+    // let krate = 0.04;
+    // let Kads = 1 * 0.0872; // 0.0872 for max conc = 100, Kads * C/2 = 4.36
     //   // this unit may take multiple steps within one outer main loop repeat step
     // for (let i = 0; i < this.unitStepRepeats; i += 1) {
-    //   let dcdt = flowrate/volume * (this.concIn - this.conc) - krate * this.conc;
+    //   let C = this.conc;
+    //   let rxnRate = - krate * C / Math.pow((1 + Kads * C),2);
+    //   let dcdt = flowrate/volume * (this.concIn - this.conc) + rxnRate;
     //   this.conc = this.conc + dcdt * this.unitTimeStep;
     // }
 

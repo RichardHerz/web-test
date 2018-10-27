@@ -53,7 +53,7 @@ let plotInfo = {
     plotInfo[pnum]['type'] = 'strip';
     plotInfo[pnum]['title'] = 'Reactor Conditions';
     plotInfo[pnum]['canvas'] = '#div_PLOTDIV_plotData'; // flot.js wants ID with prefix #
-    // set numberPoints < = than width of plot in HTML pixels for fast plotting 
+    // set numberPoints < = than width of plot in HTML pixels for fast plotting
     plotInfo[pnum]['numberPoints'] = 100;
     // plot has numberPoints + 1 pts!
     plotInfo[pnum]['xAxisLabel'] = '< recent time | earlier time (s) >';
@@ -67,10 +67,10 @@ let plotInfo = {
     plotInfo[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
     plotInfo[pnum]['yLeftAxisLabel'] = 'Reactant Concentration';
     plotInfo[pnum]['yLeftAxisMin'] = 0;
-    plotInfo[pnum]['yLeftAxisMax'] = 200;
+    plotInfo[pnum]['yLeftAxisMax'] = 2;
     plotInfo[pnum]['yRightAxisLabel'] = '';
     plotInfo[pnum]['yRightAxisMin'] = 0;
-    plotInfo[pnum]['yRightAxisMax'] = 200;
+    plotInfo[pnum]['yRightAxisMax'] = 2;
     plotInfo[pnum]['plotLegendPosition'] = "ne";
     plotInfo[pnum]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 or "show"
     plotInfo[pnum]['plotGridBgColor'] = 'white';
@@ -95,6 +95,20 @@ let plotInfo = {
     // ADD SETTINGS FOR EACH VARIABLE
     //
     let vnum = 0; // 1st variable
+    plotInfo[pnum]['varUnitIndex'][vnum] = 0; // value is index of unit in processUnits object
+    plotInfo[pnum]['var'][vnum] = 0; // value is variable index in plot data array
+    plotInfo[pnum]['varLabel'][vnum] = 'Feed';
+    // varDataUnits are dimensional units used in copy data table, along with varLabel
+    plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
+    // varShow values are 'show' to show on plot and legend,
+    // 'tabled' to not show on plot nor legend but list in copy data table
+    // and any other value, e.g., 'hide' to not show on plot but do show in legend
+    // varShow value can be changed by javascript if want to show/hide curve with checkbox
+    plotInfo[pnum]['varShow'][vnum] = 'show';
+    plotInfo[pnum]['varYaxis'][vnum] = 'left';
+    plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
+    //
+    vnum = 1; // 2nd variable
     plotInfo[pnum]['varUnitIndex'][vnum] = 1; // value is index of unit in processUnits object
     plotInfo[pnum]['var'][vnum] = 0; // value is variable index in plot data array
     plotInfo[pnum]['varLabel'][vnum] = 'Rxr 1';
@@ -108,7 +122,7 @@ let plotInfo = {
     plotInfo[pnum]['varYaxis'][vnum] = 'left';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
-    vnum = 1; // 2nd variable
+    vnum = 2; // 3rd variable
     plotInfo[pnum]['varUnitIndex'][vnum] = 2;
     plotInfo[pnum]['var'][vnum] = 0;
     plotInfo[pnum]['varLabel'][vnum] = 'Rxr 2';
@@ -117,7 +131,7 @@ let plotInfo = {
     plotInfo[pnum]['varYaxis'][vnum] = 'left';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
-    vnum = 2; // 3rd variable
+    vnum = 3; // 4th variable
     plotInfo[pnum]['varUnitIndex'][vnum] = 3;
     plotInfo[pnum]['var'][vnum] = 0;
     plotInfo[pnum]['varLabel'][vnum] = 'Rxr 3';
@@ -126,7 +140,7 @@ let plotInfo = {
     plotInfo[pnum]['varYaxis'][vnum] = 'left';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
-    vnum = 3; // 4th variable
+    vnum = 4; // 5th variable
     plotInfo[pnum]['varUnitIndex'][vnum] = 4;
     plotInfo[pnum]['var'][vnum] = 0;
     plotInfo[pnum]['varLabel'][vnum] = 'Rxr 4';
