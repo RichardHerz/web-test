@@ -1,0 +1,21 @@
+FROM HOME REACTOR plotter 
+
+  var options = {
+    // axisLabels REQUIRES LIBRARY flot.axislabels.js, SEE
+    //     https://github.com/markrcote/flot-axislabels
+
+    // --------------------------
+    // NEW FOR HOME RXR
+    series: {
+      lines: { show: false },
+      points: { show: true,
+                radius: 2,
+                }
+    },
+    grid: { backgroundColor: 'white' },
+    // colors: ['#ff6347','#1e90ff'],
+    colors: ['Red','Blue'],
+    // --------------------------
+
+axisLabels : {show: true}, 
+
