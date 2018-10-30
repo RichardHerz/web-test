@@ -28,15 +28,15 @@ let puFEED = {
   // define main parameters
   // values will be set in method initialize()
 
-  // // define arrays to hold info for variables
-  // // these will be filled with values in method initialize()
-  // dataHeaders : [], // variable names
-  // dataInputs : [], // input field ID's
-  // dataUnits : [],
-  // dataMin : [],
-  // dataMax : [],
-  // dataInitial : [],
-  // dataValues : [],
+  // define arrays to hold info for variables
+  // these will be filled with values in method initialize()
+  dataHeaders : [], // variable names
+  dataInputs : [], // input field ID's
+  dataUnits : [],
+  dataMin : [],
+  dataMax : [],
+  dataInitial : [],
+  dataValues : [],
 
   // define arrays to hold output variables
   // these will be filled with initial values in method reset()
@@ -59,18 +59,19 @@ let puFEED = {
   // residenceTime is set in this unit's updateUIparams()
 
   conc : 0.00, // FEED CONC
+  inputSliderDisplay : "field_setFeedConc_value",
 
   initialize : function() {
     //
-    // let v = 0;
-    // this.dataHeaders[v] = 'N'; // number swarm objects
-    // this.dataInputs[v] = 'input_field_input';
-    // this.dataUnits[v] = '';
-    // this.dataMin[v] = 0;
-    // this.dataMax[v] = 200;
-    // this.dataInitial[v] = 200;
-    // this.N = this.dataInitial[v]; // dataInitial used in getInputValue()
-    // this.dataValues[v] = this.N; // current input value for reporting
+    let v = 0;
+    this.dataHeaders[v] = 'Feed Conc';
+    this.dataInputs[v] = 'range_setFeedConc_slider';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 1;
+    this.dataInitial[v] = 0;
+    this.conc = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.conc; // current input oalue for reporting
     //
     // END OF INPUT VARS
     // record number of input variables, VarCount
@@ -105,7 +106,8 @@ let puFEED = {
     // set to zero ssCheckSum used to check for steady state by this unit
     this.ssCheckSum = 0;
 
-    this.conc = 0.00;
+    // get slider value for feed conc 
+    this.updateUIparams();
 
     // each unit has its own data arrays for plots and canvases
 
@@ -155,7 +157,12 @@ let puFEED = {
     //
     let unum = this.unitIndex;
     //
-    // this.N = this.dataValues[0] = interface.getInputValue(unum,0);
+    this.conc = this.dataValues[0] = interface.getInputValue(unum, 0);
+
+    // update the readout field of range slider
+    if (document.getElementById(this.inputSliderDisplay)) {
+      document.getElementById(this.inputSliderDisplay).innerHTML = this.conc;
+    }
 
   }, // END updateUIparams
 
@@ -178,17 +185,17 @@ let puFEED = {
 
     let ttime = controller.simTime;
 
-    if (ttime <= 1700) {
-      this.conc = 1.00;
-    } else if  ((ttime > 1700) && (ttime <= 3400)) {
-      this.conc = 0.60;
-    } else if ((ttime > 3400) && (ttime <= 4400)){
-      this.conc = 0.50;
-    } else if ((ttime > 4400) && (ttime <= 5400)) {
-      this.conc = 0.60;
-    } else if ((ttime > 5400)) {
-      this.conc = 0.50;
-    }
+    // if (ttime <= 1700) {
+    //   this.conc = 1.00;
+    // } else if  ((ttime > 1700) && (ttime <= 3400)) {
+    //   this.conc = 0.60;
+    // } else if ((ttime > 3400) && (ttime <= 4400)){
+    //   this.conc = 0.50;
+    // } else if ((ttime > 4400) && (ttime <= 5400)) {
+    //   this.conc = 0.60;
+    // } else if ((ttime > 5400)) {
+    //   this.conc = 0.50;
+    // }
 
   }, // end updateState method
 

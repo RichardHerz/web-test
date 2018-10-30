@@ -12,6 +12,7 @@ function puCSTR(pUnitIndex) {
     let inputs = [];
     // *** e.g., inputs[0] = processUnits[1]['Tcold'][0]; // HX T cold out = RXR Tin
     inputs[0] = processUnits[this.unitIndex - 1]['conc'];
+    inputs[1] = processUnits[0]['conc']; // feed conc
     return inputs;
   }
 
@@ -58,7 +59,9 @@ function puCSTR(pUnitIndex) {
   this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
   // define variables which will not be plotted nor saved in copy data table
-  this.conc = 0;
+  this.conc = 1; // conc in this reactor
+  this.feed = 1; // feed to first reactor
+  this.conversion = 0;
   // rateBranchOLD = 1 for high, 0 for low
   this.rateBranchOLD = 1;
 
@@ -120,12 +123,13 @@ function puCSTR(pUnitIndex) {
     this.ssCheckSum = 0;
 
     this.conc = 0;
+    this.conversion = 0;
 
     // each unit has its own data arrays for plots and canvases
 
     // initialize strip chart data array
     // initPlotData(numStripVars,numStripPts)
-    let numStripVars = 1; // conc
+    let numStripVars = 2; // conc, conversion
     let numStripPts = plotInfo[0]['numberPoints'];
     this.stripData = plotter.initPlotData(numStripVars,numStripPts);
 
@@ -139,8 +143,10 @@ function puCSTR(pUnitIndex) {
       //     and same for y-axis below
       // first index specifies which variable in plot data array
       this.stripData[0][k][0] = kn;
+      this.stripData[1][k][0] = kn;
       // y-axis values
-      this.stripData[0][k][1] = 0;
+      this.stripData[0][k][1] = this.conc;
+      this.stripData[1][k][1] = this.conversion;
     }
 
     // update display
@@ -185,6 +191,7 @@ function puCSTR(pUnitIndex) {
     // get array of current input values to this unit from other units
     let inputs = this.getInputs();
     this.concIn = inputs[0]; // conc from upstream CSTR
+    this.feed = inputs[1]; // feed to first CSTR
 
     // console.log('updateInputs, CSTR = ' + this.unitIndex + ', concIn = ' + this.concIn);
 
@@ -273,6 +280,15 @@ function puCSTR(pUnitIndex) {
       this.conc = conc + dcdt * this.unitTimeStep;
     }
 
+    if (this.feed > 0) {
+      this.conversion = 1 - this.conc / this.feed;
+    } else {
+      this.conversion = 0;
+    }
+    if (this.conversion < 0) {
+      this.conversion = 0;
+    }
+
     // let krate = 0.04;
     // let Kads = 1 * 0.0872; // 0.0872 for max conc = 100, Kads * C/2 = 4.36
     //   // this unit may take multiple steps within one outer main loop repeat step
@@ -296,8 +312,9 @@ function puCSTR(pUnitIndex) {
 
     let v = 0; // used as index
     let p = 0; // used as index
+    let tempArray = [];
     let numStripPoints = plotInfo[0]['numberPoints'];
-    let numStripVars = 1; // only the variables from this unit
+    let numStripVars = 2; // only the variables from this unit
 
     // handle reactor conc
     v = 0;
@@ -305,7 +322,17 @@ function puCSTR(pUnitIndex) {
     // delete first and oldest element which is an [x,y] pair array
     tempArray.shift();
     // add the new [x.y] pair array at end
-    tempArray.push( [ 0, this.conc] );
+    tempArray.push( [0,this.conc] );
+    // update the variable being processed
+    this.stripData[v] = tempArray;
+
+    // handle conversion
+    v = 1;
+    tempArray = this.stripData[v]; // work on one plot variable at a time
+    // delete first and oldest element which is an [x,y] pair array
+    tempArray.shift();
+    // add the new [x.y] pair array at end
+    tempArray.push( [0,this.conversion] );
     // update the variable being processed
     this.stripData[v] = tempArray;
 
