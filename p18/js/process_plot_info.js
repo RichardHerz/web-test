@@ -198,9 +198,51 @@ let plotInfo = {
     // ADD SETTINGS FOR EACH VARIABLE
     //
     vnum = 0; // 1st variable
+    plotInfo[pnum]['varUnitIndex'][vnum] = 1; // value is index of unit in processUnits object
+    plotInfo[pnum]['var'][vnum] = 1; // value is variable index in plot data array
+    plotInfo[pnum]['varLabel'][vnum] = 'X1';
+    // varDataUnits are dimensional units used in copy data table, along with varLabel
+    plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
+    // varShow values are 'show' to show on plot and legend,
+    // 'tabled' to not show on plot nor legend but list in copy data table
+    // and any other value, e.g., 'hide' to not show on plot but do show in legend
+    // varShow value can be changed by javascript if want to show/hide curve with checkbox
+    plotInfo[pnum]['varShow'][vnum] = 'show';
+    plotInfo[pnum]['varYaxis'][vnum] = 'left';
+    plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
+    //
+    vnum = 1; // 2nd variable
+    plotInfo[pnum]['varUnitIndex'][vnum] = 2; // value is index of unit in processUnits object
+    plotInfo[pnum]['var'][vnum] = 1; // value is variable index in plot data array
+    plotInfo[pnum]['varLabel'][vnum] = 'X2';
+    // varDataUnits are dimensional units used in copy data table, along with varLabel
+    plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
+    // varShow values are 'show' to show on plot and legend,
+    // 'tabled' to not show on plot nor legend but list in copy data table
+    // and any other value, e.g., 'hide' to not show on plot but do show in legend
+    // varShow value can be changed by javascript if want to show/hide curve with checkbox
+    plotInfo[pnum]['varShow'][vnum] = 'show';
+    plotInfo[pnum]['varYaxis'][vnum] = 'left';
+    plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
+    //
+    vnum = 2; // 3rd variable
+    plotInfo[pnum]['varUnitIndex'][vnum] = 3; // value is index of unit in processUnits object
+    plotInfo[pnum]['var'][vnum] = 1; // value is variable index in plot data array
+    plotInfo[pnum]['varLabel'][vnum] = 'X3';
+    // varDataUnits are dimensional units used in copy data table, along with varLabel
+    plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
+    // varShow values are 'show' to show on plot and legend,
+    // 'tabled' to not show on plot nor legend but list in copy data table
+    // and any other value, e.g., 'hide' to not show on plot but do show in legend
+    // varShow value can be changed by javascript if want to show/hide curve with checkbox
+    plotInfo[pnum]['varShow'][vnum] = 'show';
+    plotInfo[pnum]['varYaxis'][vnum] = 'left';
+    plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
+    //
+    vnum = 3; // 4th variable
     plotInfo[pnum]['varUnitIndex'][vnum] = 4; // value is index of unit in processUnits object
     plotInfo[pnum]['var'][vnum] = 1; // value is variable index in plot data array
-    plotInfo[pnum]['varLabel'][vnum] = 'Conversion';
+    plotInfo[pnum]['varLabel'][vnum] = 'X4';
     // varDataUnits are dimensional units used in copy data table, along with varLabel
     plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
     // varShow values are 'show' to show on plot and legend,
