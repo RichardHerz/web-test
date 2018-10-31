@@ -106,7 +106,7 @@ let puFEED = {
     // set to zero ssCheckSum used to check for steady state by this unit
     this.ssCheckSum = 0;
 
-    // get slider value for feed conc 
+    // get slider value for feed conc
     this.updateUIparams();
 
     // each unit has its own data arrays for plots and canvases
@@ -248,8 +248,7 @@ let puFEED = {
     // but wait at least one residence time after the previous check
     // to allow changes to propagate down unit
     //
-    // NOTE: this is the only unit, so return false
-    let ssFlag = false;
+    let ssFlag = true;
     return ssFlag;
   } // END OF checkForSteadyState()
 

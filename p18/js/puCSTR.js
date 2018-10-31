@@ -363,9 +363,19 @@ function puCSTR(pUnitIndex) {
     // but wait at least one residence time after the previous check
     // to allow changes to propagate down unit
     //
-    // *** RXR NOT USED TO CHECK FOR SS IN THIS LAB - HX is checked ***
-    //
+    // multiply all numbers by same factor to get desired number significant
+    // figures to left decimal point so toFixed() does not return string "0.###"
+    let rcs = 1.0e5 * this.concIn;
+    rcs = rcs.toFixed(0); // string
+    let lcs = 1.0e5 * this.conc;
+    lcs = lcs.toFixed(0); // string
+    let newCheckSum = rcs +'.'+ lcs; // concatenate strings, add +'.'+ if desire
+    // console.log('unit ' + this.unitIndex + ', newCheckSum = ' + newCheckSum);
+    let oldSScheckSum = this.ssCheckSum;
     let ssFlag = false;
+    // XXX DEACTIVATE NEXT LINE UNTIL FIGURE OUT HOW TO HANDLE FOR THIS LAB...
+    // if (newCheckSum == oldSScheckSum) {ssFlag = true;}
+    this.ssCheckSum = newCheckSum; // save current value for use next time
     return ssFlag;
   } // END OF checkForSteadyState()
 
