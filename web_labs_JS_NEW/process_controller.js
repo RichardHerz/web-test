@@ -235,8 +235,13 @@ let controller = {
   },  // END OF function updateDisplay
 
   resetSimTime : function() {
-    // XXX NEW move some lines here from process_interface.js
     this.simTime = 0;
+    this.resetSSflags(); // XXX NEW
+    // XXX NEW move lines to resetSSflags from process_interface.js
+  },
+
+  resetSSflags : function() { // XXX NEW
+    console.log('--- ENTER resetSSflags ---');
     this.ssStartTime = 0;
     this.oldSimTime = 0;
     this.ssFlag = false; // unit sets true when sim reaches steady state
