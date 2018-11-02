@@ -29,8 +29,9 @@ let plotInfo = {
   // after the openThisLab() function in _main.js calls method initialize()
   // here, this object will contain a child object for each plot
   //
-  // in _main.js, the function updateDisplay() uses the length of plotInfo
-  // after subtracting 1 for method initialize, in order to plot all the plots;
+  // in _main.js, the function updateDisplay() uses the
+  // LENGTH of plotInfo AFTER SUBTRACITNG ONE
+  // for method initialize, in order to plot all the plots;
   // if you add another method, you need to update the length correction
   // in updateDisplay()
   //

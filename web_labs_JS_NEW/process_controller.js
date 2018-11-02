@@ -247,6 +247,20 @@ let controller = {
     this.ssFlag = false; // unit sets true when sim reaches steady state
   },
 
+  getStripPlotSpan : function() { // XXX NEW
+    let numPlots = Object.keys(plotInfo).length; // number of plots
+    numPlots = numPlots - 1; // correct for initialize member of plotInfo
+    let span = 0;
+    for (let p = 0; p < numPlots; p += 1) {
+      if (plotInfo[p]['type'] == 'strip') {
+        // console.log('in getStripPlotSpan, p = ' + p + ', plot type is STRIP');
+        let xMax = plotInfo[p]['xAxisMax'];
+        if (xMax > span) {span = xMax}
+      }
+    }
+    return span;
+  },
+
   updateSimTime : function() {
     // only updated before simStepRepeats are all executed
     // and only updated once each displayUpdate
@@ -310,11 +324,18 @@ let controller = {
 
       console.log('after check all units, thisFlag = ' + thisFlag);
 
+      // XXX WARNING see factor after = below
+      // XXX ALSO DOES NOT HAVE TO BE GLOBAL SINCE GET EACH TIME FROM FUNCION
+      // XXX UNLESS KEEP GLOBAL AND PULL CHECK OUT OF HERE
+      this.stripPlotSpan = 0.5 * this.getStripPlotSpan();
+
+      // XXX getStripPlotSpan will return 0 if no strip plots
+      // XXX NEED TO HANDLE OTHER TYPES
+
+      console.log('after check all units, stripPlotSpan = ' + this.stripPlotSpan);
+
       // ------ NEW FOR LABS WITH STRIP PLOTS - XXX NEED TO GENERALIZE -----------
-      // XXX need to detect lab with strip plot and find longest span
-      //
-      // XXX after reach ss, stop, reset, this won't work again
-      //
+
       if (thisFlag == false) {
         this.ssFlag = false;
         this.oldSimTime = this.simTime;
@@ -329,6 +350,8 @@ let controller = {
           this.ssStartTime = this.simTime;
           console.log('   set ssStartTime to simTime, ssStartTime = ' + this.ssStartTime);
         } else if ((this.simTime - this.ssStartTime) >= this.stripPlotSpan){
+          console.log('((this.simTime - this.ssStartTime) >= this.stripPlotSpan) is TRUE');
+          console.log('strip plot is flat');
           // strip plot is flat
           // set flag so computing and plotting stop but
           // will continue to loop to check for inputs and update simTime
