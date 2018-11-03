@@ -277,7 +277,21 @@ function puCSTR(pUnitIndex) {
       let rxnRate = rateMultiplier * this.getRxnRate(conc);
       // console.log('updateState, unit = ' + this.unitIndex + ', conc = ' + conc + ', rxnRate = ' + rxnRate + ', branch = ' + this.rateBranchOLD);
       let dcdt = flowrate/volume * (this.concIn - conc) + rxnRate;
-      this.conc = conc + dcdt * this.unitTimeStep;
+      // console.log('updateState, unit = ' + this.unitIndex + ', dcdt = ' + dcdt);
+      let newConc = conc + dcdt * this.unitTimeStep;
+      //
+      // this.conc = newConc;
+      //
+      // round toFixed(3) to get ss check to work at low conc, since currently
+      // only define rate at 0.01 steps of conc and conc oscillates at
+      // small conc (consider change to finer resolution or continuous function)
+      // but when lower input to near zero input, min conc in rxrs is 0.0040 with
+      // current input, which shows in checksum as 40, because dcdt each step
+      // then too small to change conc at 3rd position to right decimal point
+      // so be careful when computing conversion after lower to zero input...
+      let newConcStr = newConc.toFixed(3); // toFixed returns string
+      this.conc = Number(newConcStr);
+      //
     }
 
     if (this.feed > 0) {
@@ -289,6 +303,7 @@ function puCSTR(pUnitIndex) {
       this.conversion = 0;
     }
 
+    // // simple first-order rate
     // let krate = 0.04;
     // let Kads = 1 * 0.0872; // 0.0872 for max conc = 100, Kads * C/2 = 4.36
     //   // this unit may take multiple steps within one outer main loop repeat step
