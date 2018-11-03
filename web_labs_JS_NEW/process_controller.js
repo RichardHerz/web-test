@@ -328,36 +328,51 @@ let controller = {
       // console.log('after check all units, thisFlag = ' + thisFlag + ', stripPlotSpan = ' + this.stripPlotSpan);
 
       if (thisFlag == false) {
+
         this.ssFlag = false;
         this.oldSimTime = this.simTime;
         this.ssStartTime = 0;
+
       } else {
         // all units are at steady state
         // console.log('ss check, all at steady state and thisFlag is true');
-        // console.log('   simTime = ' + this.simTime + ', ssStartTime = ' + this.ssStartTime);
-        if (this.ssStartTime == 0) {
-          // first time reaches new SS
-          // mark time but keep computing and plotting
-          this.ssStartTime = this.simTime;
-          // console.log('   set ssStartTime to simTime, ssStartTime = ' + this.ssStartTime);
-        } else if ((this.simTime - this.ssStartTime) >= this.stripPlotSpan){
-          // stripPlotSpan is zero for labs with no strip plot
-          // stripPlotSpan is the longest time span in labs with strip plots
-          // strip plot is flat when reach here
-          // set flag so computing and plotting stop but
-          // will continue to loop to check for inputs and update simTime
-          // console.log('((this.simTime - this.ssStartTime) >= this.stripPlotSpan) is TRUE');
-          // console.log('strip plot is flat');
+
+        if (this.stripPlotSpan == 0) {
+
+          // no strip plot in this lab
+          // all units at SS
           this.ssFlag = true;
-          // console.log('ss check, ssFlag set to true');
+          // console.log('ss check, at SS, no strip plots, ssFlag = true');
+
+        } else {
+
+          // lab has a strip plot
+          // console.log('ss check, at SS, lab has strip plots');
+          if (this.ssStartTime == 0) {
+            // first time reach SS
+            // mark time but keep updating plots
+            this.ssStartTime = this.simTime;
+            // console.log('ss check, first time at SS with strip plots');
+          } else {
+            // has strip plot and has reached SS earlier
+            if ((this.simTime - this.ssStartTime) >= this.stripPlotSpan) {
+              // has strip plot, reached SS earlier, plot lines should be flat 
+              this.ssFlag = true;
+              // console.log('ss check, at SS with FLAT strip plots, ssFlag = true');
+            } else {
+              // has strip plot, reached SS earlier but keep plotting until flat lines
+              // console.log('ss check, at SS keep plotting with strip plots, ssFlag = false');
+            }
+          }
+
         }
       }
+
       // save sim time of this check
       // do not save for every call of this function or will never enter IF & check
       this.oldSimTime = this.simTime;
 
     } else {
-
       // console.log('do NOT check all units, (this.simTime >= this.oldSimTime + 2 * resTime) is FALSE');
 
     } // END if (this.simTime >= this.oldSimTime + 2 * resTime)
