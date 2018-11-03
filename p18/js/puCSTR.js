@@ -374,8 +374,8 @@ function puCSTR(pUnitIndex) {
     lcs = lcs.toFixed(0); // string
     let newCheckSum = rcs +'.'+ lcs; // concatenate strings, add +'.'+ if desire
     let oldSScheckSum = this.ssCheckSum;
-    console.log('unit ' + this.unitIndex + ', oldSScheckSum = ' + oldSScheckSum);
-    console.log('unit ' + this.unitIndex + ', newCheckSum = ' + newCheckSum);
+    // console.log('unit ' + this.unitIndex + ', oldSScheckSum = ' + oldSScheckSum);
+    // console.log('unit ' + this.unitIndex + ', newCheckSum = ' + newCheckSum);
     let ssFlag = false;
     if (newCheckSum == oldSScheckSum) {ssFlag = true;}
     this.ssCheckSum = newCheckSum; // save current value for use next time

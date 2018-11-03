@@ -43,8 +43,11 @@ let controller = {
   // ssFlag set to false in runThisLab() and resetThisLab() in interface object
   // ssFlag set to false by updateUIparams() in each process unit
   ssFlag : false,
-  ssStartTime : 0, // XXX NEW
-  stripPlotSpan : 5000, // XXX NEW - NEED TO GET FROM plotInfo
+  // ssStartTime is time when first reach steady state
+  // used to keep computing & plotting until any strip plots go flat
+  // for which stripPlotSpan is also used
+  ssStartTime : 0,
+  stripPlotSpan : 5000,
 
   openThisLab : function() {
     // initialize variables in each process unit
@@ -236,18 +239,18 @@ let controller = {
 
   resetSimTime : function() {
     this.simTime = 0;
-    this.resetSSflags(); // XXX NEW
-    // XXX NEW move lines to resetSSflags from process_interface.js
+    this.resetSSflags();
   },
 
-  resetSSflags : function() { // XXX NEW
-    console.log('--- ENTER resetSSflags ---');
+  resetSSflags : function() {
+    // console.log('--- ENTER resetSSflags ---');
     this.ssStartTime = 0;
     this.oldSimTime = 0;
     this.ssFlag = false; // unit sets true when sim reaches steady state
+    this.stripPlotSpan = this.getStripPlotSpan();
   },
 
-  getStripPlotSpan : function() { // XXX NEW
+  getStripPlotSpan : function() {
     let numPlots = Object.keys(plotInfo).length; // number of plots
     numPlots = numPlots - 1; // correct for initialize member of plotInfo
     let span = 0;
@@ -284,8 +287,8 @@ let controller = {
   },
 
   checkForSteadyState : function() {
-    console.log('ENTER checkForSteadyState, ssFlag = ' + this.ssFlag);
-    console.log('simTime = ' + this.simTime + ', oldSimTime = ' + this.oldSimTime + ', ssStartTime = ' + this.ssStartTime)
+    // console.log('ENTER checkForSteadyState, ssFlag = ' + this.ssFlag);
+    // console.log('simTime = ' + this.simTime + ', oldSimTime = ' + this.oldSimTime + ', ssStartTime = ' + this.ssStartTime)
     // uses this.simTime
     // sets this.ssFlag and this.oldSimTime
     // requires all units to have a residence time variable
@@ -306,35 +309,23 @@ let controller = {
         resTime = processUnits[n]['residenceTime'];
       }
     }
-    console.log('before check all units, this.simTime = ' + this.simTime + ', this.oldSimTime = ' + this.oldSimTime + ', resTime = ' + resTime);
+    // console.log('before check all units, this.simTime = ' + this.simTime + ', this.oldSimTime = ' + this.oldSimTime + ', resTime = ' + resTime);
 
     // check all units to see if any not at steady state
     if (this.simTime >= this.oldSimTime + 2 * resTime) {
 
-      console.log('check all units, (this.simTime >= this.oldSimTime + 2 * resTime) is TRUE');
+      // console.log('check all units, (this.simTime >= this.oldSimTime + 2 * resTime) is TRUE');
       // get ssFlag from each unit
       let thisFlag = true; // changes to false if any unit not at steady state
       for (let n = 0; n < numUnits; n += 1) {
         if (!processUnits[n].checkForSteadyState()){
           // result returned by unit is not true
           thisFlag = false;
-          console.log('thisFlag set to false by unit ' + n);
+          // console.log('thisFlag set to false by unit ' + n);
         }
       }
 
-      console.log('after check all units, thisFlag = ' + thisFlag);
-
-      // XXX WARNING see factor after = below
-      // XXX ALSO DOES NOT HAVE TO BE GLOBAL SINCE GET EACH TIME FROM FUNCION
-      // XXX UNLESS KEEP GLOBAL AND PULL CHECK OUT OF HERE
-      this.stripPlotSpan = 0.5 * this.getStripPlotSpan();
-
-      // XXX getStripPlotSpan will return 0 if no strip plots
-      // XXX NEED TO HANDLE OTHER TYPES
-
-      console.log('after check all units, stripPlotSpan = ' + this.stripPlotSpan);
-
-      // ------ NEW FOR LABS WITH STRIP PLOTS - XXX NEED TO GENERALIZE -----------
+      // console.log('after check all units, thisFlag = ' + thisFlag + ', stripPlotSpan = ' + this.stripPlotSpan);
 
       if (thisFlag == false) {
         this.ssFlag = false;
@@ -342,21 +333,23 @@ let controller = {
         this.ssStartTime = 0;
       } else {
         // all units are at steady state
-        console.log('ss check, all at steady state and thisFlag is true');
-        console.log('   simTime = ' + this.simTime + ', ssStartTime = ' + this.ssStartTime);
+        // console.log('ss check, all at steady state and thisFlag is true');
+        // console.log('   simTime = ' + this.simTime + ', ssStartTime = ' + this.ssStartTime);
         if (this.ssStartTime == 0) {
           // first time reaches new SS
           // mark time but keep computing and plotting
           this.ssStartTime = this.simTime;
-          console.log('   set ssStartTime to simTime, ssStartTime = ' + this.ssStartTime);
+          // console.log('   set ssStartTime to simTime, ssStartTime = ' + this.ssStartTime);
         } else if ((this.simTime - this.ssStartTime) >= this.stripPlotSpan){
-          console.log('((this.simTime - this.ssStartTime) >= this.stripPlotSpan) is TRUE');
-          console.log('strip plot is flat');
-          // strip plot is flat
+          // stripPlotSpan is zero for labs with no strip plot
+          // stripPlotSpan is the longest time span in labs with strip plots
+          // strip plot is flat when reach here
           // set flag so computing and plotting stop but
           // will continue to loop to check for inputs and update simTime
+          // console.log('((this.simTime - this.ssStartTime) >= this.stripPlotSpan) is TRUE');
+          // console.log('strip plot is flat');
           this.ssFlag = true;
-          console.log('ss check, ssFlag set to true');
+          // console.log('ss check, ssFlag set to true');
         }
       }
       // save sim time of this check
@@ -365,50 +358,10 @@ let controller = {
 
     } else {
 
-      console.log('do NOT check all units, (this.simTime >= this.oldSimTime + 2 * resTime) is FALSE');
+      // console.log('do NOT check all units, (this.simTime >= this.oldSimTime + 2 * resTime) is FALSE');
 
     } // END if (this.simTime >= this.oldSimTime + 2 * resTime)
 
   } // END method checkForSteadyState()
-
-
-  // // SAVE ----------- SAVE UNTIL GENERALIZE ABOVE ------------
-  // checkForSteadyState : function() {
-  //   // uses this.simTime
-  //   // sets this.ssFlag and this.oldSimTime
-  //   // requires all units to have a residence time variable
-  //   // calls each unit's own checkForSteadyState()
-  //   // check for SS in order to save CPU time when sim is at steady state
-  //   // check for SS by checking for any significant change in array end values
-  //   // but wait at least one residence time after the previous check
-  //   // to allow changes to propagate down unit
-  //   // open OS Activity Monitor of CPU load to see effect of this
-  //   //
-  //   // get longest residence time in all units
-  //   // if all stay constant this check could be moved out of here
-  //   // so only done once, but here allows unit residence times to change
-  //   let numUnits = Object.keys(processUnits).length; // number of units
-  //   let resTime = 0;
-  //   for (let n = 0; n < numUnits; n += 1) {
-  //     if (processUnits[n]['residenceTime'] > resTime) {
-  //       resTime = processUnits[n]['residenceTime'];
-  //     }
-  //   }
-  //   // check all units to see if any not at steady state
-  //   if (this.simTime >= this.oldSimTime + 2 * resTime) {
-  //     // get ssFlag from each unit
-  //     let thisFlag = true; // changes to false if any unit not at steady state
-  //     for (let n = 0; n < numUnits; n += 1) {
-  //       if (!processUnits[n].checkForSteadyState()){
-  //         // result returned by unit is not true
-  //         thisFlag = false;
-  //       }
-  //     }
-  //     this.ssFlag = thisFlag;
-  //     // save sim time of this check
-  //     // do not save for every call of this function or will never enter IF & check
-  //     this.oldSimTime = this.simTime;
-  //   } // END if (this.simTime >= this.oldSimTime + 2 * resTime)
-  // } // END method checkForSteadyState()
 
 } // END OF OBJECT controller

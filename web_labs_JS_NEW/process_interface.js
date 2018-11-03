@@ -37,7 +37,6 @@ let interface = {
     //
     controller.stopRunningFlag();
     controller.resetSimTime();
-    // XXX NEW delete some lines here and move to resetSimTime
     // reset all units
     let numUnits = Object.keys(processUnits).length; // number of units
     for (n = 0; n < numUnits; n += 1) {
