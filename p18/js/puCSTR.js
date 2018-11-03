@@ -369,8 +369,8 @@ function puCSTR(pUnitIndex) {
     //
     // here conc ranges from 0 to 1
     let rcs = 1.0e4 * this.concIn;
-    rcs = rcs.toFixed(0); // string
     let lcs = 1.0e4 * this.conc;
+    rcs = rcs.toFixed(0); // string
     lcs = lcs.toFixed(0); // string
     let newCheckSum = rcs +'.'+ lcs; // concatenate strings, add +'.'+ if desire
     let oldSScheckSum = this.ssCheckSum;
