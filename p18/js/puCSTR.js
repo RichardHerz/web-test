@@ -62,6 +62,7 @@ function puCSTR(pUnitIndex) {
   this.conc = 1; // conc in this reactor
   this.feed = 1; // feed to first reactor
   this.conversion = 0;
+  this.rxnRate = 0;
   // rateBranchOLD = 1 for high, 0 for low
   this.rateBranchOLD = 1;
 
@@ -135,7 +136,7 @@ function puCSTR(pUnitIndex) {
 
     // initialize profile data array
     // initPlotData(numStripVars,numStripPts)
-    let numProfileVars = 1; // conversion
+    let numProfileVars = 2; // conversion, rate
     let numProfilePts = plotInfo[2]['numberPoints'];
     this.profileData = plotter.initPlotData(numProfileVars,numProfilePts);
 
@@ -264,9 +265,9 @@ function puCSTR(pUnitIndex) {
     // this unit may take multiple steps within one outer main loop repeat step
     for (let i = 0; i < this.unitStepRepeats; i += 1) {
       let conc = this.conc;
-      let rxnRate = rateMultiplier * this.getRxnRate(conc);
+      this.rxnRate = rateMultiplier * this.getRxnRate(conc);
       // console.log('updateState, unit = ' + this.unitIndex + ', conc = ' + conc + ', rxnRate = ' + rxnRate + ', branch = ' + this.rateBranchOLD);
-      let dcdt = flowrate/volume * (this.concIn - conc) + rxnRate;
+      let dcdt = flowrate/volume * (this.concIn - conc) + this.rxnRate;
       // console.log('updateState, unit = ' + this.unitIndex + ', dcdt = ' + dcdt);
       let newConc = conc + dcdt * this.unitTimeStep;
       //
@@ -389,7 +390,7 @@ function puCSTR(pUnitIndex) {
     if ((ssFlag == true) && (controller.ssStartTime == 0)) {
       // this unit at steady state && first time all units are at steady state
       // note ssStartTime will be changed != 0 after this check
-      //
+
       // handle SS conversion
       v = 0;
       tempArray = this.profileData[v]; // work on one plot variable at a time
@@ -400,6 +401,21 @@ function puCSTR(pUnitIndex) {
       tempArray.push( [processUnits[0].conc,this.conversion] );
       // update the variable being processed
       this.profileData[v] = tempArray;
+
+      // handle SS rate
+      //
+      v = 1;
+      tempArray = this.profileData[v]; // work on one plot variable at a time
+      // delete first and oldest element which is an [x,y] pair array
+      tempArray.shift();
+      // add the new [x.y] pair array at end
+      // feed conc to first CSTR, this CSTR's conversion
+      let thisRate = -100 * this.rxnRate;
+      tempArray.push( [this.conc,thisRate] );
+      // update the variable being processed
+      this.profileData[v] = tempArray;
+
+      console.log('rxnRate = ' + thisRate);
 
     }
 

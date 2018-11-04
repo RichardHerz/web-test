@@ -202,6 +202,21 @@ canvas {
   LCvScrollbar: false;
 }
 
+#div_PLOTDIV_plotSSrate {
+  display: block;
+  position: absolute;
+  left: 40px;
+  top: 1125px;
+  width: 500px;
+  height: 290px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  opacity: 1;
+  LCvScrollbar: false;
+}
+
 #div_sizer {
   display: block;
   position: absolute;
