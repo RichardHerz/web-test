@@ -356,7 +356,7 @@ let controller = {
           } else {
             // has strip plot and has reached SS earlier
             if ((this.simTime - this.ssStartTime) >= this.stripPlotSpan) {
-              // has strip plot, reached SS earlier, plot lines should be flat 
+              // has strip plot, reached SS earlier, plot lines should be flat
               this.ssFlag = true;
               // console.log('ss check, at SS with FLAT strip plots, ssFlag = true');
             } else {
@@ -372,9 +372,8 @@ let controller = {
       // do not save for every call of this function or will never enter IF & check
       this.oldSimTime = this.simTime;
 
-    } else {
+    } else { // ELSE OF if (this.simTime >= this.oldSimTime + 2 * resTime)
       // console.log('do NOT check all units, (this.simTime >= this.oldSimTime + 2 * resTime) is FALSE');
-
     } // END if (this.simTime >= this.oldSimTime + 2 * resTime)
 
   } // END method checkForSteadyState()

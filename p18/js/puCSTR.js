@@ -20,6 +20,7 @@ function puCSTR(pUnitIndex) {
   // these will be filled with initial values in method reset()
   // profileData : [], // for profile plots, plot script requires this name
   stripData : [], // for strip chart plots, plot script requires this name
+  profileData : [], // for profile plots
 
   // // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS...
   // // SEE dataInputs array in initialize() method for input field ID's
@@ -133,6 +134,12 @@ function puCSTR(pUnitIndex) {
     let numStripPts = plotInfo[0]['numberPoints'];
     this.stripData = plotter.initPlotData(numStripVars,numStripPts);
 
+    // initialize profile data array
+    // initPlotData(numStripVars,numStripPts)
+    let numProfileVars = 1; // conversion
+    let numProfilePts = plotInfo[2]['numberPoints'];
+    this.stripData = plotter.initPlotData(numStripVars,numStripPts);
+
     let kn = 0;
     for (k = 0; k <= numStripPts; k += 1) {
       kn = k * simParams.simTimeStep * simParams.simStepRepeats;
@@ -147,6 +154,19 @@ function puCSTR(pUnitIndex) {
       // y-axis values
       this.stripData[0][k][1] = this.conc;
       this.stripData[1][k][1] = this.conversion;
+    }
+
+    for (k = 0; k <= numProfilePts; k += 1) {
+      kn = k * 0.01;
+      // x-axis values
+      // x-axis values will not change during sim
+      // XXX change to get number vars for this plotInfo variable
+      //     so can put in repeat - or better yet, a function
+      //     and same for y-axis below
+      // first index specifies which variable in plot data array
+      this.profileData[0][k][0] = kn;
+      // y-axis values
+      this.profileData[0][k][1] = 0;
     }
 
     // update display
