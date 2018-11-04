@@ -152,34 +152,62 @@ let plotter = {
 
     // set up the plot axis labels and plot legend
 
-      let xShow = plotInfo[pNumber]['xAxisShow'];
-      let xLabel = plotInfo[pNumber]['xAxisLabel'];;
-      let xMin= plotInfo[pNumber]['xAxisMin'];
-      let xMax = plotInfo[pNumber]['xAxisMax'];
-      let yLeftLabel = plotInfo[pNumber]['yLeftAxisLabel'];
-      let yLeftMin = plotInfo[pNumber]['yLeftAxisMin'];
-      let yLeftMax = plotInfo[pNumber]['yLeftAxisMax'];
-      let yRightLabel = plotInfo[pNumber]['yRightAxisLabel'];
-      let yRightMin = plotInfo[pNumber]['yRightAxisMin'];
-      let yRightMax = plotInfo[pNumber]['yRightAxisMax'];
-      let plotLegendPosition = plotInfo[pNumber]['plotLegendPosition'];
-      let plotLegendShow = plotInfo[pNumber]['plotLegendShow']; // Boolean 0,1
-      let plotGridBgColor = plotInfo[pNumber]['plotGridBgColor'];
-      let plotDataSeriesColors = plotInfo[pNumber]['plotDataSeriesColors'];
+    let xShow = plotInfo[pNumber]['xAxisShow'];
+    let xLabel = plotInfo[pNumber]['xAxisLabel'];;
+    let xMin= plotInfo[pNumber]['xAxisMin'];
+    let xMax = plotInfo[pNumber]['xAxisMax'];
+    let yLeftLabel = plotInfo[pNumber]['yLeftAxisLabel'];
+    let yLeftMin = plotInfo[pNumber]['yLeftAxisMin'];
+    let yLeftMax = plotInfo[pNumber]['yLeftAxisMax'];
+    let yRightLabel = plotInfo[pNumber]['yRightAxisLabel'];
+    let yRightMin = plotInfo[pNumber]['yRightAxisMin'];
+    let yRightMax = plotInfo[pNumber]['yRightAxisMax'];
+    let plotLegendPosition = plotInfo[pNumber]['plotLegendPosition'];
+    let plotLegendShow = plotInfo[pNumber]['plotLegendShow']; // Boolean 0,1
+    let plotGridBgColor = plotInfo[pNumber]['plotGridBgColor'];
+    let plotDataSeriesColors = plotInfo[pNumber]['plotDataSeriesColors'];
+    // check if want lines and/or points shown
+    // default is lines only
+    let plotDataPoints = false;
+    let plotDataLines = true;
+    if (typeof plotInfo[pNumber]['plotDataPoints'] == 'undefined') {
+      plotDataPoints = false; // default is false
+      // console.log('plot ' +pNumber+ ', plotDataPoints undefined');
+      // console.log('plot ' +pNumber+ ',     plotDataPoints = ' + plotDataPoints);
+    } else {
+      plotDataPoints = plotInfo[pNumber]['plotDataPoints'];
+      // console.log('plot ' +pNumber+ ', plotDataPoints exists');
+      // console.log('plot ' +pNumber+ ',     plotDataPoints = ' + plotDataPoints);
+    }
+    if (typeof plotInfo[pNumber]['plotDataLines'] == 'undefined') {
+      plotDataLines = true; // default is true
+      // console.log('plot ' +pNumber+ ', plotDataLines undefined');
+      // console.log('plot ' +pNumber+ ',     plotDataLines = ' + plotDataLines);
+    } else {
+      plotDataLines = plotInfo[pNumber]['plotDataLines'];
+      // console.log('plot ' +pNumber+ ', plotDataLines exists');
+      // console.log('plot ' +pNumber+ ',     plotDataLines = ' + plotDataLines);
+    }
 
-      let options = {
-        // axisLabels REQUIRES LIBRARY flot.axislabels.js, SEE
-        //     https://github.com/markrcote/flot-axislabels
-        axisLabels : {show: true},
-        xaxes: [ { show: xShow, min: xMin, max: xMax, axisLabel: xLabel } ],
-        yaxes: [
-        // yaxis object listed first is "yaxis: 1" in dataToPlot, second is 2
-          {position: 'right', min: yRightMin, max: yRightMax, axisLabel: yRightLabel },
-          {position: 'left', min: yLeftMin, max: yLeftMax, axisLabel: yLeftLabel },
-        ],
+    let options = {
+      // axisLabels REQUIRES LIBRARY flot.axislabels.js, SEE
+      //     https://github.com/markrcote/flot-axislabels
+      axisLabels : {show: true},
+      xaxes: [ { show: xShow, min: xMin, max: xMax, axisLabel: xLabel } ],
+      yaxes: [
+      // yaxis object listed first is "yaxis: 1" in dataToPlot, second is 2
+        {position: 'right', min: yRightMin, max: yRightMax, axisLabel: yRightLabel },
+        {position: 'left', min: yLeftMin, max: yLeftMax, axisLabel: yLeftLabel },
+      ],
       legend: { show: plotLegendShow },
       legend: { position: plotLegendPosition },
       grid: { backgroundColor: plotGridBgColor },
+      series: {
+        lines: { show: plotDataLines },
+        points: { show: plotDataPoints,
+                  radius: 2,
+                }
+      },
       colors: plotDataSeriesColors
     };
 

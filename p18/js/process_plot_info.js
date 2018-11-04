@@ -281,6 +281,8 @@ let plotInfo = {
     plotInfo[pnum]['plotLegendPosition'] = "ne";
     plotInfo[pnum]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 or "show"
     plotInfo[pnum]['plotGridBgColor'] = 'white';
+    plotInfo[pnum]['plotDataPoints'] = 1; // 0 false, 1 true, default is false
+    plotInfo[pnum]['plotDataLines'] = 0; // 0 false, 1 true, default is true
     // colors can be specified rgb, rgba, hex, and color names
     // for flot.js colors, only basic color names appear to work, e.g., white, blue, red
     // for all html color names to hex see http://www.color-hex.com

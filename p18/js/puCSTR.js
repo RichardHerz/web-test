@@ -139,37 +139,6 @@ function puCSTR(pUnitIndex) {
     let numProfilePts = plotInfo[2]['numberPoints'];
     this.profileData = plotter.initPlotData(numProfileVars,numProfilePts);
 
-    // initialize strip chart plot
-    let kn = 0;
-    for (k = 0; k <= numStripPts; k += 1) {
-      kn = k * simParams.simTimeStep * simParams.simStepRepeats;
-      // x-axis values
-      // x-axis values will not change during sim
-      // XXX change to get number vars for this plotInfo variable
-      //     so can put in repeat - or better yet, a function
-      //     and same for y-axis below
-      // first index specifies which variable in plot data array
-      this.stripData[0][k][0] = kn;
-      this.stripData[1][k][0] = kn;
-      // y-axis values
-      this.stripData[0][k][1] = this.conc;
-      this.stripData[1][k][1] = this.conversion;
-    }
-
-    // initialize profile plot of SS conversion
-    for (k = 0; k <= numProfilePts; k += 1) {
-      kn = k * 0.01;
-      // x-axis values
-      // x-axis values will not change during sim
-      // XXX change to get number vars for this plotInfo variable
-      //     so can put in repeat - or better yet, a function
-      //     and same for y-axis below
-      // first index specifies which variable in plot data array
-      this.profileData[0][k][0] = kn;
-      // y-axis values
-      this.profileData[0][k][1] = 0;
-    }
-
     // update display
     this.updateDisplay();
 
@@ -418,7 +387,7 @@ function puCSTR(pUnitIndex) {
 
     // SPECIAL FOR THIS UNIT
     if ((ssFlag == true) && (controller.ssStartTime == 0)) {
-      // at steady state && first time all units are at steady state
+      // this unit at steady state && first time all units are at steady state
       // note ssStartTime will be changed != 0 after this check
       //
       // handle SS conversion
