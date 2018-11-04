@@ -264,16 +264,15 @@ let plotInfo = {
     // set numberPoints < = than width of plot in HTML pixels for fast plotting
     plotInfo[pnum]['numberPoints'] = 100;
     // plot has numberPoints + 1 pts!
-    plotInfo[pnum]['xAxisLabel'] = '< Concentration >';
-    plotInfo[pnum]['xAxisTableLabel'] = 'Concentration'; // label for copy data table
+    plotInfo[pnum]['xAxisLabel'] = 'Concentration';
+    plotInfo[pnum]['xAxisTableLabel'] = 'Reactant Conc'; // label for copy data table
     // xAxisShow false does not show numbers, nor label, nor grid for x-axis
     // might be better to cover numbers if desire not to show numbers
     plotInfo[pnum]['xAxisShow'] = 1; // 0 false, 1 true
     plotInfo[pnum]['xAxisMin'] = 0;
-    // multiplier in line below is numberPoints for this plot
     plotInfo[pnum]['xAxisMax'] = 1;
     plotInfo[pnum]['xAxisReversed'] = 0; // 0 false, 1 true, when true, xmax on left
-    plotInfo[pnum]['yLeftAxisLabel'] = 'Reactant Conversion';
+    plotInfo[pnum]['yLeftAxisLabel'] = 'Steady-State Conversion';
     plotInfo[pnum]['yLeftAxisMin'] = 0;
     plotInfo[pnum]['yLeftAxisMax'] = 1;
     plotInfo[pnum]['yRightAxisLabel'] = '';
@@ -304,8 +303,8 @@ let plotInfo = {
     //
     vnum = 0; // 1st variable
     plotInfo[pnum]['varUnitIndex'][vnum] = 4; // value is index of unit in processUnits object
-    plotInfo[pnum]['var'][vnum] = 1; // value is variable index in plot data array
-    plotInfo[pnum]['varLabel'][vnum] = 'Conv';
+    plotInfo[pnum]['var'][vnum] = 0; // value is variable index in plot data array
+    plotInfo[pnum]['varLabel'][vnum] = 'SS Conv';
     // varDataUnits are dimensional units used in copy data table, along with varLabel
     plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
     // varShow values are 'show' to show on plot and legend,

@@ -18,9 +18,8 @@ function puCSTR(pUnitIndex) {
 
   // define arrays to hold data for plots, color canvas
   // these will be filled with initial values in method reset()
-  // profileData : [], // for profile plots, plot script requires this name
-  stripData : [], // for strip chart plots, plot script requires this name
-  profileData : [], // for profile plots
+  profileData = []; // for profile plots, plot script requires this name
+  stripData = []; // for strip chart plots, plot script requires this name
 
   // // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS...
   // // SEE dataInputs array in initialize() method for input field ID's
@@ -138,8 +137,9 @@ function puCSTR(pUnitIndex) {
     // initPlotData(numStripVars,numStripPts)
     let numProfileVars = 1; // conversion
     let numProfilePts = plotInfo[2]['numberPoints'];
-    this.stripData = plotter.initPlotData(numStripVars,numStripPts);
+    this.profileData = plotter.initPlotData(numProfileVars,numProfilePts);
 
+    // initialize strip chart plot
     let kn = 0;
     for (k = 0; k <= numStripPts; k += 1) {
       kn = k * simParams.simTimeStep * simParams.simStepRepeats;
@@ -156,6 +156,7 @@ function puCSTR(pUnitIndex) {
       this.stripData[1][k][1] = this.conversion;
     }
 
+    // initialize profile plot of SS conversion
     for (k = 0; k <= numProfilePts; k += 1) {
       kn = k * 0.01;
       // x-axis values
@@ -414,6 +415,25 @@ function puCSTR(pUnitIndex) {
     let ssFlag = false;
     if (newCheckSum == oldSScheckSum) {ssFlag = true;}
     this.ssCheckSum = newCheckSum; // save current value for use next time
+
+    // SPECIAL FOR THIS UNIT
+    if ((ssFlag == true) && (controller.ssStartTime == 0)) {
+      // at steady state && first time all units are at steady state
+      // note ssStartTime will be changed != 0 after this check
+      //
+      // handle SS conversion
+      v = 0;
+      tempArray = this.profileData[v]; // work on one plot variable at a time
+      // delete first and oldest element which is an [x,y] pair array
+      tempArray.shift();
+      // add the new [x.y] pair array at end
+      // feed conc to first CSTR, this CSTR's conversion
+      tempArray.push( [processUnits[0].conc,this.conversion] );
+      // update the variable being processed
+      this.profileData[v] = tempArray;
+
+    }
+
     return ssFlag;
   } // END OF checkForSteadyState()
 
