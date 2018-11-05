@@ -1,5 +1,8 @@
 % readings from Web Labs, Lab 2 - rxn & diff
 
+% interpolate at this increment
+inc = 0.001;
+    
 % col 1 is conc (0-1), col 2 is rate
 dup = [0 0 % data on upper branch 
     0.02 1.574e-4
@@ -64,8 +67,7 @@ for j = 1:r-1
     counter = counter + 1;
     dupp(counter,1) = dc1;
     dupp(counter,2) = dr1;
-    % for each value between
-    inc = 0.01;
+    % at increment for each value between
     for dc = dc1+inc:inc:dc2-inc
         % have dc, need rate
         dr = dr1 + (dr2-dr1)*(dc-dc1)/(dc2-dc1);
@@ -96,8 +98,7 @@ for j = 1:r-1
     counter = counter + 1;
     ddnp(counter,1) = dc1;
     ddnp(counter,2) = dr1;
-    % for each value between
-    inc = 0.01;
+    % at increment for each value between
     for dc = dc1+inc:inc:dc2-inc
         % have dc, need rate
         dr = dr1 + (dr2-dr1)*(dc-dc1)/(dc2-dc1);
