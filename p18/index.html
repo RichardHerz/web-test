@@ -54,13 +54,13 @@
       <p id="field_setFeedConc_label">
         Reactant feed concentration:
       </p>
-      <p id="field_setFeedConc_value">
-        1
-      </p>
-      <input type="range" id="range_setFeedConc_slider" min="0" max="1" step="0.01" value="1"
-        oninput="processUnits[0].updateUIparams()" onchange="processUnits[0].updateUIparams()">
+      <input id="input_setFeedConc_value" value="1" onchange="processUnits[0].updateUIfeedInput()">
       </input>
       <!-- note about range slider: need event onchange for Win IE, oninput for others -->
+      <input type="range" id="range_setFeedConc_slider" min="0" max="1" step="0.01" value="1"
+        oninput="processUnits[0].updateUIfeedSlider()"
+        onchange="processUnits[0].updateUIfeedSlider()">
+      </input>
       <div id="div_PLOTDIV_plotConcentration">
       </div> <!-- end of div div_PLOTDIV_plotData -->
       <div id="div_PLOTDIV_plotConversion">

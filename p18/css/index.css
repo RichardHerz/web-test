@@ -72,33 +72,33 @@ canvas {
   LCvScrollbar: false;
 }
 
-#field_setFeedConc_label {
- position: absolute;
-  left: 22px;
- top: 53px;
-  width: 286px;
- height: 23px;
- border-width: 2px;
- visibility: visible;
- border-style: none;
- opacity: 1;
- LCvScrollbar: false;
- font-size: 16px;
-}
-
-#field_setFeedConc_value {
- position: absolute;
-  left: 211px;
- top: 53px;
+#input_setFeedConc_value {
+  position: absolute;
+  left: 230px;
+  top: 66px;
   width: 70px;
- height: 21px;
- border-width: 2px;
- visibility: visible;
- border-style: none;
- opacity: 1;
- LCvScrollbar: false;
- font-size: 16px;
-}
+  height: 21px;
+  border-width: 2px;
+  visibility: visible;
+  border-style: solid;
+  opacity: 1;
+  LCvScrollbar: false;
+  font-size: 16px;
+ }
+
+#field_setFeedConc_label {
+  position: absolute;
+  left: 20px;
+  top: 53px;
+  width: 200px;
+  height: 21px;
+  border-width: 2px;
+  visibility: visible;
+  border-style: dotted;
+  opacity: 1;
+  LCvScrollbar: false;
+  font-size: 16px;
+ }
 
 #range_setFeedConc_slider {
   left: 27px;

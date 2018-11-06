@@ -59,13 +59,25 @@ let puFEED = {
   // residenceTime is set in this unit's updateUIparams()
 
   conc : 0.00, // FEED CONC
-  inputSliderDisplay : "field_setFeedConc_value",
+  // inputSliderDisplay : "field_setFeedConc_value",
+  inputFeedSlider : 'range_setFeedConc_slider',
+  inputFeedInput : 'input_setFeedConc_value',
 
   initialize : function() {
     //
     let v = 0;
     this.dataHeaders[v] = 'Feed Conc';
     this.dataInputs[v] = 'range_setFeedConc_slider';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 1;
+    this.dataInitial[v] = 0;
+    this.conc = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.conc; // current input oalue for reporting
+    //
+    v = 1;
+    this.dataHeaders[v] = 'Feed Conc';
+    this.dataInputs[v] = 'input_setFeedConc_value';
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 1;
@@ -106,8 +118,9 @@ let puFEED = {
     // set to zero ssCheckSum used to check for steady state by this unit
     this.ssCheckSum = 0;
 
-    // get slider value for feed conc
-    this.updateUIparams();
+    // XXX
+    // // get slider value for feed conc
+    // this.updateUIparams();
 
     // each unit has its own data arrays for plots and canvases
 
@@ -148,23 +161,40 @@ let puFEED = {
     // set to zero ssCheckSum used to check for steady state by this unit
     this.ssCheckSum = 0;
 
-    // check input fields for new values
-    // function getInputValue() is defined in file process_interface.js
-    // getInputValue(unit # in processUnits object, variable # in dataInputs array)
-    // see variable numbers above in initialize()
-    // note: this.dataValues.[pVar]
-    //   is only used in copyData() to report input values
-    //
-    let unum = this.unitIndex;
-    //
-    this.conc = this.dataValues[0] = interface.getInputValue(unum, 0);
-
-    // update the readout field of range slider
-    if (document.getElementById(this.inputSliderDisplay)) {
-      document.getElementById(this.inputSliderDisplay).innerHTML = this.conc;
-    }
+    this.updateUIfeedInput();
 
   }, // END updateUIparams
+
+  updateUIfeedInput : function() {
+    let unum = this.unitIndex;
+    this.conc = this.dataValues[1] = interface.getInputValue(unum, 1);
+    // alert('input: this.conc = ' + this.conc);
+    // update position of the range slider
+    if (document.getElementById(this.inputFeedSlider)) {
+      // alert('input, slider exists');
+      document.getElementById(this.inputFeedSlider).value = this.conc;
+    }
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
+  }, // END method updateUIfeedInput()
+
+  updateUIfeedSlider : function() {
+    let unum = this.unitIndex;
+    this.conc = this.dataValues[0] = interface.getInputValue(unum, 0);
+    // update input field display
+    // alert('slider: this.conc = ' + this.conc);
+    if (document.getElementById(this.inputFeedInput)) {
+      document.getElementById(this.inputFeedInput).value = this.conc;
+    }
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
+  }, // END method updateUIfeedSlider()
 
   updateInputs : function(){
     // GET INPUT CONNECTION VALUES FROM OTHER UNITS FROM PREVIOUS TIME STEP,
