@@ -48,6 +48,12 @@ let plotInfo = {
 
     // let unum = 0; // useful when only one unit in plot, processUnits[unum]
 
+    // SPECIAL FOR THIS LAB
+    // SET HTML select TO MATCH SS CONVERSION PLOT 2 REACTOR VAR 0
+    //      plotInfo[2]['varUnitIndex'][0] = 4;
+    // ON RELOAD OF WINDOW AFTER FIRST LOAD
+    document.getElementById("selectReactor").value = 4;
+
     // plot 0 info
     let pnum = 0;
     plotInfo[pnum] = new Object();
@@ -306,7 +312,7 @@ let plotInfo = {
     vnum = 0; // 1st variable
     plotInfo[pnum]['varUnitIndex'][vnum] = 4; // value is index of unit in processUnits object
     plotInfo[pnum]['var'][vnum] = 0; // value is variable index in plot data array
-    plotInfo[pnum]['varLabel'][vnum] = 'Rxr 4';
+    plotInfo[pnum]['varLabel'][vnum] = '';
     // varDataUnits are dimensional units used in copy data table, along with varLabel
     plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
     // varShow values are 'show' to show on plot and legend,

@@ -68,8 +68,17 @@
       <div id="div_sizer">
       </div> <!-- end of div div_sizer -->
     </div> <!-- end of div div_simFrame -->
-    <div id="div_PLOTDIV_plotSSconversion">
-    </div> <!-- end of div div_PLOTDIV_plotSSconversion -->
+    <div id='div_SSconversionFrame'>
+      Select reactor to display SS conversion: &nbsp;
+      <select id='selectReactor' onchange="simParams.selectReactor()">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4" selected='true'>4</option>
+      </select>
+      <div id="div_PLOTDIV_plotSSconversion">
+      </div> <!-- end of div div_PLOTDIV_plotSSconversion -->
+    </div> <!-- end of div div_SSconversionFrame -->
     <div id="div_PLOTDIV_plotSSrate">
     </div> <!-- end of div div_PLOTDIV_plotSSrate -->
   </body>

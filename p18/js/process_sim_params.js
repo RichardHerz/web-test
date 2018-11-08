@@ -48,7 +48,7 @@ let simParams = {
   updateRunCount : function() {
 
     console.log('sim_params, updateRunCount deactivated');
-    
+
     // // WARNING: NEED LITERAL, e.g., "field_run_counter" below
     // //      e.g., this.runCounterFieldID does NOT work
     // //
@@ -66,5 +66,16 @@ let simParams = {
     // $.post(this.runCurrrentRunCountURL) .done(function(data) {
       // document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>"; } );
   },
+
+  // SPECIAL FOR THIS LAB - SELECT REACTOR FOR SS CONVERSION PLOT
+  // called onchange of html select element id='selectReactor'
+  selectReactor : function() {
+        let p = 2; // plot number
+        let rxr = document.getElementById("selectReactor").value;
+        plotInfo[p]['varUnitIndex'][0] = rxr;
+        // document.getElementById("demo").innerHTML = "You selected: " + rxr;
+        let data = plotter.getPlotData(p);
+        plotter.plotPlotData(data,p);
+  }
 
 }; // END simParams object
