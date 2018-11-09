@@ -64,8 +64,8 @@ canvas {
   border-color: DodgerBlue;
   left: 10px;
   top: 26px;
-  width: 797px;
-  height: 1250px;
+  width: 700px;
+  height: 1360px;
   visibility: visible;
   border-width: 1px;
   border-style: dotted;
@@ -102,7 +102,7 @@ canvas {
 
 #range_setFeedConc_slider {
   left: 27px;
- top: 83px;
+ top: 98px;
   width: 257px;
  height: 24px;
 }
@@ -191,9 +191,9 @@ canvas {
   display: block;
   position: absolute;
   left: 40px;
-  top: 825px;
-  width: 500px;
-  height: 320px;
+  top: 660px;
+  width: 600px;
+  height: 380px;
   visibility: visible;
   border-width: 1px;
   border-style: dotted;
@@ -206,7 +206,7 @@ canvas {
   display: block;
   position: relative;
   left: 40px;
-  top: 25px; // 825
+  top: 25px;
   width: 500px;
   height: 290px;
   visibility: visible;
@@ -221,7 +221,7 @@ canvas {
   display: block;
   position: absolute;
   left: 40px;
-  top: 1125px;
+  top: 1060px;
   width: 500px;
   height: 290px;
   visibility: visible;
