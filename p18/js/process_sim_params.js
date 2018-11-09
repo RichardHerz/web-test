@@ -70,7 +70,7 @@ let simParams = {
   // SPECIAL FOR THIS LAB - SELECT REACTOR FOR SS CONVERSION PLOT
   // called onchange of html select element id='selectReactor'
   selectReactor : function() {
-        let p = 2; // plot number
+        let p = 1; // plot number
         let rxr = document.getElementById("selectReactor").value;
         plotInfo[p]['varUnitIndex'][0] = rxr;
         // document.getElementById("demo").innerHTML = "You selected: " + rxr;

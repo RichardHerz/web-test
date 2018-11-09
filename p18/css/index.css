@@ -65,7 +65,7 @@ canvas {
   left: 10px;
   top: 26px;
   width: 700px;
-  height: 1360px;
+  height: 1050px;
   visibility: visible;
   border-width: 1px;
   border-style: dotted;
@@ -172,7 +172,7 @@ canvas {
   LCvScrollbar: false;
 }
 
-#div_PLOTDIV_plotConversion {
+/* #div_PLOTDIV_plotConversion {
   display: block;
   position: absolute;
   left: 40px;
@@ -185,15 +185,15 @@ canvas {
   border-color: DodgerBlue;
   opacity: 1;
   LCvScrollbar: false;
-}
+} */
 
 #div_SSconversionFrame {
   display: block;
   position: absolute;
   left: 40px;
-  top: 660px;
-  width: 600px;
-  height: 380px;
+  top: 400px;
+  width: 510px;
+  height: 340px;
   visibility: visible;
   border-width: 1px;
   border-style: dotted;
@@ -205,7 +205,7 @@ canvas {
 #div_PLOTDIV_plotSSconversion {
   display: block;
   position: relative;
-  left: 40px;
+  left: 0px;
   top: 25px;
   width: 500px;
   height: 290px;
@@ -221,7 +221,7 @@ canvas {
   display: block;
   position: absolute;
   left: 40px;
-  top: 1060px;
+  top: 750px;
   width: 500px;
   height: 290px;
   visibility: visible;

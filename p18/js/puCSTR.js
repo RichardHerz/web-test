@@ -198,10 +198,15 @@ function puCSTR(pUnitIndex) {
     this.stripData = plotter.initPlotData(numStripVars,numStripPts);
 
     // initialize profile data array
-    // initPlotData(numStripVars,numStripPts)
+    // initPlotData(numProfileVars,numProfilePts)
+    // SPECIAL CASE - this will be points vs. feed conc so do not fill points
     let numProfileVars = 2; // conversion, rate
-    let numProfilePts = plotInfo[2]['numberPoints'];
+    let numProfilePts = 0; // 0+1 points will be filled here
     this.profileData = plotter.initPlotData(numProfileVars,numProfilePts);
+    // SPECIAL CASE - move initial [0,0] x,y points of plots
+    this.profileData[0] = [-1,-1];
+    this.profileData[1] = [-1,-1];
+    console.log('this.profileData[0] = ' + this.profileData[0]);
 
     // update display
     this.updateDisplay();
@@ -349,6 +354,9 @@ function puCSTR(pUnitIndex) {
     // update the variable being processed
     this.stripData[v] = tempArray;
 
+    // XXX not needed if do not show dynamic converison strip chart plot
+    // XXX also at array initialization only need 1 var for conc
+    // XXX and above here at numStripVars
     // handle conversion
     v = 1;
     tempArray = this.stripData[v]; // work on one plot variable at a time
@@ -411,11 +419,16 @@ function puCSTR(pUnitIndex) {
       // handle SS conversion
       v = 0;
       tempArray = this.profileData[v]; // work on one plot variable at a time
-      // delete first and oldest element which is an [x,y] pair array
-      tempArray.shift();
-      // add the new [x.y] pair array at end
+      if (tempArray[0][0] <= 0) {
+        // shift deletes 1st [x,y] pair created on array initialization
+        tempArray.shift();
+      }
+      // add the new [x,y] pair array at end
       // feed conc to first CSTR, this CSTR's conversion
-      tempArray.push( [processUnits[0].conc,this.conversion] );
+      if (processUnits[0].conc > 0) {
+        // only add conversion when feed conc > 0
+        tempArray.push( [processUnits[0].conc,this.conversion] );
+      }
       // update the variable being processed
       this.profileData[v] = tempArray;
 
@@ -423,20 +436,16 @@ function puCSTR(pUnitIndex) {
       //
       v = 1;
       tempArray = this.profileData[v]; // work on one plot variable at a time
-      // delete first and oldest element which is an [x,y] pair array
-      tempArray.shift();
-      // add the new [x.y] pair array at end
+      if (tempArray[0][0] <= 0) {
+        // shift deletes 1st [x,y] pair created on array initialization
+        tempArray.shift();
+      }
+      // add the new [x,y] pair array at end
       // feed conc to first CSTR, this CSTR's conversion
       let thisRate = -100 * this.rxnRate;
       tempArray.push( [this.conc,thisRate] );
       // update the variable being processed
       this.profileData[v] = tempArray;
-
-      if (this.unitIndex == 4) {
-        // console.log('SS rxr 4, conc = ' + this.conc + ', rxnRate = ' + thisRate);
-        // console.log('    concIn = ' + this.concIn);
-        // console.log('    feed = ' + this.feed + ', conc = ' + this.conc + ', conversion = ' + this.conversion);
-      }
 
     } // END OF if ((ssFlag == true) && (controller.ssStartTime == 0))
 
