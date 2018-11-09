@@ -61,16 +61,14 @@ let plotInfo = {
     plotInfo[pnum]['title'] = 'Reactor Conditions';
     plotInfo[pnum]['canvas'] = '#div_PLOTDIV_plotConcentration'; // flot.js wants ID with prefix #
     // set numberPoints < = than width of plot in HTML pixels for fast plotting
-    plotInfo[pnum]['numberPoints'] = 568;
-    // plot has numberPoints + 1 pts!
-    plotInfo[pnum]['xAxisLabel'] = '< recent time | earlier time (s) >';
+    plotInfo[pnum]['numberPoints'] = 563; // WARNING: value used below in ['xAxisMax']
     plotInfo[pnum]['xAxisTableLabel'] = 'Time (s)'; // label for copy data table
     // xAxisShow false does not show numbers, nor label, nor grid for x-axis
     // might be better to cover numbers if desire not to show numbers
     plotInfo[pnum]['xAxisShow'] = 1; // 0 false, 1 true
     plotInfo[pnum]['xAxisMin'] = 0;
     // multiplier in line below is numberPoints for this plot
-    plotInfo[pnum]['xAxisMax'] = 568 * simParams.simTimeStep * simParams.simStepRepeats; // numberPoints * ...
+    plotInfo[pnum]['xAxisMax'] = 563 * simParams.simTimeStep * simParams.simStepRepeats; // numberPoints * ...
     plotInfo[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
     plotInfo[pnum]['yLeftAxisLabel'] = 'Reactant Concentration';
     plotInfo[pnum]['yLeftAxisMin'] = 0;
@@ -164,7 +162,7 @@ let plotInfo = {
     plotInfo[pnum]['title'] = 'Conversion';
     plotInfo[pnum]['canvas'] = '#div_PLOTDIV_plotConversion'; // flot.js wants ID with prefix #
     // set numberPoints < = than width of plot in HTML pixels for fast plotting
-    plotInfo[pnum]['numberPoints'] = 568;
+    plotInfo[pnum]['numberPoints'] = 563; // WARNING: value used below in ['xAxisMax']
     // plot has numberPoints + 1 pts!
     plotInfo[pnum]['xAxisLabel'] = '< recent time | earlier time (s) >';
     plotInfo[pnum]['xAxisTableLabel'] = 'Time (s)'; // label for copy data table
@@ -173,7 +171,7 @@ let plotInfo = {
     plotInfo[pnum]['xAxisShow'] = 1; // 0 false, 1 true
     plotInfo[pnum]['xAxisMin'] = 0;
     // multiplier in line below is numberPoints for this plot
-    plotInfo[pnum]['xAxisMax'] = 568 * simParams.simTimeStep * simParams.simStepRepeats; // numberPoints * ...
+    plotInfo[pnum]['xAxisMax'] = 563 * simParams.simTimeStep * simParams.simStepRepeats; // numberPoints * ...
     plotInfo[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
     plotInfo[pnum]['yLeftAxisLabel'] = 'Reactant Conversion';
     plotInfo[pnum]['yLeftAxisMin'] = 0;
