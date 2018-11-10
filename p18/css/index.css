@@ -58,12 +58,20 @@ canvas {
   font-size: 1em;
 }
 
+#cstr-train-image {
+  display: block;
+  position: relative;
+  visibility: visible;
+  height: 100px;
+  width: 300px;
+  margin: auto
+}
+
 #div_simFrame {
   display: block;
   position: relative;
   border-color: DodgerBlue;
   left: 10px;
-  top: 26px;
   width: 700px;
   height: 1050px;
   visibility: visible;
@@ -74,7 +82,7 @@ canvas {
 
 #input_setFeedConc_value {
   position: absolute;
-  left: 230px;
+  left: 260px;
   top: 66px;
   width: 70px;
   height: 21px;
@@ -90,11 +98,11 @@ canvas {
   position: absolute;
   left: 20px;
   top: 53px;
-  width: 200px;
+  width: 300px;
   height: 21px;
   border-width: 2px;
   visibility: visible;
-  border-style: dotted;
+  border-style: none;
   opacity: 1;
   LCvScrollbar: false;
   font-size: 16px;
@@ -121,7 +129,7 @@ canvas {
 
 #button_runButton {
   position: absolute;
-  left: 5px;
+  left: 10px;
   top: 5px;
   width: 70px;
   height: 24px;
@@ -232,7 +240,8 @@ canvas {
   LCvScrollbar: false;
 }
 
-#div_sizer {
+/* #div_sizer {
+  // use to get width of plotting area so don't have more pts than pixels
   display: block;
   position: absolute;
   left: 86px;
@@ -245,7 +254,7 @@ canvas {
   border-color: red;
   opacity: 1;
   LCvScrollbar: false;
-}
+} */
 
 /* example @media for responsive design */
 /* requires meta viewport element in HTML head */

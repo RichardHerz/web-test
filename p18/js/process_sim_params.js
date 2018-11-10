@@ -47,17 +47,17 @@ let simParams = {
 
   updateRunCount : function() {
 
-    console.log('sim_params, updateRunCount deactivated');
+    // console.log('sim_params, updateRunCount deactivated');
 
-    // // WARNING: NEED LITERAL, e.g., "field_run_counter" below
-    // //      e.g., this.runCounterFieldID does NOT work
-    // //
-    // $.post(this.runLoggerURL,{webAppNumber: "--arena--"})
-    //   .done(
-    //     function(data) {
-    //       // document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>";
-    //     } // END OF function(data)
-    //   ) // END OF .done(
+    // WARNING: NEED LITERAL, e.g., "field_run_counter" below
+    //      e.g., this.runCounterFieldID does NOT work
+    //
+    $.post(this.runLoggerURL,{webAppNumber: "CSTRs in Series"})
+      .done(
+        function(data) {
+          // document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>";
+        } // END OF function(data)
+      ) // END OF .done(
   }, // END OF updateRunCount
 
   updateCurrentRunCountDisplay : function() {

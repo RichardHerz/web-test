@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8"/>
 
-  <title>CSTRs in Series</title>
+  <title>Web Labs at ReactorLab.net</title>
 
-  <meta name='description' content='designed with lcCardLayoutToWeb project at GitHub'>
+  <meta name='description' content='stirred tank reactors in series'>
+  <meta name='description' content='multiple steady states'>
 
   <!-- A VIEWPORT META LINE IN HTML HEAD IS NECESSARY FOR CSS @MEDIA TO WORK -->
   <!-- ID used to modify with Javascript after initial loading - OR EDIT HERE -->
@@ -41,18 +42,46 @@
 
 </head>
   <body>
-    <p><br>Under Development
-    <br>
-    CSTRs in Series - CSTRs created with constructor method
-    <br>
-    Each CSTR contains the catalyst in Reactor Lab, Web Labs, lab 2, reaction-diffusion
+    <div id="div_page_header">
+    <!-- output field can be used in development by controller to display timing -->
+    <!-- uncomment next line and comment the following <p> and contents -->
+    <!-- <p id="field_output_field"></p> -->
+    <p>
+    <a href="http://reactorlab.net/web-labs/">Back</a> to Web Labs at ReactorLab.net
+    <p><b><i>Continuous Stirred Tank Reactors in Series with Multiple Steady States</i></b></p>
+    <!-- <p id="field_output_field">&nbsp; development field output field for idle time check</p> -->
+    <img id="cstr-train-image" src="images/cstr-train.png" alt="cstr-train">
+    <p>
+     Each continuous stirred tank reactor (CSTR)
+     contains the catalyst in Reactor Lab, Web Labs, Lab 2, Dynamic
+     diffusion and reaction in a porous catalyst. The conditions here are
+     at the default conditions on entry to that lab with Model 2 kinetics.
     </p>
-    <p id="field_output_field">&nbsp; development field output field for idle time check</p>
+    <p>
+     Each CSTR can exhibit two steady states at the same reactant concentration
+     over a range of
+     concentration because of the coupling between diffusion resistance
+     in the porous solid catalyst and the
+     self-inhibiting reaction. This four-reactor system can exhibit more than two
+     multiple steady states at some concentrations.
+   </p>
+   <p>
+      Perform experiments to determine the ranges of reactant concentration over which
+      multiple steady states are obtained in this lab. How many multiplicities can you find?
+    </p>
+    <p>
+      You can change the reactant concentration in the feed by moving the range slider
+      or by typing a value between 0 and 1
+      in the input field, then hit the Enter/Return key or click out of the field.
+      The dynamic response is determined only by the fluid space time, with the
+      catalyst specified to be at pseudo-steady-state. Conditions are isothermal.
+    </p>
+    </div> <!-- end of div div_page_header -->
     <div id="div_simFrame">
       <input type="button" id="button_runButton" value="Run" onclick="interface.runThisLab()">
       <input type="button" id="button_resetButton" value="Reset" onclick="interface.resetThisLab()">
       <p id="field_setFeedConc_label">
-        Reactant feed concentration:
+        Enter reactant feed concentration:
       </p>
       <input id="input_setFeedConc_value" value="1" onchange="processUnits[0].updateUIfeedInput()">
       </input>
@@ -63,8 +92,8 @@
       </input>
       <div id="div_PLOTDIV_plotConcentration">
       </div> <!-- end of div div_PLOTDIV_plotConcentration -->
-      <div id="div_sizer">
-      </div> <!-- end of div div_sizer -->
+      <!-- <div id="div_sizer">
+      </div> -->
     <div id='div_SSconversionFrame'>
       Select reactor to display SS conversion: &nbsp;
       <select id='selectReactor' onchange="simParams.selectReactor()">
