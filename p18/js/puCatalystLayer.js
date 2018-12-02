@@ -87,15 +87,6 @@ let puCatalystLayer = {
   y : [], // reactant gas in catalyst layer
   y2 : [], // product gas in catalyst layer
 
-  // XXX DO THE NEW VALUES NEED TO BE GLOBAL INSIDE OBJECT - OR JUST IN UPDATESTATE???
-  
-  yNew : [], // new values for reactant gas in layer
-  y2New : [], // new values for product gas in layer
-  cinNew : 0,
-  cinOld : 0,
-  caNew : 0,
-  cbNew : 0,
-
   // define the main variables which will not be plotted or save-copy data
 
   // WARNING: have to change simTimeStep and simStepRepeats if change numNodes
@@ -172,16 +163,16 @@ let puCatalystLayer = {
     for (k = 0; k <= this.numNodes; k += 1) {
       this.y[k] = 0;
       this.y2[k] = 0;
-      this.yNew[k] = 0;
-      this.y2New[k] = 0;
+      // XXX this.yNew[k] = 0;
+      // XXX this.y2New[k] = 0;
     }
-
-    this.cin = 0;
-    this.ca = 0;
-    this.cb = 0;
-    this.cinNew = 0;
-    this.caNew = 0;
-    this.cbNew = 0;
+    // XXX
+    // this.cin = 0;
+    // this.ca = 0;
+    // this.cb = 0;
+    // this.cinNew = 0;
+    // this.caNew = 0;
+    // this.cbNew = 0;
 
     let kn = 0;
     for (k=0; k<=this.numNodes; k+=1) {
@@ -370,6 +361,13 @@ let puCatalystLayer = {
     let flowRate = 0;
     let diffRate = 0;
 
+    let yNew = [];
+    let y2New = [];
+    let cinNew = 0;
+    let cinOld = 0;
+    let caNew = 0;
+    let cbNew = 0;
+
     // document.getElementById("dev01").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; y = " + inverseDz2;
 
     // this unit takes multiple steps within one outer main loop repeat step
@@ -387,11 +385,11 @@ let puCatalystLayer = {
         tNewFac = 1 / (1/this.Alpha + this.Kads/D2); // to allow any Alpha (as long as quasi-equil established)
         // replaces (D2/Kads) which is for large Alpha
 
-        this.yNew[k] = this.y[k] + dtKdOepsOAlpha * tNewFac * ( secondDeriv - Phi2overD2 * this.y[k] ); // for LARGE ALPHA
+        yNew[k] = this.y[k] + dtKdOepsOAlpha * tNewFac * ( secondDeriv - Phi2overD2 * this.y[k] ); // for LARGE ALPHA
 
         // now do for y2
         secondDeriv = ( 2*this.y2[k+1] - 2*this.y2[k] ) * inverseDz2;
-        this.y2New[k] = this.y2[k]  + dtKdOeps * ( secondDeriv + Phi2overD2 * this.y[k] );
+        y2New[k] = this.y2[k]  + dtKdOeps * ( secondDeriv + Phi2overD2 * this.y[k] );
 
        // internal nodes
        for (k = 1; k < this.numNodes; k += 1) {
@@ -403,11 +401,11 @@ let puCatalystLayer = {
           tNewFac = 1 / (1/this.Alpha + this.Kads/D2); // to allow any Alpha (as long as quasi-equil established)
           // replaces D2/Kads which is for large Alpha
 
-          this.yNew[k] = this.y[k]  + dtKdOepsOAlpha * tNewFac * ( secondDeriv - Phi2overD2 * this.y[k] ); // for LARGE ALPHA
+          yNew[k] = this.y[k]  + dtKdOepsOAlpha * tNewFac * ( secondDeriv - Phi2overD2 * this.y[k] ); // for LARGE ALPHA
 
           // now do for y2
           secondDeriv = ( this.y2[k-1] - 2*this.y2[k] + this.y2[k+1] ) * inverseDz2;
-          this.y2New[k] = this.y2[k]  + dtKdOeps * ( secondDeriv + Phi2overD2 * this.y[k] );
+          y2New[k] = this.y2[k]  + dtKdOeps * ( secondDeriv + Phi2overD2 * this.y[k] );
 
       } // end repeat
 
@@ -493,7 +491,7 @@ let puCatalystLayer = {
       diffRate = this.Kdiff*Vratio*this.numNodes*(this.y[k]-this.y[k-1]);
       dcadt = flowRate - diffRate;
       caNew = this.y[k] + dcadt * this.unitTimeStep;
-      this.yNew[k] = caNew;
+      yNew[k] = caNew;
 
       // document.getElementById("dev01").innerHTML = "flowRate = " + flowRate + "; diffRate = " + diffRate;
       // document.getElementById("dev01").innerHTML = "this.y[k] = " + this.y[k] + "; dcadt * this.unitTimeStep = " + dcadt * this.unitTimeStep;
@@ -507,9 +505,9 @@ let puCatalystLayer = {
       // document.getElementById("dev02").innerHTML = "flowRate = " + flowRate + "; diffRate = " + diffRate;
       // document.getElementById("dev02").innerHTML = "this.y2[k] = " + this.y2[k] + "; dcbdt * this.unitTimeStep = " + dcbdt * this.unitTimeStep;
 
-      this.y2New[k] = cbNew;
+      y2New[k] = cbNew;
 
-       // document.getElementById("dev01").innerHTML = "UPDATE BOUNDARY time = " + simParams.simTime.toFixed(0) + "; y = " +  this.yNew[k].toFixed(3);
+       // document.getElementById("dev01").innerHTML = "UPDATE BOUNDARY time = " + simParams.simTime.toFixed(0) + "; y = " +  yNew[k].toFixed(3);
 
        // copy temp y and y2 to current y and y2
       y = yNew;
