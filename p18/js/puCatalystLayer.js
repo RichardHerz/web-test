@@ -14,29 +14,15 @@
 //
 // EACH PROCESS UNIT DEFINITION MUST DEFINE the variable residenceTime
 
-// -------------------------------------------------------------------
-
-// ----- ARRAYS TO HOLD WORKING DATA -----------
-
-let y = []; // reactant gas in catalyst layer
-let y2 = []; // product gas in catalyst layer
-let yNew = []; // new values for reactant gas in layer
-let y2New = []; // new values for product gas in layer
-let tempArray = []; // for shifting data in strip chart plots
-let spaceData = []; // for shifting data in space-time plots
-let cinNew = 0;
-let cinOld = 0;
-let caNew = 0;
-let cbNew = 0;
-
-// ----- SEE process_plot_info.js FOR INITIALIZATION OF ---------------
-// ----- OTHER DATA ARRAYS --------------------------------------------
-
 let puCatalystLayer = {
   //
   unitIndex : 0, // index of this unit as child in processUnits parent object
   // unitIndex used in this object's updateUIparams() method
   name : 'catalyst layer',
+
+  // NOTE: this single unit could have been split into 3 units:
+  //       feed, mixing cell, catalyst layer
+  //       but choose to keep as one unit here
 
   // SUMMARY OF DEPENDENCIES
   //
@@ -58,130 +44,55 @@ let puCatalystLayer = {
   // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS...
   // SEE dataInputs array in initialize() method for input field ID's
 
-  // WARNING: the function getInputValue() called by updateUIparams() below
-  // requires a specific naming convention for vars set in INPUT FIELDS
-  // for the input ID, and initial, min and max values for each variable
-  // e.g., TinHot requires inputTinHot, initialTinHot, minTinHot, maxTinHot
-  //
-  inputModel01 : "radio_Model_1",
-  inputModel02 : "radio_Model_2",
-  inputCmax : "range_setCmax_slider",
-  inputCmaxInput : 'input_setCmax_value',
-  inputRadioConstant : "radio_Constant",
-  inputCheckBoxFeed : "checkbox_on",
-  inputRadioSine : "radio_Sine",
-  inputRadioSquare : "radio_Square",
-  inputPeriod : "input_field_enterCyclePeriod",
-  inputDuty : "input_field_enterDuty",
-  inputKflow : "input_field_enterKflow",
-  inputKads : "input_field_enterKads",
-  inputKdiff : "input_field_enterKdiff",
-  inputPhi : "input_field_enterThieleMod",
-  inputAlpha :  "input_field_enterAlpha",
-  inputBscale : "input_field_enterBscale",
-
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
-  //   no user entered values for this unit
+  // XXX  no user entered values for this unit
+  // XXX SEE BELOW IN DISPLAY METHOD
+  // XXX document.getElementById("field_aveRate").innerHTML = this.aveRate.toExponential(3);
+  // XXX document.getElementById("field_aveConversion").innerHTML = this.aveConversion.toFixed(4);
+
+  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS...
+  // SEE dataInputs array in initialize() method for input field ID's
 
   // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE... -----
   // ---- EXCEPT simParams.simTimeStep and simParams.simStepRepeats ----
 
-  // allow this unit to take more than one step within one main loop step in updateState method
-  // WARNING: see special handling for dt in this case in this unit's updateInputs method
-  unitStepRepeats : 1200,
-  unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
+  // define arrays to hold data for plots, color canvas
+  // these will be filled with initial values in method reset()
+  profileData : [], // for profile plots, plot script requires this name
+  stripData : [], // for strip chart plots, plot script requires this name
+  colorCanvasData : [], // for color canvas plots, plot script requires this name
+
+  // define arrays to hold working data
+  y : [], // reactant gas in catalyst layer
+  y2 : [], // product gas in catalyst layer
+  yNew : [], // new values for reactant gas in layer
+  y2New : [], // new values for product gas in layer
+  cinNew : 0,
+  cinOld : 0,
+  caNew : 0,
+  cbNew : 0,
+
+  // define the main variables which will not be plotted or save-copy data
+
+  // WARNING: have to change simTimeStep and simStepRepeats if change numNodes
+  // WARNING: numNodes is accessed  in process_plot_info.js
+  numNodes : 50,
 
   // WARNING: IF INCREASE NUM NODES IN CATALYST LAYER BY A FACTOR THEN HAVE TO
   // REDUCE size of time steps FOR NUMERICAL STABILITY BY SQUARE OF THE FACTOR
   // AND INCREASE step repeats BY SAME FACTOR IF WANT SAME SIM TIME BETWEEN
   // DISPLAY UPDATES
 
-  // define "initialVarName" values for reset function and
-  // so that this process unit will run if units that supply inputs and
-  // html inputs are not present in order to make units more independent
-  //
-  initialCmax : 1.0,
-  initialCmaxInput : 1.0,
-  initialKflow : 2.5, // Q/Vp/k-1 = (Q/Vc/k-1) / (Vp/Vc)
-  initialKads : 1,
-  initialKdiff : 0.003,
-  initialPhi : 34, // Phi = Thiele Modulus
-  initialAlpha : 10,
-  initialModel : 2, // use integers 1,2 - used in Math.pow(), selects rate determining step
-  initialShape : 'sine', // constant, off, sine, square
-  initialPeriod : 500, // 0.007854 = Math.PI / 400
-  initialDuty : 50, // percent on, duty cycle for square cycling
-  initialBscale : 1,
-
-  // XXX WARNING: SETTING TO this.initial___ BELOW HAS NO EFFECT HERE WHEN
-  //     THEY ARE ALSO SET IN updateUIparams
-  //     BUT WHEN NOT SET IN updateUIparams THEN setting to
-  //     this.initial___ HAS NO EFFECT AND GET NaN
-  // if list here must supply a value (e.g., this.initial___) but if not
-  //     list here then apparently is created in updateUIparams...
-  //
-  // HUH? NEED TO EXPLORE THIS....
-  //
-  Cmax : 1.0, // this.initialCmax,
-  CmaxInput : 1.0,
-  // user will vary Kflow space time based on pellet/layer volume Vp
-  Kflow : 2.5, // this.initialKflow, // d'less space time, Q/Vp/k-1 = (Q/Vc/k-1)/(Vp/Vc)
-  Kads : 1, // this.initialKads,
-  Kdiff : 0.003, // this.initialKdiff,
-  Phi : 34, // this.initialPhi, // Phi = ThieleMod
-  Alpha : 10, // this.initialAlpha,
-  Model : 2, // this.initialModel, // use integers 1,2 - used in Math.pow(), selects rate determining step
-  Shape : 'sine', // this.initialShape,
-  Period : 500, // this.initialPeriod,
-  Duty : 50, // this.initialDuty, // percent on, duty cycle for square cycling
-  Bscale : 1, // this.initialBscale,
-
-  // SET MIN AND MAX VALUES FOR INPUTS SET IN INPUT FIELDS
-  minCmax : 0,
-  minCmaxInput : 0,
-  minKflow : 0.001, // Q/Vp/k-1 = (Q/Vc/k-1) / (Vp/Vc)
-  minKads : 0,
-  minKdiff : 0.0001,
-  minPhi : 0.001, // Phi = Thiele Modulus
-  minAlpha : 0.001,
-  minModel : 1, // use integers 1,2 - used in Math.pow(), selects rate determining step
-  // does not apply - minShape : 'sine', // constant, off, sine, square
-  minPeriod : 100,
-  minDuty : 0, // percent on, duty cycle for square cycling
-  minBscale : 0,
-
-  maxCmax : 1.0,
-  maxCmax : 1.0,
-  maxKflow : 100, // Q/Vp/k-1 = (Q/Vc/k-1) / (Vp/Vc)
-  maxKads : 100,
-  maxKdiff : 1,
-  maxPhi : 1000, // Phi = Thiele Modulus
-  maxAlpha : 1000,
-  maxModel : 2, // use integers 1,2 - used in Math.pow(), selects rate determining step
-  // does not apply - maxShape : 'sine', // constant, off, sine, square
-  maxPeriod : 1000,
-  maxDuty : 100, // percent on, duty cycle for square cycling
-  maxBscale : 100,
-
-  // eps : 0.3, // epsilon, layer void fraction, keep constant
-  // phaseShift : 1.5 * Math.PI, // keep constant
-  // Vratio : 2, // layer/cell volume ratio, keep constant
-  //   KdOeps : 0.01,
-  //
-  // // new params needed to couple mixing cell to catalyst layer
-  //   Kflow : 5, // Q/Vc/k-1 = d'less space time
-
-  // define the main variables which will not be plotted or save-copy data
+  // allow this unit to take more than one step within one main loop step in updateState method
+  // WARNING: see special handling for dt in this case in this unit's updateInputs method
+  unitStepRepeats : 1200,
+  unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
 
   // NEW FOR SQUARE CYCLING WITH DUTY CYCLE
   cycleTime : 0,
   frequency : 0, // update in updateUIparams
   sineFunc : 0,
   sineFuncOLD : 0,
-
-  // WARNING: have to change simTimeStep and simStepRepeats if change numNodes
-  // WARNING: numNodes is accessed  in process_plot_info.js
-  numNodes : 50,
 
   // variables for average rate
   AinSum : 0,
@@ -190,17 +101,21 @@ let puCatalystLayer = {
   aveRate  : 0,
   aveConversion : 0,
 
-  // variables to be plotted are defined as objects
-  // with the properties: value, name, label, symbol, dimensional units
-  // name used for copy-save data column headers, label for plot legend
+  initialize : function() {
+    //
+    let v = 0;
+    this.dataHeaders[v] = 'Kf300';
+    this.dataInputs[v] = 'input_field_Kf300';
+    this.dataUnits[v] = 'm3/kg/s';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 1;
+    this.dataInitial[v] = 1.0e-7;
+    this.Kf300 = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Kf300; // current input value for reporting
+    //
+    v = 1;
 
-  // y : {
-  //   value  : 0,
-  //   name   : "y",
-  //   label  : "y",
-  //   symbol : "y",
-  //   units  : "(d'less)"
-  // },
+  }, // END of method initialize
 
   reset : function() {
     // On 1st load or reload page, the html file fills the fields with html file
@@ -235,15 +150,15 @@ let puCatalystLayer = {
       // XXX change to get number vars for this plotsObj variable
       //     so can put in repeat - or better yet, a function
       //     and same for y-axis below
-      profileData[0][k][0] = kn;
-      profileData[1][k][0] = kn;
-      profileData[2][k][0] = kn;
-      profileData[3][k][0] = kn;
+      this.profileData[0][k][0] = kn;
+      this.profileData[1][k][0] = kn;
+      this.profileData[2][k][0] = kn;
+      this.profileData[3][k][0] = kn;
       // y-axis values
-      profileData[0][k][1] = 0;
-      profileData[1][k][1] = 0;
-      profileData[2][k][1] = 0;
-      profileData[3][k][1] = 0;
+      this.profileData[0][k][1] = 0;
+      this.profileData[1][k][1] = 0;
+      this.profileData[2][k][1] = 0;
+      this.profileData[3][k][1] = 0;
     }
 
     // XXX also need to reset strip chart data
@@ -571,6 +486,8 @@ let puCatalystLayer = {
     let v = 0; // used as index
     let s = 0; // used as index
     let t = 0; // used as index
+    let tempArray = []; // for shifting data in strip chart plots
+    let tempSpaceData = []; // for shifting data in color canvas plots
 
     // HANDLE PROFILE PLOT DATA
 
@@ -578,94 +495,72 @@ let puCatalystLayer = {
 
     // XXX CONSIDER RE-ORDERING LAST TWO INDEXES IN profileData SO CAN USE
     //     SIMPLE ASSIGNMENT FOR ALL Y VALUES, e.g.,
-    // profileData[0][1][k] = y;
+    // this.profileData[0][1][k] = y;
 
     for (k=0; k<=this.numNodes; k+=1) {
-      profileData[0][k][1] = y[k];
-      profileData[1][k][1] = y2[k];
+      this.profileData[0][k][1] = y[k];
+      this.profileData[1][k][1] = y2[k];
       // update arrays for coverage and rate
       // note that these values are computed above in repeat to get reactant and
       // product gas conc but no need to update coverage and rate arrays inside repeat
       // since this sim assumes pseudo-SS between reactant gas and coverage
-      profileData[2][k][1] = this.Kads * y[k] / (1 + this.Kads * y[k]); // coverage
-      profileData[3][k][1] = this.Kads * y[k] / Math.pow( (1 + this.Kads * y[k]), this.Model); // rate, this.Model should be 1 or 2
+      this.profileData[2][k][1] = this.Kads * y[k] / (1 + this.Kads * y[k]); // coverage
+      this.profileData[3][k][1] = this.Kads * y[k] / Math.pow( (1 + this.Kads * y[k]), this.Model); // rate, this.Model should be 1 or 2
     }
 
     // HANDLE SPACE-TIME DATA
 
-    // spaceTimeData[v][t][s] - variable, time, space (profile in layer)
+    // colorCanvasData[v][t][s] - variable, time, space (profile in layer)
     // get 2D array for one variable at a time
     v = 0; // first variable = rate
-    tempArray = spaceTimeData[v];
+    tempArray = this.colorCanvasData[v];
     // get rate profile data, variable 3 in profileData array
     for (k = 0; k <= this.numNodes; k += 1) {
-      spaceData[k] = profileData[3][k][1]; // use rate computed above
+      tempSpaceData = this.profileData[3][k][1]; // use rate computed above
     }
 
-    // // TRY UNSUCCESSFULLY TO USE shift & push to update spaceTimeData array
-    // // shift & push worked OK on 1D arrays for strip charts
-    // // delete first and oldest element which is a layer profile
-    // tempArray.shift();
-    // // add the new layer profile at end
-    // tempArray.push(spaceData);
-
-    /*
-    BUT SHIFT & PUSH DO NOT WORK
-    spaceData is changing with time as expected
-    trouble is that all of spaceTimeData is getting "filled" with
-    same copy of the time varying spaceData instead of just one strip
-    getting added to end...
-    strips are getting deleted and new strips added to end
-    but looks like all non-zero strips are getting filled with current
-    spaceData...
-    */
-
-    // numStripPts is a global defined in process_plot_info
-
-    // use repeats to update the spaceTimeData array
+    // update the colorCanvasData array
     for (t = 0; t < numStripPts; t += 1) { // NOTE < numStripPts, don't do last one here
-      // numStripPts defined in process_plot_info.js
+      // XXX numStripPts defined in process_plot_info.js
       for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
         tempArray[t][s] = tempArray[t+1][s];
       }
     }
     // now update the last time
     for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
-      tempArray[numStripPts][s] = spaceData[s];
+      tempArray[numStripPts][s] = tempSpaceData[s];
     }
     // update the variable being processed
-    spaceTimeData[v] = tempArray;
+    this.colorCanvasData[v] = tempArray;
 
     // HANDLE STRIP CHART DATA
-
-    // XXX see if can make actions below for strip chart into general function
 
     // copy gas in and out data to stripData array
     // update plotData with new data
 
     // handle cin - feed of reactant gas to mixing cell
     v = 0;
-    tempArray = stripData[v]; // work on one plot variable at a time
+    tempArray = this.stripData[v]; // work on one plot variable at a time
     // delete first and oldest element which is an [x,y] pair array
     tempArray.shift();
     // add the new [x.y] pair array at end
     tempArray.push( [ 0, cinNew ] );
     // update the variable being processed
-    stripData[v] = tempArray;
+    this.stripData[v] = tempArray;
 
     // handle ca - reactant in mixing cell gas
     v = 1;
-    tempArray = stripData[v]; // work on one plot variable at a time
+    tempArray = this.stripData[v]; // work on one plot variable at a time
     // delete first and oldest element which is an [x,y] pair array
     tempArray.shift();
     // add the new [x.y] pair array at end
     tempArray.push( [ 0, caNew ] );
     // update the variable being processed
-    stripData[v] = tempArray;
+    this.stripData[v] = tempArray;
 
     // handle cb - product gas in mixing cell gas
     v = 2;
-    tempArray = stripData[v]; // work on one plot variable at a time
+    tempArray = this.stripData[v]; // work on one plot variable at a time
     // delete first and oldest element which is an [x,y] pair array
     tempArray.shift();
     // add the new [x.y] pair array at end
@@ -673,48 +568,20 @@ let puCatalystLayer = {
     // need to add a scale factor when plotting variable
     tempArray.push( [ 0, cbNew ] );
     // update the variable being processed
-    stripData[v] = tempArray;
-
-    // // recording flowRate and diffRate below are for development
-    // // WARNING: if want to use this then need to dimension stripData to hold them
-    // //          when initialize stripData in process_plot_info.js
-    //
-    // // handle flowRate - gas in mixing cell gas
-    // v = 3;
-    // tempArray = stripData[v]; // work on one plot variable at a time
-    // // delete first and oldest element which is an [x,y] pair array
-    // tempArray.shift();
-    // // add the new [x.y] pair array at end
-    // // don't scale cbNew here or then gets fed back into calc above
-    // // need to add a scale factor when plotting variable
-    // tempArray.push( [ 0, flowRate ] );
-    // // update the variable being processed
-    // stripData[v] = tempArray;
-    //
-    // // handle diffRate - gas in mixing cell gas
-    // v = 4;
-    // tempArray = stripData[v]; // work on one plot variable at a time
-    // // delete first and oldest element which is an [x,y] pair array
-    // tempArray.shift();
-    // // add the new [x.y] pair array at end
-    // // don't scale cbNew here or then gets fed back into calc above
-    // // need to add a scale factor when plotting variable
-    // tempArray.push( [ 0, diffRate ] );
-    // // update the variable being processed
-    // stripData[v] = tempArray;
+    this.stripData[v] = tempArray;
 
     // re-number the x-axis values to equal time values
     // so they stay the same after updating y-axis values
 
-    // numStripVars & numStripPts are globals defined in process_plot_info.js
+    // XXX numStripVars & numStripPts are globals defined in process_plot_info.js
     let timeStep = simParams.simTimeStep * simParams.simStepRepeats;
     for (v = 0; v < numStripVars; v += 1) {
       for (p = 0; p <= numStripPts; p += 1) { // note = in p <= numStripPts
         // note want p <= numStripPts so get # 0 to  # numStripPts of points
         // want next line for newest data at max time
-        stripData[v][p][0] = p * timeStep;
+        this.stripData[v][p][0] = p * timeStep;
         // want next line for newest data at zero time
-        // stripData[v][p][0] = (numStripPts - p) * timeStep;
+        // this.stripData[v][p][0] = (numStripPts - p) * timeStep;
       }
     }
 
