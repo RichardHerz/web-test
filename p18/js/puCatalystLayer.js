@@ -70,9 +70,11 @@ let puCatalystLayer = {
   inputRadioSine : 'radio_Sine',
   inputRadioSquare : 'radio_Square',
 
-  // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
-  displayAveRate: 'field_aveRate',
-  displayAveConversion: 'field_aveConversion',
+  // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS
+  // see updateUIparams and updateDisplay methods below
+  displayKrxn : 'field_Krxn',
+  displayAveRate : 'field_aveRate',
+  displayAveConversion : 'field_aveConversion',
 
   // *** NO LITERAL REFERENCES TO OTHER UNITS OR HTML ID'S BELOW THIS LINE ***
   // ***   EXCEPT TO HTML ID'S IN method initialize(), array dataInputs    ***
@@ -120,32 +122,111 @@ let puCatalystLayer = {
   aveRate  : 0,
   aveConversion : 0,
 
+  ssCheckSum : 0, // used to check for steady state
+  residenceTime : 0, // for timing checks for steady state check
+  // residenceTime is set in this unit's updateUIparams()
+
   initialize : function() {
 
-  // NOT A FIELD inputCmaxSlider : "range_setCmax_slider",
- // SPECIAL FIELD inputCmaxInput : 'input_setCmax_value',
-
-// inputPeriod : "input_field_enterCyclePeriod",
-// inputDuty : "input_field_enterDuty",
-// inputKflow : "input_field_enterKflow",
-// inputKads : "input_field_enterKads",
-// inputKdiff : "input_field_enterKdiff",
-// inputPhi : "input_field_enterThieleMod",
-// inputAlpha :  "input_field_enterAlpha",
-// inputBscale : "input_field_enterBscale",
-
-    //
     let v = 0;
-    this.dataHeaders[v] = 'Kf300';
-    this.dataInputs[v] = 'input_field_Kf300';
-    this.dataUnits[v] = 'm3/kg/s';
+    this.dataHeaders[v] = 'Cmax';
+    this.dataInputs[v] = 'input_setCmax_value';
+    this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 1;
-    this.dataInitial[v] = 1.0e-7;
-    this.Kf300 = this.dataInitial[v]; // dataInitial used in getInputValue()
-    this.dataValues[v] = this.Kf300; // current input value for reporting
+    this.dataInitial[v] = 1;
+    this.Cmax = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Cmax; // current input value for reporting
     //
     v = 1;
+    this.dataHeaders[v] = 'CmaxSlider';
+    this.dataInputs[v] = 'range_setCmax_slider';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 1;
+    this.dataInitial[v] = 1;
+    this.CmaxSlider = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.CmaxSlider; // current input value for reporting
+    v = 2;
+    this.dataHeaders[v] = 'Kflow';
+    this.dataInputs[v] = 'input_field_enterKflow';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0.001;
+    this.dataMax[v] = 10;
+    this.dataInitial[v] = 2.5;
+    this.Kflow = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Kflow; // current input value for reporting
+    v = 3;
+    this.dataHeaders[v] = 'Kads';
+    this.dataInputs[v] = 'input_field_enterKads';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 100;
+    this.dataInitial[v] = 1;
+    this.Kads = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Kads; // current input value for reporting
+    v = 4;
+    this.dataHeaders[v] = 'Kdiff';
+    this.dataInputs[v] = 'input_field_enterKdiff';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0.0001;
+    this.dataMax[v] = 1;
+    this.dataInitial[v] = 0.003;
+    this.Kdiff = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Kdiff; // current input value for reporting
+    v = 5;
+    this.dataHeaders[v] = 'Phi'; // Thiele Modulus
+    this.dataInputs[v] = 'input_field_enterThieleMod';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0.001;
+    this.dataMax[v] = 1000;
+    this.dataInitial[v] = 34;
+    this.Phi = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Phi; // current input value for reporting
+    v = 5;
+    this.dataHeaders[v] = 'Alpha';
+    this.dataInputs[v] = 'input_field_enterAlpha';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0.001;
+    this.dataMax[v] = 1000;
+    this.dataInitial[v] = 10;
+    this.Alpha = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Alpha; // current input value for reporting
+    v = 6;
+    this.dataHeaders[v] = 'Period';
+    this.dataInputs[v] = 'input_field_enterCyclePeriod';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 100;
+    this.dataMax[v] = 1000;
+    this.dataInitial[v] = 500;
+    this.Period = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Period; // current input value for reporting
+    v = 7;
+    this.dataHeaders[v] = 'Duty'; // percent on, duty cycle for square cycling
+    this.dataInputs[v] = 'input_field_enterDuty';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 100;
+    this.dataInitial[v] = 50;
+    this.Duty = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Duty; // current input value for reporting
+    v = 8;
+    this.dataHeaders[v] = 'Bscale'; // percent on, duty cycle for square cycling
+    this.dataInputs[v] = 'input_field_enterBscale';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 100;
+    this.dataInitial[v] = 1;
+    this.Bscale = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.Bscale; // current input value for reporting
+    //
+    // END OF INPUT VARS
+    // record number of input variables, VarCount
+    // used, e.g., in copy data to table in _plotter.js
+    this.VarCount = v;
+    //
+    // OUTPUT VARS
+    //
 
   }, // END of method initialize
 
@@ -163,16 +244,7 @@ let puCatalystLayer = {
     for (k = 0; k <= this.numNodes; k += 1) {
       this.y[k] = 0;
       this.y2[k] = 0;
-      // XXX this.yNew[k] = 0;
-      // XXX this.y2New[k] = 0;
     }
-    // XXX
-    // this.cin = 0;
-    // this.ca = 0;
-    // this.cb = 0;
-    // this.cinNew = 0;
-    // this.caNew = 0;
-    // this.cbNew = 0;
 
     let kn = 0;
     for (k=0; k<=this.numNodes; k+=1) {
@@ -193,8 +265,6 @@ let puCatalystLayer = {
       this.profileData[3][k][1] = 0;
     }
 
-    // XXX also need to reset strip chart data
-
     // WARNING - if change a value to see initialization here
     // then reset it to zero below this line or will get results at this node
     // document.getElementById("dev01").innerHTML = "RESET time = " + simParams.simTime.toFixed(0) + "; y = " + y[0];
@@ -203,27 +273,46 @@ let puCatalystLayer = {
 
   updateUIparams : function() {
     //
-    // SPECIFY REFERENCES TO HTML UI COMPONENTS ABOVE in this unit definition
-    //
     // GET INPUT PARAMETER VALUES FROM HTML UI CONTROLS
+    // SPECIFY REFERENCES TO HTML UI COMPONENTS ABOVE in this unit definition
+
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+
+    // residenceTime of this unit required to check for steady state in controller object
+    // SPECIAL this unit prob never at SS and checkForSteadyState below
+    // always returns false so set a large number here
+    this.residenceTime = 100;
+
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
+
+    // updateUIparams gets called on page load but not new range and input
+    // updates, so need to call updateUIfeedInput here
+    this.updateUIfeedInput();
+    // console.log('updateUIparams: this.Cmax = ' + this.Cmax);
     //
 
     // check input fields for new values
     // function getInputValue() is defined in file process_interface.js
+    // getInputValue(unit # in processUnits object, variable # in dataInputs array)
+    // see variable numbers above in initialize()
+    // note: this.dataValues.[pVar]
+    //   is only used in copyData() to report input values
     //
-    // updateUIparams gets called on page load but not new range and input
-    // updates, so need to call here
-    this.updateUIfeedInput();
-    // console.log('updateUIparams: this.Cmax = ' + this.Cmax);
+    let unum = this.unitIndex;
     //
-    this.Period = getInputValue('puCatalystLayer','Period');
-    this.Duty = getInputValue('puCatalystLayer', 'Duty');
-    this.Kflow = getInputValue('puCatalystLayer','Kflow');
-    this.Kads = getInputValue('puCatalystLayer','Kads');
-    this.Kdiff = getInputValue('puCatalystLayer','Kdiff');
-    this.Phi = getInputValue('puCatalystLayer','Phi'); // Phi = Thiele Modulus
-    this.Alpha = getInputValue('puCatalystLayer','Alpha');
-    this.Bscale = getInputValue('puCatalystLayer','Bscale');
+    // SPECIAL for this unit methods updateUIfeedInput and updateUIfeedSlider
+    //         below get Cmax slider and field value for [0] and [1]
+    this.Period = this.dataValues[2] = interface.getInputValue(unum, 2);
+    this.Duty = this.dataValues[3] = interface.getInputValue(unum, 3);
+    this.Kflow = this.dataValues[4] = interface.getInputValue(unum, 4);
+    this.Kads = this.dataValues[5] = interface.getInputValue(unum, 5);
+    this.Kdiff = this.dataValues[6] = interface.getInputValue(unum, 6);
+    this.Phi = this.dataValues[7] = interface.getInputValue(unum, 7);
+    this.Alpha = this.dataValues[8] = interface.getInputValue(unum, 8);
+    this.Bscale = this.dataValues[9] = interface.getInputValue(unum, 9);
 
     // update cycling frequency
     this.frequency = 2 * Math.PI / this.Period;
@@ -263,7 +352,7 @@ let puCatalystLayer = {
 
     let Krxn = Math.pow(this.Phi, 2)*this.Kdiff/0.3/this.Alpha/this.Kads;
     // note eps is local to updateState, so use 0.3 here
-    document.getElementById("field_Krxn").innerHTML = Krxn.toFixed(4);
+    document.getElementById(this.displayKrxn).innerHTML = Krxn.toFixed(4);
 
     // reset average rate after any change
     this.AinSum = 0;
@@ -276,55 +365,34 @@ let puCatalystLayer = {
 
   updateUIfeedInput : function() {
     // called in HTML input element
-    this.Cmax = getInputValue('puCatalystLayer','CmaxInput');
-    // update position of the range slider
-    if (document.getElementById(this.inputCmaxSlider)) {
-      // alert('input, slider exists');
-      document.getElementById(this.inputCmaxSlider).value = this.Cmax;
-    }
+    // [0] is field, [1] is slider
+    // get field value
+    this.Cmax = this.dataValues[0] = interface.getInputValue(unum, 0);
+    // update slider position
+    document.getElementById(this.dataInputs[1]).value = this.Cmax;
     // console.log('updateUIfeedInput: this.Cmax = ' + this.Cmax);
   }, // END method updateUIfeedInput()
 
   updateUIfeedSlider : function() {
     // called in HTML input element
-    this.Cmax = getInputValue('puCatalystLayer','Cmax');
-    // update input field display
-    // alert('slider: this.conc = ' + this.conc);
-    if (document.getElementById(this.inputCmaxInput)) {
-      document.getElementById(this.inputCmaxInput).value = this.Cmax;
-    }
+    // [0] is field, [1] is slider
+    // get slider value
+    this.Cmax = this.dataValues[1] = interface.getInputValue(unum, 1);
+    // update field display
+    document.getElementById(this.dataInputs[0]).value = this.Cmax;
     // console.log('updateUIfeedSlider: this.Cmax = ' + this.Cmax);
   }, // END method updateUIfeedSlider()
 
   updateInputs : function() {
     //
-    // SPECIFY REFERENCES TO INPUTS ABOVE in this unit definition
-    //
     // GET INPUT CONNECTION VALUES FROM OTHER UNITS FROM PREVIOUS TIME STEP,
-    // SINCE updateInputs IS CALLED BEFORE updateState IN EACH TIME STEP
-    //
+    //   SINCE updateInputs IS CALLED BEFORE updateState IN EACH TIME STEP
+    // SPECIFY REFERENCES TO INPUTS ABOVE in this unit definition
 
     // check for change in overall main time step simTimeStep
     this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
-    //
-    // The following TRY-CATCH structures provide for unit independence
-    // such that when input doesn't exist, you get "initial" value
-
-    // try {
-    // //   let tmpFunc = new Function("return " + this.inputPV + ";");
-    // //   this.PV = tmpFunc();
-    // //   // note: can't test for definition of this.inputVAR because any
-    // //   // definition is true BUT WHEN try to get value of bad input
-    // //   // to see if value is undefined then get "uncaught reference" error
-    // //   // that the value of the bad input specified is undefined,
-    // //   // which is why use try-catch structure here
-    // }
-    // catch(err) {
-    // //   this.PV = this.initialPV;
-    // }
-
-  },
+  }, // END of updateInputs method
 
   updateState : function() {
     // BEFORE REPLACING PREVIOUS STATE VARIABLE VALUE WITH NEW VALUE, MAKE
