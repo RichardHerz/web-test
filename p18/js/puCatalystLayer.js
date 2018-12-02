@@ -26,13 +26,28 @@ let puCatalystLayer = {
 
   // SUMMARY OF DEPENDENCIES
   //
-  // USES OBJECT simParams
-  // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //   puController.command.value
-  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
-  //   none
-  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
+  //  THIS OBJECT HAS MULTIPLE I/O CONNECTIONS TO HTML
   //
+  //  USES FROM OBJECT simParams
+  //    GETS simParams.simTimeStep
+  //  OBJECT plotInfo USES FROM THIS OBJECT:
+
+  //    XXX CHECK ON THIS - numNodes, and possibly others
+
+  //  CALLS TO FUNCTIONS HERE ARE SENT BY THE FOLLOWING EXTERNAL FUNCTIONS:
+  //    initialize() sent by openThisLab() in object controller
+  //    reset() sent by resetThisLab() in object controller
+  //    updateInputs() & updateState() sent by updateProcessUnits() in object controller
+  //    updateDisplay() sent by updateDisplay() in object controller
+  //    updateUIparams() sent by updateUIparams() in object controller
+  //    checkForSteadyState() sent by checkForSteadyState() in object controller
+  //  THE FOLLOWING EXTERNAL FUNCTIONS USE VALUES FROM THIS OBJECT:
+  //    copyData() in object interface uses name, varCount, dataHeaders[],
+  //        dataUnits[], dataValues[], profileData[], stripData[]
+  //    getInputValue() in object interface uses dataInputs[], dataInitial[],
+  //        dataMin[], dataMax[]
+  //    getPlotData() in object plotFlot uses profileData[], stripData[]
+  //    plotColorCanvasPlot() in object plotter uses colorCanvasData[]
 
   // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, used in updateInputs() method
   getInputs : function() {
@@ -43,18 +58,24 @@ let puCatalystLayer = {
 
   // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS...
   // SEE dataInputs array in initialize() method for input field ID's
+  //
+  // THIS UNIT ALSO HAS A RANGE INPUT SLIDER
+  inputCmaxSlider : "range_setCmax_slider",
+  // THIS UNIT ALSO HAS A CHECKBOX INPUT
+  inputCheckBoxFeed : 'checkbox_on',
+  // THIS UNIT ALSO HAS RADIO BUTTON INPUTS
+  inputModel01 : 'radio_Model_1', // model 1 is AS > B + S
+  inputModel02 : 'radio_Model_2', // model 2 is AS + S > B + 2S
+  inputRadioConstant : 'radio_Constant',
+  inputRadioSine : 'radio_Sine',
+  inputRadioSquare : 'radio_Square',
 
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
-  // XXX  no user entered values for this unit
-  // XXX SEE BELOW IN DISPLAY METHOD
-  // XXX document.getElementById("field_aveRate").innerHTML = this.aveRate.toExponential(3);
-  // XXX document.getElementById("field_aveConversion").innerHTML = this.aveConversion.toFixed(4);
+  displayAveRate: 'field_aveRate',
+  displayAveConversion: 'field_aveConversion',
 
-  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS...
-  // SEE dataInputs array in initialize() method for input field ID's
-
-  // ---- NO EXPLICIT REF TO EXTERNAL VALUES BELOW THIS LINE... -----
-  // ---- EXCEPT simParams.simTimeStep and simParams.simStepRepeats ----
+  // *** NO LITERAL REFERENCES TO OTHER UNITS OR HTML ID'S BELOW THIS LINE ***
+  // ***   EXCEPT TO HTML ID'S IN method initialize(), array dataInputs    ***
 
   // define arrays to hold data for plots, color canvas
   // these will be filled with initial values in method reset()
@@ -65,6 +86,9 @@ let puCatalystLayer = {
   // define arrays to hold working data
   y : [], // reactant gas in catalyst layer
   y2 : [], // product gas in catalyst layer
+
+  // XXX DO THE NEW VALUES NEED TO BE GLOBAL INSIDE OBJECT - OR JUST IN UPDATESTATE???
+  
   yNew : [], // new values for reactant gas in layer
   y2New : [], // new values for product gas in layer
   cinNew : 0,
@@ -88,7 +112,11 @@ let puCatalystLayer = {
   unitStepRepeats : 1200,
   unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
 
-  // NEW FOR SQUARE CYCLING WITH DUTY CYCLE
+  // kinetic model
+  Model : 2, // use integers 1,2 - used in Math.pow(), selects rate determining step
+
+  // for sine or square cycling with variable duty time
+  Shape : 'sine',
   cycleTime : 0,
   frequency : 0, // update in updateUIparams
   sineFunc : 0,
@@ -102,6 +130,19 @@ let puCatalystLayer = {
   aveConversion : 0,
 
   initialize : function() {
+
+  // NOT A FIELD inputCmaxSlider : "range_setCmax_slider",
+ // SPECIAL FIELD inputCmaxInput : 'input_setCmax_value',
+
+// inputPeriod : "input_field_enterCyclePeriod",
+// inputDuty : "input_field_enterDuty",
+// inputKflow : "input_field_enterKflow",
+// inputKads : "input_field_enterKads",
+// inputKdiff : "input_field_enterKdiff",
+// inputPhi : "input_field_enterThieleMod",
+// inputAlpha :  "input_field_enterAlpha",
+// inputBscale : "input_field_enterBscale",
+
     //
     let v = 0;
     this.dataHeaders[v] = 'Kf300';
@@ -129,18 +170,18 @@ let puCatalystLayer = {
     // this.errorIntegral = this.initialErrorIntegral;
 
     for (k = 0; k <= this.numNodes; k += 1) {
-      y[k] = 0;
-      y2[k] = 0;
-      yNew[k] = 0;
-      y2New[k] = 0;
+      this.y[k] = 0;
+      this.y2[k] = 0;
+      this.yNew[k] = 0;
+      this.y2New[k] = 0;
     }
 
-    cin = 0;
-    ca = 0;
-    cb = 0;
-    cinNew = 0;
-    caNew = 0;
-    cbNew = 0;
+    this.cin = 0;
+    this.ca = 0;
+    this.cb = 0;
+    this.cinNew = 0;
+    this.caNew = 0;
+    this.cbNew = 0;
 
     let kn = 0;
     for (k=0; k<=this.numNodes; k+=1) {
@@ -243,16 +284,18 @@ let puCatalystLayer = {
   }, // END updateUIparams
 
   updateUIfeedInput : function() {
+    // called in HTML input element
     this.Cmax = getInputValue('puCatalystLayer','CmaxInput');
     // update position of the range slider
-    if (document.getElementById(this.inputCmax)) {
+    if (document.getElementById(this.inputCmaxSlider)) {
       // alert('input, slider exists');
-      document.getElementById(this.inputCmax).value = this.Cmax;
+      document.getElementById(this.inputCmaxSlider).value = this.Cmax;
     }
     // console.log('updateUIfeedInput: this.Cmax = ' + this.Cmax);
   }, // END method updateUIfeedInput()
 
   updateUIfeedSlider : function() {
+    // called in HTML input element
     this.Cmax = getInputValue('puCatalystLayer','Cmax');
     // update input field display
     // alert('slider: this.conc = ' + this.conc);
@@ -298,7 +341,7 @@ let puCatalystLayer = {
     // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
     // STATE VARIABLE
 
-    // document.getElementById("dev01").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; y = " + y[20];
+    // document.getElementById("dev01").innerHTML = "UPDATE time = " + simParams.simTime.toFixed(0) + "; y = " + this.y[20];
 
     let eps = 0.3; // layer void fraction, constant
     let Vratio = 2; // layer-pellet/cell volume ratio Vp/Vc, keep constant
@@ -306,7 +349,7 @@ let puCatalystLayer = {
 
     // compute these products outside of repeat
 
-    // XXX check, note I compute 0 to this.numNodes points, therefore this.numNodes divisions
+    // compute 0 to this.numNodes points, therefore this.numNodes divisions
     let dz = 1/this.numNodes; // dless distance between nodes in layer
 
     let inverseDz2 = Math.pow(1/dz, 2);
@@ -337,34 +380,34 @@ let puCatalystLayer = {
         // boundary condition at inner sealed face
         k = 0;
 
-        D2 = Math.pow((1 + this.Kads * y[k]), this.Model); // this.Model should be 1 or 2
+        D2 = Math.pow((1 + this.Kads * this.y[k]), this.Model); // this.Model should be 1 or 2
         Phi2overD2 = Phi2 / D2;
-        secondDeriv = ( 2 * y[k+1] - 2 * y[k] ) * inverseDz2;
+        secondDeriv = ( 2 * this.y[k+1] - 2 * this.y[k] ) * inverseDz2;
 
         tNewFac = 1 / (1/this.Alpha + this.Kads/D2); // to allow any Alpha (as long as quasi-equil established)
         // replaces (D2/Kads) which is for large Alpha
 
-        yNew[k] = y[k] + dtKdOepsOAlpha * tNewFac * ( secondDeriv - Phi2overD2 * y[k] ); // for LARGE ALPHA
+        this.yNew[k] = this.y[k] + dtKdOepsOAlpha * tNewFac * ( secondDeriv - Phi2overD2 * this.y[k] ); // for LARGE ALPHA
 
         // now do for y2
-        secondDeriv = ( 2*y2[k+1] - 2*y2[k] ) * inverseDz2;
-        y2New[k] = y2[k]  + dtKdOeps * ( secondDeriv + Phi2overD2 * y[k] );
+        secondDeriv = ( 2*this.y2[k+1] - 2*this.y2[k] ) * inverseDz2;
+        this.y2New[k] = this.y2[k]  + dtKdOeps * ( secondDeriv + Phi2overD2 * this.y[k] );
 
        // internal nodes
        for (k = 1; k < this.numNodes; k += 1) {
 
-          D2 = Math.pow(( 1 + this.Kads * y[k] ), this.Model); // this.Model should be 1 or 2
+          D2 = Math.pow(( 1 + this.Kads * this.y[k] ), this.Model); // this.Model should be 1 or 2
           Phi2overD2 = Phi2 / D2;
-          secondDeriv = ( y[k-1] - 2*y[k] + y[k+1] ) * inverseDz2;
+          secondDeriv = ( this.y[k-1] - 2*this.y[k] + this.y[k+1] ) * inverseDz2;
 
           tNewFac = 1 / (1/this.Alpha + this.Kads/D2); // to allow any Alpha (as long as quasi-equil established)
           // replaces D2/Kads which is for large Alpha
 
-          yNew[k] = y[k]  + dtKdOepsOAlpha * tNewFac * ( secondDeriv - Phi2overD2 * y[k] ); // for LARGE ALPHA
+          this.yNew[k] = this.y[k]  + dtKdOepsOAlpha * tNewFac * ( secondDeriv - Phi2overD2 * this.y[k] ); // for LARGE ALPHA
 
           // now do for y2
-          secondDeriv = ( y2[k-1] - 2*y2[k] + y2[k+1] ) * inverseDz2;
-          y2New[k] = y2[k]  + dtKdOeps * ( secondDeriv + Phi2overD2 * y[k] );
+          secondDeriv = ( this.y2[k-1] - 2*this.y2[k] + this.y2[k+1] ) * inverseDz2;
+          this.y2New[k] = this.y2[k]  + dtKdOeps * ( secondDeriv + Phi2overD2 * this.y[k] );
 
       } // end repeat
 
@@ -446,27 +489,27 @@ let puCatalystLayer = {
       // because they are only updated after this repeat of unitStepRepeats is done
 
       // reactant A balance in mixing cell with diffusion in/out of layer
-      flowRate = KflowCell * (cinOld - y[k]);
-      diffRate = this.Kdiff*Vratio*this.numNodes*(y[k]-y[k-1]);
+      flowRate = KflowCell * (cinOld - this.y[k]);
+      diffRate = this.Kdiff*Vratio*this.numNodes*(this.y[k]-this.y[k-1]);
       dcadt = flowRate - diffRate;
-      caNew = y[k] + dcadt * this.unitTimeStep;
-      yNew[k] = caNew;
+      caNew = this.y[k] + dcadt * this.unitTimeStep;
+      this.yNew[k] = caNew;
 
       // document.getElementById("dev01").innerHTML = "flowRate = " + flowRate + "; diffRate = " + diffRate;
-      // document.getElementById("dev01").innerHTML = "y[k] = " + y[k] + "; dcadt * this.unitTimeStep = " + dcadt * this.unitTimeStep;
+      // document.getElementById("dev01").innerHTML = "this.y[k] = " + this.y[k] + "; dcadt * this.unitTimeStep = " + dcadt * this.unitTimeStep;
 
       // product B balance in mixing cell with diffusion in/out of layer
-      flowRate = KflowCell * (0 - y2[k]);
-      diffRate = this.Kdiff*Vratio*this.numNodes*(y2[k]-y2[k-1]);
+      flowRate = KflowCell * (0 - this.y2[k]);
+      diffRate = this.Kdiff*Vratio*this.numNodes*(this.y2[k]-this.y2[k-1]);
       dcbdt = flowRate - diffRate;
-      cbNew = y2[k] + dcbdt * this.unitTimeStep;
+      cbNew = this.y2[k] + dcbdt * this.unitTimeStep;
 
       // document.getElementById("dev02").innerHTML = "flowRate = " + flowRate + "; diffRate = " + diffRate;
-      // document.getElementById("dev02").innerHTML = "y2[k] = " + y2[k] + "; dcbdt * this.unitTimeStep = " + dcbdt * this.unitTimeStep;
+      // document.getElementById("dev02").innerHTML = "this.y2[k] = " + this.y2[k] + "; dcbdt * this.unitTimeStep = " + dcbdt * this.unitTimeStep;
 
-      y2New[k] = cbNew;
+      this.y2New[k] = cbNew;
 
-       // document.getElementById("dev01").innerHTML = "UPDATE BOUNDARY time = " + simParams.simTime.toFixed(0) + "; y = " +  yNew[k].toFixed(3);
+       // document.getElementById("dev01").innerHTML = "UPDATE BOUNDARY time = " + simParams.simTime.toFixed(0) + "; y = " +  this.yNew[k].toFixed(3);
 
        // copy temp y and y2 to current y and y2
       y = yNew;
@@ -478,16 +521,16 @@ let puCatalystLayer = {
 
   display : function() {
 
-    // display average rate and average conversion
-    document.getElementById("field_aveRate").innerHTML = this.aveRate.toExponential(3);
-    document.getElementById("field_aveConversion").innerHTML = this.aveConversion.toFixed(4);
-
     let k = 0; // used as index
     let v = 0; // used as index
     let s = 0; // used as index
     let t = 0; // used as index
     let tempArray = []; // for shifting data in strip chart plots
     let tempSpaceData = []; // for shifting data in color canvas plots
+
+    // display average rate and average conversion
+    document.getElementById(this.displayAveRate).innerHTML = this.aveRate.toExponential(3);
+    document.getElementById(this.displayAveConversion).innerHTML = this.aveConversion.toFixed(4);
 
     // HANDLE PROFILE PLOT DATA
 
@@ -498,14 +541,14 @@ let puCatalystLayer = {
     // this.profileData[0][1][k] = y;
 
     for (k=0; k<=this.numNodes; k+=1) {
-      this.profileData[0][k][1] = y[k];
-      this.profileData[1][k][1] = y2[k];
+      this.profileData[0][k][1] = this.y[k];
+      this.profileData[1][k][1] = this.y2[k];
       // update arrays for coverage and rate
       // note that these values are computed above in repeat to get reactant and
       // product gas conc but no need to update coverage and rate arrays inside repeat
       // since this sim assumes pseudo-SS between reactant gas and coverage
-      this.profileData[2][k][1] = this.Kads * y[k] / (1 + this.Kads * y[k]); // coverage
-      this.profileData[3][k][1] = this.Kads * y[k] / Math.pow( (1 + this.Kads * y[k]), this.Model); // rate, this.Model should be 1 or 2
+      this.profileData[2][k][1] = this.Kads * this.y[k] / (1 + this.Kads * this.y[k]); // coverage
+      this.profileData[3][k][1] = this.Kads * this.y[k] / Math.pow( (1 + this.Kads * this.y[k]), this.Model); // rate, this.Model should be 1 or 2
     }
 
     // HANDLE SPACE-TIME DATA
@@ -519,9 +562,13 @@ let puCatalystLayer = {
       tempSpaceData = this.profileData[3][k][1]; // use rate computed above
     }
 
+    // XXX numStripPts defined in process_plot_info.js
+
     // update the colorCanvasData array
     for (t = 0; t < numStripPts; t += 1) { // NOTE < numStripPts, don't do last one here
+
       // XXX numStripPts defined in process_plot_info.js
+
       for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
         tempArray[t][s] = tempArray[t+1][s];
       }
@@ -529,6 +576,9 @@ let puCatalystLayer = {
     // now update the last time
     for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
       tempArray[numStripPts][s] = tempSpaceData[s];
+
+      // XXX numStripPts defined in process_plot_info.js
+
     }
     // update the variable being processed
     this.colorCanvasData[v] = tempArray;
@@ -585,6 +635,26 @@ let puCatalystLayer = {
       }
     }
 
-  } // end display method
+  }, // END display method
+
+  checkForSteadyState : function() {
+    // required - called by controller object
+    // *IF* this unit NOT used to check for SS *AND* another unit IS checked,
+    // which can not be at SS, *THEN* return ssFlag = true to calling unit
+    // returns ssFlag, true if this unit at SS, false if not
+    // uses and sets this.ssCheckSum
+    // this.ssCheckSum can be set by reset() and updateUIparams()
+    // check for SS in order to save CPU time when sim is at steady state
+    // check for SS by checking for any significant change in array end values
+    // but wait at least one residence time after the previous check
+    // to allow changes to propagate down unit
+    //
+    // multiply all numbers by a factor to get desired number significant
+    // figures to left decimal point so toFixed() does not return string "0.###"
+    // WARNING: too many sig figs will prevent detecting steady state
+    //
+    let ssFlag = false;
+    return ssFlag;
+  } // END checkForSteadyState method
 
 }; // END object puCatalystLayer
