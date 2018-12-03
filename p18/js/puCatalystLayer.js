@@ -446,6 +446,8 @@ let puCatalystLayer = {
     // check for change in overall main time step simTimeStep
     this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
+    // console.log('updateInputs, this.unitTimeStep = ' + this.unitTimeStep);
+
   }, // END of updateInputs method
 
   updateState : function() {
@@ -473,6 +475,15 @@ let puCatalystLayer = {
     let dtKdOeps = this.unitTimeStep * KdOeps;
     let Phi2 = Math.pow(this.Phi, 2);
     let flowFactor = this.Kflow / this.Alpha / eps; // for aveRate
+
+    // console.log('inverseDz2 = ' + inverseDz2);
+    // console.log('KflowCell = ' + KflowCell);
+    // console.log('KdOeps = ' + KdOeps);
+    // console.log('KdOepsOAlpha = ' + KdOepsOAlpha);
+    // console.log('dtKdOepsOAlpha = ' + dtKdOepsOAlpha);
+    // console.log('dtKdOeps = ' + dtKdOeps);
+    // console.log('Phi2 = ' + Phi2);
+    // console.log('flowFactor = ' + flowFactor);
 
     let secondDeriv = 0;
     let D2 = 0;
@@ -505,6 +516,15 @@ let puCatalystLayer = {
 
       yNew[k] = this.y[k] + dtKdOepsOAlpha * tNewFac * ( secondDeriv - Phi2overD2 * this.y[k] ); // for LARGE ALPHA
 
+      // console.log('k = 0');
+      // console.log("D2 = " + D2);
+      // console.log("Phi2overD2 = " + Phi2overD2);
+      // console.log("secondDeriv = " + secondDeriv);
+      // console.log("tNewFac = " + tNewFac);
+      // console.log("this.y[k+1] = " + this.y[k+1]);
+      // console.log("this.y[k] = " + this.y[k]);
+      // console.log("yNew[k] = " + yNew[k]);
+
       // now do for y2
       secondDeriv = ( 2*this.y2[k+1] - 2*this.y2[k] ) * inverseDz2;
       y2New[k] = this.y2[k]  + dtKdOeps * ( secondDeriv + Phi2overD2 * this.y[k] );
@@ -527,6 +547,16 @@ let puCatalystLayer = {
 
       } // end repeat
 
+      // k = this.numNodes - 1; // <<<< TEMPORARY FOR CONSOLE.LOG
+      // console.log('k = this.numNodes - 1;');
+      // console.log("D2 = " + D2);
+      // console.log("Phi2overD2 = " + Phi2overD2);
+      // console.log("secondDeriv = " + secondDeriv);
+      // console.log("tNewFac = " + tNewFac);
+      // console.log("this.y[k+1] = " + this.y[k+1]);
+      // console.log("this.y[k] = " + this.y[k]);
+      // console.log("yNew[k] = " + yNew[k]);
+
       // boundary condition at outer bulk face
 
       k = this.numNodes;
@@ -535,7 +565,7 @@ let puCatalystLayer = {
       this.sineFuncOLD = this.sineFunc; // need for square cycle with duty fraction
       this.sineFunc = 0.5 * (1 + Math.sin( this.frequency * controller.simTime  + phaseShift) );
 
-      // XXX controller.simTime does not change within this repeat!!!! 
+      // XXX controller.simTime does not change within this repeat!!!!
 
       // console.log('updateState, frequency = ' + this.frequency);
       // console.log('updateState, controller.simTime = ' + controller.simTime);
@@ -580,9 +610,6 @@ let puCatalystLayer = {
       // force this.cinNew to be a number, if not, then
       // 0 and 1 values get treated as text when summing for aveConversion
       this.cinNew = Number(this.cinNew);
-
-      console.log('updateState, cinOld = ' + this.cinOld);
-      console.log('updateState, cinNew = ' + this.cinNew);
 
       // compute average rate and conversion
       // need to update only after complete cycles or get values
@@ -634,13 +661,15 @@ let puCatalystLayer = {
        // document.getElementById("dev01").innerHTML = "UPDATE BOUNDARY time = " + controller.simTime.toFixed(0) + "; y = " +  yNew[k].toFixed(3);
 
        // copy temp y and y2 to current y and y2
-      y = yNew;
-      y2 = y2New;
+      this.y = yNew;
+      this.y2 = y2New;
 
     } // END NEW FOR REPEAT for (i=0; i<this.unitStepRepeats; i+=1)
 
-    console.log('after repeat, caNew = ' + caNew);
-    console.log('after repeat, y = ' + y);
+    // console.log('after repeat, cinOld = ' + this.cinOld);
+    // console.log('after repeat, cinNew = ' + this.cinNew);
+    // console.log('after repeat, caNew = ' + caNew);
+    // console.log('after repeat, y = ' + this.y);
 
   }, // end updateState method
 
