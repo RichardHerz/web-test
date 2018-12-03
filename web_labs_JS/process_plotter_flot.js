@@ -35,6 +35,10 @@ let plotter = {
     let numVar = varNumbers.length;
     let varUnitIndex;
     let plotData = this.initPlotData(numVar,numPlotPoints);
+    // returns array with all elements for plot filled with zero
+    //    index 1 specifies the variable [0 to numVars-1],
+    //    index 2 specifies the data point pair [0 to & including numPlotPoints]
+    //    index 3 specifies x or y in x,y data point pair [0 & 1]
 
     // get data for plot
     for (v = 0; v < numVar; v += 1) {
@@ -65,6 +69,7 @@ let plotter = {
     for (v = 0; v < numVar; v += 1) {
       sf = plotInfo[plotInfoNum]['varYscaleFactor'][v];
       if (sf != 1) {
+        // console.log('plot, v, sf = ' + plotInfoNum + ', ' + v + ', ' + sf);
         for (p = 0; p <= numPlotPoints; p += 1) {
           plotData[v][p][1] = sf * plotData[v][p][1];
         }

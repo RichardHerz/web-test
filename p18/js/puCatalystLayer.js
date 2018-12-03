@@ -243,7 +243,7 @@ let puCatalystLayer = {
     this.dataInputs[v] = 'input_field_enterBscale';
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 100;
+    this.dataMax[v] = 10;
     this.dataInitial[v] = 1;
     this.Bscale = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Bscale; // current input value for reporting
@@ -360,7 +360,10 @@ let puCatalystLayer = {
     this.frequency = 2 * Math.PI / this.Period;
 
     // change input y-axis scale factor for plotting of B out
-    plotInfo[3]['varYscaleFactor'][1] = this.Bscale; // this.Bscale;
+    // B out is in plot 3, variable 1
+    plotInfo[3]['varYscaleFactor'][1] = this.Bscale;
+
+    // sf = plotInfo[plotInfoNum]['varYscaleFactor'][v];
 
     // RADIO BUTTONS & CHECK BOX
     // at least for now, do not check existence of UI element as above
@@ -705,34 +708,6 @@ let puCatalystLayer = {
       this.profileData[3][k][1] = this.Kads * this.y[k] / Math.pow( (1 + this.Kads * this.y[k]), this.Model); // rate, this.Model should be 1 or 2
     }
 
-    // HANDLE SPACE-TIME DATA
-
-    // colorCanvasData[v][t][s] - variable, time, space (profile in layer)
-    // get 2D array for one variable at a time
-    v = 0; // first variable = rate
-    tempArray = this.colorCanvasData[v];
-    // get rate profile data, variable 3 in profileData array
-    for (k = 0; k <= this.numNodes; k += 1) {
-      tempSpaceData = this.profileData[3][k][1]; // use rate computed above
-    }
-
-    // xxx change to get from plotInfo obj in process_plot_info.js
-    let numStripPts = 80;
-
-    // update the colorCanvasData array
-    for (t = 0; t < numStripPts; t += 1) { // NOTE < numStripPts, don't do last one here
-      for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
-        tempArray[t][s] = tempArray[t+1][s];
-      }
-    }
-    // now update the last time
-    for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
-      tempArray[numStripPts][s] = tempSpaceData[s];
-    }
-
-    // update the variable being processed
-    this.colorCanvasData[v] = tempArray;
-
     // HANDLE STRIP CHART DATA
 
     // copy gas in and out data to stripData array
@@ -765,8 +740,6 @@ let puCatalystLayer = {
     // delete first and oldest element which is an [x,y] pair array
     tempArray.shift();
     // add the new [x,y] pair array at end
-    // don't scale cbNew here or then gets fed back into calc above
-    // need to add a scale factor when plotting variable
     // this.y2[this.numNodes] is B in mixing cell
     tempArray.push( [ 0, this.y2[this.numNodes] ] );
     // update the variable being processed
@@ -776,6 +749,8 @@ let puCatalystLayer = {
     // so they stay the same after updating y-axis values
 
     let numStripVars = 3; // xxx change to use var value
+    // xxx change to get from plotInfo obj in process_plot_info.js
+    let numStripPts = 80;
     let timeStep = simParams.simTimeStep * simParams.simStepRepeats;
     for (v = 0; v < numStripVars; v += 1) {
       for (p = 0; p <= numStripPts; p += 1) { // note = in p <= numStripPts
@@ -786,6 +761,32 @@ let puCatalystLayer = {
         // this.stripData[v][p][0] = (numStripPts - p) * timeStep;
       }
     }
+
+    // HANDLE SPACE-TIME DATA
+
+    // colorCanvasData[v][t][s] - variable, time, space (profile in layer)
+    // get 2D array for one variable at a time
+    v = 0; // first variable = rate
+    tempArray = this.colorCanvasData[v];
+    // get rate profile data, variable 3 in profileData array
+    for (k = 0; k <= this.numNodes; k += 1) {
+      tempSpaceData = this.profileData[3][k][1]; // use rate computed above
+    }
+
+    // update the colorCanvasData array
+    // NOTE: used numStripPts so same time span as strip plots in this lab
+    for (t = 0; t < numStripPts; t += 1) { // NOTE < numStripPts, don't do last one here
+      for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
+        tempArray[t][s] = tempArray[t+1][s];
+      }
+    }
+    // now update the last time
+    for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
+      tempArray[numStripPts][s] = tempSpaceData[s];
+    }
+
+    // update the variable being processed
+    this.colorCanvasData[v] = tempArray;
 
   }, // END updateDisplay method
 
