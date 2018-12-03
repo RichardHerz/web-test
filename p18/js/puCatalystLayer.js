@@ -89,6 +89,16 @@ let puCatalystLayer = {
   y : [], // reactant gas in catalyst layer
   y2 : [], // product gas in catalyst layer
 
+  // define arrays to hold info for variables
+  // these will be filled with values in method initialize()
+  dataHeaders : [], // variable names
+  dataInputs : [], // input field ID's
+  dataUnits : [],
+  dataMin : [],
+  dataMax : [],
+  dataInitial : [],
+  dataValues : [],
+
   // define the main variables which will not be plotted or save-copy data
 
   // WARNING: have to change simTimeStep and simStepRepeats if change numNodes
@@ -238,8 +248,22 @@ let puCatalystLayer = {
     this.updateUIparams(); // this first, then set other values as needed
     // set state variables not set by updateUIparams to initial settings
 
-    // this.command.value = this.initialCommand;
-    // this.errorIntegral = this.initialErrorIntegral;
+    // XXX constants below should be converted to variables here & in plot info
+
+    // initialize profile data array
+    // initPlotData(numProfileVars,numProfilePts)
+    this.profileData = plotter.initPlotData(4,this.numNodes); // holds data for static profile plots
+    // the 4 vars are A, B, AS, rate
+
+    // initialize strip chart data array
+    // initPlotData(numStripVars,numStripPts)
+    this.stripData = plotter.initPlotData(3,80); // holds data for scrolling strip chart plots
+    // the 3 vars are Ain, Aout, Bout
+
+    // initialize local array to hold color-canvas data, e.g., space-time data -
+    // plotter.initColorCanvasArray(numVars,numXpts,numYpts)
+    this.colorCanvasData = plotter.initColorCanvasArray(1,80,this.numNodes);
+    // the 1 var is rate, numXpts should match strip chart numStripPts
 
     for (k = 0; k <= this.numNodes; k += 1) {
       this.y[k] = 0;
@@ -251,7 +275,7 @@ let puCatalystLayer = {
       kn = k/this.numNodes;
       // x-axis values
       // x-axis values will not change during sim
-      // XXX change to get number vars for this plotsObj variable
+      // XXX change to get number vars for this plotInfo variable
       //     so can put in repeat - or better yet, a function
       //     and same for y-axis below
       this.profileData[0][k][0] = kn;
@@ -318,7 +342,7 @@ let puCatalystLayer = {
     this.frequency = 2 * Math.PI / this.Period;
 
     // change input y-axis scale factor for plotting of B out
-    plotsObj[3]['varYscaleFactor'][1] = this.Bscale; // this.Bscale;
+    plotInfo[3]['varYscaleFactor'][1] = this.Bscale; // this.Bscale;
 
     // RADIO BUTTONS & CHECK BOX
     // at least for now, do not check existence of UI element as above
@@ -364,9 +388,11 @@ let puCatalystLayer = {
   }, // END updateUIparams
 
   updateUIfeedInput : function() {
+    // SPECIAL FOR THIS UNIT
     // called in HTML input element
     // [0] is field, [1] is slider
     // get field value
+    let unum = 0;
     this.Cmax = this.dataValues[0] = interface.getInputValue(unum, 0);
     // update slider position
     document.getElementById(this.dataInputs[1]).value = this.Cmax;
@@ -374,9 +400,11 @@ let puCatalystLayer = {
   }, // END method updateUIfeedInput()
 
   updateUIfeedSlider : function() {
+    // SPECIAL FOR THIS UNIT
     // called in HTML input element
     // [0] is field, [1] is slider
     // get slider value
+    let unum = 0;
     this.Cmax = this.dataValues[1] = interface.getInputValue(unum, 1);
     // update field display
     document.getElementById(this.dataInputs[0]).value = this.Cmax;
@@ -585,7 +613,7 @@ let puCatalystLayer = {
 
   }, // end updateState method
 
-  display : function() {
+  updateDisplay : function() {
 
     let k = 0; // used as index
     let v = 0; // used as index
@@ -628,13 +656,11 @@ let puCatalystLayer = {
       tempSpaceData = this.profileData[3][k][1]; // use rate computed above
     }
 
-    // XXX numStripPts defined in process_plot_info.js
+    // xxx change to get from plotInfo obj in process_plot_info.js
+    let numStripPts = 80;
 
     // update the colorCanvasData array
     for (t = 0; t < numStripPts; t += 1) { // NOTE < numStripPts, don't do last one here
-
-      // XXX numStripPts defined in process_plot_info.js
-
       for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
         tempArray[t][s] = tempArray[t+1][s];
       }
@@ -642,10 +668,8 @@ let puCatalystLayer = {
     // now update the last time
     for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
       tempArray[numStripPts][s] = tempSpaceData[s];
-
-      // XXX numStripPts defined in process_plot_info.js
-
     }
+    
     // update the variable being processed
     this.colorCanvasData[v] = tempArray;
 
@@ -701,7 +725,7 @@ let puCatalystLayer = {
       }
     }
 
-  }, // END display method
+  }, // END updateDisplay method
 
   checkForSteadyState : function() {
     // required - called by controller object
