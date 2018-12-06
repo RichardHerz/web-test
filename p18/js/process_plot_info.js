@@ -194,7 +194,7 @@ let plotInfo = {
     plotInfo[pnum]['title'] = 'Inlet Gas';
     plotInfo[pnum]['canvas'] = '#div_PLOTDIV_inlet_gas'; // flot.js wants ID with prefix #
     // set numberPoints < = than width of plot in HTML pixels for fast plotting
-    plotInfo[pnum]['numberPoints'] = 80; // WARNING: value used below in xAxisMax
+    plotInfo[pnum]['numberPoints'] = 80; // WARNING: value used below in xAxisMax & plot 4
     // plot has numberPoints + 1 pts!
     plotInfo[pnum]['xAxisLabel'] = '< recent time | earlier time (s) >';
     plotInfo[pnum]['xAxisTableLabel'] = 'Time'; // label for copy data table
@@ -332,7 +332,7 @@ let plotInfo = {
     plotInfo[pnum]['var'] = 0; // variable number in array spaceTimeData, 0, 1, etc.
     // varTimePts & varSpacePts must match values used in unit array colorCanvasData
     plotInfo[pnum]['varTimePts'] = 80;
-    plotInfo[pnum]['varSpacePts'] = processUnits[unum].numNodes;
+    plotInfo[pnum]['varSpacePts'] = processUnits[unum]['numNodes'];
     plotInfo[pnum]['varValueMin'] = 0;
     plotInfo[pnum]['varValueMax'] = 1/processUnits[unum].Model/processUnits[unum].Model; // 1/1/1 or 1/2/2
     plotInfo[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left

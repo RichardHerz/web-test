@@ -769,8 +769,9 @@ let puCatalystLayer = {
     v = 0; // first variable = rate
     tempArray = this.colorCanvasData[v];
     // get rate profile data, variable 3 in profileData array
+    // NOTE array index [this.numNodes-k] to flip plot vertically
     for (k = 0; k <= this.numNodes; k += 1) {
-      tempSpaceData = this.profileData[3][k][1]; // use rate computed above
+      tempSpaceData[this.numNodes-k] = this.profileData[3][k][1]; // use rate computed above
     }
 
     // update the colorCanvasData array
@@ -780,11 +781,11 @@ let puCatalystLayer = {
         tempArray[t][s] = tempArray[t+1][s];
       }
     }
+    
     // now update the last time
     for (s = 0; s <= this.numNodes; s +=1) { // NOTE <= this.numNodes
       tempArray[numStripPts][s] = tempSpaceData[s];
     }
-
     // update the variable being processed
     this.colorCanvasData[v] = tempArray;
 
