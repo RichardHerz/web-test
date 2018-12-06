@@ -244,7 +244,7 @@ let puCatalystLayer = {
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 10;
-    this.dataInitial[v] = 1;
+    this.dataInitial[v] = 4;
     this.Bscale = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.Bscale; // current input value for reporting
     //

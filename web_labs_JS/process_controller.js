@@ -218,6 +218,7 @@ let controller = {
       } else if ((ptype == 'profile') || (ptype == 'strip')) {
         // profile (static x,y) or strip chart (scolling x,y)
         let data = plotter.getPlotData(p);
+        // console.log('controller, p = ' +p+', data ='+data);
         plotter.plotPlotData(data,p);
       } else {
         // plotting must be handled by a unit's updateDisplay

@@ -22,12 +22,12 @@ let plotter = {
     // which is defined in file process_plot_info.js
     //
     // uses plotInfo object defined in process_plot_info.js
-    // uses plotArrays object defined in plotter object in this file
 
     let v = 0; // used as index to select the variable
     let p = 0; // used as index to select data point pair
     let n = 0; // used as index
     let sf = 1; // scale factor used below
+    let thisNumPts = 0; // used a couple places below with array .length
 
     let numPlotPoints = plotInfo[plotInfoNum]['numberPoints'];
     // plot will have 0 to numberPoints for total of numberPoints + 1 points
@@ -35,10 +35,6 @@ let plotter = {
     let numVar = varNumbers.length;
     let varUnitIndex;
     let plotData = this.initPlotData(numVar,numPlotPoints);
-    // returns array with all elements for plot filled with zero
-    //    index 1 specifies the variable [0 to numVars-1],
-    //    index 2 specifies the data point pair [0 to & including numPlotPoints]
-    //    index 3 specifies x or y in x,y data point pair [0 & 1]
 
     // get data for plot
     for (v = 0; v < numVar; v += 1) {
@@ -51,11 +47,26 @@ let plotter = {
       // need to do this separately for each variable because they
       // may be from different units
 
-      // IF REQUIRES unit local array name to be profileData or stripData
+      // WARNING - you can't make independent copy simply using the next line
+      //    NO >> plotData[v] = processUnits[varUnitIndex]['stripData'][n];
+      // this just references plotData to orig data and any changes in
+      // plotData, e.g., scaling a var, will change orig data, and that
+      // change will be present the next time the scale is applied, etc.
+      // so have to copy data arrays element by element to get independent copy
       if (plotInfo[plotInfoNum]['type'] == 'profile') {
-        plotData[v] = processUnits[varUnitIndex]['profileData'][n];
+        // requires units' local array name to be profileData
+        thisNumPts = processUnits[varUnitIndex]['profileData'][n].length;
+        // at least in web lab 9, may not have defined all numPlotPoints
+        for (p = 0; p < thisNumPts; p += 1) {
+          plotData[v][p][0] = processUnits[varUnitIndex]['profileData'][n][p][0];
+          plotData[v][p][1] = processUnits[varUnitIndex]['profileData'][n][p][1];
+        }
       } else if (plotInfo[plotInfoNum]['type'] == 'strip') {
-        plotData[v] = processUnits[varUnitIndex]['stripData'][n];
+        // requires units' local array name to be stripData
+        for (p = 0; p <= numPlotPoints; p += 1) { // NOTE = AT p <=
+          plotData[v][p][0] = processUnits[varUnitIndex]['stripData'][n][p][0];
+          plotData[v][p][1] = processUnits[varUnitIndex]['stripData'][n][p][1];
+        }
       } else {
         alert('in getPlotData, unknown plot type');
       }
@@ -68,9 +79,9 @@ let plotter = {
     // scale y-axis values if scale factor not equal to 1
     for (v = 0; v < numVar; v += 1) {
       sf = plotInfo[plotInfoNum]['varYscaleFactor'][v];
+      thisNumPts = plotData[v].length;
       if (sf != 1) {
-        // console.log('plot, v, sf = ' + plotInfoNum + ', ' + v + ', ' + sf);
-        for (p = 0; p <= numPlotPoints; p += 1) {
+        for (p = 0; p < thisNumPts; p += 1) {
           plotData[v][p][1] = sf * plotData[v][p][1];
         }
       }
@@ -238,7 +249,7 @@ let plotter = {
       // console.log('redraw entire plot, axes, labels');
       this.plotArrays['plot'][pNumber] = $.plot($(plotCanvasHtmlID), dataToPlot, options);
     } else {
-      // console.log('redraw only data');
+      // console.log('plotter.plotPlotData - redraw only data, pNumber = ' + pNumber);
       this.plotArrays['plot'][pNumber].setData(dataToPlot);
       this.plotArrays['plot'][pNumber].draw();
     }
@@ -261,7 +272,7 @@ let plotter = {
 
     initialize : function() {
       // called by controller.openThisLab()
-      // uses length of plotObs so must be called after plotInfo has been initialized
+      // uses length of plotInfo so must be called after plotInfo has been initialized
       let npl = Object.keys(plotInfo).length; // number of plots
       this.plotFlag = [0];
       for (p = 1; p < npl; p += 1) {
