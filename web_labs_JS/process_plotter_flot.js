@@ -47,28 +47,44 @@ let plotter = {
       // need to do this separately for each variable because they
       // may be from different units
 
-      // WARNING - you can't make independent copy simply using the next line
-      //    NO >> plotData[v] = processUnits[varUnitIndex]['stripData'][n];
-      // this just references plotData to orig data and any changes in
-      // plotData, e.g., scaling a var, will change orig data, and that
-      // change will be present the next time the scale is applied, etc.
-      // so have to copy data arrays element by element to get independent copy
-      if (plotInfo[plotInfoNum]['type'] == 'profile') {
-        // requires units' local array name to be profileData
-        thisNumPts = processUnits[varUnitIndex]['profileData'][n].length;
-        // at least in web lab 9, may not have defined all numPlotPoints
-        for (p = 0; p < thisNumPts; p += 1) {
-          plotData[v][p][0] = processUnits[varUnitIndex]['profileData'][n][p][0];
-          plotData[v][p][1] = processUnits[varUnitIndex]['profileData'][n][p][1];
-        }
-      } else if (plotInfo[plotInfoNum]['type'] == 'strip') {
-        // requires units' local array name to be stripData
-        for (p = 0; p <= numPlotPoints; p += 1) { // NOTE = AT p <=
-          plotData[v][p][0] = processUnits[varUnitIndex]['stripData'][n][p][0];
-          plotData[v][p][1] = processUnits[varUnitIndex]['stripData'][n][p][1];
+      sf = plotInfo[plotInfoNum]['varYscaleFactor'][v];
+      if (sf != 1) {
+        // WARNING - with sf != 1 you want to modify values but not original
+        // values and so need an independent copy with copy by value
+        // you can't make independent copy simply using the next line
+        //    NO >> plotData[v] = processUnits[varUnitIndex]['stripData'][n];
+        // this just references plotData to orig data and any changes in
+        // plotData, e.g., scaling a var, will change orig data, and that
+        // change will be present the next time the scale is applied, etc.
+        // so have to copy data arrays element by element to get independent copy
+        if (plotInfo[plotInfoNum]['type'] == 'profile') {
+          // requires units' local array name to be profileData
+          thisNumPts = processUnits[varUnitIndex]['profileData'][n].length;
+          // at least in web lab 9, may not have defined all numPlotPoints
+            for (p = 0; p < thisNumPts; p += 1) {
+            plotData[v][p][0] = processUnits[varUnitIndex]['profileData'][n][p][0];
+            plotData[v][p][1] = processUnits[varUnitIndex]['profileData'][n][p][1];
+          }
+        } else if (plotInfo[plotInfoNum]['type'] == 'strip') {
+          // requires units' local array name to be stripData
+          for (p = 0; p <= numPlotPoints; p += 1) { // NOTE = AT p <=
+            plotData[v][p][0] = processUnits[varUnitIndex]['stripData'][n][p][0];
+            plotData[v][p][1] = processUnits[varUnitIndex]['stripData'][n][p][1];
+          }
+        } else {
+          alert('in getPlotData, unknown plot type');
         }
       } else {
-        alert('in getPlotData, unknown plot type');
+        // scale factor sf = 1 so won't be changing original data
+        // and so can copy by reference (rather than by value when sf != 1)
+        // XXX check to see if this is any faster than copy all by value...
+        if (plotInfo[plotInfoNum]['type'] == 'profile') {
+          plotData[v] = processUnits[varUnitIndex]['profileData'][n];
+        } else if (plotInfo[plotInfoNum]['type'] == 'strip') {
+          plotData[v] = processUnits[varUnitIndex]['stripData'][n];
+        } else {
+          alert('in getPlotData, unknown plot type');
+        }
       }
 
       // NOTE: if I go back to earlier scheme I might be able to use some of the
