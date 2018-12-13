@@ -1,0 +1,21 @@
+Parameters from Wu & Chang ie061314j which give self-sustained oscillations
+
+Their g/L should be same as my kg/m3
+I can just use my seconds for their hours
+
+Feed conc > 15 g/L
+Dilution rate from 0.125 to 0.28 per hour
+
+Below, greek are Wu & Chang for yield equation, English from Alvarez-Ramirez et al.
+
+Vmin (alpha) = 0.01 g/g
+a (beta) = 0.03 L/g
+p (gamma) = 0.1 g/g
+
+MUmax = 0.3 per hour (for standard Monod equation)
+Ks = 1.75 g/L
+
+initial conditions in reactor
+biomass (x0) = 1.322 g/L
+substrate (s0) = 0.3 g/L
+

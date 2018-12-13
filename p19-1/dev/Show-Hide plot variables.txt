@@ -1,0 +1,33 @@
+-------- HOW TO SELECT WHICH VARIABLE CURVES TO DISPLAY ON PLOT -------
+
+In RL control lab, all curves are generated and only ones desired are displayed.
+
+In web apps, in function plotPlotData(pData), add only desired "SERIES OBJECTS" to dataToPlot array. Currently, dataToPlot array is as follows:
+
+  var dataToPlot = [
+    // "yaxis: 1" is axis on right side of plot, "yaxis: 2" is on left side
+    { data: y1RightData, label: y1RightDataLabel, yaxis: 1 },
+    { data: y2RightData, label: y2RightDataLabel, yaxis: 1 },
+    { data: y1LeftData, label: y1LeftDataLabel, yaxis: 2 },
+    { data: y2LeftData, label: y2LeftDataLabel, yaxis:2 },
+  ];
+
+This may change the color of the variable on the plot, currently, since I don't specify which color goes with which variable. 
+
+SEE UNDER DATA FORMAT ON THIS PAGE https://github.com/flot/flot/blob/master/API.md#plot-methods  
+
+If you don't specify color, the series [SERIES OBJECT] will get a color from the auto-generated colors. The color is either a CSS color specification (like "rgb(255, 100, 123)") or an integer that specifies which of auto-generated colors to select, e.g. 0 will get color no. 0, etc.
+
+The latter is mostly useful if you let the user add and remove series, in which case you can hard-code the color index to prevent the colors from jumping around between the series.
+
+-------- HOW TO ONLY UPDATE CURVES AND NOT REDRAW ENTIRE PLOT ------
+
+SEE ON THIS PAGE https://github.com/flot/flot/blob/master/API.md#plot-methods  
+
+setData(data)
+
+You can use this to reset the data used. Note that axis scaling, ticks, legend etc. will not be recomputed (use setupGrid() to do that). You'll probably want to call draw() afterwards.
+
+You can use this function to speed up redrawing a small plot if you know that the axes won't change. Put in the new data with setData(newdata), call draw(), and you're good to go. 
+
+>>> SEE THIS: Note that for large datasets, almost all the time is consumed in draw() plotting the data so in this case don't bother.

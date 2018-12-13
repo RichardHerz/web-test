@@ -1,0 +1,575 @@
+/* NEW - sup, body - AFTER MACAW */
+
+sup {
+    font-size: smaller;
+}
+
+body {
+  background-color: rgb(255, 255, 255);
+  font-family: Helvetica;
+  font-size: 0.9em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+/* ORIG FROM MACAW
+body {
+  background-color: rgb(255, 255, 255);
+  font: 400 1em/1.38 Helvetica;
+  color: rgb(0, 0, 0);
+}
+*/
+
+.backbutton {
+  display: block;
+  position: absolute;
+  top: 14px;
+  left: 120px;
+  z-index: 1;
+  font-size: 1em;
+  text-decoration: underline;
+  color: rgb(32, 25, 239);
+}
+
+.container_controller {
+  position: absolute;
+  top: 273px;
+  left: 427px;
+  z-index: 20;
+  width: 427px;
+  height: 415px;
+}
+
+.container_operatingparams {
+  position: absolute;
+  top: 273px;
+  left: 120px;
+  z-index: 23;
+  width: 256px;
+  height: 46px;
+}
+
+.container_reactionparams {
+  position: absolute;
+  top: 553px;
+  left: 120px;
+  z-index: 34;
+  width: 268px;
+  height: 162px;
+}
+
+.container_reactor {
+  position: absolute;
+  top: 319px;
+  left: 120px;
+  z-index: 37;
+  width: 280px;
+  height: 202px;
+}
+
+.copydatabutton {
+  display: block;
+  position: absolute;
+  top: 258px;
+  left: 326px;
+  z-index: 19;
+  width: 104px;
+  height: 24px;
+  border-radius: 3px;
+  background-color: rgb(222, 222, 222);
+  font-size: 1em;
+  text-align: center;
+  color: rgb(0, 0, 0);
+}
+
+.element_reactorcontents {
+  position: absolute;
+  top: 84px;
+  left: 93px;
+  z-index: 36;
+  width: 105px;
+  height: 66px;
+  background-color: rgb(127, 0, 127);
+}
+
+.enterva {
+  display: block;
+  position: absolute;
+  top: 100px;
+  left: 184px;
+  z-index: 30;
+  width: 72px;
+  height: 22px;
+  padding: 2px;
+  border: 2px solid rgb(0, 0, 0);
+  background-color: rgb(242, 242, 242);
+  font-size: 0.813em;
+  text-align: right;
+  color: rgb(0, 0, 0);
+}
+
+.enterfeedconc {
+  display: block;
+  position: absolute;
+  top: 388px;
+  left: 217px; /* NEW - change value from macaw */
+  z-index: 12;
+  width: 72px;
+  height: 22px;
+  padding: 2px;
+  border: 2px solid rgb(0, 0, 0);
+  background-color: rgb(242, 242, 242);
+  font-size: 0.813em;
+  text-align: right;
+  color: rgb(0, 0, 0);
+}
+
+.enterfeedflowrate {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 184px;
+  z-index: 21;
+  width: 72px;
+  height: 22px;
+  padding: 2px;
+  border: 2px solid rgb(0, 0, 0);
+  background-color: rgb(242, 242, 242);
+  font-size: 0.813em;
+  text-align: right;
+  color: rgb(0, 0, 0);
+}
+
+.entergain {
+  display: block;
+  position: absolute;
+  top: 306px;
+  left: 217px;
+  z-index: 7;
+  width: 72px;
+  height: 22px;
+  padding: 2px;
+  border: 2px solid rgb(0, 0, 0);
+  background-color: rgb(242, 242, 242);
+  font-size: 0.813em;
+  text-align: right;
+  color: rgb(0, 0, 0);
+}
+
+.enterks {
+  display: block;
+  position: absolute;
+  top: 34px;
+  left: 184px;
+  z-index: 26;
+  width: 72px;
+  height: 22px;
+  padding: 2px;
+  border: 2px solid rgb(0, 0, 0);
+  background-color: rgb(242, 242, 242);
+  font-size: 0.813em;
+  text-align: right;
+  color: rgb(0, 0, 0);
+}
+
+.entermumax {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 184px;
+  z-index: 24;
+  width: 72px;
+  height: 22px;
+  padding: 2px;
+  border: 2px solid rgb(0, 0, 0);
+  background-color: rgb(242, 242, 242);
+  font-size: 0.813em;
+  text-align: right;
+  color: rgb(0, 0, 0);
+}
+
+.entervp {
+  display: block;
+  position: absolute;
+  top: 134px;
+  left: 184px;
+  z-index: 32;
+  width: 72px;
+  height: 22px;
+  padding: 2px;
+  border: 2px solid rgb(0, 0, 0);
+  background-color: rgb(242, 242, 242);
+  font-size: 0.813em;
+  text-align: right;
+  color: rgb(0, 0, 0);
+}
+
+.enterresettime {
+  display: block;
+  position: absolute;
+  top: 335px;
+  left: 217px;
+  z-index: 9;
+  width: 72px;
+  height: 22px;
+  padding: 2px;
+  border: 2px solid rgb(0, 0, 0);
+  background-color: rgb(242, 242, 242);
+  font-size: 0.813em;
+  text-align: right;
+  color: rgb(0, 0, 0);
+}
+
+.entersetpoint {
+  display: block;
+  position: absolute;
+  top: 278px;
+  left: 217px;
+  z-index: 5;
+  width: 72px;
+  height: 22px;
+  padding: 2px;
+  border: 2px solid rgb(0, 0, 0);
+  background-color: rgb(242, 242, 242);
+  font-size: 0.813em;
+  text-align: right;
+  color: rgb(0, 0, 0);
+}
+
+.entervmin {
+  display: block;
+  position: absolute;
+  top: 67px;
+  left: 184px;
+  z-index: 28;
+  width: 72px;
+  height: 22px;
+  padding: 2px;
+  border: 2px solid rgb(0, 0, 0);
+  background-color: rgb(242, 242, 242);
+  font-size: 0.813em;
+  text-align: right;
+  color: rgb(0, 0, 0);
+}
+
+.image_reactorimage {
+  display: block;
+  position: relative;
+  float: left;
+  z-index: 35;
+  width: 280px;
+  height: auto;
+  overflow: hidden;
+}
+
+.plotcanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  width: 430px;
+  height: 248px;
+  background-color: rgb(230, 230, 230);
+}
+
+.radio-label {
+  display: block;
+  position: relative;
+  float: left;
+  width: 23.7634637188%;
+  height: 24px;
+}
+
+.radio_controllerauto,
+.radio_controllermanual {
+  display: block;
+  float: left;
+  margin-top: 3px;
+}
+
+.input,
+.radio_manuallabel,
+.radio_autolabel { /* new - this line - after macaw */
+  display: block;
+  float: left;
+  margin-left: 6px;
+}
+
+.reset {
+  display: block;
+  position: absolute;
+  top: 239px;
+  left: 201px;
+  z-index: 3;
+  width: 70px;
+  height: 24px;
+  border-radius: 3px;
+  background-color: rgb(222, 222, 222);
+  font-size: 1em;
+  text-align: center;
+  color: rgb(0, 0, 0);
+}
+
+.run {
+  display: block;
+  position: absolute;
+  top: 239px;
+  left: 120px;
+  z-index: 2;
+  width: 70px;
+  height: 24px;
+  border-radius: 3px;
+  background-color: rgb(222, 222, 222);
+  font-size: 1em;
+  text-align: center;
+  color: rgb(0, 0, 0);
+}
+
+.copydatabutton:active,
+.reset:active,
+.run:active {
+  background-color: rgb(143, 200, 246);
+}
+
+.text_entervalabel-1 {
+  position: absolute;
+  top: 100px;
+  left: 0;
+  z-index: 31;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+}
+
+.text_enterfeedconclabel-1 {
+  position: absolute;
+  top: 387px;
+  left: 20px;
+  z-index: 11;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+}
+
+.text_enterfeedflowrate {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 22;
+  width: 181px;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+}
+
+.text_entergainlabel-1 {
+  position: absolute;
+  top: 306px;
+  left: 21px;
+  z-index: 8;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+}
+
+.text_enterkslabel-1 {
+  position: absolute;
+  top: 34px;
+  left: 0;
+  z-index: 27;
+  width: 183px;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+}
+
+.text_entermumaxlabel-1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 25;
+  width: 183px;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+}
+
+.text_entervplabel-1 {
+  position: absolute;
+  top: 134px;
+  left: 0;
+  z-index: 33;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+}
+
+.text_enterresettimelabel-1 {
+  position: absolute;
+  top: 335px;
+  left: 21px;
+  z-index: 10;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+}
+
+.text_entersetpointlabel-1 {
+  position: absolute;
+  top: 278px;
+  left: 21px;
+  z-index: 6;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+}
+
+.text_entervminlabel-1 {
+  position: absolute;
+  top: 67px;
+  left: 0;
+  z-index: 29;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+}
+
+.text_toppagetext {
+  position: absolute;
+  top: 46px;
+  left: 120px;
+  width: 797px;
+  height: 137px;
+  min-height: 74px;
+  font-size: 1em;
+  color: rgb(0, 0, 0);
+}
+
+.text_toppagetext p {
+  margin-bottom: 1em;
+}
+
+.radio-label-1 {
+  z-index: 18;
+  margin-top: 253px;
+}
+
+.radio-label-2 {
+  clear: both;
+  z-index: 15;
+  margin-top: 87px;
+}
+
+.text_entervalabel-1 em,
+.text_enterfeedconclabel-1 em,
+.text_entergainlabel-1 em,
+.text_enterkslabel-1 em,
+.text_entermumaxlabel-1 em,
+.text_entervplabel-1 em,
+.text_enterresettimelabel-1 em,
+.text_entersetpointlabel-1 em,
+.text_entervminlabel-1 em {
+  border-top-width: 0;
+  border-right-width: 0;
+  border-bottom-width: 0;
+  border-left-width: 0;
+  border-color: transparent;
+  border-style: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: transparent;
+  font-family: inherit;
+  font-style: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  text-transform: inherit;
+  text-decoration: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  color: inherit;
+  opacity: 1;
+  word-break: normal;
+  word-wrap: normal;
+  white-space: normal;
+}
+
+.text_toppagetext a {
+  border-top-width: 0;
+  border-right-width: 0;
+  border-bottom-width: 0;
+  border-left-width: 0;
+  border-color: transparent;
+  border-style: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: transparent;
+  font-family: inherit;
+  font-style: normal;
+  font-weight: inherit;
+  text-transform: inherit;
+  text-decoration: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  color: #000000;
+  opacity: 1;
+  word-break: normal;
+  word-wrap: normal;
+  white-space: normal;
+}
+
+.text_enterfeedflowrate em,
+.text_toppagetext span {
+  border-top-width: 0;
+  border-right-width: 0;
+  border-bottom-width: 0;
+  border-left-width: 0;
+  border-color: transparent;
+  border-style: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: transparent;
+  font-family: inherit;
+  font-style: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-transform: inherit;
+  text-decoration: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  color: inherit;
+  opacity: 1;
+  word-break: normal;
+  word-wrap: normal;
+  white-space: normal;
+}
+
+@media(max-width: 640px) {
+  .container_controller {
+    top: 710px;
+    left: 97px;
+  }
+
+  .container_controller .radio-label {
+    position: relative;
+  }
+
+  .container_reactionparams {
+    top: 537px;
+  }
+
+  .container_reactor .image_reactorimage {
+    position: relative;
+    z-index: 35;
+    height: auto;
+  }
+
+  .text_toppagetext {
+    width: 456px;
+    height: 177px;
+  }
+
+  .container_controller .radio-label-1 {
+    z-index: 18;
+  }
+
+  .container_controller .radio-label-2 {
+    z-index: 15;
+  }
+}

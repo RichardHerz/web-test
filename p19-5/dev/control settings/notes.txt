@@ -1,0 +1,6 @@
+Screenshot case gained control because set point was near where biomass conc was at min during open loop cycling and I switched to auto near a biomass min.
+
+At other times, command goes to zero initially on switching to auto and that causes feed conc goes to zero and so all biomass dies out and biomass stays pegged at zero even when feed conc increases.
+
+So need to work in a bumpless transfer somehow...
+

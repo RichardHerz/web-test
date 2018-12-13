@@ -1,0 +1,108 @@
+---------------------
+WEB APP TO DO:
+- see zotero record javascript best practices - especially don't use "eval" and about namespace (shared variable names) and how to limit 
+
+UNIT INDEPENDENCE
+- can I move plot variable definitions for variables out of simParams and into each unit? Then in simParams or plotter functions just do a .forEach through unitList of active units to get plot variable definitions? Don't want to put plot var def i plotter file to keep it general
+- put all references to specific input units.variables and UI inputs into one place in each unit object so only that one place has to be changed when moving unit to another sim
+
+WEB APP PLOT TO DO:
+>> SEE http://www.flotcharts.org/ for examples, etc.
+- let user select time span on plot - let them change var value of number of points on plot BUT ALSO will need to fill in values in array if increase number
+- let user pick vars to plot - see examples at flotcharts.org
+- time scrollback on plot or earlier data on copy
+- can I get two plots (or more) in same web app?
+
+ALSO CHECK RL NON ISTHERMAL CSTR CONTINUOUS SAVE OF DATA.... 
+
+HOW RL CONTROL LAB DOES PLOTS
+- RL control lab plots half-dozen or so variables - user can select which curves to show or hide 
+- has no x-axis label or scale - all variables plotted as percent between their own min and max 
+- save data (copy data) header has this info - also doesn't list time but does list time interval between points
+
+FROM SAVE DATA FILE:
+Numbers below for each variable are percent between minimum and maximum value for that variable.
+
+Column 1, PV Input, min = 300, max = 400, units = K
+   Input is controlled process variable = temperature of liquid in tank
+...
+
+Columns are tab-delimited data
+Time between data points = 0.5 min
+
+------------------------------
+SIM TIME DISPLAY
+- adaptive dt 
+- add a time display...but why?...SEE BELOW
+- could be useful to use this as time in copy data 
+- suggest to user that they pause, then make change and record time and change made, then restart run
+- or maybe reset sim time to zero on pause
+- or show times of pauses or changes in copy data
+
+
+--------------------
+VERSION NOTES - OLDEST VERSION NOTES AT TOP - NEWEST AT BOTTOM
+
+web_app_1 on the RL web site was originally Ford Wang's experiment - that was taken down and my new web_app_3 renamed to web_app_1 on the RL web site - see work of others folder for his work
+
+web_app_1_orig of 20160116 had layout by MACAW
+
+web_app_1 of 20161007a had layout by lcCardLayoutToWeb 
+
+web_app_1 of 20161028a had modified process_main.js and process_units.js to change step() to updateInputConnections() and updateState() - updateInputConnections gets NEW values from last time step from connected units - updateState gets NEW values from last time step from this unit, then computes new state as NEW values.
+
+web_app_1 20161029a changes updateInputConnections to updateInputs AND removes "NEW" values in answer to this QUESTION: with new updateInputs() and updateState() not sure why need NEW values - since get last values from all other units first, shouldn't need NEW values for this unit (or input units) because just compute new state values and they aren't used in other units in current time step - only reason would be if want to first compute new state values but later in code in same function use the old values in calculation for other state variables - but then could just save a copy as OLD when needed in a particular unit and get rid of NEW values for all units...?
+
+Reactor Networks in Reactor Lab desktop has sendMessages followed by updateProcess - stores message text in both input and output ports - in sendMessages, messages in output ports get put into connected input ports - in updateProcess, unit gets values in both input and output ports, updates output values, then puts them into output ports. THIS HAS SAME EFFECT as updateInputs() and updateState() in web_app_1, with only difference is that previous value of state variables are stored in output port of reactor networks vs. retained as persistent variable value in web app object.
+
+SimzLab Control Lab has updatePorts and updateState - updatePorts copies NEW (TEMP) to regular variables for this unit only (repeating through all units) - then updateState uses regular variables from this unit and other units to compute NEW (TEMP) variable values - so new method with web_app_1 sort of like this but switches what updatePorts and updateInputConnections do - not sure name NEW (TEMP) needed but LC app must use custom props to save new values of state variables (or globals) vs. retained as persistent variable value in web app object. 
+
+web_app_1 20161030a gets rid of global variables, except in plotting script, by creating a simParams unit in the process units script. 
+
+web_app_1 20161030b gets rid of global variables in plotting script by creating a dataArrays object. 
+
+web_app_1 20161031a make modifications to process_interface.js to supply run button ID as function argument and get logger url from simParams object in process_units.js. 
+
+web_app_1 20161031c changes naming of units from unit_1, etc., to puWaterSource, etc., and puts the names in an array in simParams 
+
+web_app_1 20161101f generalizes plotting script in file process_plotter.js so that it gets all parameters from simParams in file process_units.js
+
+web_app_1 20161102a added copy data button to html and css; added copyData() function to process_plotter.js; remove run button ID as argument to run and reset onclick in html and add run button ID as data in simParams and have the run and reset button functions get that from simParams SO THAT copyData() function can pause sim if it is running. 
+
+web_app_1 20161106a replaces FOR REPEATS that step through unit list array with forEach array method in process_main.js
+
+web_app_1 20161109a gets rid of constant almostZero everywhere and || or logic for inputs and replaces it with checks on all inputs to see whether or not they are defined. 
+
+web_app_1 20161109c gets rid of all but one eval() in process_main.js file and shows one example of how to do this in process_plotter.js file but doesn't change all the lines with eval()
+
+web_app_1 20161110b gets rid of all eval() in all files 
+
+web_app_1 20161114a IS EXPERIMENT WITH PLOT INFO ARRAY 
+
+web_app_1 20161114b starting to add new plot data to plotter, etc. 
+
+web_app_1 20161114c see xxx GOT TO HERE CHANGING...
+
+web_app_1 20161116c this is working with new approach to plotting with following exceptions:
+* values of plot variables are oscillating - turns out because of bad initialization
+* array initialization only works for max of two variables - need to make work for more variables
+* copy-save data function not updated
+* new plotting requires that variables to be plotted or copied-saved are objects, and have only updated the two now being plotted - need to update all possible variables to plot (1) in their definition as objects and (2) how values are accessed in calculations
+
+web_app_1 20161116d this is working with new approach to plotting with following exceptions:
+* array initialization only works for max of two variables - need to make work for more variables
+* copy-save data function not updated
+* new plotting requires that variables to be plotted or copied-saved are objects, and have only updated the two now being plotted - need to update all possible variables to plot (1) in their definition as objects and (2) how values are accessed in calculations
+
+web_app_1 20161117a this is working with new approach to plotting for UNLIM VARS with following exceptions:
+* copy-save data function not updated
+* new plotting requires that variables to be plotted or copied-saved are objects, and have only updated the two now being plotted - need to update all possible variables to plot (1) in their definition as objects and (2) how values are accessed in calculations
+
+web_app_1 20161117b this is working with new approach to plotting for UNLIM VARS with following exceptions:
+* copy-save data function not updated 
+
+web_app_1 20161117d this has new plot approach working for unlim variables and copy-save data function working 
+
+web_app_1 20161122a working on puController to put all input and UI input specs at top and then to make updateInputs and updateUIparams independent of having external input present - BUT HAVING PROBLEM with updateInputs... 
+
+web_app_1 20161122d  finished putting all input and UI input specs at top of units and then to make updateInputs and updateUIparams independent of having external input present
