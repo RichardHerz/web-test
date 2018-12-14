@@ -1,484 +1,1104 @@
-// by Richard K. Herz of www.ReactorLab.net
-// 2015
+/*
+  Design, text, images and code by Richard K. Herz, 2018
+  Copyrights held by Richard K. Herz
+  Licensed for use under the GNU General Public License v3.0
+  https://www.gnu.org/licenses/gpl-3.0.en.html
+*/
 
-// this file contains definitions of the process units
-// see file process_main.js for the main simulation scripts
+// This file defines objects that represent process units
 
-// *** CHANGE SO JACKET T IS JACKET FEED T SO NO JACKET DYNAMICS
+// ------------ PROCESS UNIT OBJECT DEFINITIONS ----------------------
 
-// numUnits value needs to agree with number units defined below
-var numUnits = 5;
-
-// essentially irreversible reaction in cstr with heat transfer
-// units will be:
-// (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
-// IF CHANGE THIS LIST EDIT EVERYWHERE BELOW
-// controlled variable is reactor T, manipulated variable is jacket T
-// **** NOTE CHANGE SO manipulated variable is jacket T, not jacket feed T
-
-var unitNameBase = 'unit_';
-var unitName;
-
-var gMinSetValue = 1.0203040504030201e-230; // special value not 0 (-230 for all digits to display)
-
-// ----------------- PROCESS UNIT OBJECT DEFINITIONS ----------------------
-
-// EACH PROCESS UNIT DEFINITION MUST CONTAIN AT LEAST THESE FOUR FUNCTIONS:
-//   reset, updateUIparams, step, display
+// EACH PROCESS UNIT DEFINITION MUST CONTAIN AT LEAST THESE 7 FUNCTIONS:
+//  initialize, reset, updateUIparams, updateInputs, updateState,
+//  updateDisplay, checkForSteadyState
 // THESE FUNCTION DEFINITIONS MAY BE EMPTY BUT MUST BE PRESENT
+//
+// EACH PROCESS UNIT DEFINITION MUST DEFINE the variable residenceTime
 
-// unit_1 - reactor feed - OBJECT DEFINITION
-var unit_1 = {
+// -------------------------------------------------------------------
+
+let processUnits = new Object();
+  // contents must be only the process units as child objects
+  // children optionally can be defined in separate script files, e.g., as puHeatExchanger,
+  // then inserted into processUnits, e.g., processUnits[0] = puHeatExchanger,
+  // then cleared for garbage collection, e.g., puHeatExchanger = null;
+  // units defined in separate files makes them easier to edit
+
+// load process unit objects into this object
+// as indexed objects in order to allow object controller
+// to access them in a repeat with numeric
+
+// processUnits: [0] reactor feed, [1] reactor, [2] jacket, [3] controller
+
+processUnits[0] = {
   //
-  // unit_1 IS REACTOR FEED
-  //
-  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
-  // SEE "GET INPUT CONNECTIONS" below in this unit
-  //   none
+  unitIndex : 0, // index of this unit as child in processUnits parent object
+  // unitIndex used in this object's updateUIparams() method
+  name : 'reactor feed',
+
+  // SUMMARY OF DEPENDENCIES
+
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, used in updateInputs() method
+  getInputs : function() {
+    let inputs = [];
+    // *** e.g., inputs[0] = processUnits[1]['Tcold'][0];
+    return inputs;
+  },
+
+  // USES OBJECT simParams
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //   unit_2 USES unit_1.rate
-  //   unit_2 USES unit_1.conc
-  //   unit_2 USES unit_1.TTemp
-  // (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
+  //   unit 1 USES unit 0 flowRate
+  //   unit 1 USES unit 0 conc
+  //   unit 1 USES unit 0 Tfeed
+  //   [0] reactor feed, [1] reactor, [2] jacket, [3] controller
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
+  //   none
+  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
 
-  dt        : 0.1, // (s), default time step size, dt changed by process_main.js
+  // define main parameters
+  // values will be set in method intialize()
+  flowRate : 0, // (m3/s), feed flow rate
+  conc : 0, // (mol/m3)
+  Tfeed : 300, // (K)
 
-  initialRate	: 0, // (m3/s), feed flow rate
-  rate      : this.initialRate, // (m3/s), feed flow rate
-  rateNEW		: this.initialRate,
+  // define arrays to hold info for variables
+  // these will be filled with values in method initialize()
+  dataHeaders : [], // variable names
+  dataInputs : [], // input field ID's
+  dataUnits : [],
+  dataMin : [],
+  dataMax : [],
+  dataInitial : [],
+  dataValues : [],
 
-  initialConc	: 0,
-  conc      : this.initialConc,
-  concNEW		: this.initialConc,
+  ssCheckSum : 0, // used to check for steady state
+  residenceTime : 0, // for timing checks for steady state check
 
-  initialTTemp	: 300, // (K), TTemp = temperature
-  TTemp     : this.initialTTemp,
-  TTempNEW  : this.initialTTemp,
+  initialize : function() {
+    //
+    let v = 0;
+    this.dataHeaders[v] = 'feedFlowRate';
+    this.dataInputs[v] = 'input_field_enterFeedFlowRate';
+    this.dataUnits[v] = 'm3/s';
+    this.dataMin[v] = 0.0001;
+    this.dataMax[v] = 1;
+    this.dataInitial[v] = 0.05;
+    this.flowRate = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.flowRate; // current input value for reporting
+    //
+    v = 1;
+    this.dataHeaders[v] = 'feedConc';
+    this.dataInputs[v] = 'input_field_enterFeedConc';
+    this.dataUnits[v] = 'mol/m3';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 1000;
+    this.dataInitial[v] = 0;
+    this.conc = this.dataInitial[v];
+    this.dataValues[v] = this.conc;
+    //
+    v = 2;
+    this.dataHeaders[v] = 'feedTemp';
+    this.dataInputs[v] = 'input_field_enterFeedTTemp';
+    this.dataUnits[v] = 'K';
+    this.dataMin[v] = 200;
+    this.dataMax[v] = 500;
+    this.dataInitial[v] = 300;
+    this.Tfeed = this.dataInitial[v];
+    this.dataValues[v] = this.Tfeed;
+    // END OF INPUT VARS
+    // record number of input variables, VarCount
+    // used, e.g., in copy data to table
+    //
+    this.VarCount = v;
+    //
+    // OUTPUT VARS
+    //
+    // v = 7;
+    // this.dataHeaders[v] = 'Trxr';
+    // this.dataUnits[v] =  'K';
+    // // Trxr dataMin & dataMax can be changed in updateUIparams()
+    // this.dataMin[v] = 200;
+    // this.dataMax[v] = 500;
+    //
+  }, // END of initialize()
 
-  reset		: function(){
+  // *** NO LITERAL REFERENCES TO OTHER UNITS OR HTML ID'S BELOW THIS LINE ***
+
+  reset : function(){
     // On 1st load or reload page, the html file fills the fields with html file
     // values and calls reset, which needs updateUIparams to get values in fields.
     // On click reset button but not reload page, unless do something else here,
     // reset function will use whatever last values user has entered.
     this.updateUIparams(); // this first, then set other values as needed
-  },  // << COMMAS ARE REQUIRED AT END OF EACH OBJECT PROPERTY & FUNCTION EXCEPT LAST ONE (NO ;)
-
-  updateUIparams : function(){
-    // use suffix NEW only when user enters unit's output variables
-    // convert input values to Number() so .toFixed() method works when needed,
-    //  e.g., this.UA = Number(enterJacketUA.value);
-    // (1) enterFeedConc, enterFeedTTemp, enterFeedFlowRate
-    this.concNEW = Number(enterFeedConc.value);
-    this.TTempNEW = Number(enterFeedTTemp.value);
-    this.rateNEW = Number(enterFeedFlowRate.value);
+    // set state variables not set by updateUIparams() to initial settings
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
   },
 
-  step		: function(){
+  updateUIparams : function(){
+    //
+    // GET INPUT PARAMETER VALUES FROM HTML UI CONTROLS
+    // SPECIFY REFERENCES TO HTML UI COMPONENTS ABOVE in this unit definition
 
-    // GET INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
-    //   none
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
 
-    // SAVE CURRENT VALUE ON NEW TIME STEP
-    // SO OTHER UNITS UPDATING CAN USE VALUE AT START OF TIME STEP
-    // FOR THEIR CALCS FOR NEW TIME STEP
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
 
-    this.rate = this.rateNEW || this.initialRate;
-    this.conc = this.concNEW || this.initialConc;
-    this.TTemp = this.TTempNEW || this.initialTTemp;
-    // VALUE IS EXPRESSION *||* = *OR* initial value IF EXPRESSION IS UNDEFINED OR FALSE (0)
-    // IF WANT (0) VALUE THEN USE SPECIAL SMALL VALUE
-    // IF WANT TO RESET NEW VALUE TO (0) WHEN SPECIAL SMALL VALUE
-    // THEN BE CAREFUL ALSO ABOUT SAVING CURRENT VALUE
+    // check input fields for new values
+    // function getInputValue() is defined in file process_interface.js
+    // getInputValue(unit # in processUnits object, variable # in dataInputs array)
+    // see variable numbers above in initialize()
+    // note: this.dataValues.[pVar]
+    //   is only used in copyData() to report input values
+    //
+    let unum = this.unitIndex;
+    //
+    this.flowRate = this.dataValues[0] = interface.getInputValue(unum,0);
+    this.conc = this.dataValues[1] = interface.getInputValue(unum,1);
+    this.Tfeed = this.dataValues[2] = interface.getInputValue(unum,2);
 
-  }, // end step method
+  }, // END updateUIparams
 
-  display		: function(){
-    // document.getElementById("demo01").innerHTML = "unit_1.rate = " + this.rate;
-  } // end display method
+  updateInputs : function(){
+    // GET INPUT CONNECTION VALUES FROM OTHER UNITS FROM PREVIOUS TIME STEP,
+    // SINCE updateInputs IS CALLED BEFORE updateState IN EACH TIME STEP
+    //    none for this unit
+  }, // END updateInputs
 
-}; // END var unit_1
+  updateState : function() {
+    //
+    // BEFORE REPLACING PREVIOUS STATE VARIABLE VALUE WITH NEW VALUE, MAKE
+    // SURE THAT VARIABLE IS NOT ALSO USED TO UPDATE ANOTHER STATE VARIABLE HERE -
+    // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
+    // STATE VARIABLE
+    //
+    // WARNING: this method must NOT contain references to other units!
+    //          get info from other units ONLY in updateInputs() method
+    //
+    // nothing to do here for this unit
+    //
+  }, // end updateState method
 
-// unit_2 - reactor - OBJECT DEFINITION
-var unit_2 = {
+  updateDisplay : function(){
+    // nothing to do here for this unit
+  }, // END of updateDisplay()
+
+  checkForSteadyState : function() {
+    // required - called by controller object
+    // *IF* NOT used to check for SS *AND* another unit IS checked,
+    // which can not be at SS, *THEN* return ssFlag = true to calling unit
+    // returns ssFlag, true if this unit at SS, false if not
+    // uses and sets this.ssCheckSum
+    // this.ssCheckSum can be set by reset() and updateUIparams()
+    // check for SS in order to save CPU time when sim is at steady state
+    // check for SS by checking for any significant change in array end values
+    // but wait at least one residence time after the previous check
+    // to allow changes to propagate down unit
+    //
+    let ssFlag = true;
+    return ssFlag;
+  } // END OF checkForSteadyState()
+
+}; // END unit 0 - feed to reactor
+
+processUnits[1] = {
   //
-  // unit_2 IS REACTOR
+  unitIndex : 1, // index of this unit as child in processUnits parent object
+  // unitIndex used in this object's updateUIparams() method
+  name : 'reactor',
+
+  // SUMMARY OF DEPENDENCIES
   //
-  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
-  // SEE "GET INPUT CONNECTIONS" below in this unit
-  //   unit_2 USES unit_1.rate
-  //   unit_2 USES unit_1.conc
-  //   unit_2 USES unit_4.TTemp // TTemp = temperature
-  //   unit_2 USES unit_4.UA
+  // USES OBJECT simParams
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //   unit_5 USES unit_2.TTemp
-  // (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
+  //   unit 3 USES unit 1 Trxr
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
+  //   unit 1 USES unit 0 flowRate // flow rate
+  //   unit 1 USES unit 0 conc
+  //   unit 1 USES unit 0 Tfeed
+  //   unit 1 USES unit 2 Tj
+  //   unit 1 USES unit 2 UA
+  //   [0] reactor feed, [1] reactor, [2] jacket, [3] controller
 
-  dt				: 0.1, // (s), default time step size, dt changed by process_main.js
-  initialTTemp 	: 300, // (K), TTemp = temperature in Kelvin
-  initialConc   : 0, // (mol/m3), reactant concentration
-  vol				: 0.1, // (m3), volume of reactor contents = constant with flow rate
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, used in updateInputs() method
+  getInputs : function() {
+    let inputs = [];
+    inputs[0] = processUnits[0].flowRate;
+    inputs[1] = processUnits[0].conc;
+    inputs[2] = processUnits[0].Tfeed;
+    inputs[3] = processUnits[2].Tj;
+    inputs[4] = processUnits[2].UA;
+    return inputs;
+  },
+
+  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS...
+  // SEE dataInputs array in initialize() method for input field ID's
+
+  // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, used in updateDisplay() method
+  displayReactorContents: '#div_PLOTDIV_reactorContents',
+
+  // *** NO LITERAL REFERENCES TO OTHER UNITS OR HTML ID'S BELOW THIS LINE ***
+  // ***   EXCEPT TO HTML ID'S IN method initialize(), array dataInputs    ***
+
+  // define main parameters
+  // values will be set in method intialize()
+  k300 : 5e-6, // (1/s), reaction rate coefficient value at 300 K
+  Ea : 200, // (kJ/mol), reaction activation energy
+  delH : -250, // (kJ/mol), reaction heat of reaction (exothermic < 0)
+
+  // define variables to hold outputs
+  initialTrxr : 300, // (K)
+  Trxr : 300, // (K)
+  initialCa : 0, // (mol/m3)
+  Ca : 0, // (mol/m3), reactant concentration
+
+  // define arrays to hold info for variables
+  // these will be filled with values in method initialize()
+  dataHeaders : [], // variable names
+  dataInputs : [], // input field ID's
+  dataUnits : [],
+  dataMin : [],
+  dataMax : [],
+  dataInitial : [],
+  dataValues : [],
+
+  // define arrays to hold data for plots, color canvas
+  // these will be filled with initial values in method reset()
+  // profileData : [], // for profile plots, plot script requires this name
+  stripData : [], // for strip chart plots, plot script requires this name
+  // colorCanvasData : [], // for color canvas plots, plot script requires this name
+
+  // allow this unit to take more than one step within one main loop step in updateState method
+  unitStepRepeats : 1,
+  unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
+
+  ssCheckSum : 0, // used to check for steady state
+  residenceTime : 0, // for timing checks for steady state check
+
+  // define variables which will not be plotted nor saved in copy data table
 
   // parameters for essentially irreversible first-order reaction
-  k300      : 5e-6, // (1/s), reaction rate coefficient value at 300 K
-  Ea        : 200, // (kJ/mol), reaction activation energy
-  delH      : -250, // (kJ/mol), reaction heat of reaction (exothermic < 0)
-  Rg        : 8.3144598E-3, // (kJ/mol/K), ideal gas constant
-  rho       : 1000, // (kg/m3), reactant liquid density
-  Cp        : 2.0, // (kJ/kg/K), reactant liquid heat capacity
+  Rg : 8.3144598E-3, // (kJ/mol/K), ideal gas constant
+  rho : 1000, // (kg/m3), reactant liquid density
+  Cp : 2.0, // (kJ/kg/K), reactant liquid heat capacity
+  vol : 0.1, // (m3), volume of reactor contents = constant with flow rate
 
-  TTemp     : this.initialTTemp, // (K), TTemp = temperature in Kelvin
-  TTempNEW  : this.initialTTemp,
+  flowRate : 0, // will get flowRate from unit 0 in updateInputs
+  concIn : 0, // will get concIn from unit 0 in updateInputs, feed
+  Tfeed : 0, // will get Tfeed from unit 0 in updateInputs, feed
+  Tj : 0, // will get Tj from unit 3 in updateInputs, jacket
+  UA : 0, // will get UA from unit 3 in updateInputs
 
-  conc      : this.initialConc, // (mol/m3), reactant concentration
-  concNEW   : this.initialConc,
+  initialize : function() {
+    //
+    let v = 0;
+    this.dataHeaders[v] = 'k300';
+    this.dataInputs[v] = 'input_field_enterk300';
+    this.dataUnits[v] = '1/s';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 1;
+    this.dataInitial[v] = 5.0e-6;
+    this.k300 = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.k300; // current input value for reporting
+    //
+    v = 1;
+    this.dataHeaders[v] = 'Ea';
+    this.dataInputs[v] = 'input_field_enterEa';
+    this.dataUnits[v] = 'kJ/mol';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 500;
+    this.dataInitial[v] = 200
+    this.Ea = this.dataInitial[v];
+    this.dataValues[v] = this.Ea;
+    //
+    v = 2;
+    this.dataHeaders[v] = 'delH';
+    this.dataInputs[v] = 'input_field_enterdelH';
+    this.dataUnits[v] = 'kJ/mol';
+    this.dataMin[v] = -400;
+    this.dataMax[v] = 400;
+    this.dataInitial[v] = -250
+    this.delH = this.dataInitial[v];
+    this.dataValues[v] = this.delH;
+    //
+    // END OF INPUT VARS
+    // record number of input variables, VarCount
+    // used, e.g., in copy data to table
+    //
+    this.VarCount = v;
+    //
+    // OUTPUT VARS
+    //
+    v = 3;
+    this.dataHeaders[v] = 'Trxr';
+    this.dataUnits[v] =  'K';
+    this.dataMin[v] = 200;
+    this.dataMax[v] = 500;
+    //
+    v = 4;
+    this.dataHeaders[v] = 'Ca';
+    this.dataUnits[v] =  'mol/m3';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 1000;
+    //
+  }, // END of initialize()
 
-  reset		: function(){
+  // *** NO LITERAL REFERENCES TO OTHER UNITS OR HTML ID'S BELOW THIS LINE ***
+
+  reset : function() {
+
     // On 1st load or reload page, the html file fills the fields with html file
     // values and calls reset, which needs updateUIparams to get values in fields.
     // On click reset button but not reload page, unless do something else here,
     // reset function will use whatever last values user has entered.
+
     this.updateUIparams(); // this first, then set other values as needed
-    this.TTemp = this.initialTTemp; // (K), TTemp = temperature in Kelvin
-    this.TTempNEW = this.initialTTemp;
-    this.conc = this.initialConc;
-    this.concNEW = this.initialConc;
-  },  // << COMMAS ARE REQUIRED AT END OF EACH OBJECT PROPERTY & FUNCTION EXCEPT LAST ONE (NO ;)
 
-  updateUIparams : function(){
-    // use suffix NEW only when user enters unit's output variables
-    // convert input values to Number() so .toFixed() method works when needed,
-    //  e.g., this.UA = Number(enterJacketUA.value);
-    this.k300 = Number(enterk300.value);
-    this.Ea = Number(enterEa.value);
-    this.delH = Number(enterdelH.value);
-  },
+    // set state variables not set by updateUIparams() to initial settings
 
-  step		: function(){
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
 
-    // GET INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
-    var flowRate1 = unit_1.rate;
-    var conc1 = unit_1.conc;
-    var TTemp4 = unit_4.TTemp;
-    var UA4 = unit_4.UA;
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
 
-    // SAVE CURRENT VALUE ON NEW TIME STEP
-    // SO OTHER UNITS UPDATING CAN USE VALUE AT START OF TIME STEP
-    // FOR THEIR CALCS FOR NEW TIME STEP
+    this.Trxr = this.initialTrxr; // (K)
+    this.Ca = this.initialCa; // (mol/m3), reactant conc
 
-    this.TTemp = this.TTempNEW || this.initialTTemp;
-    this.conc = this.concNEW || this.initialConc;
-    // VALUE IS EXPRESSION *||* = *OR* initial value IF EXPRESSION IS UNDEFINED OR FALSE (0)
-    // IF WANT (0) VALUE THEN USE SPECIAL SMALL VALUE
-    // IF WANT TO RESET NEW VALUE TO (0) WHEN SPECIAL SMALL VALUE
-    // THEN BE CAREFUL ALSO ABOUT SAVING CURRENT VALUE
+    // each unit has its own data arrays for plots and canvases
 
-    var krxn = this.k300 * Math.exp(-(this.Ea/this.Rg)*(1/this.TTemp - 1/300));
-    var rate = -krxn * this.conc;
-    var invTau = flowRate1 / this.vol; // inverse of space time = space velocity
+    // initialize strip chart data array
+    // initPlotData(numStripVars,numStripPts)
+    let numStripVars = 2; // Trxr & Ca here
+    let numStripPts = plotInfo[0]['numberPoints'];
+    this.stripData = plotter.initPlotData(numStripVars,numStripPts);
 
-    var dCdt = invTau * (conc1 - this.conc) + rate;
-    var dC = this.dt * dCdt;
-    var newConc = this.conc + dC;
-    if (newConc <= 0){newConc = gMinSetValue;}  // if value = 0 then set to special small value
-    this.concNEW = newConc || this.initialConc;
+    let kn = 0;
+    for (k = 0; k <= numStripPts; k += 1) {
+      kn = k * simParams.simTimeStep * simParams.simStepRepeats;
+      // x-axis values
+      // x-axis values will not change during sim
+      // XXX change to get number vars for this plotInfo variable
+      //     so can put in repeat - or better yet, a function
+      //     and same for y-axis below
+      // first index specifies which variable in plot data array
+      this.stripData[0][k][0] = kn;
+      this.stripData[1][k][0] = kn;
+      // y-axis values
+      this.stripData[0][k][1] = this.dataMin[3];
+      this.stripData[1][k][1] = this.dataMin[4];
+    }
 
-    var dTdt = invTau*(unit_1.TTemp - this.TTemp) + rate*this.delH/(this.rho*this.Cp) +
-               (TTemp4 - this.TTemp) * UA4 / (this.vol*this.rho*this.Cp);
-    var dTTemp = this.dt * dTdt;
-    var newTTemp = this.TTemp + dTTemp;
-    if (newTTemp <= 0){newTTemp = gMinSetValue;}  // if value = 0 then set to special small value
-    this.TTempNEW = newTTemp || this.initialTTemp;
+  }, // END reset method
 
-  }, // end step method
+  updateUIparams : function() {
+    //
+    // GET INPUT PARAMETER VALUES FROM HTML UI CONTROLS
+    // SPECIFY REFERENCES TO HTML UI COMPONENTS ABOVE in this unit definition
 
-  display		: function(){
-    // document.getElementById("demo01").innerHTML = "unit_1.rate = " + this.rate;
-    var el = document.querySelector("#reactorContents");
-    // reactant is blue, product is red, this.conc is reactant conc
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
+
+    // check input fields for new values
+    // function getInputValue() is defined in file process_interface.js
+    // getInputValue(unit # in processUnits object, variable # in dataInputs array)
+    // see variable numbers above in initialize()
+    // note: this.dataValues.[pVar]
+    //   is only used in copyData() to report input values
+    //
+    let unum = this.unitIndex;
+    //
+    this.k300 = this.dataValues[0] = interface.getInputValue(unum, 0);
+    this.Ea = this.dataValues[1] = interface.getInputValue(unum, 1);
+    this.delH = this.dataValues[2] = interface.getInputValue(unum, 2);
+
+  }, // END updateUIparams()
+
+  updateInputs : function() {
+    //
+    // GET INPUT CONNECTION VALUES FROM OTHER UNITS FROM PREVIOUS TIME STEP,
+    //   SINCE updateInputs IS CALLED BEFORE updateState IN EACH TIME STEP
+    // SPECIFY REFERENCES TO INPUTS ABOVE in this unit definition
+
+    // check for change in overall main time step simTimeStep
+    this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
+
+    let inputs = this.getInputs();
+    this.flowRate = inputs[0]; // feed flow rate
+    this.concIn = inputs[1]; // feed conc
+    this.Tfeed = inputs[2]; // feed T
+    this.Tj = inputs[3]; // jacket T
+    this.UA = inputs[4];
+
+    // residence time used in controller.checkForSteadyState()
+    this.residenceTime = this.vol / this.flowRate;
+    // BUT use width of strip plot to help ensure plot update does not
+    // suspend in middle when reach steady state for check every 2 times
+    // longest res time BUT NOT foolproof, e.g., with
+    // XXX 1 K up then down changes in manual Tj at certain times
+    // let numStripPoints = plotInfo[0]['numberPoints'];
+    // this.residenceTime = this.stripData[1][numStripPoints][0];
+    // console.log('rxr res time = ' + this.residenceTime);
+
+  }, // END updateInputs()
+
+  updateState : function() {
+    //
+    // BEFORE REPLACING PREVIOUS STATE VARIABLE VALUE WITH NEW VALUE, MAKE
+    // SURE THAT VARIABLE IS NOT ALSO USED TO UPDATE ANOTHER STATE VARIABLE HERE -
+    // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
+    // STATE VARIABLE
+    //
+    // WARNING: this method must NOT contain references to other units!
+    //          get info from other units ONLY in updateInputs() method
+
+    let krxn = this.k300 * Math.exp(-(this.Ea/this.Rg)*(1/this.Trxr- 1/300));
+    let rate = -krxn * this.Ca;
+    let invTau = this.flowRate / this.vol; // inverse of space time = space velocity
+
+    let dCdt = invTau * (this.concIn - this.Ca) + rate;
+    let dC = this.unitTimeStep * dCdt;
+    // update conc
+    this.Ca = this.Ca + dC;
+    if (this.Ca < 0){this.Ca = 0;}
+
+    let dTdt = invTau*(this.Tfeed - this.Trxr) + rate*this.delH/(this.rho*this.Cp) +
+               (this.Tj - this.Trxr) * this.UA /(this.vol*this.rho*this.Cp);
+    let dTrxr = this.unitTimeStep * dTdt;
+    // update Trxr
+    this.Trxr = this.Trxr + dTrxr;
+
+  }, // end updateState method
+
+  updateDisplay : function() {
+
+    // update color of reactor contents on web page
+    let el = document.querySelector(this.displayReactorContents);
+    // reactant is blue, product is red, this.Ca is reactant conc
     // xxx assume here max conc is 400 but should make it a variable
-    var concB = Math.round((this.conc)/400 * 255);
-    var concR = 255 - concB;
-    var concColor = "rgb(" + concR + ", 0, " + concB + ")";
+    let concB = Math.round(this.Ca/400 * 255);
+    let concR = 255 - concB;
+    let concColor = "rgb(" + concR + ", 0, " + concB + ")";
     // alert("concColor = " + concColor); // check results
     // "background-color" in index.css did not work
     el.style.backgroundColor = concColor;
-  } // end display method
 
-}; // END var unit_2
+    // HANDLE STRIP CHART DATA
 
-// unit_3 - feed to heat transfer jacket - OBJECT DEFINITION
-var unit_3 = {
-  // *** CHANGE SO JACKET T IS JACKET FEED T SO NO JACKET DYNAMICS
-  //
-  // unit_3 IS FEED TO HEAT TRANSFER JACKET
-  //
-  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
-  // SEE "GET INPUT CONNECTIONS" below in this unit
-  //   unit_3 USES unit_5.command
-  // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //   unit_4 USES unit_3.rate
-  //   unit_4 USES unit_3.TTemp // TTemp = temperature
-  // (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
+    let v = 0; // used as index
+    let p = 0; // used as index
+    let numStripPoints = plotInfo[0]['numberPoints'];
+    let numStripVars = 2; // only the variables from this unit
 
-  dt        : 0.1, // (s), default time step size, dt changed by process_main.js
+    // handle reactor T
+    v = 0;
+    tempArray = this.stripData[v]; // work on one plot variable at a time
+    // delete first and oldest element which is an [x,y] pair array
+    tempArray.shift();
+    // add the new [x.y] pair array at end
+    tempArray.push( [ 0, this.Trxr] );
+    // update the variable being processed
+    this.stripData[v] = tempArray;
 
-  initialRate	: 1, // (m3/s), heat transfer liquid flow rate
-  rate      : this.initialRate,
-  rateNEW		: this.initialRate,
+    // handle reactant conc
+    v = 1;
+    tempArray = this.stripData[v]; // work on one plot variable at a time
+    // delete first and oldest element which is an [x,y] pair array
+    tempArray.shift();
+    // add the new [x.y] pair array at end
+    tempArray.push( [ 0, this.Ca ] );
+    // update the variable being processed
+    this.stripData[v] = tempArray;
 
-  initialTTemp	: 350, // (K), TTemp = temperature
-  TTemp		: this.initialTTemp,
-  TTempNEW		: this.initialTTemp,
+    // re-number the x-axis values to equal time values
+    // so they stay the same after updating y-axis values
+    let timeStep = simParams.simTimeStep * simParams.simStepRepeats;
+    for (v = 0; v < numStripVars; v += 1) {
+      for (p = 0; p <= numStripPoints; p += 1) { // note = in p <= numStripPoints
+        // note want p <= numStripPoints so get # 0 to  # numStripPoints of points
+        // want next line for newest data at max time
+        this.stripData[v][p][0] = p * timeStep;
+        // want next line for newest data at zero time
+        // this.stripData[v][p][0] = (numStripPoints - p) * timeStep;
+      }
+    }
 
-  reset		: function(){
-    // On 1st load or reload page, the html file fills the fields with html file
-    // values and calls reset, which needs updateUIparams to get values in fields.
-    // On click reset button but not reload page, unless do something else here,
-    // reset function will use whatever last values user has entered.
-    this.updateUIparams(); // this first, then set other values as needed
-    this.TTempNEW = this.initialTTemp;
-  },  // << COMMAS ARE REQUIRED AT END OF EACH OBJECT PROPERTY & FUNCTION EXCEPT LAST ONE (NO ;)
+  }, // END of updateDisplay()
 
-  updateUIparams : function(){
-    // use suffix NEW only when user enters unit's output variables
-    // convert input values to Number() so .toFixed() method works when needed,
-    //  e.g., this.UA = Number(enterJacketUA.value);
-    // (3) enterJacketFlowRate
-
-    // *** CHANGE SO JACKET T IS JACKET FEED T SO NO JACKET DYNAMICS
-    this.rateNEW = this.initialRate; // arbitrary value
-    // this.rateNEW = Number(enterJacketFlowRate.value);
-  },
-
-  step		: function(){
-
-    // GET INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
-    var command = unit_5.command;
-
-    // SAVE CURRENT VALUE ON NEW TIME STEP
-    // SO OTHER UNITS UPDATING CAN USE VALUE AT START OF TIME STEP
-    // FOR THEIR CALCS FOR NEW TIME STEP
-
-    this.rate = this.rateNEW || this.initialRate;
-    this.TTemp = this.TTempNEW || this.initialTTemp;
-    // VALUE IS EXPRESSION *||* = *OR* initial value IF EXPRESSION IS UNDEFINED OR FALSE (0)
-    // IF WANT (0) VALUE THEN USE SPECIAL SMALL VALUE
-    // IF WANT TO RESET NEW VALUE TO (0) WHEN SPECIAL SMALL VALUE
-    // THEN BE CAREFUL ALSO ABOUT SAVING CURRENT VALUE
-
-    // get feed T from controller command xxx
-    this.TTempNEW =  command || this.initialTTemp;
-
-  }, // end step method
-
-  display		: function(){
-    // document.getElementById("demo01").innerHTML = "unit_1.rate = " + this.rate;
-  } // end display method
-
-}; // END var unit_3
-
-// unit_4 - heat transfer jacket - OBJECT DEFINITION
-var unit_4 = {
-  // *** CHANGE SO JACKET T IS JACKET FEED T SO NO JACKET DYNAMICS
-  //
-  // unit_4 IS HEAT TRANSFER JACKET
-  //
-  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
-  // SEE "GET INPUT CONNECTIONS" below in this unit
-  //   unit_4 USES unit_2.TTemp
-  //   unit_4 USES unit_3.rate // flow rate
-  //   unit_4 USES unit_3.TTemp
-  // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //   unit_2 USES unit_4.TTemp // TTemp = temperature
-  // (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
-
-  dt        : 0.1, // (s), default time step size, dt changed by process_main.js
-
-  vol       : 0.02, // (m3), heat transfer jacket volume
-  rho       : 1000, // (kg/m3), heat transfer liquid density
-  Cp        : 2.0, // (kJ/kg/K), heat transfer liquid heat capacity
-
-  initialTTemp	: 350, // (K), TTemp = temperature
-  TTemp     : this.initialTTemp,
-  TTempNEW  : this.initialTTemp,
-
-  reset		: function(){
-    // On 1st load or reload page, the html file fills the fields with html file
-    // values and calls reset, which needs updateUIparams to get values in fields.
-    // On click reset button but not reload page, unless do something else here,
-    // reset function will use whatever last values user has entered.
-    this.updateUIparams(); // this first, then set other values as needed
-    this.TTemp = this.initialTTemp;
-    this.TTempNEW = this.initialTTemp;
-  },  // << COMMAS ARE REQUIRED AT END OF EACH OBJECT PROPERTY & FUNCTION EXCEPT LAST ONE (NO ;)
-
-  updateUIparams : function(){
-    // use suffix NEW only when user enters unit's output variables
-    // convert input values to Number() so .toFixed() method works when needed,
-    //  e.g., this.UA = Number(enterJacketUA.value);
-    this.UA = Number(enterJacketUA.value); // (kJ/s/K), heat transfer area * coefficient
-  },
-
-  step		: function(){
-
-    // GET INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
-    var TTemp2 = unit_2.TTemp;
-    var flowRate3 = unit_3.rate;
-    var TTemp3 =  unit_3.TTemp;
-
-    // SAVE CURRENT VALUE ON NEW TIME STEP
-    // SO OTHER UNITS UPDATING CAN USE VALUE AT START OF TIME STEP
-    // FOR THEIR CALCS FOR NEW TIME STEP
-
-    this.TTemp = this.TTempNEW || this.initialTTemp;
-    // VALUE IS EXPRESSION *||* = *OR* initial value IF EXPRESSION IS UNDEFINED OR FALSE (0)
-    // IF WANT (0) VALUE THEN USE SPECIAL SMALL VALUE
-    // IF WANT TO RESET NEW VALUE TO (0) WHEN SPECIAL SMALL VALUE
-    // THEN BE CAREFUL ALSO ABOUT SAVING CURRENT VALUE
-
-// *** CHANGE SO JACKET T IS JACKET FEED T SO NO JACKET DYNAMICS
-
-    // var invTau = flowRate3 / this.vol;
+  checkForSteadyState : function() {
+    // required - called by controller object
+    // *IF* NOT used to check for SS *AND* another unit IS checked,
+    // which can not be at SS, *THEN* return ssFlag = true to calling unit
+    // returns ssFlag, true if this unit at SS, false if not
+    // uses and sets this.ssCheckSum
+    // this.ssCheckSum can be set by reset() and updateUIparams()
+    // check for SS in order to save CPU time when sim is at steady state
+    // check for SS by checking for any significant change in array end values
+    // but wait at least one residence time after the previous check
+    // to allow changes to propagate down unit
     //
-    // var dTdt = invTau*(TTemp3 - this.TTemp) +
-    //            (TTemp2 - this.TTemp) * this.UA/(this.vol*this.rho*this.Cp);
-    // var dTTemp = this.dt * dTdt;
-    // var newTTemp= this.TTemp + dTTemp;
-    // if (newTTemp <= 0){newTTemp = gMinSetValue;}  // if value = 0 then set to special small value
-    // this.TTempNEW = newTTemp || this.initialTTemp;
+    // use reactant conc at oldest time on plot in check
+    // as well as current conc this.Ca in crt check
+    // in order to help ensure strip plot update doesn't stop unless plot flat
+    // AND use width of strip plot for residence time in updateInputs
+    // BUT NOT foolproof, e.g., with
+    // 1 K up then down changes in manual Tj at certain times
+    //
+    // multiply all numbers by a factor to get desired number significant
+    // figures to left decimal point so toFixed() does not return string "0.###"
+    // WARNING: too many sig figs will prevent detecting steady state
+    //
+    let rc = 1.0e1 * this.stripData[1][0][1]; // oldest reactant conc in rxr conc plot
+    let rt = 1.0e1 * this.Tj;
+    let lt = 1.0e1 * this.Trxr;
+    let lc = 1.0e1 * this.Ca;
+    rc = rc.toFixed(0); // strings
+    rt = rt.toFixed(0);
+    lt = lt.toFixed(0);
+    lc = lc.toFixed(0);
+    // concatenate strings
+    let newCheckSum = rc +'.'+ rt +'.'+ lt +'.'+ lc;
+    //
+    let oldSScheckSum = this.ssCheckSum;
+    let ssFlag = false;
+    if (newCheckSum == oldSScheckSum) {ssFlag = true;}
+    this.ssCheckSum = newCheckSum; // save current value for use next time
 
-    var newTTemp = TTemp3; // **** CHANGE use jacket feed T for jacket T
-    this.TTempNEW = newTTemp || this.initialTTemp;
+    // console.log('oldSScheckSum = ' + oldSScheckSum);
+    // console.log('newCheckSum = ' + newCheckSum + ', ssFlag = ' + ssFlag);
 
-    // this.TTempNEW = 347; // XXX TEST
+    return ssFlag;
+  } // END checkForSteadyState method
 
-  }, // end step method
+}; // END unit 1 - reactor
 
-  display		: function(){
-    // document.getElementById("demo01").innerHTML = "unit_1.rate = " + this.rate;
-  } // end display method
-
-}; // END var unit_4
-
-// unit_5 - reactor temperature controller - OBJECT DEFINITION
-var unit_5 = {
+processUnits[2] = {
   //
-  // unit_5 IS REACTOR TEMPERATURE CONTORLLER
+  unitIndex : 2, // index of this unit as child in processUnits parent object
+  // unitIndex used in this object's updateUIparams() method
+  name : 'heat transfer jacket',
+
+  // SUMMARY OF DEPENDENCIES
   //
-  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
-  // SEE "GET INPUT CONNECTIONS" below in this unit
-  //   unit_5 USES unit_2.TTemp - controlled variable
+  // USES OBJECT simParams
   // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
-  //   unit_3 USES unit_5.command - manipulated variable
-  // (1) reactor feed, (2) reactor, (3) feed to jacket, (4) jacket, (5) controller
+  //   unit 1 USES unit 2 UA
+  //   unit 1 USES unit 2 Tj
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
+  //   unit 2 USES unit 3 command
+  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
 
-  dt				:	0.1, // (s), default time step size, dt changed by process_main.js
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, used in updateInputs() method
+  getInputs : function() {
+    let inputs = [];
+    inputs[0] = processUnits[3].command;
+    return inputs;
+  },
 
-  setPoint		:	330, // (K) desired reactor temperature
-  gain				:	100, // controller gain
-  resetTime   :	3, // integral mode reset time
-  manualBias  : 300, // (K), command at zero error
-  initialCommand  :	300, // controller command signal (coef for unit_2)
-  command     : this.initialCommand,
-  commandNEW  : this.initialCommand,
-  errorIntegral :	gMinSetValue, // integral error
-  errorIntegralNEW  : gMinSetValue,
+  // variables defined here are available to all functions inside this unit
 
-  mode        : "manual", // auto or manual, see changeMode() below
-  manualCommand : 348,
+  // vol       : 0.02, // (m3), heat transfer jacket volume
+  // rho       : 1000, // (kg/m3), heat transfer liquid density
+  // Cp        : 2.0, // (kJ/kg/K), heat transfer liquid heat capacity
 
-  reset		: function(){
+  initialTj : 350,
+  Tj     : this.initialTj,
+  command : 0, // input from controller
+
+  // define arrays to hold info for variables
+  // these will be filled with values in method initialize()
+  dataHeaders : [], // variable names
+  dataInputs : [], // input field ID's
+  dataUnits : [],
+  dataMin : [],
+  dataMax : [],
+  dataInitial : [],
+  dataValues : [],
+
+  // define arrays to hold output variables
+  // these will be filled with initial values in method reset()
+  // *** e.g., Trxr : [],
+
+  // define arrays to hold data for plots, color canvas
+  // these will be filled with initial values in method reset()
+  stripData : [], // for strip chart plots, plot script requires this name
+
+  // allow this unit to take more than one step within one main loop step in updateState method
+  unitStepRepeats : 1,
+  unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
+
+  ssCheckSum : 0, // used to check for steady state
+  residenceTime : 0, // for timing checks for steady state check
+  // residenceTime is set in this unit's updateUIparams()
+
+  initialize : function() {
+    //
+    let v = 0;
+    this.dataHeaders[v] = 'UA';
+    this.dataInputs[v] = 'input_field_enterjacketUA';
+    this.dataUnits[v] = 'kJ/s/K';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 100;
+    this.dataInitial[v] = 20;
+    this.UA = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.UA; // current input value for reporting
+    //
+    // END OF INPUT VARS
+    // record number of input variables, VarCount
+    // used, e.g., in copy data to table
+    //
+    this.VarCount = v;
+    //
+    // OUTPUT VARS
+    //
+    v = 1;
+    this.dataHeaders[v] = 'Tj';
+    this.dataUnits[v] =  'K';
+    this.dataMin[v] = 200;
+    this.dataMax[v] = 500;
+    //
+  }, // END initialize()
+
+  reset : function(){
+    //
     // On 1st load or reload page, the html file fills the fields with html file
     // values and calls reset, which needs updateUIparams to get values in fields.
     // On click reset button but not reload page, unless do something else here,
     // reset function will use whatever last values user has entered.
+
     this.updateUIparams(); // this first, then set other values as needed
-    this.errorIntegral = gMinSetValue;
-    this.errorIntegralNEW = gMinSetValue;
+
+    // set state variables not set by updateUIparams() to initial settings
+
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
+
+    // set state variables not set by updateUIparams to initial settings
+    this.Tj = this.initialTj;
+
+    // each unit has its own data arrays for plots and canvases
+
+    // initialize strip chart data array
+    // initPlotData(numStripVars,numStripPts)
+    let numStripVars = 1; // jacket T here
+    let numStripPts = plotInfo[0]['numberPoints'];
+    this.stripData = plotter.initPlotData(numStripVars,numStripPts);
+
+    let kn = 0;
+    for (k = 0; k <= numStripPts; k += 1) {
+      kn = k * simParams.simTimeStep * simParams.simStepRepeats;
+      // x-axis values
+      // x-axis values will not change during sim
+      // XXX change to get number vars for this plotInfo variable
+      //     so can put in repeat - or better yet, a function
+      //     and same for y-axis below
+      // first index specifies which variable in plot data array
+      this.stripData[0][k][0] = kn;
+      // y-axis values
+      this.stripData[0][k][1] = this.dataMin[1];
+    }
+
+  }, // END reset method
+
+  updateUIparams : function() {
+    //
+    // GET INPUT PARAMETER VALUES FROM HTML UI CONTROLS
+    // SPECIFY REFERENCES TO HTML UI COMPONENTS ABOVE in this unit definition
+
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
+
+    // check input fields for new values
+    // function getInputValue() is defined in file process_interface.js
+    // getInputValue(unit # in processUnits object, variable # in dataInputs array)
+    // see variable numbers above in initialize()
+    // note: this.dataValues.[pVar]
+    //   is only used in copyData() to report input values
+    //
+    let unum = this.unitIndex;
+    //
+    this.UA = this.dataValues[0] = interface.getInputValue(unum, 0);
+
+  }, // END updateUIparams method
+
+  updateInputs : function() {
+    //
+    // GET INPUT CONNECTION VALUES FROM OTHER UNITS FROM PREVIOUS TIME STEP,
+    //   SINCE updateInputs IS CALLED BEFORE updateState IN EACH TIME STEP
+    // SPECIFY REFERENCES TO INPUTS ABOVE in this unit definition
+
+    // check for change in overall main time step simTimeStep
+    this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
+
+    // get array of current input values to this unit from other units
+    let inputs = this.getInputs();
+    this.command = inputs[0];
+
+  }, // END updateInputs method
+
+  updateState : function(){
+    //
+    // BEFORE REPLACING PREVIOUS STATE VARIABLE VALUE WITH NEW VALUE, MAKE
+    // SURE THAT VARIABLE IS NOT ALSO USED TO UPDATE ANOTHER STATE VARIABLE -
+    // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
+    // STATE VARIABLE
+
+    this.Tj = this.command;
+
+  }, // END updateState method
+
+  updateDisplay : function(){
+    // update display elements which only depend on this process unit
+    // except do all plotting at main controller updateDisplay
+    // since some plots may contain data from more than one process unit
+
+    // HANDLE STRIP CHART DATA
+
+    let v = 0; // used as index
+    let p = 0; // used as index
+    let numStripPoints = plotInfo[0]['numberPoints'];
+
+    // handle Tj
+    v = 0;
+    tempArray = this.stripData[v]; // work on one plot variable at a time
+    // delete first and oldest element which is an [x,y] pair array
+    tempArray.shift();
+    // add the new [x.y] pair array at end
+    tempArray.push( [ 0, this.Tj ] );
+    // update the variable being processed
+    this.stripData[v] = tempArray;
+
+    // re-number the x-axis values to equal time values
+    // so they stay the same after updating y-axis values
+    let timeStep = simParams.simTimeStep * simParams.simStepRepeats;
+    v = 0; // just one var in this display method, so don't need repeat
+    // to do all vars, for (v = 0; v < numStripVariables; v += 1)
+    for (p = 0; p <= numStripPoints; p += 1) { // note = in p <= numStripPoints
+      // note want p <= numStripPoints so get # 0 to  # numStripPoints of points
+      // want next line for newest data at max time
+      this.stripData[v][p][0] = p * timeStep;
+      // want next line for newest data at zero time
+      // this.stripData[v][p][0] = (numStripPoints - p) * timeStep;
+    }
+
+  }, // END updateDisplay()
+
+  checkForSteadyState : function() {
+    // required - called by controller object
+    // *IF* NOT used to check for SS *AND* another unit IS checked,
+    // which can not be at SS, *THEN* return ssFlag = true to calling unit
+    // returns ssFlag, true if this unit at SS, false if not
+    // uses and sets this.ssCheckSum
+    // this.ssCheckSum can be set by reset() and updateUIparams()
+    // check for SS in order to save CPU time when sim is at steady state
+    // check for SS by checking for any significant change in array end values
+    // but wait at least one residence time after the previous check
+    // to allow changes to propagate down unit
+    //
+    let ssFlag = true;
+    return ssFlag;
+  } // END checkForSteadyState()
+
+}; // END unit 2 - heat transfer jacket
+
+processUnits[3] = {
+  //
+  unitIndex : 3, // index of this unit as child in processUnits parent object
+  // unitIndex used in this object's updateUIparams() method
+  name : 'reactor temperature controller',
+
+  // NOTE: this unit has a special method: changeMode
+
+  // SUMMARY OF DEPENDENCIES
+  // USES OBJECT simParams
+  // OUTPUT CONNECTIONS FROM THIS UNIT TO OTHER UNITS
+  //   unit 2 USES processUnits[3].command - manipulated variable
+  //   [0] reactor feed, [1] reactor, [2] jacket, [3] controller
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, see updateInputs below
+  //   unit 3 USES unit 1 Trxr - controlled variable
+  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS, see updateUIparams below
+
+  // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, used in updateInputs() method
+  getInputs : function() {
+    let inputs = [];
+    inputs[0] = processUnits[1].Trxr;
+    return inputs;
+  },
+
+  // INPUT CONNECTIONS TO THIS UNIT FROM HTML UI CONTROLS...
+  // SEE dataInputs array in initialize() method for input field ID's
+
+  // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, used in updateDisplay() method
+  // *** e.g., displayReactorLeftConc: 'field_reactor_left_conc',
+
+  // *** NO LITERAL REFERENCES TO OTHER UNITS OR HTML ID'S BELOW THIS LINE ***
+  // ***   EXCEPT TO HTML ID'S IN method initialize(), array dataInputs    ***
+
+  // define main inputs
+  // values will be set in method intialize()
+  resetTime   : 30, // integral mode reset time
+  gain				: 300, // controller gain
+  setPoint		: 340, // (K) desired reactor temperature
+  manualCommand : 348, // (K)
+  manualBias  : 300, // (K), command at zero error
+  initialCommand  : 300, // controller command signal (coef for unit_2)
+  command         : 0,
+  errorIntegral   : 0, // integral error
+  Trxr : 0, // will get Trxr from unit 1 in updateInputs
+  mode : "manual", // auto or manual, see changeMode() below
+
+  // define arrays to hold info for variables
+  // these will be filled with values in method initialize()
+  dataHeaders : [], // variable names
+  dataInputs : [], // input field ID's
+  dataUnits : [],
+  dataMin : [],
+  dataMax : [],
+  dataInitial : [],
+  dataValues : [],
+
+  // allow this unit to take more than one step within one main loop step in updateState method
+  unitStepRepeats : 1,
+  unitTimeStep : simParams.simTimeStep / this.unitStepRepeats,
+
+  ssCheckSum : 0, // used to check for steady state
+  residenceTime : 0, // for timing checks for steady state check
+  // residenceTime is set in this unit's updateUIparams()
+
+  initialize : function() {
+    //
+    let v = 0;
+    this.dataHeaders[v] = 'resetTime';
+    this.dataInputs[v] = 'input_field_enterResetTime';
+    this.dataUnits[v] = 's';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 100;
+    this.dataInitial[v] = 30;
+    this.resetTime = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.resetTime; // current input value for reporting
+    //
+    v = 1;
+    this.dataHeaders[v] = 'gain';
+    this.dataInputs[v] = 'input_field_enterGain';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 1000;
+    this.dataInitial[v] = 300;
+    this.gain = this.dataInitial[v];
+    this.dataValues[v] = this.gain;
+    //
+    v = 2;
+    this.dataHeaders[v] = 'setPoint';
+    this.dataInputs[v] = 'input_field_enterSetpoint';
+    this.dataUnits[v] = 'K';
+    this.dataMin[v] = 300;
+    this.dataMax[v] = 500;
+    this.dataInitial[v] = 340;
+    this.setPoint = this.dataInitial[v];
+    this.dataValues[v] = this.setPoint;
+    //
+    v = 3;
+    this.dataHeaders[v] = 'manualCommand';
+    this.dataInputs[v] = 'input_field_enterJacketFeedTTemp';
+    this.dataUnits[v] = 'K';
+    this.dataMin[v] = 200;
+    this.dataMax[v] = 450;
+    this.dataInitial[v] = 348;
+    this.manualCommand = this.dataInitial[v];
+    this.dataValues[v] = this.manualCommand;
+    //
+    // SPECIAL - SET CHECKED OF RADIO BUTTONS TO MATCH THIS SETTING
+    // PAGE RELOAD DOES NOT CHANGE CHECKED BUT DOES CALL initialize
+    document.getElementById("radio_controllerAUTO").checked = false;
+    document.getElementById("radio_controllerMANUAL").checked = true;
+    //
+    // END OF INPUT VARS
+    // record number of input variables, VarCount
+    // used, e.g., in copy data to table
+    //
+    // special, use v-1 to not report manualCommand in copy data table header
+    // but need manualCommand as input var to get from html input
+    this.VarCount = v-1;
+    //
+    // OUTPUT VARS
+    //
+    v = 4;
+    this.dataHeaders[v] = 'command';
+    this.dataUnits[v] =  'K';
+    this.dataMin[v] = 300;
+    this.dataMax[v] = 450;
+    //
+  }, // END initialize method
+
+  reset : function() {
+    //
+    // On 1st load or reload page, the html file fills the fields with html file
+    // values and calls reset, which needs updateUIparams to get values in fields.
+    // On click reset button but not reload page, unless do something else here,
+    // reset function will use whatever last values user has entered.
+
+    this.updateUIparams(); // this first, then set other values as needed
+
+    // set state variables not set by updateUIparams() to initial settings
+
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
+
+    // set state variables not set by updateUIparams to initial settings
+    this.errorIntegral = 0;
     this.command = this.initialCommand;
-    this.commandNEW = this.initialCommand;
-  },  // << COMMAS ARE REQUIRED AT END OF EACH OBJECT PROPERTY & FUNCTION EXCEPT LAST ONE (NO ;)
+
+  },  // END reset method
 
   changeMode : function(){
-    // below does not work when html input tag id="input.radio_controllerAUTO"
-    // use instead id="radio_controllerAUTO" - same for MANUAL & AUTO
-    var el = document.querySelector("#radio_controllerAUTO");
-    var el2 = document.querySelector("#enterJacketFeedTTemp");
+    let el = document.querySelector("#radio_controllerAUTO");
+    let el2 = document.querySelector("#enterJacketFeedTTemp");
     if (el.checked){
-      // alert("controller in AUTO mode");
+      // console.log("switch controller to AUTO mode");
       this.mode = "auto"
       // TWO LINES BELOW USED WHEN TOGGLE THIS INPUT HIDDEN-VISIBLE
       //   el2.type = "hidden";
-      //   document.getElementById("enterJacketFeedTTempLABEL").style.visibility = "hidden";
+      //   document.getElementById("enterJacketFeedTTemp_LABEL").style.visibility = "hidden";
     } else {
-      // alert("controller in MANUAL mode");
+      // console.log("switch controller to MANUAL mode");
       this.mode = "manual"
       // TWO LINES BELOW USED WHEN TOGGLE THIS INPUT HIDDEN-VISIBLE
       //   el2.type = "input";
-      //   document.getElementById("enterJacketFeedTTempLABEL").style.visibility = "visible";
+      //   document.getElementById("enterJacketFeedTTemp_LABEL").style.visibility = "visible";
     }
+
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
+
   }, // end changeMode function
 
-  updateUIparams : function(){
-    // use suffix NEW only when user enters unit's output variables
-    // convert input values to Number() so .toFixed() method works when needed,
-    //  e.g., this.UA = Number(enterJacketUA.value);
-    // (5) enterResetTime, enterGain, enterSetpoint
-    this.resetTime = Number(enterResetTime.value);
-    this.gain = Number(enterGain.value);
-    this.setPoint = Number(enterSetpoint.value);
-    // at least for input below, value returned is not a number, probably text
-    // so convert this and others to numbers
-    // noticed problem in process_units copyData function, .toFixed(2) didn't work
-    this.manualCommand = Number(enterJacketFeedTTemp.value);
-  },
+  updateUIparams : function() {
+    //
+    // GET INPUT PARAMETER VALUES FROM HTML UI CONTROLS
+    // SPECIFY REFERENCES TO HTML UI COMPONENTS ABOVE in this unit definition
 
-  step	: function(){
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
 
-    // GET INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS
-    var TTemp2 = unit_2.TTemp;
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
 
-    // SAVE CURRENT VALUE ON NEW TIME STEP
-    // SO OTHER UNITS UPDATING CAN USE VALUE AT START OF TIME STEP
-    // FOR THEIR CALCS FOR NEW TIME STEP
+    // check input fields for new values
+    // function getInputValue() is defined in file process_interface.js
+    // getInputValue(unit # in processUnits object, variable # in dataInputs array)
+    // see variable numbers above in initialize()
+    // note: this.dataValues.[pVar]
+    //   is only used in copyData() to report input values
+    //
+    let unum = this.unitIndex;
+    //
+    this.resetTime = this.dataValues[0] = interface.getInputValue(unum, 0);
+    this.gain = this.dataValues[1] = interface.getInputValue(unum, 1);
+    this.setPoint = this.dataValues[2] = interface.getInputValue(unum, 2);
+    this.manualCommand = this.dataValues[3] = interface.getInputValue(unum, 3);
 
-    this.command = this.commandNEW || this.initialCommand;
-    this.errorIntegral = this.errorIntegralNEW || gMinSetValue;
-    // VALUE IS EXPRESSION *||* = *OR* initial value IF EXPRESSION IS UNDEFINED OR FALSE (0)
-    // IF WANT (0) VALUE THEN USE SPECIAL SMALL VALUE
-    // IF WANT TO RESET NEW VALUE TO (0) WHEN SPECIAL SMALL VALUE
-    // THEN BE CAREFUL ALSO ABOUT SAVING CURRENT VALUE
+  }, // END updateUIparams method
+
+  updateInputs : function() {
+    //
+    // GET INPUT CONNECTION VALUES FROM OTHER UNITS FROM PREVIOUS TIME STEP,
+    //   SINCE updateInputs IS CALLED BEFORE updateState IN EACH TIME STEP
+    // SPECIFY REFERENCES TO INPUTS ABOVE in this unit definition
+
+    // check for change in overall main time step simTimeStep
+    this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
+
+    // get array of current input values to this unit from other units
+    let inputs = this.getInputs();
+    this.Trxr = inputs[0];
+  }, // END updateInputs method
+
+  updateState : function(){
+    //
+    // BEFORE REPLACING PREVIOUS STATE VARIABLE VALUE WITH NEW VALUE, MAKE
+    // SURE THAT VARIABLE IS NOT ALSO USED TO UPDATE ANOTHER STATE VARIABLE HERE -
+    // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
+    // STATE VARIABLE
+    //
+    // WARNING: this method must NOT contain references to other units!
+    //          get info from other units ONLY in updateInputs() method
 
     // compute new value of PI controller command
-    // USING VALUE FROM unit_2, unit_2.TTemp
-    var error = this.setPoint - TTemp2;
-    this.commandNEW = this.manualBias + this.gain *
+    let error = this.setPoint - this.Trxr;
+    this.command = this.manualBias + this.gain *
                   (error + (1/this.resetTime) * this.errorIntegral);
 
     // stop integration at command limits
     // to prevent integral windup
-    if (this.commandNEW > 450){
-      this.commandNEW = 450;
-    } else if (this.commandNEW < 200){
-      this.commandNEW = 200;
+    let v = 4; // 4 is command
+    if (this.command > this.dataMax[v]){
+      this.command = this.dataMax[v];
+    } else if (this.command < this.dataMin[v]){
+      this.command = this.dataMin[v];
     } else {
       // not at limit, OK to update integral of error
-      this.errorIntegralNEW = this.errorIntegral + error * this.dt; // update integral of error
+      // update errorIntegral only after it is used above to update this.command
+      this.errorIntegral = this.errorIntegral + error * simParams.simTimeStep; // update integral of error
     }
 
     if (this.mode == "manual"){
-      // replace commandNEW with value entered in input in page
-      // var el = document.querySelector("#enterJacketFeedTTemp");
-      // this.commandNEW = el.value;
-      this.commandNEW = this.manualCommand;
+      // replace command with value entered in input in page
+      // let el = document.querySelector("#enterJacketFeedTTemp");
+      // this.command = el.value;
+      this.command = this.manualCommand;
     } else {
-      // in auto mode, use commandNEW computed above
+      // in auto mode, use command computed above
     }
 
-  }, // end step method
+  }, // end updateState method
 
-  display		: function(){
-    // document.getElementById("demo05").innerHTML = "unit_5.command = " + this.command;
-  } // end display METHOD
+  updateDisplay : function(){
+    // nothing to do here
+  }, // END of updateDisplay()
 
-}; // END var unit_5
+  checkForSteadyState : function() {
+    // required - called by controller object
+    // *IF* NOT used to check for SS *AND* another unit IS checked,
+    // which can not be at SS, *THEN* return ssFlag = true to calling unit
+    // returns ssFlag, true if this unit at SS, false if not
+    // uses and sets this.ssCheckSum
+    // this.ssCheckSum can be set by reset() and updateUIparams()
+    // check for SS in order to save CPU time when sim is at steady state
+    // check for SS by checking for any significant change in array end values
+    // but wait at least one residence time after the previous check
+    // to allow changes to propagate down unit
+    //
+    let ssFlag = true;
+    return ssFlag;
+  } // END OF checkForSteadyState()
+
+}; // END unit 3 - controller
