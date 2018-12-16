@@ -7,6 +7,9 @@
 
 // *** THIS VERSION OF OBJECT plotter USES THE FLOT.JS LIBRARY
 // *** FOR X-Y PLOTS
+//
+// *** SPECIFICALLY, FUNCTION plotPlotData HERE IS SPECIFIC TO FLOT.JS
+//
 // *** TO USE ANOTHER LIBRARY, WRITE ANOTHER VERSION IN A DIFFERENT FILE
 // *** COMPONENTS (functions, objects) NAMES SHOULD STAY SAME BUT
 // *** definitions of those components will change
