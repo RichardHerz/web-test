@@ -30,8 +30,8 @@ function puWaterFeed(pUnitIndex) {
   // XXX why need these when have them in initialize method???
   // XXX but they are used below if want to eliminate
   // XXX or keep one (input field) in initialize and keep the other here???
-  inputFeedSlider : 'range_slider_enterFlowRate',
-  inputFeedInput : 'input_field_enterFlowRate',
+  this.inputFeedSlider = 'range_slider_enterFlowRate',
+  this.inputFeedInput = 'input_field_enterFlowRate',
 
   this.initialize = function() {
     //
