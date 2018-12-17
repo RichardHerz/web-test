@@ -9,6 +9,8 @@ let interface = {
   // OBJECT interface handles UI controls and input fields in HTML
   // unit objects may write directly to output fields or other elements
 
+  // REQUIRES run button id="button_runButton"
+
   runThisLab : function() {
     // CALLED BY UI RUN BUTTON DEFINED IN HTML
     // USES OBJECTS simParams, controller
