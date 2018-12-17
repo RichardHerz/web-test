@@ -68,12 +68,11 @@
   <div id="div_simFrame">
    <input type="button" id="button_runButton" value="Run" onclick="interface.runThisLab()">
    <input type="button" id="button_resetButton" value="Reset" onclick="interface.resetThisLab()">
-   <p id="field_enterFlowRate_value">
-      1
-   </p>
    <p id="field_enterFlowRate_label">
-      Slide to set flow rate (m<sup shift="-4">3</sup>/s) :
+      Set flow rate (m<sup shift="-4">3</sup>/s) :
    </p>
+   <input id="input_field_enterFlowRate" value="1" onchange="processUnits[0].updateUIparams()">
+   <input type="range" id="range_slider_enterFlowRate" min="0" max="3" step="0.1" value="1" oninput="processUnits[0].updateUIparams()">
    <img id="image_tank-from-LC_png" src="images/tank-from-LC.png">
    <div id="div_controller">
       <p id="field_enterResetTime_label">
@@ -97,7 +96,6 @@
    </div> <!-- end of div div_controller-->
    <div id="div_water">
    </div> <!-- end of div div_water-->
-   <input type="range" id="range_enterFlowRate_slider" min="0" max="3" step="0.1" value="1" oninput="processUnits[0].updateUIparams()">
 </div> <!-- end of div div_simFrame-->
 </body>
 </html>

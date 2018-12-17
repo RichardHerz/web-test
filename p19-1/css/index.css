@@ -74,21 +74,28 @@ select {
  opacity: 1;
 }
 
-#field_enterFlowRate_value {
- position: absolute;
- left: 208px;
- top: 218px;
- width: 68px;
- height: 21px;
- text-align: left;
-}
-
 #field_enterFlowRate_label {
  position: absolute;
  left: 10px;
  top: 213px;
  width: 195px;
  height: 27px;
+}
+
+#range_slider_enterFlowRate {
+ left: 15px;
+ top: 257px;
+ width: 249px;
+ height: 24px;
+}
+
+#input_field_enterFlowRate {
+ position: absolute;
+ left: 208px;
+ top: 222px;
+ width: 68px;
+ height: 21px;
+ text-align: center;
 }
 
 #image_tank-from-LC_png {
@@ -204,13 +211,6 @@ select {
  background-color: rgb(102,102,255);
  border-style: none;
  opacity: 1;
-}
-
-#range_enterFlowRate_slider {
- left: 15px;
- top: 257px;
- width: 249px;
- height: 24px;
 }
 
 @media (orientation: portrait) {

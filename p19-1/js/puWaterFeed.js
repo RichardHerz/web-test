@@ -15,8 +15,8 @@ function puWaterFeed(pUnitIndex) {
   // define arrays to hold data for plots, color canvas
   // these will be filled with initial values in method reset()
   //
-  this.profileData = []; // for profile plots, plot script requires this name
-  // this.stripData = []; // for strip chart plots, plot script requires this name
+  // this.profileData = []; // for profile plots, plot script requires this name
+  this.stripData = []; // for strip chart plots, plot script requires this name
   // this.colorCanvasData = []; // for color canvas, plot script requires this name
 
   // allow this unit to take more than one step within one main loop step in updateState method
@@ -24,10 +24,52 @@ function puWaterFeed(pUnitIndex) {
   this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
   // define variables
-  this.ssCheckSum = 0; // used in checkForSteadyState() method 
+  this.ssCheckSum = 0; // used in checkForSteadyState() method
   this.flowRate = 0; // feed to first reactor
 
+  // XXX why need these when have them in initialize method???
+  // XXX but they are used below if want to eliminate
+  // XXX or keep one (input field) in initialize and keep the other here???
+  inputFeedSlider : 'range_slider_enterFlowRate',
+  inputFeedInput : 'input_field_enterFlowRate',
+
   this.initialize = function() {
+    //
+    v = 0;
+    this.dataHeaders[v] = 'Flow Rate';
+    this.dataInputs[v] = 'input_field_enterFlowRate';
+    this.dataUnits[v] = 'm3/s';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 3;
+    this.dataInitial[v] = 1;
+    this.flowRate = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.flowRate; // current input oalue for reporting
+    //
+    let v = 1;
+    this.dataHeaders[v] = 'Flow Rate';
+    this.dataInputs[v] = 'range_slider_enterFlowRate';
+    this.dataUnits[v] = 'm3/s';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 3;
+    this.dataInitial[v] = 1;
+    this.flowRate = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.flowRate; // current input oalue for reporting
+    //
+    // END OF INPUT VARS
+    // record number of input variables, VarCount
+    // used, e.g., in copy data to table
+    //
+    // this.VarCount = v;
+    //
+    // OUTPUT VARS
+    //
+    // v = 7;
+    // this.dataHeaders[v] = 'Trxr';
+    // this.dataUnits[v] =  'K';
+    // // Trxr dataMin & dataMax can be changed in updateUIparams()
+    // this.dataMin[v] = 200;
+    // this.dataMax[v] = 500;
+    //
   } // END of initialize() method
 
   this.reset = function() {
@@ -52,24 +94,9 @@ function puWaterFeed(pUnitIndex) {
 
     // initialize strip chart data array
     // initPlotData(numStripVars,numStripPts)
-    let numStripVars = 2; // conc, conversion
+    let numStripVars = 1; // flowRate
     let numStripPts = plotInfo[0]['numberPoints'];
     this.stripData = plotter.initPlotData(numStripVars,numStripPts);
-
-    // initialize profile data array
-    // initPlotData(numProfileVars,numProfilePts)
-    // SPECIAL CASE - this will be points vs. feed conc so do not fill points
-    let numProfileVars = 2; // conversion, rate
-    let numProfilePts = 0; // 0+1 points will be filled here
-    this.profileData = plotter.initPlotData(numProfileVars,numProfilePts);
-    // SPECIAL CASE - move initial [0,0] x,y points off plots
-    // order of 3 indices is var, point, x-y
-    this.profileData[0][0][0] = -1;
-    this.profileData[0][0][1] = -1;
-    this.profileData[1][0][0] = -1;
-    this.profileData[1][0][1] = -1;
-    // console.log('reset, this.profileData[0] = ' + this.profileData[0]);
-    // console.log('reset, this.profileData[1] = ' + this.profileData[1]);
 
     // update display
     this.updateDisplay();
@@ -77,15 +104,117 @@ function puWaterFeed(pUnitIndex) {
   } // END of reset() method
 
   this.updateUIparams = function() {
+
+    // updateUIparams gets called on page load but not new range and input
+    // updates, so need to call updateUIfeedInput here
+    this.updateUIfeedInput();
+    // console.log('updateUIparams: this.Cmax = ' + this.Cmax);
+    //
+    // check input fields for new values
+    // function getInputValue() is defined in file process_interface.js
+    // getInputValue(unit # in processUnits object, variable # in dataInputs array)
+    // see variable numbers above in initialize()
+    // note: this.dataValues.[pVar]
+    //   is only used in copyData() to report input values
+    //
+    let unum = this.unitIndex;
+    //
+    // SPECIAL for this unit methods updateUIfeedInput and updateUIfeedSlider
+    //         below get slider and field value for [0] and [1]
+
   } // END of updateUIparams() method
 
+  this.updateUIfeedInput = function() {
+    // SPECIAL FOR THIS UNIT
+    // called in HTML input element
+    // [0] is field, [1] is slider
+    // get field value
+    let unum = this.unitIndex;
+    this.flowRate = this.dataValues[0] = interface.getInputValue(unum, 0);
+    // update slider position
+    document.getElementById(this.dataInputs[1]).value = this.flowRate;
+    // console.log('updateUIfeedInput: this.Cmax = ' + this.flowRate);
+  } // END method updateUIfeedInput()
+
+  updateUIfeedSlider : function() {
+    let unum = this.unitIndex;
+    this.flowRate = this.dataValues[0] = interface.getInputValue(unum, 0);
+    // update input field display
+    // alert('slider: this.conc = ' + this.conc);
+    if (document.getElementById(this.inputFeedInput)) {
+      document.getElementById(this.inputFeedInput).value = this.flowRate;
+    }
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
+  }, // END method updateUIfeedSlider()
+
   this.updateInputs = function() {
+    //
+    // GET INPUT CONNECTION VALUES FROM OTHER UNITS FROM PREVIOUS TIME STEP,
+    //   SINCE updateInputs IS CALLED BEFORE updateState IN EACH TIME STEP
+    // SPECIFY REFERENCES TO INPUTS ABOVE in this unit definition
+
+    // check for change in overall main time step simTimeStep
+    this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
+
+    // no inputs from other units for this unit
+
   } // END of updateInputs() method
 
   this.updateState = function() {
+    //
+    // BEFORE REPLACING PREVIOUS STATE VARIABLE VALUE WITH NEW VALUE, MAKE
+    // SURE THAT VARIABLE IS NOT ALSO USED TO UPDATE ANOTHER STATE VARIABLE HERE -
+    // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
+    // STATE VARIABLE
+    //
+    // WARNING: this method must NOT contain references to other units!
+    //          get info from other units ONLY in updateInputs() method
+
+    // nothing to do for this this feed unit
+    // updates handled by updateUIparams
+
   } // END of updateState() method
 
   this.updateDisplay = function() {
+    // update display elements which only depend on this process unit
+    // except do all plotting at main controller updateDisplay
+    // since some plots may contain data from more than one process unit
+
+    // HANDLE STRIP CHART DATA
+
+    let v = 0; // used as index
+    let p = 0; // used as index
+    let tempArray = [];
+    let numStripPoints = plotInfo[0]['numberPoints'];
+    let numStripVars = 1; // only the variables from this unit
+
+    // handle flowRate
+    v = 0;
+    tempArray = this.stripData[v]; // work on one plot variable at a time
+    // delete first and oldest element which is an [x,y] pair array
+    tempArray.shift();
+    // add the new [x.y] pair array at end
+    tempArray.push( [0,this.conc] );
+    // update the variable being processed
+    this.stripData[v] = tempArray;
+
+    // re-number the x-axis values to equal time values
+    // so they stay the same after updating y-axis values
+    let timeStep = simParams.simTimeStep * simParams.simStepRepeats;
+    for (v = 0; v < numStripVars; v += 1) {
+      for (p = 0; p <= numStripPoints; p += 1) { // note = in p <= numStripPoints
+        // note want p <= numStripPoints so get # 0 to  # numStripPoints of points
+        // want next line for newest data at max time
+        this.stripData[v][p][0] = p * timeStep;
+        // want next line for newest data at zero time
+        // this.stripData[v][p][0] = (numStripPoints - p) * timeStep;
+      }
+    }
+
   } // END of updateDisplay() method
 
   this.checkForSteadyState = function() {
