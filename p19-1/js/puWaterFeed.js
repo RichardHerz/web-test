@@ -136,7 +136,7 @@ function puWaterFeed(pUnitIndex) {
     // console.log('updateUIfeedInput: this.Cmax = ' + this.flowRate);
   } // END method updateUIfeedInput()
 
-  updateUIfeedSlider : function() {
+  this.updateUIfeedSlider = function() {
     let unum = this.unitIndex;
     this.flowRate = this.dataValues[0] = interface.getInputValue(unum, 0);
     // update input field display
@@ -149,7 +149,7 @@ function puWaterFeed(pUnitIndex) {
     controller.ssFlag = false;
     // set to zero ssCheckSum used to check for steady state by this unit
     this.ssCheckSum = 0;
-  }, // END method updateUIfeedSlider()
+  } // END method updateUIfeedSlider()
 
   this.updateInputs = function() {
     //
