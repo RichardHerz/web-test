@@ -106,11 +106,6 @@ function puWaterTank(pUnitIndex) {
   } // END of reset() method
 
   this.updateUIparams = function() {
-
-    // updateUIparams gets called on page load but not new range and input
-    // updates, so need to call updateUIfeedInput here
-    this.updateUIfeedInput();
-    // console.log('updateUIparams: this.Cmax = ' + this.Cmax);
     //
     // check input fields for new values
     // function getInputValue() is defined in file process_interface.js

@@ -173,7 +173,7 @@ select {
  text-align: center;
 }
 
-#div_plotCanvas {
+#div_PLOTDIV_plotData {
  display: block;
  position: absolute;
  left: 10px;

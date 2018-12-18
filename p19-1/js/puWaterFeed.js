@@ -16,6 +16,13 @@ function puWaterFeed(pUnitIndex) {
   this.unitStepRepeats = 1;
   this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
+  // define arrays to hold data for plots, color canvas
+  // these will be filled with initial values in method reset()
+  //
+  // this.profileData = []; // for profile plots, plot script requires this name
+  this.stripData = []; // for strip chart plots, plot script requires this name
+  // this.colorCanvasData = []; // for color canvas, plot script requires this name
+
   // define variables
   this.ssCheckSum = 0; // used in checkForSteadyState() method
   this.flowRate = 0; // feed to water tank
@@ -30,19 +37,12 @@ function puWaterFeed(pUnitIndex) {
   this.dataInitial = [];
   this.dataValues = [];
 
-  // define arrays to hold data for plots, color canvas
-  // these will be filled with initial values in method reset()
-  //
-  // this.profileData = []; // for profile plots, plot script requires this name
-  this.stripData = []; // for strip chart plots, plot script requires this name
-  // this.colorCanvasData = []; // for color canvas, plot script requires this name
-
   // XXX why need these when have them in initialize method???
   // XXX but they are used below if want to eliminate
   // XXX or keep one (input field) in initialize and keep the other here???
   this.inputFeedSlider = 'range_slider_enterFlowRate',
   this.inputFeedInput = 'input_field_enterFlowRate',
-  
+
   this.initialize = function() {
     //
     let v = 0;
