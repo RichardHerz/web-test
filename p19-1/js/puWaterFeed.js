@@ -25,7 +25,7 @@ function puWaterFeed(pUnitIndex) {
 
   // define variables
   this.ssCheckSum = 0; // used in checkForSteadyState() method
-  this.flowRate = 0; // feed to first reactor
+  this.flowRate = 0; // feed to water tank
 
   // XXX why need these when have them in initialize method???
   // XXX but they are used below if want to eliminate
