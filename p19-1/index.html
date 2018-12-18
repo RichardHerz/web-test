@@ -71,8 +71,13 @@
    <p id="field_enterFlowRate_label">
       Set flow rate (m<sup shift="-4">3</sup>/s) :
    </p>
-   <input id="input_field_enterFlowRate" value="1" onchange="processUnits[0].updateUIparams()">
-   <input type="range" id="range_slider_enterFlowRate" min="0" max="3" step="0.1" value="1" oninput="processUnits[0].updateUIparams()">
+   <input id="input_field_enterFlowRate" value="1" onchange="processUnits[0].updateUIfeedInput()">
+   </input>
+   <!-- note about range slider: need event onchange for Win IE, oninput for others -->
+   <input type="range" id="range_slider_enterFlowRate" min="0" max="3" step="0.1" value="1"
+     oninput="processUnits[0].updateUIfeedSlider()"
+     onchange="processUnits[0].updateUIfeedSlider()">
+   </input>
    <img id="image_tank-from-LC_png" src="images/tank-from-LC.png">
    <div id="div_controller">
       <p id="field_enterResetTime_label">
@@ -92,7 +97,7 @@
       </input>
       <div id="div_PLOTDIV_plotData">
       </div> <!-- end of div div_PLOTDIV_plotData -->
-      <input type="button" id="button_copyDataButton" value="Copy Data" onclick="interface.copyData()"></input>
+      <input type="button" id="button_copyDataButton" value="Copy Data" onclick="interface.copyData(0)"></input>
    </div> <!-- end of div div_controller-->
    <div id="div_water">
    </div> <!-- end of div div_water-->

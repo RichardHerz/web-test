@@ -140,17 +140,22 @@ function puWaterFeed(pUnitIndex) {
     // [0] is field, [1] is slider
     // get field value
     let unum = this.unitIndex;
-    this.flowRate = this.dataValues[0] = interface.getInputValue(unum, 0);
+    let vnum = 0; // index for input field in initialize arrays
+    this.flowRate = this.dataValues[0] = interface.getInputValue(unum, vnum);
     // update slider position
     document.getElementById(this.dataInputs[1]).value = this.flowRate;
-    // console.log('updateUIfeedInput: this.Cmax = ' + this.flowRate);
+    // console.log('updateUIfeedInput: this.flowRate = ' + this.flowRate);
   } // END method updateUIfeedInput()
 
   this.updateUIfeedSlider = function() {
+    // SPECIAL FOR THIS UNIT
+    // called in HTML input element
+    // [0] is field, [1] is slider
     let unum = this.unitIndex;
-    this.flowRate = this.dataValues[0] = interface.getInputValue(unum, 0);
+    let vnum = 1; // index for range slider in initialize arrays
+    this.flowRate = this.dataValues[0] = interface.getInputValue(unum, vnum);
     // update input field display
-    // alert('slider: this.conc = ' + this.conc);
+    // console.log('updateUIfeedSlider: this.flowRate = ' + this.flowRate);
     if (document.getElementById(this.inputFeedInput)) {
       document.getElementById(this.inputFeedInput).value = this.flowRate;
     }
@@ -171,6 +176,7 @@ function puWaterFeed(pUnitIndex) {
     this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
     // no inputs from other units for this unit
+    // updates handled by updateUIparams
 
   } // END of updateInputs() method
 

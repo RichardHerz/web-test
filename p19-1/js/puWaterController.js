@@ -50,7 +50,7 @@ function puWaterController(pUnitIndex) {
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 0;
-    this.dataInitial[v] = 0;
+    this.dataInitial[v] = 1;
     this.setPoint = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.setPoint; // current input oalue for reporting
     //
@@ -60,7 +60,7 @@ function puWaterController(pUnitIndex) {
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 0;
-    this.dataInitial[v] = 0;
+    this.dataInitial[v] = 5;
     this.gain = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.gain; // current input oalue for reporting
     //
@@ -70,7 +70,7 @@ function puWaterController(pUnitIndex) {
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 0;
-    this.dataInitial[v] = 0;
+    this.dataInitial[v] = 2;
     this.resetTime = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.resetTime; // current input oalue for reporting
     //
@@ -96,12 +96,28 @@ function puWaterController(pUnitIndex) {
     // On click reset button but not reload page, unless do something else here,
     // reset function will use whatever last values user has entered.
     this.updateUIparams(); // this first, then set other values as needed
+
     // set state variables not set by updateUIparams to initial settings
     this.command = 0;
     this.errorIntegral = 0;
+
+    // each unit has its own data arrays for plots and canvases
+
+    // initialize strip chart data array
+    // initPlotData(numStripVars,numStripPts)
+    let numStripVars = 2; // setPoint, command
+    let numStripPts = plotInfo[0]['numberPoints'];
+    this.stripData = plotter.initPlotData(numStripVars,numStripPts);
+
+    // update display
+    this.updateDisplay();
+
   } // END of reset() method
 
   this.updateUIparams = function() {
+
+    console.log('enter updateUIparams, sp, g, rt = '+this.setPoint+', '+this.gain+', '+this.resetTime);
+
     //
     // GET INPUT PARAMETER VALUES FROM HTML UI CONTROLS
     // SPECIFY REFERENCES TO HTML UI COMPONENTS ABOVE in this unit definition
@@ -125,6 +141,9 @@ function puWaterController(pUnitIndex) {
     this.setPoint = this.dataValues[0] = interface.getInputValue(unum, 0);
     this.gain = this.dataValues[1] = interface.getInputValue(unum, 1);
     this.resetTime = this.dataValues[2] = interface.getInputValue(unum, 2);
+
+    console.log('  leave updateUIparams, sp, g, rt = '+this.setPoint+', '+this.gain+', '+this.resetTime);
+
   } // END of updateUIparams() method
 
   this.updateInputs = function() {
