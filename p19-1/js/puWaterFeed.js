@@ -12,13 +12,6 @@ function puWaterFeed(pUnitIndex) {
     return inputs;
   }
 
-  // define arrays to hold data for plots, color canvas
-  // these will be filled with initial values in method reset()
-  //
-  // this.profileData = []; // for profile plots, plot script requires this name
-  this.stripData = []; // for strip chart plots, plot script requires this name
-  // this.colorCanvasData = []; // for color canvas, plot script requires this name
-
   // allow this unit to take more than one step within one main loop step in updateState method
   this.unitStepRepeats = 1;
   this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
@@ -27,15 +20,32 @@ function puWaterFeed(pUnitIndex) {
   this.ssCheckSum = 0; // used in checkForSteadyState() method
   this.flowRate = 0; // feed to water tank
 
+  // define arrays to hold info for variables
+  // these will be filled with values in method initialize()
+  this.dataHeaders = []; // variable names
+  this.dataInputs = []; // input field ID's
+  this.dataUnits = [];
+  this.dataMin = [];
+  this.dataMax = [];
+  this.dataInitial = [];
+  this.dataValues = [];
+
+  // define arrays to hold data for plots, color canvas
+  // these will be filled with initial values in method reset()
+  //
+  // this.profileData = []; // for profile plots, plot script requires this name
+  this.stripData = []; // for strip chart plots, plot script requires this name
+  // this.colorCanvasData = []; // for color canvas, plot script requires this name
+
   // XXX why need these when have them in initialize method???
   // XXX but they are used below if want to eliminate
   // XXX or keep one (input field) in initialize and keep the other here???
   this.inputFeedSlider = 'range_slider_enterFlowRate',
   this.inputFeedInput = 'input_field_enterFlowRate',
-
+  
   this.initialize = function() {
     //
-    v = 0;
+    let v = 0;
     this.dataHeaders[v] = 'Flow Rate';
     this.dataInputs[v] = 'input_field_enterFlowRate';
     this.dataUnits[v] = 'm3/s';
@@ -45,7 +55,7 @@ function puWaterFeed(pUnitIndex) {
     this.flowRate = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.flowRate; // current input oalue for reporting
     //
-    let v = 1;
+    v = 1;
     this.dataHeaders[v] = 'Flow Rate';
     this.dataInputs[v] = 'range_slider_enterFlowRate';
     this.dataUnits[v] = 'm3/s';

@@ -1,4 +1,4 @@
-function puWaterFeed(pUnitIndex) {
+function puWaterTank(pUnitIndex) {
   // constructor function for process unit
 
   this.unitIndex = pUnitIndex; // index of this unit as child in processUnits parent object
@@ -19,13 +19,6 @@ function puWaterFeed(pUnitIndex) {
   // displayWaterDivBottom = SUM orig CSS file specs of top+height pixels for water div
   this.displayWaterDivBottom = 448; // PIXELS, bottom of html water div IN PIXELS
 
-  // define arrays to hold data for plots, color canvas
-  // these will be filled with initial values in method reset()
-  //
-  // this.profileData = []; // for profile plots, plot script requires this name
-  this.stripData = []; // for strip chart plots, plot script requires this name
-  // this.colorCanvasData = []; // for color canvas, plot script requires this name
-
   // allow this unit to take more than one step within one main loop step in updateState method
   this.unitStepRepeats = 1;
   this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
@@ -35,6 +28,23 @@ function puWaterFeed(pUnitIndex) {
   this.flowRate = 0; // input flow rate from feed unit
   this.level = 0; // water level in this tank
   this.command = 0; // command from controller
+
+  // define arrays to hold info for variables
+  // these will be filled with values in method initialize()
+  this.dataHeaders = []; // variable names
+  this.dataInputs = []; // input field ID's
+  this.dataUnits = [];
+  this.dataMin = [];
+  this.dataMax = [];
+  this.dataInitial = [];
+  this.dataValues = [];
+
+  // define arrays to hold data for plots, color canvas
+  // these will be filled with initial values in method reset()
+  //
+  // this.profileData = []; // for profile plots, plot script requires this name
+  this.stripData = []; // for strip chart plots, plot script requires this name
+  // this.colorCanvasData = []; // for color canvas, plot script requires this name
 
   this.initialize = function() {
     //
@@ -178,7 +188,7 @@ function puWaterFeed(pUnitIndex) {
 
     // SET LEVEL OF WATER IN TANK
     //    css top & left sets top-left of water rectangle
-    //    from top of browser window - can"t use css bottom because
+    //    from top of browser window - can't use css bottom because
     //    that is from bottom of browser window (not bottom rect from top window)
     //    and bottom of browser window can be moved by user,
     //    so must compute new top value to keep bottom of water rect
@@ -232,4 +242,4 @@ function puWaterFeed(pUnitIndex) {
     return ssFlag;
   } // END of checkForSteadyState() method
 
-} // END of puWaterFeed
+} // END of puWaterTank
