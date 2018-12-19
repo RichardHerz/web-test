@@ -112,8 +112,8 @@ let plotter = {
 
   plotPlotData : function(pData,pNumber) {
 
-    // PLOTTING WITH THE FLOT LIBRARY
-    // THESE FUNCTIONS DEPEND ON JQUERY.JS AND JQUERY.FLOT.JS FOR PLOTTING
+    // PLOTTING WITH THE FLOT LIBRARY - THIS plotPlotData OBJECT AND
+    // ITS METHODS DEPEND ON JQUERY.JS AND JQUERY.FLOT.JS FOR PLOTTING
 
     // SEE WEB SITE OF flot.js
     //     http://www.flotcharts.org/
@@ -255,11 +255,11 @@ let plotter = {
       }
     }
 
-    // only draw plot with axes and all options the first time /
-    // after that just setData and re-draw;
+    // only draw plot with axes and all options the first time
+    // after that just setData and re-draw
+    // plot[] must save data between display updates
     // plot[pNumber] saves data for each plot between display updates
     // plotFlag[pNumber] telling whether or not to redraw axes & labels
-    // since plot[] must save data between display updates, it is a GLOBAL
     // for example, for 4 plots on page, this ran in 60% of time for full refresh
     // see object plotArrays below for intialization of plot[] and plotFlag[]
 
