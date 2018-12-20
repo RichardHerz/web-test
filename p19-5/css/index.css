@@ -1,575 +1,608 @@
-/* NEW - sup, body - AFTER MACAW */
-
 sup {
-    font-size: smaller;
+  font-size: smaller;
 }
 
-body {
-  background-color: rgb(255, 255, 255);
-  font-family: Helvetica;
-  font-size: 0.9em;
-  font-weight: 400;
-  line-height: 1.38;
-  color: rgb(0, 0, 0);
+sub {
+  font-size: smaller;
 }
 
-/* ORIG FROM MACAW
-body {
-  background-color: rgb(255, 255, 255);
-  font: 400 1em/1.38 Helvetica;
-  color: rgb(0, 0, 0);
-}
-*/
-
-.backbutton {
+input {
   display: block;
   position: absolute;
-  top: 14px;
-  left: 120px;
-  z-index: 1;
-  font-size: 1em;
-  text-decoration: underline;
-  color: rgb(32, 25, 239);
+  text-align: center;
 }
 
-.container_controller {
-  position: absolute;
-  top: 273px;
-  left: 427px;
-  z-index: 20;
-  width: 427px;
-  height: 415px;
+input, button {
+  text-align: center;
 }
 
-.container_operatingparams {
-  position: absolute;
-  top: 273px;
-  left: 120px;
-  z-index: 23;
-  width: 256px;
-  height: 46px;
+/* do NOT write general style for div since interferes
+    with plotting by jquery.flot.js */
+
+p {
+  display: block;
+  text-align: left;
 }
 
-.container_reactionparams {
+label {
+  display: block;
   position: absolute;
-  top: 553px;
-  left: 120px;
-  z-index: 34;
-  width: 268px;
-  height: 162px;
 }
 
-.container_reactor {
+img {
+  display: block;
   position: absolute;
-  top: 319px;
-  left: 120px;
-  z-index: 37;
+}
+
+select {
+  display: block;
+  position: absolute;
+}
+
+canvas {
+  display: block;
+  position: absolute;
+  text-align: left;
+}
+
+::-ms-tooltip {
+  display: none;
+}
+
+#div_simFrame {
+  display: block;
+  position: relative;
+  border-color: DodgerBlue;
+  left: 10px;
+  top: 21px;
+  width: 797px;
+  height: 544px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: dotted;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: true;
+}
+
+#div_reactor {
+  display: block;
+  position: absolute;
+  border-color: DodgerBlue;
+  left: 13px;
+  top: 257px;
+  width: 288px;
+  height: 210px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+}
+
+#image_reactorImage {
+  position: absolute;
+  left: 4px;
+  top: 4px;
   width: 280px;
   height: 202px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  border-width: 2px;
+  background-color: rgba(255, 255, 255, 1);
+  LCthreeD: false;
+  LCshowBorder: false;
 }
 
-.copydatabutton {
+#div_PLOTDIV_reactorContents {
   display: block;
   position: absolute;
-  top: 258px;
-  left: 326px;
-  z-index: 19;
-  width: 104px;
+  left: 98px;
+  top: 87px;
+  width: 106px;
+  height: 67px;
+  visibility: visible;
+  border-width: 0px;
+  background-color: rgb(Cyan);
+  border-style: outset;
+  opacity: 1;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  LCthreeD: false;
+  LCshowBorder: true;
+  LCvScrollbar: false;
+}
+
+#button_resetButton {
+  position: absolute;
+  left: 85px;
+  top: 5px;
+  width: 70px;
   height: 24px;
-  border-radius: 3px;
-  background-color: rgb(222, 222, 222);
-  font-size: 1em;
-  text-align: center;
-  color: rgb(0, 0, 0);
+  visibility: visible;
+  border-width: 2px;
+  background-color: rgb(222,222,222);
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
 }
 
-.element_reactorcontents {
+#button_runButton {
   position: absolute;
-  top: 84px;
-  left: 93px;
-  z-index: 36;
-  width: 105px;
-  height: 66px;
-  background-color: rgb(127, 0, 127);
+  left: 5px;
+  top: 5px;
+  width: 70px;
+  height: 24px;
+  visibility: visible;
+  border-width: 2px;
+  background-color: rgb(222,222,222);
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
 }
 
-.enterva {
+#div_operatingParams {
   display: block;
   position: absolute;
-  top: 100px;
-  left: 184px;
-  z-index: 30;
+  border-color: DodgerBlue;
+  left: 9px;
+  top: 52px;
+  width: 283px;
+  height: 201px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+}
+
+#field_enter_a_LABEL {
+  position: absolute;
+  left: 4px;
+  top: 118px;
+  width: 200px;
+  height: 32px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#field_enter_p_LABEL {
+  position: absolute;
+  left: 4px;
+  top: 149px;
+  width: 200px;
+  height: 32px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#input_field_enter_p {
+  position: absolute;
+  left: 207px;
+  top: 166px;
   width: 72px;
   height: 22px;
-  padding: 2px;
-  border: 2px solid rgb(0, 0, 0);
-  background-color: rgb(242, 242, 242);
-  font-size: 0.813em;
-  text-align: right;
-  color: rgb(0, 0, 0);
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: true;
 }
 
-.enterfeedconc {
-  display: block;
+#input_field_enter_a {
   position: absolute;
-  top: 388px;
-  left: 217px; /* NEW - change value from macaw */
-  z-index: 12;
-  width: 72px;
-  height: 22px;
-  padding: 2px;
-  border: 2px solid rgb(0, 0, 0);
-  background-color: rgb(242, 242, 242);
-  font-size: 0.813em;
-  text-align: right;
-  color: rgb(0, 0, 0);
-}
-
-.enterfeedflowrate {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 184px;
-  z-index: 21;
-  width: 72px;
-  height: 22px;
-  padding: 2px;
-  border: 2px solid rgb(0, 0, 0);
-  background-color: rgb(242, 242, 242);
-  font-size: 0.813em;
-  text-align: right;
-  color: rgb(0, 0, 0);
-}
-
-.entergain {
-  display: block;
-  position: absolute;
-  top: 306px;
-  left: 217px;
-  z-index: 7;
-  width: 72px;
-  height: 22px;
-  padding: 2px;
-  border: 2px solid rgb(0, 0, 0);
-  background-color: rgb(242, 242, 242);
-  font-size: 0.813em;
-  text-align: right;
-  color: rgb(0, 0, 0);
-}
-
-.enterks {
-  display: block;
-  position: absolute;
-  top: 34px;
-  left: 184px;
-  z-index: 26;
-  width: 72px;
-  height: 22px;
-  padding: 2px;
-  border: 2px solid rgb(0, 0, 0);
-  background-color: rgb(242, 242, 242);
-  font-size: 0.813em;
-  text-align: right;
-  color: rgb(0, 0, 0);
-}
-
-.entermumax {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 184px;
-  z-index: 24;
-  width: 72px;
-  height: 22px;
-  padding: 2px;
-  border: 2px solid rgb(0, 0, 0);
-  background-color: rgb(242, 242, 242);
-  font-size: 0.813em;
-  text-align: right;
-  color: rgb(0, 0, 0);
-}
-
-.entervp {
-  display: block;
-  position: absolute;
+  left: 207px;
   top: 134px;
-  left: 184px;
-  z-index: 32;
   width: 72px;
   height: 22px;
-  padding: 2px;
-  border: 2px solid rgb(0, 0, 0);
-  background-color: rgb(242, 242, 242);
-  font-size: 0.813em;
-  text-align: right;
-  color: rgb(0, 0, 0);
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: true;
 }
 
-.enterresettime {
-  display: block;
+#field_enterVminLABEL {
   position: absolute;
-  top: 335px;
-  left: 217px;
-  z-index: 9;
+  left: 4px;
+  top: 86px;
+  width: 200px;
+  height: 32px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#input_field_enterVmin {
+  position: absolute;
+  left: 207px;
+  top: 102px;
   width: 72px;
   height: 22px;
-  padding: 2px;
-  border: 2px solid rgb(0, 0, 0);
-  background-color: rgb(242, 242, 242);
-  font-size: 0.813em;
-  text-align: right;
-  color: rgb(0, 0, 0);
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: true;
 }
 
-.entersetpoint {
-  display: block;
+#field_enterKsLABEL {
   position: absolute;
-  top: 278px;
-  left: 217px;
-  z-index: 5;
+  left: 4px;
+  top: 53px;
+  width: 181px;
+  height: 32px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#input_field_enterKs {
+  position: absolute;
+  left: 207px;
+  top: 69px;
   width: 72px;
   height: 22px;
-  padding: 2px;
-  border: 2px solid rgb(0, 0, 0);
-  background-color: rgb(242, 242, 242);
-  font-size: 0.813em;
-  text-align: right;
-  color: rgb(0, 0, 0);
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: true;
 }
 
-.entervmin {
-  display: block;
+#field_enterMUmaxLABEL {
   position: absolute;
-  top: 67px;
-  left: 184px;
-  z-index: 28;
+  left: 4px;
+  top: 21px;
+  width: 181px;
+  height: 28px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#input_field_enterMUmax {
+  position: absolute;
+  left: 207px;
+  top: 37px;
   width: 72px;
   height: 22px;
-  padding: 2px;
-  border: 2px solid rgb(0, 0, 0);
-  background-color: rgb(242, 242, 242);
-  font-size: 0.813em;
-  text-align: right;
-  color: rgb(0, 0, 0);
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: true;
 }
 
-.image_reactorimage {
-  display: block;
-  position: relative;
-  float: left;
-  z-index: 35;
-  width: 280px;
-  height: auto;
-  overflow: hidden;
-}
-
-.plotcanvas {
+#field_enterFeedFlowRateLABEL {
   position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 4;
+  left: 4px;
+  top: -12px;
+  width: 195px;
+  height: 32px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#input_field_enterFeedFlowRate {
+  position: absolute;
+  left: 207px;
+  top: 5px;
+  width: 72px;
+  height: 22px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: true;
+}
+
+#div_controller {
+  display: block;
+  position: absolute;
+  border-color: DodgerBlue;
+  left: 342px;
+  top: 39px;
+  width: 450px;
+  height: 500px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+}
+
+#div_PLOTDIV_plotData {
+  display: block;
+  position: absolute;
+  left: 0px;
+  top: 0px;
   width: 430px;
   height: 248px;
-  background-color: rgb(230, 230, 230);
+  visibility: visible;
+  border-width: 0px;
+  background-color: rgb(Cyan);
+  border-style: outset;
+  opacity: 1;
+  border-style: dotted;
+  border-color: DodgerBlue;
+  LCthreeD: false;
+  LCshowBorder: true;
+  LCvScrollbar: false;
 }
 
-.radio-label {
-  display: block;
-  position: relative;
-  float: left;
-  width: 23.7634637188%;
+#button_copyDataButton {
+  position: absolute;
+  left: 326px;
+  top: 258px;
+  width: 104px;
   height: 24px;
+  visibility: visible;
+  border-width: 2px;
+  background-color: rgb(222,222,222);
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
 }
 
-.radio_controllerauto,
-.radio_controllermanual {
-  display: block;
-  float: left;
-  margin-top: 3px;
-}
-
-.input,
-.radio_manuallabel,
-.radio_autolabel { /* new - this line - after macaw */
-  display: block;
-  float: left;
-  margin-left: 6px;
-}
-
-.reset {
-  display: block;
+#field_enterSubstrateFeedConcLABEL {
   position: absolute;
-  top: 239px;
-  left: 201px;
-  z-index: 3;
-  width: 70px;
-  height: 24px;
-  border-radius: 3px;
-  background-color: rgb(222, 222, 222);
-  font-size: 1em;
-  text-align: center;
-  color: rgb(0, 0, 0);
+  left: 30px;
+  top: 384px;
+  width: 198px;
+  height: 33px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+  font-size: 16px;
 }
 
-.run {
-  display: block;
+#field_enterResetTimeLABEL {
   position: absolute;
-  top: 239px;
-  left: 120px;
-  z-index: 2;
-  width: 70px;
-  height: 24px;
-  border-radius: 3px;
-  background-color: rgb(222, 222, 222);
-  font-size: 1em;
-  text-align: center;
-  color: rgb(0, 0, 0);
+  left: 30px;
+  top: 322px;
+  width: 187px;
+  height: 32px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+  font-size: 16px;
 }
 
-.copydatabutton:active,
-.reset:active,
-.run:active {
-  background-color: rgb(143, 200, 246);
-}
-
-.text_entervalabel-1 {
+#input_field_enterResetTime {
   position: absolute;
-  top: 100px;
-  left: 0;
-  z-index: 31;
-  font-size: 1em;
-  color: rgb(0, 0, 0);
+  left: 230px;
+  top: 339px;
+  width: 72px;
+  height: 22px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: true;
 }
 
-.text_enterfeedconclabel-1 {
+#field_enterGainLABEL {
   position: absolute;
-  top: 387px;
-  left: 20px;
-  z-index: 11;
-  font-size: 1em;
-  color: rgb(0, 0, 0);
+  left: 30px;
+  top: 293px;
+  width: 190px;
+  height: 32px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+  font-size: 16px;
 }
 
-.text_enterfeedflowrate {
+#input_field_enterGain {
   position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 22;
-  width: 181px;
-  font-size: 1em;
-  color: rgb(0, 0, 0);
+  left: 230px;
+  top: 308px;
+  width: 72px;
+  height: 22px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: true;
 }
 
-.text_entergainlabel-1 {
+#field_enterSetpointLABEL {
   position: absolute;
-  top: 306px;
-  left: 21px;
-  z-index: 8;
-  font-size: 1em;
-  color: rgb(0, 0, 0);
+  left: 30px;
+  top: 265px;
+  width: 189px;
+  height: 32px;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
+  font-size: 16px;
 }
 
-.text_enterkslabel-1 {
+#input_field_enterSetpoint {
   position: absolute;
-  top: 34px;
-  left: 0;
-  z-index: 27;
-  width: 183px;
-  font-size: 1em;
-  color: rgb(0, 0, 0);
-}
-
-.text_entermumaxlabel-1 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 25;
-  width: 183px;
-  font-size: 1em;
-  color: rgb(0, 0, 0);
-}
-
-.text_entervplabel-1 {
-  position: absolute;
-  top: 134px;
-  left: 0;
-  z-index: 33;
-  font-size: 1em;
-  color: rgb(0, 0, 0);
-}
-
-.text_enterresettimelabel-1 {
-  position: absolute;
-  top: 335px;
-  left: 21px;
-  z-index: 10;
-  font-size: 1em;
-  color: rgb(0, 0, 0);
-}
-
-.text_entersetpointlabel-1 {
-  position: absolute;
+  left: 230px;
   top: 278px;
-  left: 21px;
-  z-index: 6;
-  font-size: 1em;
-  color: rgb(0, 0, 0);
+  width: 72px;
+  height: 22px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: true;
 }
 
-.text_entervminlabel-1 {
+#div_RADIO_group_Controller {
+  display: block;
   position: absolute;
-  top: 67px;
-  left: 0;
-  z-index: 29;
-  font-size: 1em;
-  color: rgb(0, 0, 0);
+  border-color: DodgerBlue;
+  left: 4px;
+  top: 254px;
+  width: 163px;
+  height: 242px;
+  visibility: visible;
+  border-width: 1px;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: false;
 }
 
-.text_toppagetext {
+#radio_controllerAUTO_LABEL {
+  display: block;
   position: absolute;
-  top: 46px;
-  left: 120px;
-  width: 797px;
-  height: 137px;
-  min-height: 74px;
-  font-size: 1em;
-  color: rgb(0, 0, 0);
+  width: 163px;
+  height: 28px;
+  left: 0px;
+  top: 0px;
 }
 
-.text_toppagetext p {
-  margin-bottom: 1em;
+#radio_controllerAUTO_SPAN {
+  margin-left: 22px;
+  line-height: 22px;
+  font-size: 15px;
 }
 
-.radio-label-1 {
-  z-index: 18;
-  margin-top: 253px;
+#radio_controllerMANUAL_LABEL {
+  display: block;
+  position: absolute;
+  width: 158px;
+  height: 28px;
+  left: 0px;
+  top: 117px;
 }
 
-.radio-label-2 {
-  clear: both;
-  z-index: 15;
-  margin-top: 87px;
+#radio_controllerMANUAL_SPAN {
+  margin-left: 22px;
+  line-height: 22px;
+  font-size: 15px;
 }
 
-.text_entervalabel-1 em,
-.text_enterfeedconclabel-1 em,
-.text_entergainlabel-1 em,
-.text_enterkslabel-1 em,
-.text_entermumaxlabel-1 em,
-.text_entervplabel-1 em,
-.text_enterresettimelabel-1 em,
-.text_entersetpointlabel-1 em,
-.text_entervminlabel-1 em {
-  border-top-width: 0;
-  border-right-width: 0;
-  border-bottom-width: 0;
-  border-left-width: 0;
-  border-color: transparent;
-  border-style: none;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-  background-color: transparent;
-  font-family: inherit;
-  font-style: inherit;
-  font-size: inherit;
-  font-weight: 700;
-  text-transform: inherit;
-  text-decoration: inherit;
-  letter-spacing: inherit;
-  word-spacing: inherit;
-  color: inherit;
+#input_field_enterSubstrateFeedConc {
+  position: absolute;
+  left: 230px;
+  top: 399px;
+  width: 72px;
+  height: 22px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
   opacity: 1;
-  word-break: normal;
-  word-wrap: normal;
-  white-space: normal;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: false;
+  LCshowBorder: true;
 }
 
-.text_toppagetext a {
-  border-top-width: 0;
-  border-right-width: 0;
-  border-bottom-width: 0;
-  border-left-width: 0;
-  border-color: transparent;
-  border-style: none;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-  background-color: transparent;
-  font-family: inherit;
-  font-style: normal;
-  font-weight: inherit;
-  text-transform: inherit;
-  text-decoration: inherit;
-  letter-spacing: inherit;
-  word-spacing: inherit;
-  color: #000000;
-  opacity: 1;
-  word-break: normal;
-  word-wrap: normal;
-  white-space: normal;
-}
-
-.text_enterfeedflowrate em,
-.text_toppagetext span {
-  border-top-width: 0;
-  border-right-width: 0;
-  border-bottom-width: 0;
-  border-left-width: 0;
-  border-color: transparent;
-  border-style: none;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-  background-color: transparent;
-  font-family: inherit;
-  font-style: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  text-transform: inherit;
-  text-decoration: inherit;
-  letter-spacing: inherit;
-  word-spacing: inherit;
-  color: inherit;
-  opacity: 1;
-  word-break: normal;
-  word-wrap: normal;
-  white-space: normal;
-}
-
+/* example @media for responsive design */
+/* requires meta viewport element in HTML head */
 @media(max-width: 640px) {
-  .container_controller {
-    top: 710px;
-    left: 97px;
-  }
-
-  .container_controller .radio-label {
-    position: relative;
-  }
-
-  .container_reactionparams {
-    top: 537px;
-  }
-
-  .container_reactor .image_reactorimage {
-    position: relative;
-    z-index: 35;
-    height: auto;
-  }
-
-  .text_toppagetext {
-    width: 456px;
-    height: 177px;
-  }
-
-  .container_controller .radio-label-1 {
-    z-index: 18;
-  }
-
-  .container_controller .radio-label-2 {
-    z-index: 15;
-  }
+  /* change the following when the screen width is <= 640px */
+  /* #div_controller {
+    top: 600px;
+    left: 20px;
+   } */
 }
