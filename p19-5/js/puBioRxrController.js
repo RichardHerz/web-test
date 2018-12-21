@@ -3,7 +3,7 @@ function puBioRxrController(pUnitIndex) {
 
   this.unitIndex = pUnitIndex; // index of this unit as child in processUnits parent object
   // unitIndex used in this object's updateUIparams() method
-  this.name = 'process unit Bioreactor Controller;
+  this.name = 'process unit Bioreactor Controller';
 
   // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, used in updateInputs() method
   this.getInputs = function() {

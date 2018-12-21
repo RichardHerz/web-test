@@ -24,8 +24,9 @@ function puBioReactor(pUnitIndex) {
   // define variables
   this.ssCheckSum = 0; // used in checkForSteadyState() method
   this.flowRate = 0; // input flow rate from feed unit
-  this.level = 0; // water level in this tank
-  this.command = 0; // command from controller
+  this.feedConc = 0; // input substrate conc from feed unit
+  this.conc = 0; // substrate conc in reactor
+  this.biomass = 0; // biomass in reactor
 
   // define arrays to hold info for variables
   // these will be filled with values in method initialize()
@@ -64,11 +65,17 @@ function puBioReactor(pUnitIndex) {
     //
     // OUTPUT VARS
     //
-    // v = 1;
-    this.dataHeaders[v] = 'Water Level';
+    v = 1;
+    this.dataHeaders[v] = 'Biomass Conc';
     this.dataUnits[v] =  '';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 2;
+    this.dataMax[v] = 100;
+    //
+    v = 2;
+    this.dataHeaders[v] = 'Substrate Conc';
+    this.dataUnits[v] =  '';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 100;
     //
   } // END of initialize() method
 
@@ -94,7 +101,7 @@ function puBioReactor(pUnitIndex) {
 
     // initialize strip chart data array
     // initPlotData(numStripVars,numStripPts)
-    let numStripVars = 1; // flowRate
+    let numStripVars = 2; // substrate conc, biomass conc in reactor
     let numStripPts = plotInfo[0]['numberPoints'];
     this.stripData = plotter.initPlotData(numStripVars,numStripPts);
 
@@ -114,8 +121,7 @@ function puBioReactor(pUnitIndex) {
     //
     let unum = this.unitIndex;
     //
-    // SPECIAL for this unit methods updateUIfeedInput and updateUIfeedSlider
-    //         below get slider and field value for [0] and [1]
+    // no direct UI inputs for this unit
 
   } // END of updateUIparams() method
 
@@ -132,7 +138,7 @@ function puBioReactor(pUnitIndex) {
     // get array of current input values to this unit from other units
     let inputs = this.getInputs();
     this.flowRate = inputs[0]; // input water flow rate from feed unit
-    this.command = inputs[1]; // command from controller unit
+    this.feedConc = inputs[1]; // command from controller unit
 
   } // END of updateInputs() method
 
@@ -146,31 +152,24 @@ function puBioReactor(pUnitIndex) {
     // WARNING: this method must NOT contain references to other units!
     //          get info from other units ONLY in updateInputs() method
 
-    // compute new value of level
-    // here have normally open valve
-    // increasing command to valve results in decreasing valve coefficient
+    let G = this.MUmax * this.conc / (this.Ks + this.conc); // biomass growth rate
+    let Y = (this.Vmin + this.Va * this.conc); // partial yield function
+    Y = Math.pow(Y,this.Vp); // complete yield function
+    let D = this.flowRate / this.vol; // dilution rate = space velocity
 
-    let Ax = 10; // cross sectional area of tank
-    let maxValveCoeff = 3;
-    let newCoef = maxValveCoeff*(1 - this.command);
+    let dCdt = D * (this.feedConc - this.conc) - (G / Y) * this.biomass;
+    let dC = this.unitTimeStep * dCdt;
+    let newConc = this.conc + dC;
 
-    if (newCoef > maxValveCoeff) {
-      newCoef = maxValveCoeff;
-    }
-    if (newCoef < 0) {
-      newCoef = 0;
-    }
+    let dBdt = (G - D) * this.biomass;
+    let dB = this.unitTimeStep * dBdt;
+    let newBiomass = this.biomass + dB;
 
-    let exprValue = (this.level +
-      this.unitTimeStep / Ax * (this.flowRate - newCoef * Math.pow(this.level,0.5)));
+    if (newConc < 0){newConc = 0;}
+    if (newBiomass < 0){newBiomass = 0;}
 
-    // make sure within limits
-    // see puWaterController function updateInputs, maxSPvalue, minSPvalue
-    if (exprValue > 2){exprValue = 2}
-    if (exprValue < 0){exprValue = 0}
-
-    // set new value
-    this.level = exprValue;
+    this.conc = newConc;
+    this.biomass = newBiomass;
 
   } // END of updateState() method
 
@@ -179,19 +178,18 @@ function puBioReactor(pUnitIndex) {
     // except do all plotting at main controller updateDisplay
     // since some plots may contain data from more than one process unit
 
-    // SET LEVEL OF WATER IN TANK
-    //    css top & left sets top-left of water rectangle
-    //    from top of browser window - can't use css bottom because
-    //    that is from bottom of browser window (not bottom rect from top window)
-    //    and bottom of browser window can be moved by user,
-    //    so must compute new top value to keep bottom of water rect
-    //    constant value from top of browser window
-    let pixPerHtUnit = 48; // was 50
-    let newHt = pixPerHtUnit * this.level;
-    let origBtm = this.displayWaterDivBottom;
-    let el = document.querySelector(this.displayWaterDiv);
-    el.style.height = newHt + "px";
-    el.style.top = (origBtm - newHt) + "px";
+    let el = document.querySelector(this.displayReactorContents);
+
+    let colorMax = 240;
+    let biomassMax = 40;
+    let cValue = Math.round((this.biomass)/biomassMax * colorMax);
+    let concR = colorMax - cValue;
+    let concG = colorMax;
+    let concB = colorMax - cValue;;
+
+    let concColor = "rgb(" + concR + ", " + concG + ", " + concB + ")";
+    // "background-color" in index.css did not work
+    el.style.backgroundColor = concColor;
 
     // HANDLE STRIP CHART DATA
 
@@ -199,15 +197,25 @@ function puBioReactor(pUnitIndex) {
     let p = 0; // used as index
     let tempArray = [];
     let numStripPoints = plotInfo[0]['numberPoints'];
-    let numStripVars = 1; // only the variables from this unit
+    let numStripVars = 2; // only the variables from this unit
 
-    // handle level
+    // handle biomass
     v = 0;
     tempArray = this.stripData[v]; // work on one plot variable at a time
     // delete first and oldest element which is an [x,y] pair array
     tempArray.shift();
     // add the new [x.y] pair array at end
-    tempArray.push( [0,this.level] );
+    tempArray.push( [0,this.biomass] );
+    // update the variable being processed
+    this.stripData[v] = tempArray;
+
+    // handle conc
+    v = 1;
+    tempArray = this.stripData[v]; // work on one plot variable at a time
+    // delete first and oldest element which is an [x,y] pair array
+    tempArray.shift();
+    // add the new [x.y] pair array at end
+    tempArray.push( [0,this.conclevel] );
     // update the variable being processed
     this.stripData[v] = tempArray;
 

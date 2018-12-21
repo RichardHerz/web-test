@@ -53,7 +53,7 @@ let plotInfo = {
     let pnum = 0;
     plotInfo[pnum] = new Object();
     plotInfo[pnum]['type'] = 'strip';
-    plotInfo[pnum]['title'] = 'Water Tank Level Control';
+    plotInfo[pnum]['title'] = 'Bioreactor Control';
     plotInfo[pnum]['canvas'] = '#div_PLOTDIV_plotData'; // flot.js wants ID with prefix #
     // set numberPoints < = than width of plot in HTML pixels for fast plotting
     plotInfo[pnum]['numberPoints'] = 563; // WARNING: value used below in ['xAxisMax']
@@ -66,12 +66,12 @@ let plotInfo = {
     // multiplier in line below is numberPoints for this plot
     plotInfo[pnum]['xAxisMax'] = 563 * simParams.simTimeStep * simParams.simStepRepeats; // numberPoints * ...
     plotInfo[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
-    plotInfo[pnum]['yLeftAxisLabel'] = 'Inlet Flow Rate';
+    plotInfo[pnum]['yLeftAxisLabel'] = 'Feed Substrate Conc';
     plotInfo[pnum]['yLeftAxisMin'] = 0;
-    plotInfo[pnum]['yLeftAxisMax'] = 3;
-    plotInfo[pnum]['yRightAxisLabel'] = 'Water Level - Controller Command';
+    plotInfo[pnum]['yLeftAxisMax'] = 40;
+    plotInfo[pnum]['yRightAxisLabel'] = 'Concentration in Bioreactor';
     plotInfo[pnum]['yRightAxisMin'] = 0;
-    plotInfo[pnum]['yRightAxisMax'] = 2;
+    plotInfo[pnum]['yRightAxisMax'] = 20;
     plotInfo[pnum]['plotLegendPosition'] = "nw";
     plotInfo[pnum]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 or "show"
     plotInfo[pnum]['plotGridBgColor'] = 'white';
@@ -96,9 +96,9 @@ let plotInfo = {
     // ADD SETTINGS FOR EACH VARIABLE
     //
     let vnum = 0; // 1st variable
-    plotInfo[pnum]['varUnitIndex'][vnum] = 0; // value is index of unit in processUnits object
+    plotInfo[pnum]['varUnitIndex'][vnum] = 1; // value is index of unit in processUnits object
     plotInfo[pnum]['var'][vnum] = 0; // value is variable index in plot data array
-    plotInfo[pnum]['varLabel'][vnum] = 'Flow Rate';
+    plotInfo[pnum]['varLabel'][vnum] = 'Biomass';
     // varDataUnits are dimensional units used in copy data table, along with varLabel
     plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
     // varShow values are 'show' to show on plot and legend,
@@ -106,13 +106,13 @@ let plotInfo = {
     // and any other value, e.g., 'hide' to not show on plot but do show in legend
     // varShow value can be changed by javascript if want to show/hide curve with checkbox
     plotInfo[pnum]['varShow'][vnum] = 'show';
-    plotInfo[pnum]['varYaxis'][vnum] = 'left';
+    plotInfo[pnum]['varYaxis'][vnum] = 'right';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
     vnum = 1; // 2nd variable
     plotInfo[pnum]['varUnitIndex'][vnum] = 1; // value is index of unit in processUnits object
-    plotInfo[pnum]['var'][vnum] = 0; // value is variable index in plot data array
-    plotInfo[pnum]['varLabel'][vnum] = 'Water Level';
+    plotInfo[pnum]['var'][vnum] = 1; // value is variable index in plot data array
+    plotInfo[pnum]['varLabel'][vnum] = 'Substrate';
     // varDataUnits are dimensional units used in copy data table, along with varLabel
     plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
     // varShow values are 'show' to show on plot and legend,
@@ -124,21 +124,12 @@ let plotInfo = {
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
     vnum = 2; // 3rd variable
-    plotInfo[pnum]['varUnitIndex'][vnum] = 2;
+    plotInfo[pnum]['varUnitIndex'][vnum] = 0;
     plotInfo[pnum]['var'][vnum] = 0;
-    plotInfo[pnum]['varLabel'][vnum] = 'Set Point';
+    plotInfo[pnum]['varLabel'][vnum] = 'Substrate Feed';
     plotInfo[pnum]['varDataUnits'][vnum] = '';
     plotInfo[pnum]['varShow'][vnum] = 'show';
-    plotInfo[pnum]['varYaxis'][vnum] = 'right';
-    plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
-    //
-    vnum = 3; // 4th variable
-    plotInfo[pnum]['varUnitIndex'][vnum] = 2;
-    plotInfo[pnum]['var'][vnum] = 1;
-    plotInfo[pnum]['varLabel'][vnum] = 'Command';
-    plotInfo[pnum]['varDataUnits'][vnum] = '';
-    plotInfo[pnum]['varShow'][vnum] = 'show';
-    plotInfo[pnum]['varYaxis'][vnum] = 'right';
+    plotInfo[pnum]['varYaxis'][vnum] = 'left';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
 
