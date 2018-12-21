@@ -72,14 +72,14 @@
      <input type="button" id="button_resetButton" value="Reset" value="Reset" onclick="interface.resetThisLab()">
      <input type="button" id="button_runButton" value="Run" value="Run" onclick="interface.runThisLab()">
      <div id="div_operatingParams">
-        <p id="field_enter_a_LABEL">
+        <p id="field_enter_Va_LABEL">
               Enter a (m<sup shift="-4">3</sup>/kg)
         </p>
-        <input id="input_field_enter_a" value="0.03" onchange="processUnits[1].updateUIparams()">
-        <p id="field_enter_p_LABEL">
+        <input id="input_field_enter_Va" value="0.03" onchange="processUnits[1].updateUIparams()">
+        <p id="field_enter_Vp_LABEL">
               Enter p
         </p>
-        <input id="input_field_enter_p" value="0.6" onchange="processUnits[1].updateUIparams()">
+        <input id="input_field_enter_Vp" value="0.6" onchange="processUnits[1].updateUIparams()">
         <p id="field_enterVminLABEL">
               Enter Vmin
         </p>
@@ -100,8 +100,7 @@
      <div id="div_controller">
            <div id="div_PLOTDIV_plotData">
            </div> <!-- end of div div_PLOTDIV_plotData -->
-        <input type="button" id="button_copyDataButton" value="Copy data" value="Copy data" onclick="interface.copyData()">
-        <!-- <p> id="field_enterJacketFeedTTempLABEL" MAY HAVE css visibility:hidden on open page; changed by unit_5.changeMode -->
+        <input type="button" id="button_copyDataButton" value="Copy data" onclick="interface.copyData(0)">
         <p id="field_enterSubstrateFeedConcLABEL">
               Substrate feed conc (kg/m<sup shift="-4">3</sup>)
         </p>
@@ -117,7 +116,7 @@
         <p id="field_enterSetpointLABEL">
               Biomass set point (kg/m<sup shift="-4">3</sup>)
         </p>
-        <input id="input_field_enterSetpoint" value="4" onchange="processUnits[2].updateUIparams()">
+        <input id="input_field_enterSetpoint" value="5" onchange="processUnits[2].updateUIparams()">
         <div id="div_RADIO_group_Controller">
            <label id="radio_controllerAUTO_LABEL" name="radio_of_div_RADIO_group_Controller">
                     <input type="radio" id="radio_controllerAUTO" name="radio_of_div_RADIO_group_Controller" onchange="processUnits[2].changeMode()">

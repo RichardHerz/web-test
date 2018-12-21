@@ -167,7 +167,7 @@ canvas {
   LCshowBorder: false;
 }
 
-#field_enter_a_LABEL {
+#field_enter_Va_LABEL {
   position: absolute;
   left: 4px;
   top: 118px;
@@ -184,7 +184,7 @@ canvas {
   font-size: 16px;
 }
 
-#field_enter_p_LABEL {
+#field_enter_Vp_LABEL {
   position: absolute;
   left: 4px;
   top: 149px;
@@ -201,7 +201,7 @@ canvas {
   font-size: 16px;
 }
 
-#input_field_enter_p {
+#input_field_enter_Vp {
   position: absolute;
   left: 207px;
   top: 166px;
@@ -217,7 +217,7 @@ border-style: solid;
   LCshowBorder: true;
 }
 
-#input_field_enter_a {
+#input_field_enter_Va {
   position: absolute;
   left: 207px;
   top: 134px;

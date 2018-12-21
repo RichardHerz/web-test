@@ -51,8 +51,8 @@ function puBioRxrController(pUnitIndex) {
     this.dataInputs[v] = 'input_field_enterSetpoint';
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 2;
-    this.dataInitial[v] = 1;
+    this.dataMax[v] = 20;
+    this.dataInitial[v] = 5;
     this.setPoint = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.setPoint; // current input oalue for reporting
     //
@@ -69,7 +69,7 @@ function puBioRxrController(pUnitIndex) {
     v = 2;
     this.dataHeaders[v] = 'reset time';
     this.dataInputs[v] = 'input_field_enterResetTime';
-    this.dataUnits[v] = '';
+    this.dataUnits[v] = 'hr';
     this.dataMin[v] = 0;
     this.dataMax[v] = 20;
     this.dataInitial[v] = 2;
@@ -103,9 +103,9 @@ function puBioRxrController(pUnitIndex) {
     //
     v = 4;
     this.dataHeaders[v] = 'command';
-    this.dataUnits[v] =  'K';
-    this.dataMin[v] = 300;
-    this.dataMax[v] = 450;
+    this.dataUnits[v] =  '';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 40;
     //
   } // END of initialize() method
 
@@ -148,7 +148,6 @@ function puBioRxrController(pUnitIndex) {
 
   this.changeMode = function(){
     let el = document.querySelector("#radio_controllerAUTO");
-    let el2 = document.querySelector("#enterJacketFeedTTemp");
     if (el.checked){
       // console.log("switch controller to AUTO mode");
       this.mode = "auto"
@@ -227,7 +226,7 @@ function puBioRxrController(pUnitIndex) {
     //          get info from other units ONLY in updateInputs() method
 
     // compute new value of PI controller command
-    let error = this.setPoint - this.Trxr;
+    let error = this.setPoint - this.processVariable;
     this.command = this.manualBias + this.gain *
                   (error + (1/this.resetTime) * this.errorIntegral);
 

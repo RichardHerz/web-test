@@ -73,7 +73,7 @@ let plotInfo = {
     plotInfo[pnum]['yRightAxisMin'] = 0;
     plotInfo[pnum]['yRightAxisMax'] = 20;
     plotInfo[pnum]['plotLegendPosition'] = "nw";
-    plotInfo[pnum]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 or "show"
+    plotInfo[pnum]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 for "show"
     plotInfo[pnum]['plotGridBgColor'] = 'white';
     // colors can be specified rgb, rgba, hex, and color names
     // for flot.js colors, only basic color names appear to work, e.g., white, blue, red
@@ -100,7 +100,7 @@ let plotInfo = {
     plotInfo[pnum]['var'][vnum] = 0; // value is variable index in plot data array
     plotInfo[pnum]['varLabel'][vnum] = 'Biomass';
     // varDataUnits are dimensional units used in copy data table, along with varLabel
-    plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
+    plotInfo[pnum]['varDataUnits'][vnum] = 'kg/m3'; // processUnits[1]['dataUnits'][4]; // 1st var
     // varShow values are 'show' to show on plot and legend,
     // 'tabled' to not show on plot nor legend but list in copy data table
     // and any other value, e.g., 'hide' to not show on plot but do show in legend
@@ -114,7 +114,7 @@ let plotInfo = {
     plotInfo[pnum]['var'][vnum] = 1; // value is variable index in plot data array
     plotInfo[pnum]['varLabel'][vnum] = 'Substrate';
     // varDataUnits are dimensional units used in copy data table, along with varLabel
-    plotInfo[pnum]['varDataUnits'][vnum] = ''; // processUnits[1]['dataUnits'][4]; // 1st var
+    plotInfo[pnum]['varDataUnits'][vnum] = 'kg/m3'; // processUnits[1]['dataUnits'][4]; // 1st var
     // varShow values are 'show' to show on plot and legend,
     // 'tabled' to not show on plot nor legend but list in copy data table
     // and any other value, e.g., 'hide' to not show on plot but do show in legend
@@ -125,9 +125,9 @@ let plotInfo = {
     //
     vnum = 2; // 3rd variable
     plotInfo[pnum]['varUnitIndex'][vnum] = 0;
-    plotInfo[pnum]['var'][vnum] = 0;
+    plotInfo[pnum]['var'][vnum] = 1;
     plotInfo[pnum]['varLabel'][vnum] = 'Substrate Feed';
-    plotInfo[pnum]['varDataUnits'][vnum] = '';
+    plotInfo[pnum]['varDataUnits'][vnum] = 'kg/m3';
     plotInfo[pnum]['varShow'][vnum] = 'show';
     plotInfo[pnum]['varYaxis'][vnum] = 'left';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
