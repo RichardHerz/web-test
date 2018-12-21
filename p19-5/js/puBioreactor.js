@@ -3,7 +3,7 @@ function puBioReactor(pUnitIndex) {
 
   this.unitIndex = pUnitIndex; // index of this unit as child in processUnits parent object
   // unitIndex used in this object's updateUIparams() method
-  this.name = 'process unit Water Tank';
+  this.name = 'process unit Bioreactor';
 
   // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, used in updateInputs() method
   this.getInputs = function() {
@@ -15,9 +15,7 @@ function puBioReactor(pUnitIndex) {
   }
 
   // DISPLAY CONNECTIONS FROM THIS UNIT TO HTML UI CONTROLS, see updateDisplay below
-  this.displayWaterDiv = "#div_water";
-  // displayWaterDivBottom = SUM orig CSS file specs of top+height pixels for water div
-  this.displayWaterDivBottom = 268; // PIXELS, bottom of html water div IN PIXELS
+  this.displayReactorContents = "#div_PLOTDIV_reactorContents";
 
   // allow this unit to take more than one step within one main loop step in updateState method
   this.unitStepRepeats = 1;

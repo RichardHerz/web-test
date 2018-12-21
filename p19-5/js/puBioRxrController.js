@@ -3,13 +3,13 @@ function puBioRxrController(pUnitIndex) {
 
   this.unitIndex = pUnitIndex; // index of this unit as child in processUnits parent object
   // unitIndex used in this object's updateUIparams() method
-  this.name = 'process unit Water Controller';
+  this.name = 'process unit Bioreactor Controller;
 
   // INPUT CONNECTIONS TO THIS UNIT FROM OTHER UNITS, used in updateInputs() method
   this.getInputs = function() {
     let inputs = [];
     // *** e.g., inputs[0] = processUnits[1]['Tcold'][0];
-    inputs[0] = processUnits[1].level; // level in water tank unit
+    inputs[0] = processUnits[1].biomass; // biomass in bioreactor
     return inputs;
   }
 
@@ -29,8 +29,10 @@ function puBioRxrController(pUnitIndex) {
   this.setPoint = 0;
   this.gain = 0; // controller gain
   this.resetTime = 0; // controller reset time
+  this.manualBias = 0;
   this.command = 0; // controller command from this controller unit
   this.errorIntegral = 0;
+  this.mode = "manual"; // auto or manual, see changeMode() below
 
   // define arrays to hold info for variables
   // these will be filled with values in method initialize()
@@ -74,32 +76,62 @@ function puBioRxrController(pUnitIndex) {
     this.resetTime = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.resetTime; // current input oalue for reporting
     //
+    v = 3;
+    this.dataHeaders[v] = 'manualCommand';
+    this.dataInputs[v] = 'input_field_enterSubstrateFeedConc';
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 100;
+    this.dataInitial[v] = 20;
+    this.manualCommand = this.dataInitial[v];
+    this.dataValues[v] = this.manualCommand;
+    //
+    // SPECIAL - SET CHECKED OF RADIO BUTTONS TO MATCH THIS SETTING
+    // PAGE RELOAD DOES NOT CHANGE CHECKED BUT DOES CALL initialize
+    document.getElementById("radio_controllerAUTO").checked = false;
+    document.getElementById("radio_controllerMANUAL").checked = true;
+    //
     // END OF INPUT VARS
     // record number of input variables, VarCount
     // used, e.g., in copy data to table
     //
-    this.VarCount = v;
+    // special, use v-1 to not report manualCommand in copy data table header
+    // but need manualCommand as input var to get from html input
+    this.VarCount = v-1;
     //
     // OUTPUT VARS
     //
-    v = 3;
+    v = 4;
     this.dataHeaders[v] = 'command';
-    this.dataUnits[v] =  '';
-    this.dataMin[v] = 0;
-    this.dataMax[v] = 1;
+    this.dataUnits[v] =  'K';
+    this.dataMin[v] = 300;
+    this.dataMax[v] = 450;
     //
   } // END of initialize() method
 
   this.reset = function() {
+    //
     // On 1st load or reload page, the html file fills the fields with html file
     // values and calls reset, which needs updateUIparams to get values in fields.
     // On click reset button but not reload page, unless do something else here,
     // reset function will use whatever last values user has entered.
+
     this.updateUIparams(); // this first, then set other values as needed
 
+    // set state variables not set by updateUIparams() to initial settings
+
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
+
     // set state variables not set by updateUIparams to initial settings
-    this.command = 0;
     this.errorIntegral = 0;
+    this.command = this.dataInitial[3]; // initial manual command
+
+    // XXX should this reset mode to manual?
 
     // each unit has its own data arrays for plots and canvases
 
@@ -113,6 +145,32 @@ function puBioRxrController(pUnitIndex) {
     this.updateDisplay();
 
   } // END of reset() method
+
+  this.changeMode = function(){
+    let el = document.querySelector("#radio_controllerAUTO");
+    let el2 = document.querySelector("#enterJacketFeedTTemp");
+    if (el.checked){
+      // console.log("switch controller to AUTO mode");
+      this.mode = "auto"
+      // TWO LINES BELOW USED WHEN TOGGLE THIS INPUT HIDDEN-VISIBLE
+      //   el2.type = "hidden";
+      //   document.getElementById("enterJacketFeedTTemp_LABEL").style.visibility = "hidden";
+    } else {
+      // console.log("switch controller to MANUAL mode");
+      this.mode = "manual"
+      // TWO LINES BELOW USED WHEN TOGGLE THIS INPUT HIDDEN-VISIBLE
+      //   el2.type = "input";
+      //   document.getElementById("enterJacketFeedTTemp_LABEL").style.visibility = "visible";
+    }
+
+    // need to directly set controller.ssFlag to false to get sim to run
+    // after change in UI params when previously at steady state
+    controller.ssFlag = false;
+
+    // set to zero ssCheckSum used to check for steady state by this unit
+    this.ssCheckSum = 0;
+
+  } // END of changeMode() method
 
   this.updateUIparams = function() {
     //
@@ -135,9 +193,10 @@ function puBioRxrController(pUnitIndex) {
     //
     let unum = this.unitIndex;
     //
-    this.setPoint = this.dataValues[0] = interface.getInputValue(unum, 0);
+    this.resetTime = this.dataValues[0] = interface.getInputValue(unum, 0);
     this.gain = this.dataValues[1] = interface.getInputValue(unum, 1);
-    this.resetTime = this.dataValues[2] = interface.getInputValue(unum, 2);
+    this.setPoint = this.dataValues[2] = interface.getInputValue(unum, 2);
+    this.manualCommand = this.dataValues[3] = interface.getInputValue(unum, 3);
 
   } // END of updateUIparams() method
 
@@ -153,34 +212,45 @@ function puBioRxrController(pUnitIndex) {
     // *** GET REACTOR INLET T FROM COLD OUT OF HEAT EXCHANGER ***
     // get array of current input values to this unit from other units
     let inputs = this.getInputs();
-    this.processVariable = inputs[0]; // level in water tank unit
+    this.processVariable = inputs[0]; // biomass in bioreactor
 
   } // END of updateInputs() method
 
   this.updateState = function() {
+    //
     // BEFORE REPLACING PREVIOUS STATE VARIABLE VALUE WITH NEW VALUE, MAKE
     // SURE THAT VARIABLE IS NOT ALSO USED TO UPDATE ANOTHER STATE VARIABLE HERE -
     // IF IT IS, MAKE SURE PREVIOUS VALUE IS USED TO UPDATE THE OTHER
     // STATE VARIABLE
+    //
+    // WARNING: this method must NOT contain references to other units!
+    //          get info from other units ONLY in updateInputs() method
 
     // compute new value of PI controller command
-    let error = this.setPoint - this.processVariable
-    this.command = this.gain * (error + (1/this.resetTime) * this.errorIntegral);
+    let error = this.setPoint - this.Trxr;
+    this.command = this.manualBias + this.gain *
+                  (error + (1/this.resetTime) * this.errorIntegral);
 
     // stop integration at command limits
     // to prevent integral windup
-
-    let cMax = 1;
-    let cMin = 0;
-
-    if (this.command.value > cMax) {
-      this.command.value = cMax;
-    } else if (this.command.value < cMin) {
-      this.command.value = cMin;
+    let v = 4; // 4 is command
+    if (this.command > this.dataMax[v]){
+      this.command = this.dataMax[v];
+    } else if (this.command < this.dataMin[v]){
+      this.command = this.dataMin[v];
     } else {
       // not at limit, OK to update integral of error
-      // update errorIntegral only after it is used above to update this.command.value
-      this.errorIntegral = this.errorIntegral + error * this.unitTimeStep;
+      // update errorIntegral only after it is used above to update this.command
+      this.errorIntegral = this.errorIntegral + error * this.unitTimeStep; // update integral of error
+    }
+
+    if (this.mode == "manual"){
+      // replace command with value entered in input in page
+      // let el = document.querySelector("#enterJacketFeedTTemp");
+      // this.command = el.value;
+      this.command = this.manualCommand;
+    } else {
+      // in auto mode, use command computed above
     }
 
   } // END of updateState() method
