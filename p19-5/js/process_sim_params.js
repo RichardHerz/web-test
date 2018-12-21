@@ -21,9 +21,9 @@ let simParams = {
   //    variable simTimeStep in method controller.changeSimTimeStep
   //
 
-  title : 'Reactor T control with heat transfer jacket Tj', // title of simulation
+  title : 'Bioreactor Control', // title of simulation
 
-  runButtonID : "button_runButton", // for functions to run, reset, copy data
+  runButtonID : "button_runButton", // required for interface object methods
   // URLs for methods updateRunCount and updateCurrentRunCountDisplay below
   runLoggerURL : "../webAppRunLog.lc",
   runCurrrentRunCountURL : "../webAppCurrentCount.lc",
@@ -32,7 +32,7 @@ let simParams = {
   // see method simParams.changeSimTimeStep() below to change simTimeStep value
   // WARNING: DO NOT CHANGE simTimeStep BETWEEN display updates
 
-  simStepRepeats : 40, // integer number of unit updates between display updates
+  simStepRepeats : 1, // integer number of unit updates between display updates
   simTimeStep : 0.1, // time step value, simulation time, of main repeat
 
   // individual units may do more steps in one unit updateState()
@@ -40,16 +40,19 @@ let simParams = {
 
   // set updateDisplayTimingMs to 50 ms because runs too fast on fast desktop
   // and 50 ms gives about same speed as 0 ms on my laptop
-  updateDisplayTimingMs : 50, // real time milliseconds between display updates
+  updateDisplayTimingMs : 30, // real time milliseconds between display updates
 
   // WARNING: NEED LITERAL, e.g., "field_run_counter" in methods below
   //      e.g., this.runCounterFieldID does NOT work
 
   updateRunCount : function() {
+
+    // console.log('sim_params, updateRunCount deactivated');
+
     // WARNING: NEED LITERAL, e.g., "field_run_counter" below
     //      e.g., this.runCounterFieldID does NOT work
     //
-    $.post(this.runLoggerURL,{webAppNumber: "4, Reactor T control with Tj"})
+    $.post(this.runLoggerURL,{webAppNumber: "5, Bioreactor Control"})
       .done(
         function(data) {
           // document.getElementById("field_run_counter").innerHTML = "<i>Total runs = " + data + "</i>";
