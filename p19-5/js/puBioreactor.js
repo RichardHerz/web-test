@@ -56,7 +56,7 @@ function puBioReactor(pUnitIndex) {
     v = 0;
     this.dataHeaders[v] = 'MUmax'; // Wu & Chang 2007, MUmax = 0.3
     this.dataInputs[v] = 'input_field_enter_MUmax';
-    this.dataUnits[v] = '1/hr';
+    this.dataUnits[v] = 'm3/kg/hr'; // XXX in paper was 1/hr
     this.dataMin[v] = 0.01;
     this.dataMax[v] = 10;
     this.dataInitial[v] = 0.3;
@@ -143,7 +143,8 @@ function puBioReactor(pUnitIndex) {
     // set to zero ssCheckSum used to check for steady state by this unit
     this.ssCheckSum = 0;
 
-    this.biomass = 1; // biomass in reactor, need > 0 initially or no growth
+    this.biomass = 1.322; // biomass in reactor, need > 0 initially or no growth
+    this.conc = 0.3;
 
     // each unit has its own data arrays for plots and canvases
 
@@ -169,7 +170,11 @@ function puBioReactor(pUnitIndex) {
     //
     let unum = this.unitIndex;
     //
-    // no direct UI inputs for this unit
+    this.MUmax = this.dataValues[0] = interface.getInputValue(unum, 0);
+    this.ks = this.dataValues[1] = interface.getInputValue(unum, 1);
+    this.alpha = this.dataValues[2] = interface.getInputValue(unum, 2);
+    this.beta = this.dataValues[3] = interface.getInputValue(unum, 3);
+    this.gamma = this.dataValues[4] = interface.getInputValue(unum, 4);
 
   } // END of updateUIparams() method
 
@@ -200,15 +205,14 @@ function puBioReactor(pUnitIndex) {
     // WARNING: this method must NOT contain references to other units!
     //          get info from other units ONLY in updateInputs() method
 
+     // XXX equations from paper but does NOT seem dimensionlly consistent...
+     // XXX only dimensionally consistent if units of MUmax are m3/kg/hr not 1/hr....
     let rxrVolume = 1; // (m3)
     let G = this.MUmax * this.conc / (this.ks + this.conc); // biomass growth rate
 
     let Y = (this.alpha + this.beta * this.conc); // partial yield function
     Y = Math.pow(Y,this.gamma); // complete yield function
     let D = this.flowRate / rxrVolume; // dilution rate = space velocity
-
-    // console.log('  Y = '+Y);
-    // console.log('  D = '+D);
 
     let dCdt = D * (this.feedConc - this.conc) - (G / Y) * this.biomass;
     let dC = this.unitTimeStep * dCdt;
@@ -223,6 +227,52 @@ function puBioReactor(pUnitIndex) {
 
     this.conc = newConc;
     this.biomass = newBiomass;
+
+    // // XXX dimensionally consistent here - seems not in paper...
+    // // XXX HERE delete this.conc from numerator of G...
+    // let rxrVolume = 1; // (m3)
+    // let G = this.MUmax / (this.ks + this.conc); // XXX (1/hr), XXX biomass growth rate
+    //
+    // let Y = (this.alpha + this.beta * this.conc); // (d'less), partial yield function
+    // Y = Math.pow(Y,this.gamma); // (d'less), complete yield function
+    // let D = this.flowRate / rxrVolume; // (1/hr), dilution rate = space velocity
+    //
+    // let dCdt = D * (this.feedConc - this.conc) - (G / Y); // (kg/m3/hr)
+    // let dC = this.unitTimeStep * dCdt; // (kg/m3)
+    // let newConc = this.conc + dC; // (kg/m3)
+    //
+    // let dBdt = G - D * this.biomass; // (kg/m3/hr)
+    // let dB = this.unitTimeStep * dBdt; // (kg/m3)
+    // let newBiomass = this.biomass + dB; // (kg/m3)
+    //
+    // if (newConc < 0){newConc = 0;}
+    // if (newBiomass < 0){newBiomass = 0;}
+    //
+    // this.conc = newConc;
+    // this.biomass = newBiomass;
+
+    // // XXX dimensionally consistent here - seems not in paper...
+    // // XXX HERE delete biomass times G in terms
+    // let rxrVolume = 1; // (m3)
+    // let G = this.MUmax * this.conc / (this.ks + this.conc); // (kg/m3/hr), biomass growth rate
+    //
+    // let Y = (this.alpha + this.beta * this.conc); // (d'less), partial yield function
+    // Y = Math.pow(Y,this.gamma); // (d'less), complete yield function
+    // let D = this.flowRate / rxrVolume; // (1/hr), dilution rate = space velocity
+    //
+    // let dCdt = D * (this.feedConc - this.conc) - (G / Y); // (kg/m3/hr)
+    // let dC = this.unitTimeStep * dCdt; // (kg/m3)
+    // let newConc = this.conc + dC; // (kg/m3)
+    //
+    // let dBdt = G - D * this.biomass; // (kg/m3/hr)
+    // let dB = this.unitTimeStep * dBdt; // (kg/m3)
+    // let newBiomass = this.biomass + dB; // (kg/m3)
+    //
+    // if (newConc < 0){newConc = 0;}
+    // if (newBiomass < 0){newBiomass = 0;}
+    //
+    // this.conc = newConc;
+    // this.biomass = newBiomass;
 
   } // END of updateState() method
 
