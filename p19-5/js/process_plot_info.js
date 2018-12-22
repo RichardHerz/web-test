@@ -56,7 +56,7 @@ let plotInfo = {
     plotInfo[pnum]['title'] = 'Bioreactor Control';
     plotInfo[pnum]['canvas'] = '#div_PLOTDIV_plotData'; // flot.js wants ID with prefix #
     // set numberPoints < = than width of plot in HTML pixels for fast plotting
-    plotInfo[pnum]['numberPoints'] = 563; // WARNING: value used below in ['xAxisMax']
+    plotInfo[pnum]['numberPoints'] = 340; // WARNING: value used below in ['xAxisMax']
     plotInfo[pnum]['xAxisLabel'] = '< recent time | earlier time >'; // label for copy data table
     plotInfo[pnum]['xAxisTableLabel'] = 'Time (s)'; // label for copy data table
     // xAxisShow false does not show numbers, nor label, nor grid for x-axis
@@ -64,14 +64,14 @@ let plotInfo = {
     plotInfo[pnum]['xAxisShow'] = 1; // 0 false, 1 true
     plotInfo[pnum]['xAxisMin'] = 0;
     // multiplier in line below is numberPoints for this plot
-    plotInfo[pnum]['xAxisMax'] = 563 * simParams.simTimeStep * simParams.simStepRepeats; // numberPoints * ...
+    plotInfo[pnum]['xAxisMax'] = 340 * simParams.simTimeStep * simParams.simStepRepeats; // numberPoints * ...
     plotInfo[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
-    plotInfo[pnum]['yLeftAxisLabel'] = 'Feed Substrate Conc';
+    plotInfo[pnum]['yLeftAxisLabel'] = 'Concentration in Bioreactor';
     plotInfo[pnum]['yLeftAxisMin'] = 0;
     plotInfo[pnum]['yLeftAxisMax'] = 40;
-    plotInfo[pnum]['yRightAxisLabel'] = 'Concentration in Bioreactor';
+    plotInfo[pnum]['yRightAxisLabel'] = '';
     plotInfo[pnum]['yRightAxisMin'] = 0;
-    plotInfo[pnum]['yRightAxisMax'] = 20;
+    plotInfo[pnum]['yRightAxisMax'] = 0;
     plotInfo[pnum]['plotLegendPosition'] = "nw";
     plotInfo[pnum]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 for "show"
     plotInfo[pnum]['plotGridBgColor'] = 'white';
@@ -79,7 +79,7 @@ let plotInfo = {
     // for flot.js colors, only basic color names appear to work, e.g., white, blue, red
     // for all html color names to hex see http://www.color-hex.com
     // for all color names to hex see https://www.w3schools.com/colors/colors_picker.asp
-    plotInfo[pnum]['plotDataSeriesColors'] = ['blue','red','#919191','orange']; // optional, in variable order 0, 1, etc.
+    plotInfo[pnum]['plotDataSeriesColors'] = ['Green','Blue','Black']; // optional, in variable order 0, 1, etc.
     // ['#1e90ff','#ff6347','#919191'] is DodgerBlue, Tomato, Tin (metal Tin)
     //
     // SET UP ARRAYS TO HOLD INFO FOR EACH VARIABLE on plot and/or copy data table
@@ -106,7 +106,7 @@ let plotInfo = {
     // and any other value, e.g., 'hide' to not show on plot but do show in legend
     // varShow value can be changed by javascript if want to show/hide curve with checkbox
     plotInfo[pnum]['varShow'][vnum] = 'show';
-    plotInfo[pnum]['varYaxis'][vnum] = 'right';
+    plotInfo[pnum]['varYaxis'][vnum] = 'left';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
     vnum = 1; // 2nd variable
@@ -120,7 +120,7 @@ let plotInfo = {
     // and any other value, e.g., 'hide' to not show on plot but do show in legend
     // varShow value can be changed by javascript if want to show/hide curve with checkbox
     plotInfo[pnum]['varShow'][vnum] = 'show';
-    plotInfo[pnum]['varYaxis'][vnum] = 'right';
+    plotInfo[pnum]['varYaxis'][vnum] = 'left';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
     vnum = 2; // 3rd variable

@@ -9,7 +9,8 @@ function puBioRxrController(pUnitIndex) {
   this.getInputs = function() {
     let inputs = [];
     // *** e.g., inputs[0] = processUnits[1]['Tcold'][0];
-    inputs[0] = processUnits[1].biomass; // biomass in bioreactor
+    // inputs[0] = processUnits[1].biomass; // biomass in bioreactor
+    inputs[0] = processUnits[1].conc; // substrate conc in bioreactor
     return inputs;
   }
 
@@ -52,7 +53,7 @@ function puBioRxrController(pUnitIndex) {
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 20;
-    this.dataInitial[v] = 5;
+    this.dataInitial[v] = 10;
     this.setPoint = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.setPoint; // current input oalue for reporting
     //
@@ -61,8 +62,8 @@ function puBioRxrController(pUnitIndex) {
     this.dataInputs[v] = 'input_field_enterGain';
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 20;
-    this.dataInitial[v] = 5;
+    this.dataMax[v] = 10;
+    this.dataInitial[v] = 1;
     this.gain = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.gain; // current input oalue for reporting
     //
@@ -71,8 +72,8 @@ function puBioRxrController(pUnitIndex) {
     this.dataInputs[v] = 'input_field_enterResetTime';
     this.dataUnits[v] = 'hr';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 20;
-    this.dataInitial[v] = 2;
+    this.dataMax[v] = 100;
+    this.dataInitial[v] = 20;
     this.resetTime = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.resetTime; // current input oalue for reporting
     //
@@ -81,7 +82,7 @@ function puBioRxrController(pUnitIndex) {
     this.dataInputs[v] = 'input_field_enterSubstrateFeedConc';
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 100;
+    this.dataMax[v] = 40;
     this.dataInitial[v] = 20;
     this.manualCommand = this.dataInitial[v];
     this.dataValues[v] = this.manualCommand;
@@ -192,9 +193,9 @@ function puBioRxrController(pUnitIndex) {
     //
     let unum = this.unitIndex;
     //
-    this.resetTime = this.dataValues[0] = interface.getInputValue(unum, 0);
+    this.setPoint = this.dataValues[0] = interface.getInputValue(unum, 0);
     this.gain = this.dataValues[1] = interface.getInputValue(unum, 1);
-    this.setPoint = this.dataValues[2] = interface.getInputValue(unum, 2);
+    this.resetTime = this.dataValues[2] = interface.getInputValue(unum, 2);
     this.manualCommand = this.dataValues[3] = interface.getInputValue(unum, 3);
 
   } // END of updateUIparams() method
@@ -227,6 +228,11 @@ function puBioRxrController(pUnitIndex) {
 
     // compute new value of PI controller command
     let error = this.setPoint - this.processVariable;
+
+    // console.log('this.setPoint = '+this.setPoint);
+    // console.log('this.processVariable = '+this.processVariable);
+    // console.log('error = '+error);
+
     this.command = this.manualBias + this.gain *
                   (error + (1/this.resetTime) * this.errorIntegral);
 
@@ -251,6 +257,9 @@ function puBioRxrController(pUnitIndex) {
     } else {
       // in auto mode, use command computed above
     }
+
+    // console.log('this.errorIntegral = '+this.errorIntegral);
+    // console.log('this.command = '+this.command);
 
   } // END of updateState() method
 

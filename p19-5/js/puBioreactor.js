@@ -18,7 +18,7 @@ function puBioReactor(pUnitIndex) {
   this.displayReactorContents = "#div_PLOTDIV_reactorContents";
 
   // allow this unit to take more than one step within one main loop step in updateState method
-  this.unitStepRepeats = 1;
+  this.unitStepRepeats = 10;
   this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
   // define variables
