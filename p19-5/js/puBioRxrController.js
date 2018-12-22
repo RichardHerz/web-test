@@ -9,8 +9,9 @@ function puBioRxrController(pUnitIndex) {
   this.getInputs = function() {
     let inputs = [];
     // *** e.g., inputs[0] = processUnits[1]['Tcold'][0];
-    // inputs[0] = processUnits[1].biomass; // biomass in bioreactor
-    inputs[0] = processUnits[1].conc; // substrate conc in bioreactor
+    // WARNING: make sure html field text for set point var name matches this input!
+    inputs[0] = processUnits[1].biomass; // biomass in bioreactor
+    // inputs[0] = processUnits[1].conc; // substrate conc in bioreactor
     return inputs;
   }
 
@@ -52,8 +53,8 @@ function puBioRxrController(pUnitIndex) {
     this.dataInputs[v] = 'input_field_enterSetpoint';
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 20;
-    this.dataInitial[v] = 10;
+    this.dataMax[v] = 30;
+    this.dataInitial[v] = 5;
     this.setPoint = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.setPoint; // current input oalue for reporting
     //
@@ -62,8 +63,8 @@ function puBioRxrController(pUnitIndex) {
     this.dataInputs[v] = 'input_field_enterGain';
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 10;
-    this.dataInitial[v] = 1;
+    this.dataMax[v] = 2;
+    this.dataInitial[v] = 0.2;
     this.gain = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.gain; // current input oalue for reporting
     //
@@ -73,7 +74,7 @@ function puBioRxrController(pUnitIndex) {
     this.dataUnits[v] = 'hr';
     this.dataMin[v] = 0;
     this.dataMax[v] = 100;
-    this.dataInitial[v] = 20;
+    this.dataInitial[v] = 5;
     this.resetTime = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.resetTime; // current input oalue for reporting
     //
@@ -82,8 +83,8 @@ function puBioRxrController(pUnitIndex) {
     this.dataInputs[v] = 'input_field_enterSubstrateFeedConc';
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 40;
-    this.dataInitial[v] = 20;
+    this.dataMax[v] = 30;
+    this.dataInitial[v] = 15;
     this.manualCommand = this.dataInitial[v];
     this.dataValues[v] = this.manualCommand;
     //
@@ -106,7 +107,7 @@ function puBioRxrController(pUnitIndex) {
     this.dataHeaders[v] = 'command';
     this.dataUnits[v] =  '';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 40;
+    this.dataMax[v] = this.dataMax[3];
     //
   } // END of initialize() method
 

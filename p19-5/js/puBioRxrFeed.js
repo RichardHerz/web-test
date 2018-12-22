@@ -46,8 +46,8 @@ function puBioRxrFeed(pUnitIndex) {
     this.dataInputs[v] = 'input_field_enterFeedFlowRate"';
     this.dataUnits[v] = 'm3/hr';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 1;
-    this.dataInitial[v] = 0.02;
+    this.dataMax[v] = 0.5;
+    this.dataInitial[v] = 0.2;
     this.flowRate = this.dataInitial[v]; // dataInitial used in getInputValue()
     this.dataValues[v] = this.flowRate; // current input oalue for reporting
     //

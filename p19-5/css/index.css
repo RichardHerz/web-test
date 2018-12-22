@@ -167,7 +167,7 @@ canvas {
   LCshowBorder: false;
 }
 
-#field_enter_Va_LABEL {
+#field_enter_beta_LABEL {
   position: absolute;
   left: 4px;
   top: 118px;
@@ -184,7 +184,7 @@ canvas {
   font-size: 16px;
 }
 
-#field_enter_Vp_LABEL {
+#field_enter_gamma_LABEL {
   position: absolute;
   left: 4px;
   top: 149px;
@@ -201,7 +201,7 @@ canvas {
   font-size: 16px;
 }
 
-#input_field_enter_Vp {
+#input_field_enter_gamma {
   position: absolute;
   left: 207px;
   top: 166px;
@@ -217,7 +217,7 @@ border-style: solid;
   LCshowBorder: true;
 }
 
-#input_field_enter_Va {
+#input_field_enter_beta {
   position: absolute;
   left: 207px;
   top: 134px;
@@ -233,7 +233,7 @@ border-style: solid;
   LCshowBorder: true;
 }
 
-#field_enterVminLABEL {
+#field_enter_alpha_LABEL {
   position: absolute;
   left: 4px;
   top: 86px;
@@ -250,7 +250,7 @@ border-style: solid;
   font-size: 16px;
 }
 
-#input_field_enterVmin {
+#input_field_enter_alpha {
   position: absolute;
   left: 207px;
   top: 102px;
@@ -266,7 +266,7 @@ border-style: solid;
   LCshowBorder: true;
 }
 
-#field_enterKsLABEL {
+#field_enter_ks_LABEL {
   position: absolute;
   left: 4px;
   top: 53px;
@@ -283,7 +283,7 @@ border-style: solid;
   font-size: 16px;
 }
 
-#input_field_enterKs {
+#input_field_enter_ks {
   position: absolute;
   left: 207px;
   top: 69px;
@@ -299,7 +299,7 @@ border-style: solid;
   LCshowBorder: true;
 }
 
-#field_enterMUmaxLABEL {
+#field_enter_MUmax_LABEL {
   position: absolute;
   left: 4px;
   top: 21px;
@@ -316,7 +316,7 @@ border-style: solid;
   font-size: 16px;
 }
 
-#input_field_enterMUmax {
+#input_field_enter_MUmax {
   position: absolute;
   left: 207px;
   top: 37px;

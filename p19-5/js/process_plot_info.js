@@ -56,22 +56,23 @@ let plotInfo = {
     plotInfo[pnum]['title'] = 'Bioreactor Control';
     plotInfo[pnum]['canvas'] = '#div_PLOTDIV_plotData'; // flot.js wants ID with prefix #
     // set numberPoints < = than width of plot in HTML pixels for fast plotting
-    plotInfo[pnum]['numberPoints'] = 340; // WARNING: value used below in ['xAxisMax']
-    plotInfo[pnum]['xAxisLabel'] = '< recent time | earlier time >'; // label for copy data table
-    plotInfo[pnum]['xAxisTableLabel'] = 'Time (s)'; // label for copy data table
+    let npm = 250;
+    plotInfo[pnum]['numberPoints'] = npm; // WARNING: value used below in ['xAxisMax']
+    plotInfo[pnum]['xAxisLabel'] = '< recent time | earlier time (hr) >'; // label for copy data table
+    plotInfo[pnum]['xAxisTableLabel'] = 'Time (hr)'; // label for copy data table
     // xAxisShow false does not show numbers, nor label, nor grid for x-axis
     // might be better to cover numbers if desire not to show numbers
     plotInfo[pnum]['xAxisShow'] = 1; // 0 false, 1 true
     plotInfo[pnum]['xAxisMin'] = 0;
     // multiplier in line below is numberPoints for this plot
-    plotInfo[pnum]['xAxisMax'] = 340 * simParams.simTimeStep * simParams.simStepRepeats; // numberPoints * ...
+    plotInfo[pnum]['xAxisMax'] = npm * simParams.simTimeStep * simParams.simStepRepeats; // numberPoints * ...
     plotInfo[pnum]['xAxisReversed'] = 1; // 0 false, 1 true, when true, xmax on left
-    plotInfo[pnum]['yLeftAxisLabel'] = 'Concentration in Bioreactor';
+    plotInfo[pnum]['yLeftAxisLabel'] = 'Biomass (kg/m<sup shift=4>3</sup>)';
     plotInfo[pnum]['yLeftAxisMin'] = 0;
-    plotInfo[pnum]['yLeftAxisMax'] = 40;
-    plotInfo[pnum]['yRightAxisLabel'] = '';
+    plotInfo[pnum]['yLeftAxisMax'] = 30;
+    plotInfo[pnum]['yRightAxisLabel'] = 'Substrate (kg/m<sup shift=4>3</sup>)';
     plotInfo[pnum]['yRightAxisMin'] = 0;
-    plotInfo[pnum]['yRightAxisMax'] = 0;
+    plotInfo[pnum]['yRightAxisMax'] = 30;
     plotInfo[pnum]['plotLegendPosition'] = "nw";
     plotInfo[pnum]['plotLegendShow'] = 1;  // Boolean, '' or 0 for no show, 1 for "show"
     plotInfo[pnum]['plotGridBgColor'] = 'white';
@@ -120,7 +121,7 @@ let plotInfo = {
     // and any other value, e.g., 'hide' to not show on plot but do show in legend
     // varShow value can be changed by javascript if want to show/hide curve with checkbox
     plotInfo[pnum]['varShow'][vnum] = 'show';
-    plotInfo[pnum]['varYaxis'][vnum] = 'left';
+    plotInfo[pnum]['varYaxis'][vnum] = 'right';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
     vnum = 2; // 3rd variable
@@ -129,7 +130,7 @@ let plotInfo = {
     plotInfo[pnum]['varLabel'][vnum] = 'Substrate Feed';
     plotInfo[pnum]['varDataUnits'][vnum] = 'kg/m3';
     plotInfo[pnum]['varShow'][vnum] = 'show';
-    plotInfo[pnum]['varYaxis'][vnum] = 'left';
+    plotInfo[pnum]['varYaxis'][vnum] = 'right';
     plotInfo[pnum]['varYscaleFactor'][vnum] = 1;
     //
 

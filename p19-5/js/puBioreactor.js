@@ -18,7 +18,7 @@ function puBioReactor(pUnitIndex) {
   this.displayReactorContents = "#div_PLOTDIV_reactorContents";
 
   // allow this unit to take more than one step within one main loop step in updateState method
-  this.unitStepRepeats = 10;
+  this.unitStepRepeats = 1;
   this.unitTimeStep = simParams.simTimeStep / this.unitStepRepeats;
 
   // define variables
@@ -29,10 +29,10 @@ function puBioReactor(pUnitIndex) {
   this.biomass = 1; // biomass in reactor, need > 0 initially or no growth
   // rate parameters
   this.MUmax = 0;
-  this.Ks = 0;
-  this.Vmin = 0;
-  this.Va = 0; // add V to var names so not simply a, p
-  this.Vp = 0; // but keep a, p in dataHeaders
+  this.ks = 0;
+  this.alpha = 0;
+  this.beta = 0;
+  this.gamma = 0;
 
   // define arrays to hold info for variables
   // these will be filled with values in method initialize()
@@ -54,8 +54,8 @@ function puBioReactor(pUnitIndex) {
   this.initialize = function() {
     //
     v = 0;
-    this.dataHeaders[v] = 'MUmax';
-    this.dataInputs[v] = 'input_field_enterMUmax';
+    this.dataHeaders[v] = 'MUmax'; // Wu & Chang 2007, MUmax = 0.3
+    this.dataInputs[v] = 'input_field_enter_MUmax';
     this.dataUnits[v] = '1/hr';
     this.dataMin[v] = 0.01;
     this.dataMax[v] = 10;
@@ -64,44 +64,44 @@ function puBioReactor(pUnitIndex) {
     this.dataValues[v] = this.MUmax; // current input oalue for reporting
     //
     v = 1;
-    this.dataHeaders[v] = 'Ks';
-    this.dataInputs[v] = 'input_field_enterKs';
+    this.dataHeaders[v] = 'ks';  // Wu & Chang 2007, ks = 1.75
+    this.dataInputs[v] = 'input_field_enter_ks';
     this.dataUnits[v] = 'kg/m3';
     this.dataMin[v] = 0.01;
     this.dataMax[v] = 10;
     this.dataInitial[v] = 1.75;
-    this.Ks = this.dataInitial[v]; // dataInitial used in getInputValue()
-    this.dataValues[v] = this.Ks; // current input oalue for reporting
+    this.ks = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.ks; // current input oalue for reporting
     //
     v = 2;
-    this.dataHeaders[v] = 'Vmin';
-    this.dataInputs[v] = 'input_field_enterVmin';
+    this.dataHeaders[v] = 'alpha';  // Wu & Chang 2007, alpha = 0.01
+    this.dataInputs[v] = 'input_field_enter_alpha';
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 1;
     this.dataInitial[v] = 0.01;
-    this.Vmin = this.dataInitial[v]; // dataInitial used in getInputValue()
-    this.dataValues[v] = this.Vmin; // current input oalue for reporting
+    this.alpha = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.alpha; // current input oalue for reporting
     //
     v = 3;
-    this.dataHeaders[v] = 'a';
-    this.dataInputs[v] = 'input_field_enterVa';
+    this.dataHeaders[v] = 'beta';  // Wu & Chang 2007, beta = 0.03
+    this.dataInputs[v] = 'input_field_enter_beta';
     this.dataUnits[v] = 'm3/kg';
     this.dataMin[v] = 0;
     this.dataMax[v] = 1;
     this.dataInitial[v] = 0.03;
-    this.Va = this.dataInitial[v]; // dataInitial used in getInputValue()
-    this.dataValues[v] = this.Va; // current input oalue for reporting
+    this.beta = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.beta; // current input oalue for reporting
     //
     v = 4;
-    this.dataHeaders[v] = 'p';
-    this.dataInputs[v] = 'input_field_enterVp';
+    this.dataHeaders[v] = 'gamma'; // Wu & Chang 2007, gamma = 0.1
+    this.dataInputs[v] = 'input_field_enter_gamma';
     this.dataUnits[v] = '';
     this.dataMin[v] = 0;
     this.dataMax[v] = 2;
-    this.dataInitial[v] = 0.6;
-    this.Vp = this.dataInitial[v]; // dataInitial used in getInputValue()
-    this.dataValues[v] = this.Vp; // current input oalue for reporting
+    this.dataInitial[v] = 0.1;
+    this.gamma = this.dataInitial[v]; // dataInitial used in getInputValue()
+    this.dataValues[v] = this.gamma; // current input oalue for reporting
     //
     // END OF INPUT VARS
     // record number of input variables, VarCount
@@ -115,13 +115,13 @@ function puBioReactor(pUnitIndex) {
     this.dataHeaders[v] = 'Biomass Conc';
     this.dataUnits[v] =  'kg/m3';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 20;
+    this.dataMax[v] = 30;
     //
     v = 6;
     this.dataHeaders[v] = 'Substrate Conc';
     this.dataUnits[v] =  'kg/m3';
     this.dataMin[v] = 0;
-    this.dataMax[v] = 20;
+    this.dataMax[v] = 30;
     //
   } // END of initialize() method
 
@@ -200,16 +200,11 @@ function puBioReactor(pUnitIndex) {
     // WARNING: this method must NOT contain references to other units!
     //          get info from other units ONLY in updateInputs() method
 
-    let rxrVolume = 0.1; // (m3)
-    let G = this.MUmax * this.conc / (this.Ks + this.conc); // biomass growth rate
+    let rxrVolume = 1; // (m3)
+    let G = this.MUmax * this.conc / (this.ks + this.conc); // biomass growth rate
 
-    // console.log('  this.MUmax = '+this.MUmax);
-    // console.log('  this.conc = '+this.conc);
-    // console.log('  this.Ks  = '+this.Ks);
-    // console.log('  G = '+G);
-
-    let Y = (this.Vmin + this.Va * this.conc); // partial yield function
-    Y = Math.pow(Y,this.Vp); // complete yield function
+    let Y = (this.alpha + this.beta * this.conc); // partial yield function
+    Y = Math.pow(Y,this.gamma); // complete yield function
     let D = this.flowRate / rxrVolume; // dilution rate = space velocity
 
     // console.log('  Y = '+Y);
@@ -219,25 +214,15 @@ function puBioReactor(pUnitIndex) {
     let dC = this.unitTimeStep * dCdt;
     let newConc = this.conc + dC;
 
-    // console.log('  dCdt = '+dCdt);
-    // console.log('  dC = '+dC);
-    // console.log('  newConc = '+newConc);
-
     let dBdt = (G - D) * this.biomass;
     let dB = this.unitTimeStep * dBdt;
     let newBiomass = this.biomass + dB;
-
-    // console.log('  dBdt = '+dBdt);
-    // console.log('  dB = '+dB);
-    // console.log('  newBiomass = '+newBiomass);
 
     if (newConc < 0){newConc = 0;}
     if (newBiomass < 0){newBiomass = 0;}
 
     this.conc = newConc;
     this.biomass = newBiomass;
-
-    // console.log('end updateState, conc, biomass = '+this.conc+', '+this.biomass);
 
   } // END of updateState() method
 
@@ -249,7 +234,7 @@ function puBioReactor(pUnitIndex) {
     let el = document.querySelector(this.displayReactorContents);
 
     let colorMax = 240;
-    let biomassMax = 20;
+    let biomassMax = this.dataMax[5];
     let cValue = Math.round((this.biomass)/biomassMax * colorMax);
     let concR = colorMax - cValue;
     let concG = colorMax;
