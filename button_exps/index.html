@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0">
+
+  <title>Reactor Lab web app experiment</title>
+
+  <!-- load style sheets for this lab  -->
+  <link rel="stylesheet" href="css/standardize.css">
+  <link rel="stylesheet" href="css/index-grid.css">
+  <link rel="stylesheet" href="css/index.css">
+
+  <!-- load main Javascript for this lab -->
+  <script language="javascript" src="js/process_main.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_units.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_interface.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_plotter.js" type="text/javascript"></script>
+
+  <!-- load flot PLOTTING LIBRARY -->
+  <!-- need full jquery.js for flot.js to work -->
+  <script language="javascript" src="js/jquery.js" type="text/javascript"></script>
+  <script language="javascript" src="js/flot_library/jquery.flot.js" type="text/javascript"></script>
+  <script language="javascript" src="js/flot_library/jquery.flot.axislabels.js" type="text/javascript"></script>
+
+</head>
+<body class="body page-index clearfix">
+
+  <!-- units: (1) water source, (2) water in tank, (3) controller
+  values set by inputs below:
+  (1) enterFlowRate
+  (3) enterResetTime, enterGain, enterSetpoint
+  -->
+
+  <div id="controller" class="container">
+    <p class="text text-1">Enter reset time ( &gt; 0 s)</p>
+    <input id="enterResetTime" value=2 onchange="unit_3.updateUIparams()" class="_input _input-1" name="enterResetTime" type="text"> <!-- new add value & onchange -->
+    <p class="text text-2">Enter controller gain</p>
+    <input id="enterGain" value=5 onchange="unit_3.updateUIparams()" class="_input _input-2" name="enterGain" type="text"> <!-- new add value & onchange -->
+    <p class="text text-3">Enter level setpoint (0-2 m)</p>
+    <input id="enterSetpoint" value=1 onchange="unit_3.updateUIparams()" class="_input _input-3" name="enterSetpoint" type="text"> <!-- new add value & onchange -->
+    <div id="plotCanvas" class="_element"></div>
+  </div>
+  <p class="text text-4">Enter flow rate (0-3 m<sup>3</sup>/s)</p> <!-- new add sup tag -->
+  <input id="enterFlowRate" value=1 onchange="unit_1.updateUIparams()" class="_input _input-4" name="enterFlowRate" type="text">  <!-- new add value & onchange -->
+  <!--  <button id="resetButton" class="_button _button-1">Reset</button> -->
+  <input id="resetButton" class="_button _button-1" onclick="resetThisLab()" type="button" value="Reset" /> <!-- new add & replace line above -->
+  <!-- <button id="runButton" class="_button _button-2">Run</button> -->
+  <input id="runButton" class="_button _button-2" onclick="runThisLab()" type="button" value="Run" /> <!-- new add & replace line above -->
+  <!-- <p onClick="window.location='http://reactorlab.net/resources/web-app-experiment/';" class="text text-5">Back</p> -->
+  <p><a href="http://reactorlab.net/resources/web-app-experiments/" class="text text-5">Back</a></p> <!-- new add & replace line above -->
+  <div id="water" class="element _element element-1"></div>
+  <div class="text text-6">
+    <p>Web app example 1 - HTML5</p>
+    <p>There are three process units: a water source that empties into a tank,
+      a tank with a variable-flow outlet valve, and a feedback controller.
+      The controller controls the water level by sending a command to the valve. Each process unit is defined as a separate Javascript object, so units can be added to a model easily.
+    <br>
+  <font color="blue">Click the Run button to start. Hit the enter key or click out of field after changing inputs.</font>
+</p>
+</div>
+  <div id="tank" class="element _element element-2"></div>
+</body>
+</html>
