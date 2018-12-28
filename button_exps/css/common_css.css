@@ -1,0 +1,43 @@
+/*
+  * set cursor to thumb pointer when over these input types
+*/
+
+html input[type="button"],
+input[type="range"],
+input[type="reset"],
+input[type="submit"] {
+    cursor: pointer;
+}
+
+/*
+  * Re-set default cursor for disabled elements.
+*/
+
+html input[disabled] {
+    cursor: default;
+}
+
+/*
+  * Remove the default button background color that browsers set
+*/
+
+/* html input[type="button"] {
+    background: transparent;
+} */
+
+/*
+  * change color when hover over buttons
+*/
+
+html input[type="button"]:hover {
+  background-color: rgb(232, 228, 250);
+}
+
+/*
+  * change color when click to activate buttons
+  * WARNING: active must appear below hover in css file
+*/
+
+html input[type="button"]:active {
+  background-color: rgb(177, 150, 254);
+}
