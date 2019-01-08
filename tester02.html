@@ -1,0 +1,108 @@
+<!-- gist - forEach - var - pass object with function to function that executes object's function and returns updated object  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <script>
+
+  // let units = {};
+  let units = [];
+
+  units[0] = {
+    data : 0,
+    update : function() {
+      this.data += 1;
+    }
+  }
+
+  units[1] = {
+    info : 5,
+    update : function() {
+      this.info += 3;
+    }
+  }
+
+  function updater(ppu,index) {
+    // updater does not know actual name of object ppu
+    // so should operate same on other objects
+    ppu.update();
+    // this changes original input value (pass by reference)
+    // so get same effect if do not return the object with altered value
+    return ppu;
+  }
+
+  console.log(units[0].data);
+  console.log(units[1].info);
+
+  // USE FOREACH
+  // works whether or not return result from updater
+  // as long as units is an array of objects (not if object of objects)
+  units.forEach(updater);
+  console.log(units[0].data);
+  console.log(units[1].info);
+  units.forEach(updater);
+  console.log(units[0].data);
+  console.log(units[1].info);
+
+  // ** EXAMPLE HOW THIS COULD BE USED IN WEB LABS CONTROLLER **
+  // let numUnits = Object.keys(processUnits).length; // number of units
+  // for (n = 0; n < numUnits; n += 1) {
+  //   processUnits[n].updateInputs();
+  // }
+  // // could be replaced by
+  // processUnits.forEach(updateInputs);
+
+  // // USE FOR REPEAT
+  // // works whether or not units is an array of object or object of objects
+  // // note does not use updater()
+  // // BUT THIS IS WHAT I DO NOW...
+  // for (i = 0; i < 2; i += 1) {
+  //   units[i].update();
+  // }
+  // console.log(units[0].data);
+  // console.log(units[1].info);
+
+  // // USE FOREACH
+  // // works whether or not return result from updater
+  // // as long as units is an array of objects (not if object of objects)
+  // // *EXCEPT* newstuff is UNDEFINED
+  // let newstuff = units.forEach(updater);
+  // console.log(units[0].data);
+  // console.log(units[1].info);
+  // console.log('newstuff = ' + newstuff);
+
+  // // USE FOREACH
+  // // works whether or not return result from updater
+  // // as long as units is an array of objects (not if object of objects)
+  // units.forEach(updater);
+  // let newunits = [];
+  // newunits[0] = units[0];
+  // newunits[1] = units[1];
+  // console.log(newunits[0].data);
+  // console.log(newunits[1].info);
+  // console.log(newunits[1]);
+
+  // // USE FOREACH - DOES NOT WORK
+  // // // does not work whether or not return result from updater
+  // // // and whether or not units is an array of objects or object or objects
+  // let newunits = units.forEach(updater); // OR if use separate let newunits = [];
+  // console.log(newunits[0].data);
+  // console.log(newunits[1].info);
+
+  </script>
+</head>
+<body>
+see console for output
+</body>
+</html>
+
+<!--
+CONSOLE OUTPUT
+0
+1
+2
+now operate on fred
+5
+8
+ -->

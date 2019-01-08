@@ -1,4 +1,5 @@
-<!-- gist - var - pass object with function to function that executes object's function and returns updated object  -->
+<!-- gist - array - pass object with function to function that executes object's function and returns updated object 
+NOW object includes array and its function operates on array -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,16 +8,16 @@
   <script>
 
   var joe = {
-    data : 0,
+    data : [0,1,2],
     update : function() {
-      this.data += 1;
+      this.data[1] += 1; // op on 2nd element [1]
     }
   }
 
   var fred = {
-    info : 5,
+    info : [5,7,9],
     update : function() {
-      this.info += 3;
+      this.info[2] += 3; // op on 3rd element [2]
     }
   }
 
@@ -24,8 +25,8 @@
     // updater does not know actual name of object ppu
     // so should operate same on other objects
     ppu.update();
-    // this changes original input value (pass by reference)
-    // so get same effect if do not return the object with altered value
+    // this changes original array (pass by reference)
+    // so get same effect if do not return the object with altered array
     // return ppu;
   }
 
@@ -48,10 +49,10 @@ see console for output
 
 <!--
 CONSOLE OUTPUT
-0
-1
-2
+Array(3) [ 0, 1, 2 ]
+Array(3) [ 0, 2, 2 ]
+Array(3) [ 0, 3, 2 ]
 now operate on fred
-5
-8
+Array(3) [ 5, 7, 9 ]
+Array(3) [ 5, 7, 12 ]
  -->
