@@ -1,0 +1,48 @@
+<!-- gist - pass object with function to function that executes object's function and returns updated object  -->
+
+<html>
+<script>
+
+var joe = {
+  data : 0,
+  update : function() {
+    this.data += 1;
+  }
+}
+
+var fred = {
+  info : 5,
+  update : function() {
+    this.info += 3;
+  }
+}
+
+function updater(ppu) {
+  // updater does not know actual name of object ppu
+  // so should operate same on other objects
+  ppu.update();
+  return ppu;
+}
+
+console.log(joe.data);
+updater(joe);
+console.log(joe.data);
+updater(joe);
+console.log(joe.data);
+console.log('now operate on fred');
+console.log(fred.info);
+updater(fred);
+console.log(fred.info);
+
+</script>
+</html>
+
+<!-- 
+CONSOLE OUTPUT
+0 
+1 
+2 
+now operate on fred 
+5
+8
+ --> 
