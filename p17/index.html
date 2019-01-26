@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <!-- load style sheets for this lab  -->
+  <link rel="stylesheet" href="index.css">
+  <title>web-test</title>
+</head>
+<body>
+
+  <svg id="svg_test" width="600" height="600">
+    <!-- http://tutorials.jenkov.com/svg/g-element.html -->
+    <g id="svg_group" transform="rotate(0 300 300)"> <!-- attributeName=type -->
+      <!-- https://www.w3schools.com/graphics/svg_line.asp -->
+      <line x1="300" y1="300" x2="300" y2="400" style="stroke:rgb(255,0,0);stroke-width:2"
+       />
+      <circle cx="300" cy="400" r="10" stroke="black" stroke-width="3" fill="red"
+      />
+    </g>
+  </svg>
+
+  <script>
+    // http://tutorials.jenkov.com/svg/scripting.html
+
+    let svgElement = document.getElementById("svg_group");
+    let angle = 0;
+
+    let rotor = function(pAngle) {
+      svgElement.setAttribute("transform", "rotate(" + pAngle + " 300 300)");
+    }
+
+    for (let i=0; i<90; i++) {
+      angle = angle - i;
+      setTimeout(rotor(angle), 500);
+    }
+
+  </script>
+
+</body>
+</html>
