@@ -1,0 +1,125 @@
+-- by Richard K. Herz, rich@reactorlab.net, 2017
+-- pendulum on rigid rod
+
+local g, ff, r, pixPerMeter, rpix
+local v, a, th, dt
+local xc, yc
+local stepsPerDisplay, updateTime
+
+on openStack
+   resetSim
+end openStack
+
+on resetSim
+   
+   put field "initial velocity" into v -- tangential linear velocity
+   put field "friction factor" into ff
+   put field "theta" into th -- initial angle, -pi <= theta <= pi
+   if th contains "pi" then
+      replace "pi" with pi in th
+   end if
+   
+   add 0.0016 to ff -- 0.0016 to 0.003 need a little to offset Euler errors
+   
+   put 20 into stepsPerDisplay -- steps between display updates
+   put 100 into updateTime -- real time between updates in ms
+   
+   put 9.8 into g -- (m/s2), vertical component gravity
+   put 1 into r -- radius in meters
+   put 200 into pixPerMeter
+   put r * pixPerMeter into rpix
+   
+   put 0.0005 into dt
+   
+   put the loc of graphic "center" into tloc
+   put item 1 of tloc into xc
+   put item 2 of tloc into yc
+   put g * sin(-th) into a
+   
+   if the hilite of button "vec" is true then
+      show graphic "Avector - rod"
+      show graphic "Avector - down"
+   else
+      hide graphic "Avector - rod"
+      hide graphic "Avector - down"
+   end if
+   updateDisplay
+   
+end resetSim
+
+on updateTrigger
+   if the label of button "run" is "run" then exit updateTrigger
+   updateProcess
+   updateDisplay
+   send updateTrigger to me in updateTime milliseconds
+end updateTrigger
+
+on updateProcess
+   repeat stepsPerDisplay times
+      put g * sin(-th) into a
+      -- compute friction proportional to velocity
+      put ff * v into f
+      put v + a * dt into vnew
+      -- apply friction
+      put vnew - f * dt into vnew
+      -- compute angular velocity (rad/s)
+      put v / r into vth -- (rad/s)
+      put th + vth * dt into thnew
+      -- correct angle if pendulum goes past top in CCW direction
+      if thnew > pi then
+         put -pi + thnew mod pi into thnew 
+      end if
+      -- correct angle if pendulum goes past top in CW direction
+      if thnew < -pi then
+         put pi + thnew mod -pi into th
+      end if
+      -- update current values
+      put thnew into th
+      put vnew into v
+   end repeat
+end updateProcess
+
+on updateDisplay
+   -- compute new coordinates for bob & rod
+   put xc + rpix * sin(th) into x
+   put yc + rpix * cos(th) into y
+   put xc,yc into line 1 of tpoints
+   put x,y into line 2 of tpoints
+   -- Vvector
+   put 0.15 into pixFac
+   put x + pixFac * pixPerMeter * v * cos(th) into xv
+   put y - pixFac * pixPerMeter * v * sin(th) into yv
+   put x,y into line 1 of tVpoints
+   put xv,yv into line 2 of tVpoints
+   -- Avector
+   put 0.05 into pixFac
+   put x + pixFac * pixPerMeter * a * cos(th) into xa
+   put y - pixFac* pixPerMeter * a * sin(th) into ya
+   put x,y into line 1 of tApoints
+   put xa,ya into line 2 of tApoints
+   -- Avector - down 
+   -- component of tangential accel that is gravity pulling down
+   put g into tDown -- down always g
+   put y + pixFac* pixPerMeter * tDown into tDownY -- use tDown below
+   put x, y into line 1 of tApointsDown
+   put x, tDownY into line 2 of tApointsDown
+   -- Avector - rod
+   -- component of tang accel that is rod holding bob, i.e., radial accel
+   -- with rod in tension when bob below horiz and
+   -- rod in compression when bob above horiz
+   put tDown * cos(th) into tRod
+   put pixFac * pixPerMeter * (tRod * sin(th)) into dX
+   put pixFac * pixPerMeter * (tRod * cos(th)) into dY
+   put x, y into line 1 of tApointsRod
+   put x-dX, y-dY into line 2 of tApointsRod
+   -- lock screen so all update together, otherwise
+   -- some graphics lag the others
+   lock screen
+   set the loc of graphic "bob" to x,y
+   set the points of graphic "rod" to tpoints
+   set the points of graphic "Vvector" to tVpoints
+   set the points of graphic "Avector" to tApoints
+   set the points of graphic "Avector - down" to tApointsDown
+   set the points of graphic "Avector - rod" to tApointsRod
+   unlock screen
+end updateDisplay
