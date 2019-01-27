@@ -1,32 +1,39 @@
 
 // http://tutorials.jenkov.com/svg/scripting.html
 
-let rotor = function(pAngle) {
+var pAngle = -135;
 
-  alert('pAngle = ' + pAngle);
+function rotor() {
+  pAngle = pAngle + 45;
+  console.log('pAngle = ' + pAngle);
   let svgElement = document.getElementById("svg_group");
   let el = document.getElementById("test_p");
-  el.value = "hello " + pAngle;
+  el.innerHTML = "angle = " + pAngle;
   svgElement.setAttribute("transform", "rotate(" + pAngle + " 300 300)");
-
 }
 
-let doit = function(){
+function doit() {
 
-  let angle = 0;
+  // // see https://stackoverflow.com/a/37505354
+  // // need function(){rotor()} - rotor() by itself doesn't work
+  // // rotor() by itself gets called but no delay
 
-  rotor(10);
-  rotor(20);
-  rotor(30);
+  // *** can use delx as a variable
+  // *** but argument myVar in rotor(myVar) gets value myVar is at time of last call
+  // *** to setTimeout is executed, which is almost instantaneously here
+  // *** so maybe increment angle in rotor() with no arguments...which works
+  // *** but may be able to use an input argument if only issue the rotor
+  // *** calls as part of some other function which is called by setTimeout...
 
-    // setTimeout(rotor(0), 500);
-    // setTimeout(rotor(45), 500);
-    // setTimeout(rotor(90), 500);
-
-
-    // for (let i=0; i<90; i++) {
-    //   angle = angle - i;
-    //   setTimeout(rotor(angle), 500);
-    // }
+  let delx = 1000;
+  setTimeout(function(){ rotor(); }, delx);
+  delx = delx + 500;
+  setTimeout(function(){ rotor(); }, delx);
+  delx = delx + 500;
+  setTimeout(function(){ rotor(); }, delx);
+  delx = delx + 500;
+  setTimeout(function(){ rotor(); }, delx);
+  delx = delx + 500;
+  setTimeout(function(){ rotor(); }, delx);
 
 }
