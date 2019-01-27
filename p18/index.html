@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+
+  <title>Web Labs at ReactorLab.net</title>
+
+  <meta name='description' content='water tank level control'>
+  <meta name='description' content='designed with lcCardLayoutToWeb project at GitHub'>
+
+  <!-- A VIEWPORT META LINE IN HTML HEAD IS NECESSARY FOR CSS @MEDIA TO WORK -->
+  <!-- ID used to modify with Javascript after initial loading - OR EDIT HERE -->
+  <!-- suggest use content width = div_simFrame width + 2 * div_simFrame left, and no scale -->
+  <meta id='meta-viewport' name='viewport' content='width=650'>
+
+  <!-- load CSS style sheets for this lab  -->
+  <link rel="stylesheet" href="css/index.css">
+
+  <!-- load COMMON CSS style sheets for this lab  -->
+  <link rel="stylesheet" href="../web_labs_CSS/common.css">
+
+  <!-- load SPECIFIC JAVASCRIPT for this lab -->
+
+  <script language="javascript" src="js/process_sim_params.js" type="text/javascript"></script>
+  <script language="javascript" src="js/puPendulum.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_units.js" type="text/javascript"></script>
+  <script language="javascript" src="js/process_plot_info.js" type="text/javascript"></script>
+
+  <!-- load COMMON JAVASCRIPT for Web Labs -->
+  <script language="javascript" src="../web_labs_JS/process_controller.js" type="text/javascript"></script>
+  <script language="javascript" src="../web_labs_JS/process_interfacer.js" type="text/javascript"></script>
+  <script language="javascript" src="../web_labs_JS/process_plotter_flot.js" type="text/javascript"></script>
+
+  <!-- load flot.js PLOTTING LIBRARY -->
+  <script language="javascript" src="../web_labs_JS/jquery/new_jquery/jquery-3.3.1.min.js" type="text/javascript"></script>
+  <script language="javascript" src="../web_labs_JS/jquery/new_jquery/jquery.flot.min-0.8.3.js" type="text/javascript"></script>
+  <script language="javascript" src="../web_labs_JS/jquery/new_jquery/jquery.flot.axislabels-20141122.js" type="text/javascript"></script>
+
+  <!-- initialize simulation after loading of this window -->
+  <script language="javascript">
+      // this works as script in html file but not in external js files
+      window.onload = controller.openThisLab; // can NOT use () after openThisLab
+  </script>
+
+</head>
+<body>
+  <div id="div_page_header">
+    <!-- output field can be used in development by controller to display timing -->
+    <!-- uncomment next line and comment the following <p> and contents -->
+    <!-- <p id="field_output_field"></p> -->
+    <p>
+    <!-- <a href="http://reactorlab.net/web-labs/">Back</a> to Web Labs at ReactorLab.net -->
+    <p><b><i>Pendulum</i></b></p>
+    <p>
+      This is a Pendulum
+      <br>
+      <br><font color="#0000FF">Click the Run button to start. Hit the enter key or click out of field after changing inputs.</font>
+    </p>
+  </div> <!-- end of div div_page_header -->
+
+  <div id="div_simFrame">
+    <input type="button" id="button_runButton" value="Run" onclick="interfacer.runThisLab()">
+    <input type="button" id="button_resetButton" value="Reset" onclick="interfacer.resetThisLab()">
+
+    <svg id="svg_test" width="600" height="600">
+     <!-- http://tutorials.jenkov.com/svg/g-element.html -->
+     <g id="svg_group" transform="rotate(0 300 300)"> <!-- attributeName=type -->
+       <!-- https://www.w3schools.com/graphics/svg_line.asp -->
+       <line x1="300" y1="300" x2="300" y2="400" style="stroke:rgb(255,0,0);stroke-width:2"
+        />
+       <circle cx="300" cy="400" r="10" stroke="black" stroke-width="3" fill="red"
+       />
+     </g>
+    </svg>
+
+  </div> <!-- end of div div_simFrame-->
+  <p id="field_output_field">&nbsp; development field output field for idle time check</p>
+</body>
+</html>

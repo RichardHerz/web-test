@@ -1,0 +1,31 @@
+#field_output_field {
+  position: relative;
+  border : solid;
+  border-color : green;
+}
+
+#div_simFrame {
+  position: relative;
+  border : dotted;
+  border-color : red;
+}
+
+#button_runButton {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+}
+
+#button_resetButton {
+  position : absolute;
+  top : 0px;
+  left : 50px;
+}
+
+#svg_test {
+  position: relative;
+  /* left: 40px; */
+  top: 40px;
+  border : dotted;
+  border-color : DodgerBlue;
+}
