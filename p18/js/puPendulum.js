@@ -150,12 +150,13 @@ function puPendulum(pUnitIndex) {
 
     angle = angle + 1;
     // console.log('angle = ' + angle);
-    let svgElement = document.getElementById("svg_group");
-    svgElement.setAttribute("transform", "rotate(" + angle + " 300 300)");
 
   } // END of updateState method
 
   this.updateDisplay = function() {
+
+    let svgElement = document.getElementById("svg_group");
+    svgElement.setAttribute("transform", "rotate(" + angle + " 300 300)");
 
     let el = document.getElementById("field_output_field");
     el.innerHTML = "simTime = " + controller.simTime;
