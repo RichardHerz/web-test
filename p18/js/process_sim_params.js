@@ -32,15 +32,15 @@ let simParams = {
   // see method simParams.changeSimTimeStep() below to change simTimeStep value
   // WARNING: DO NOT CHANGE simTimeStep BETWEEN display updates
 
-  simStepRepeats : 1, // integer number of unit updates between display updates
-  simTimeStep : 1, // time step value, simulation time, of main repeat
+  simStepRepeats : 20, // integer number of unit updates between display updates
+  simTimeStep : 0.0005, // time step value, simulation time, of main repeat
 
   // individual units may do more steps in one unit updateState()
   // see individual units for any unitTimeStep and unitStepRepeats
 
   // set updateDisplayTimingMs to 50 ms because runs too fast on fast desktop
   // and 50 ms gives about same speed as 0 ms on my laptop
-  updateDisplayTimingMs : 10, // real time milliseconds between display updates
+  updateDisplayTimingMs : 100, // real time milliseconds between display updates
 
   // WARNING: NEED LITERAL, e.g., "field_run_counter" in methods below
   //      e.g., this.runCounterFieldID does NOT work

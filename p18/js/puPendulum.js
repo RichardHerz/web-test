@@ -32,8 +32,20 @@ function puPendulum(pUnitIndex) {
   let unitTimeStep = simParams.simTimeStep / unitStepRepeats;
   let ssCheckSum = 0; // used in checkForSteadyState method
 
-  // variables used by pendulum unit
-  let angle = 0;
+  // XXX which can be moved into updateState?
+  // XXX first check reset(), initialize() and updateUIparams(), updateDisplay()
+  const radius = 1; // (m), radius, length of rod
+  const pixPerMeter = 100; // (px/m)
+  const rpix = radius * pixPerMeter; // (px), pixel length of rod-radius
+  const xc = 300; // (px), x location of center of rotation
+  const yc = 300; // (px), y location of center of rotation
+  const gravity = 9.8; // (m2/s), gravitational accel in vertical direction
+  const fricFrac = 0.0016; // friction factor, 0.0016 to offset Euler errors
+  const pi = Math.PI;
+  let accel = 0; // (m2/s), acceleration in tangential direction
+  let veloc = 0; // (m/s), tangential velocity
+  let friction = fricFrac * veloc;
+  let angle = 0; // (radian)
 
   // *******************************************
   //         define PUBLIC properties
@@ -104,7 +116,8 @@ function puPendulum(pUnitIndex) {
 
     // set state variables not set by updateUIparams to initial settings
 
-    angle = 0;
+    angle = pi/2; // (radian), initial angle
+    veloc = 0; // (m/s), initial tangential velocity
 
     // update display
     this.updateDisplay();
@@ -148,15 +161,53 @@ function puPendulum(pUnitIndex) {
     // check for change in overall main time step simTimeStep
     unitTimeStep = simParams.simTimeStep / unitStepRepeats;
 
-    angle = angle + 1;
-    // console.log('angle = ' + angle);
+    // LiveCode
+    // put g * sin(-th) into a
+    // -- compute friction proportional to velocity
+    // put ff * v into f
+    // put v + a * dt into vnew
+    // -- apply friction
+    // put vnew - f * dt into vnew
+    // -- compute angular velocity (rad/s)
+    // put v / r into vth -- (rad/s)
+    // put th + vth * dt into thnew
+    // -- correct angle if pendulum goes past top in CCW direction
+    // if thnew > pi then
+    //    put -pi + thnew mod pi into thnew
+    // end if
+    // -- correct angle if pendulum goes past top in CW direction
+    // if thnew < -pi then
+    //    put pi + thnew mod -pi into th
+    // end if
+    // -- update current values
+    // put thnew into th
+    // put vnew into v
+
+    accel = gravity * Math.sin(-angle); // put g * sin(-th) into a
+    friction = fricFrac * veloc; // put ff * v into f
+    let newVeloc = veloc + accel * unitTimeStep; // put v + a * dt into vnew
+    // apply friction
+    newVeloc = newVeloc - friction * unitTimeStep; // put vnew - f * dt into vnew
+    let angularVeloc = veloc * radius; // (radian/s) // put v / r into vth -- (rad/s)
+    let newAngle = angle + angularVeloc * unitTimeStep; // put th + vth * dt into thnew
+    // correct angle if pendulum goes past top in CCW direction
+    // if thnew > pi then put -pi + thnew mod pi into thnew
+    if (newAngle > pi) {
+      newAngle = -pi + newAngle % pi;  // % is JS modulus operator,
+    }
+
+    // update current values
+    angle = newAngle; // put thnew into th
+    veloc = newVeloc; // put vnew into v
 
   } // END of updateState method
 
   this.updateDisplay = function() {
 
+    let angleD = angle * 180/pi; // (degree) = (radian) * (degree/radian)
+
     let svgElement = document.getElementById("svg_group");
-    svgElement.setAttribute("transform", "rotate(" + angle + " 300 300)");
+    svgElement.setAttribute("transform", "rotate(" + angleD + " 300 300)");
 
     let el = document.getElementById("field_output_field");
     el.innerHTML = "simTime = " + controller.simTime;
