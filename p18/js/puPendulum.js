@@ -193,11 +193,11 @@ function puPendulum(pUnitIndex) {
     // compute x,y of bob and set bx,by
     // computer length and angle of vector
     // *OR* just use "d" and draw line from start to end pts as computed
-    // in LC version 
+    // in LC version
     let bx = 100;
     let by = 150;
     svgElement.setAttribute("d", "M" + bx + "," + by + " l" + 50 + "," + 50 );
-    svgElement.setAttribute("transform", "rotate(" + angleD + " " + cx + " " + cy + ")");
+    svgElement.setAttribute("transform", "rotate(" + angleD + " " + bx + " " + by + ")");
 
   } // END of updateDisplay method
 
