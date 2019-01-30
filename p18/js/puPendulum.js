@@ -161,56 +161,43 @@ function puPendulum(pUnitIndex) {
     // check for change in overall main time step simTimeStep
     unitTimeStep = simParams.simTimeStep / unitStepRepeats;
 
-    // LiveCode
-    // put g * sin(-th) into a
-    // -- compute friction proportional to velocity
-    // put ff * v into f
-    // put v + a * dt into vnew
-    // -- apply friction
-    // put vnew - f * dt into vnew
-    // -- compute angular velocity (rad/s)
-    // put v / r into vth -- (rad/s)
-    // put th + vth * dt into thnew
-    // -- correct angle if pendulum goes past top in CCW direction
-    // if thnew > pi then
-    //    put -pi + thnew mod pi into thnew
-    // end if
-    // -- correct angle if pendulum goes past top in CW direction
-    // if thnew < -pi then
-    //    put pi + thnew mod -pi into th
-    // end if
-    // -- update current values
-    // put thnew into th
-    // put vnew into v
-
-    accel = gravity * Math.sin(-angle); // put g * sin(-th) into a
-    friction = fricFrac * veloc; // put ff * v into f
-    let newVeloc = veloc + accel * unitTimeStep; // put v + a * dt into vnew
+    accel = gravity * Math.sin(-angle);
+    friction = fricFrac * veloc;
+    let newVeloc = veloc + accel * unitTimeStep;
     // apply friction
-    newVeloc = newVeloc - friction * unitTimeStep; // put vnew - f * dt into vnew
-    let angularVeloc = veloc * radius; // (radian/s) // put v / r into vth -- (rad/s)
-    let newAngle = angle + angularVeloc * unitTimeStep; // put th + vth * dt into thnew
+    newVeloc = newVeloc - friction * unitTimeStep;
+    let angularVeloc = veloc * radius; // (radian/s)
+    let newAngle = angle + angularVeloc * unitTimeStep;
     // correct angle if pendulum goes past top in CCW direction
-    // if thnew > pi then put -pi + thnew mod pi into thnew
     if (newAngle > pi) {
-      newAngle = -pi + newAngle % pi;  // % is JS modulus operator,
+      newAngle = -pi + newAngle % pi;  // % is JS modulo operator,
     }
 
     // update current values
-    angle = newAngle; // put thnew into th
-    veloc = newVeloc; // put vnew into v
+    angle = newAngle;
+    veloc = newVeloc;
 
   } // END of updateState method
 
   this.updateDisplay = function() {
+
+    let el = document.getElementById("field_output_field");
+    el.innerHTML = "simTime = " + controller.simTime;
 
     let angleD = angle * 180/pi; // (degree) = (radian) * (degree/radian)
 
     let svgElement = document.getElementById("svg_group");
     svgElement.setAttribute("transform", "rotate(" + angleD + " 300 300)");
 
-    let el = document.getElementById("field_output_field");
-    el.innerHTML = "simTime = " + controller.simTime;
+    svgElement = document.getElementById("newArrow");
+    // compute x,y of bob and set bx,by
+    // computer length and angle of vector
+    // *OR* just use "d" and draw line from start to end pts as computed
+    // in LC version 
+    let bx = 100;
+    let by = 150;
+    svgElement.setAttribute("d", "M" + bx + "," + by + " l" + 50 + "," + 50 );
+    svgElement.setAttribute("transform", "rotate(" + angleD + " " + cx + " " + cy + ")");
 
   } // END of updateDisplay method
 
