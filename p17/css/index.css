@@ -1,7 +1,12 @@
+#field_output_field {
+  position: relative;
+  border : solid;
+  border-color : green;
+}
+
 #div_simFrame {
   position: relative;
   border : dotted;
-  height : 660px;
   border-color : red;
 }
 
@@ -17,15 +22,10 @@
   left : 50px;
 }
 
-#svg_pendulum {
+#svg_test {
   position: relative;
-  top: 30px;
+  /* left: 40px; */
+  top: 40px;
   border : dotted;
   border-color : DodgerBlue;
-}
-
-#field_output_field {
-  position: relative;
-  border : solid;
-  border-color : green;
 }

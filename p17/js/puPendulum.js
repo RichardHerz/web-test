@@ -34,16 +34,16 @@ function puPendulum(pUnitIndex) {
 
   // XXX which can be moved into updateState?
   // XXX first check reset(), initialize() and updateUIparams(), updateDisplay()
-  const radius = 2; // (m), radius, length of rod
+  const radius = 1; // (m), radius, length of rod
   const pixPerMeter = 100; // (px/m)
   const rpix = radius * pixPerMeter; // (px), pixel length of rod-radius
   const xc = 300; // (px), x location of center of rotation
-  const yc = 200; // (px), y location of center of rotation
+  const yc = 300; // (px), y location of center of rotation
   const gravity = 9.8; // (m2/s), gravitational accel in vertical direction
   const fricFrac = 0.0016; // friction factor, 0.0016 to offset Euler errors
   const pi = Math.PI;
   let accel = 0; // (m2/s), acceleration in tangential direction
-  let veloc = 0; // (m/s), velocity
+  let veloc = 0; // (m/s), tangential velocity
   let friction = fricFrac * veloc;
   let angle = 0; // (radian)
 
@@ -181,79 +181,23 @@ function puPendulum(pUnitIndex) {
 
   this.updateDisplay = function() {
 
-    // coordinates for bobANDrod
-    let x = xc + rpix * Math.sin(angle);
-    let y = yc + rpix * Math.cos(angle);
+    let el = document.getElementById("field_output_field");
+    el.innerHTML = "simTime = " + controller.simTime;
 
-    // coordinates for velocVector
-    let pixFac = 0.15;
-    let xv = x + pixFac * pixPerMeter * veloc * Math.cos(angle);
-    let yv = y - pixFac * pixPerMeter * veloc * Math.sin(angle);
-    // velocVector is x,y to xv,yv
+    let angleD = angle * 180/pi; // (degree) = (radian) * (degree/radian)
 
-    // coordinates for accelVector
-    pixFac = 0.05;
-    let xa = x + pixFac * pixPerMeter * accel * Math.cos(angle);
-    let ya = y - pixFac * pixPerMeter * accel * Math.sin(angle);
-    // accelVector is x,y to xa,ya
+    let svgElement = document.getElementById("svg_group");
+    svgElement.setAttribute("transform", "rotate(" + angleD + " 300 300)");
 
-    // coordinates for accelVectorDown
-    //   component of tangential accel that is gravity pulling down
-    let tDownY = y + pixFac * pixPerMeter * gravity;
-    // accelVectorDown is x,y to x,tDownY
-
-    // coordinates for accelVectorRod
-    //   component of tangential accel that is rod holding bob (radial accel)
-    //   with rod in tension when bob below horizontal and
-    //   rod in compression when bob above horizontal
-    let tRod = gravity * Math.cos(angle);
-    let dX = pixFac * pixPerMeter * (tRod * Math.sin(angle));
-    let dY = pixFac * pixPerMeter * (tRod * Math.cos(angle));
-    // accelVectorRod is x,y to x-dX,y-dY
-
-    // Set new vector positions
-    //   bobANDrod is xc,yc to x,y
-    //   velocVector is x,y to xv,yv
-    //   accelVector is x,y to xa,ya
-    //   accelVectorDown is x,y to x,tDownY
-    //   accelVectorRod is x,y to x-dX,y-dY
-
-    // http://tutorials.jenkov.com/svg/
-
-    let svgElement = document.getElementById("bobANDrod");
-    let xs = xc;
-    let xe = x;
-    let ys = yc;
-    let ye = y;
-    svgElement.setAttribute("d", "M" + xs + "," + ys + " L" + xe + "," + ye );
-
-    svgElement = document.getElementById("velocVector");
-    xs = x;
-    xe = xv;
-    ys = y;
-    ye = yv;
-    svgElement.setAttribute("d", "M" + xs + "," + ys + " L" + xe + "," + ye );
-
-    svgElement = document.getElementById("accelVector");
-    xs = x;
-    xe = xa;
-    ys = y;
-    ye = ya;
-    svgElement.setAttribute("d", "M" + xs + "," + ys + " L" + xe + "," + ye );
-
-    svgElement = document.getElementById("accelVectorDown");
-    xs = x;
-    xe = x;
-    ys = y;
-    ye = tDownY;
-    svgElement.setAttribute("d", "M" + xs + "," + ys + " L" + xe + "," + ye );
-
-    svgElement = document.getElementById("accelVectorRod");
-    xs = x;
-    xe = x-dX;
-    ys = y;
-    ye = y-dY;
-    svgElement.setAttribute("d", "M" + xs + "," + ys + " L" + xe + "," + ye );
+    svgElement = document.getElementById("newArrow");
+    // compute x,y of bob and set bx,by
+    // computer length and angle of vector
+    // *OR* just use "d" and draw line from start to end pts as computed
+    // in LC version
+    let bx = 100;
+    let by = 150;
+    svgElement.setAttribute("d", "M" + bx + "," + by + " l" + 50 + "," + 50 );
+    svgElement.setAttribute("transform", "rotate(" + angleD + " " + bx + " " + by + ")");
 
   } // END of updateDisplay method
 

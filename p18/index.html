@@ -62,16 +62,16 @@
     <input type="button" id="button_runButton" value="Run" onclick="interfacer.runThisLab()">
     <input type="button" id="button_resetButton" value="Reset" onclick="interfacer.resetThisLab()">
 
-    <svg id="svg_test" width="600" height="600">
+    <svg id="svg_pendulum" width="600" height="600">
 
       <defs>
         <!-- refX and refY are positions in marker that is end of line that marker is set -->
-        <marker id="markerEmptyCircle" markerWidth="8" markerHeight="8" refX="5" refY="5">
-            <circle cx="5" cy="5" r="3" style="stroke: #000000; fill: none;"/>
+        <marker id="markerEmptyCircle" markerWidth="14" markerHeight="10" refX="5" refY="5">
+            <circle cx="5" cy="5" r="4" style="stroke: #000000; fill: none;"/>
         </marker>
 
-        <marker id="markerSmallFilledCircle" markerWidth="14" markerHeight="14" refX="7" refY="7">
-            <circle cx="7" cy="7" r="6" style="stroke: #000000; fill: none;"/>
+        <marker id="markerFilledCircle" markerWidth="14" markerHeight="14" refX="7" refY="7">
+            <circle cx="7" cy="7" r="6" style="stroke: none; fill: #000000;"/>
         </marker>
 
         <marker id="markerArrowHead" markerWidth="13" markerHeight="13" refX="2" refY="6"
@@ -80,24 +80,35 @@
         </marker>
       </defs>
 
-      <path id="newArrow" d="M100,150 l50,50"
-        style="stroke: #6666ff; stroke-width: 1px; fill: none;
-          marker-start: url(#markerSmallFilledCircle);
+      <path id="bobANDrod" d="M100,150 l50,50"
+        style="stroke: black; stroke-width: 1px; fill: none;
+          marker-start: url(#markerEmptyCircle);
+          marker-end: url(#markerFilledCircle);"
+      />
+
+      <path id="velocVector" d="M100,150 l50,50"
+        style="stroke: green; stroke-width: 1px; fill: none;
           marker-end: url(#markerArrowHead);"
       />
 
-       <!-- http://tutorials.jenkov.com/svg/g-element.html -->
-       <g id="svg_group"> <!-- attributeName=type -->
-         <!-- https://www.w3schools.com/graphics/svg_line.asp -->
-         <line x1="300" y1="300" x2="300" y2="400" style="stroke:rgb(255,0,0);stroke-width:2"
-          />
-         <circle cx="300" cy="400" r="10" stroke="black" stroke-width="3" fill="red"
-         />
-       </g>
+      <path id="accelVector" d="M100,150 l50,50"
+        style="stroke: blue; stroke-width: 1px; fill: none;
+          marker-end: url(#markerArrowHead);"
+      />
+
+      <path id="accelVectorDown" d="M100,150 l50,50"
+        style="stroke: blue; stroke-width: 1px; fill: none;
+          marker-end: url(#markerArrowHead);
+          stroke-dasharray: 4 2;"
+      />
+
+      <path id="accelVectorRod" d="M100,150 l50,50"
+        style="stroke: blue; stroke-width: 1px; fill: none;
+          marker-end: url(#markerArrowHead);"
+      />
 
     </svg>
 
   </div> <!-- end of div div_simFrame-->
-  <p id="field_output_field">&nbsp; development field output field for idle time check</p>
 </body>
 </html>
