@@ -38,7 +38,7 @@ function puPendulum(pUnitIndex) {
   const pixPerMeter = 100; // (px/m)
   const rpix = radius * pixPerMeter; // (px), pixel length of rod-radius
   const xc = 300; // (px), x location of center of rotation
-  const yc = 200; // (px), y location of center of rotation
+  const yc = 250; // (px), y location of center of rotation
   const gravity = 9.8; // (m2/s), gravitational accel in vertical direction
   const fricFrac = 0.0016; // friction factor, 0.0016 to offset Euler errors
   const pi = Math.PI;

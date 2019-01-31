@@ -62,6 +62,25 @@
     <input type="button" id="button_runButton" value="Run" onclick="interfacer.runThisLab()">
     <input type="button" id="button_resetButton" value="Reset" onclick="interfacer.resetThisLab()">
 
+    <div id="div_input_group">
+       <input id="input_field_theta" value="0">
+       <input id="input_field_initial_velocity" value="4">
+       <p id="field_th_label">
+             start angle:
+       </p>
+       <p id="field_v_label">
+             initial velocity:
+       </p>
+       <p id="field_ff_label">
+             friction factor:
+       </p>
+       <input id="input_field_friction_factor" value="0">
+       <label id="checkbox_vec_LABEL">
+             <input type="checkbox" id="checkbox_vec">
+             <span id="checkbox_vec_SPAN">vec</span>
+       </label>
+    </div> <!-- end of div div_input_group -->
+
     <svg id="svg_pendulum" width="600" height="600">
 
       <defs>
