@@ -63,20 +63,20 @@
     <input type="button" id="button_resetButton" value="Reset" onclick="interfacer.resetThisLab()">
 
     <div id="div_input_group">
-       <input id="input_field_theta" value="0">
-       <input id="input_field_initial_velocity" value="4">
-       <p id="field_th_label">
-             start angle:
-       </p>
-       <p id="field_v_label">
-             initial velocity:
-       </p>
+      <p id="field_v_label">
+            initial velocity:
+      </p>
+      <input id="input_field_initial_velocity" value="0" onchange="processUnits[0].updateUIparams()">
+      <p id="field_th_label">
+            start angle:
+      </p>
+       <input id="input_field_theta" value="1.57" onchange="processUnits[0].updateUIparams()">
        <p id="field_ff_label">
              friction factor:
        </p>
-       <input id="input_field_friction_factor" value="0">
+       <input id="input_field_friction_factor" value="0" onchange="processUnits[0].updateUIparams()">
        <label id="checkbox_vec_LABEL">
-             <input type="checkbox" id="checkbox_vec">
+             <input type="checkbox" id="checkbox_vec" onchange="processUnits[0].updateUIparams()">
              <span id="checkbox_vec_SPAN">vec</span>
        </label>
     </div> <!-- end of div div_input_group -->
@@ -89,8 +89,8 @@
             <circle cx="5" cy="5" r="4" style="stroke: #000000; fill: none;"/>
         </marker>
 
-        <marker id="markerFilledCircle" markerWidth="14" markerHeight="14" refX="7" refY="7">
-            <circle cx="7" cy="7" r="6" style="stroke: none; fill: #000000;"/>
+        <marker id="markerFilledCircle" markerWidth="20" markerHeight="20" refX="10" refY="10">
+            <circle cx="10" cy="10" r="10" style="stroke: none; fill: #000000;"/>
         </marker>
 
         <marker id="markerArrowHead" markerWidth="13" markerHeight="13" refX="2" refY="6"

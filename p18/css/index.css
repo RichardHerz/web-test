@@ -54,9 +54,9 @@ canvas {
   position: relative;
   border-color: red;
   left: 17px;
-  top: 56px;
-  width: 609px;
-  height: 111px;
+  top: 0px;
+  width: 608px;
+  height: 650px;
   visibility: visible;
   border-width: 2px;
   border-style: dotted;
@@ -72,6 +72,7 @@ canvas {
   top: 30px;
   border : dotted;
   border-color : DodgerBlue;
+  z-index : -1; // need svg below input fields
 }
 
 #button_resetButton {
@@ -122,20 +123,21 @@ canvas {
   LCshowBorder: false;
 }
 
-#input_field_theta {
+#field_v_label {
   position: absolute;
-  left: 100px;
-  top: 30px;
-  width: 72px;
+  left: 23px;
+  top: -12px;
+  width: 100px;
   height: 21px;
-border-width: 1px;
+  border-width: 1px;
   visibility: visible;
-border-style: solid;
+  border-style: none;
   opacity: 1;
-  background-color: rgba(255, 255, 255, 1);
+  background-color: rgba(255, 255, 255, 0);
   LCvScrollbar: false;
   LCthreeD: true;
-  LCshowBorder: true;
+  LCshowBorder: false;
+  font-size: 16px;
 }
 
 #input_field_initial_velocity {
@@ -157,7 +159,7 @@ border-style: solid;
 #field_th_label {
   position: absolute;
   left: 4px;
-  top: 12px;
+  top: 18px;
   width: 98px;
   height: 21px;
   border-width: 1px;
@@ -171,27 +173,26 @@ border-style: solid;
   font-size: 16px;
 }
 
-#field_v_label {
+#input_field_theta {
   position: absolute;
-  left: 23px;
-  top: -12px;
-  width: 100px;
+  left: 100px;
+  top: 36px;
+  width: 72px;
   height: 21px;
-  border-width: 1px;
+border-width: 1px;
   visibility: visible;
-  border-style: none;
+border-style: solid;
   opacity: 1;
-  background-color: rgba(255, 255, 255, 0);
+  background-color: rgba(255, 255, 255, 1);
   LCvScrollbar: false;
   LCthreeD: true;
-  LCshowBorder: false;
-  font-size: 16px;
+  LCshowBorder: true;
 }
 
 #field_ff_label {
   position: absolute;
   left: 23px;
-  top: 38px;
+  top: 50px;
   width: 100px;
   height: 21px;
   border-width: 1px;
@@ -208,7 +209,7 @@ border-style: solid;
 #input_field_friction_factor {
   position: absolute;
   left: 127px;
-  top: 56px;
+  top: 68px;
   width: 45px;
   height: 21px;
 border-width: 1px;
@@ -225,7 +226,7 @@ border-style: solid;
   width: 63px;
   height: 23px;
   left: 127px;
-  top: 80px;
+  top: 98px;
 }
 
 #checkbox_vec_SPAN {

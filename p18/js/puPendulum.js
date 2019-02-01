@@ -32,20 +32,17 @@ function puPendulum(pUnitIndex) {
   let unitTimeStep = simParams.simTimeStep / unitStepRepeats;
   let ssCheckSum = 0; // used in checkForSteadyState method
 
-  // XXX which can be moved into updateState?
-  // XXX first check reset(), initialize() and updateUIparams(), updateDisplay()
-  const radius = 2; // (m), radius, length of rod
-  const pixPerMeter = 100; // (px/m)
-  const rpix = radius * pixPerMeter; // (px), pixel length of rod-radius
-  const xc = 300; // (px), x location of center of rotation
-  const yc = 250; // (px), y location of center of rotation
-  const gravity = 9.8; // (m2/s), gravitational accel in vertical direction
-  const fricFrac = 0.0016; // friction factor, 0.0016 to offset Euler errors
-  const pi = Math.PI;
-  let accel = 0; // (m2/s), acceleration in tangential direction
+  const gravity = 9.8; // (m2/s), // used in updateState & updateDisplay
+  const pi = Math.PI; // used in reset & updateState
+  const radius = 1; // (m), radius, rod length, used in updateState & updateDisplay
+
   let veloc = 0; // (m/s), velocity
-  let friction = fricFrac * veloc;
   let angle = 0; // (radian)
+  let fricFrac = 0; // used in initialize & updateUIparams
+  let accel = 0; // (m2/s), acceleration in tangential direction
+
+  // THIS UNIT ALSO HAS A CHECKBOX INPUT
+  let inputCheckBoxVectors = "checkbox_vec";
 
   // *******************************************
   //         define PUBLIC properties
@@ -53,6 +50,14 @@ function puPendulum(pUnitIndex) {
 
   this.name = 'process unit Pendulum'; // used by interfacer.copyData()
   this.residenceTime = 100; // used by controller.checkForSteadyState()
+
+  // define arrays to hold data for plots, color canvas
+  // these arrays will be used by plotter object
+  // these will be filled with initial values in method reset
+  //
+  // this.profileData = []; // for profile plots, plot script requires this name
+  // this.stripData = []; // for strip chart plots, plot script requires this name
+  // this.colorCanvasData = []; // for color canvas, plot script requires this name
 
   // define arrays to hold info for variables
   // all used in interfacer.getInputValue() &/or interfacer.copyData() &/or plotInfo obj
@@ -64,14 +69,6 @@ function puPendulum(pUnitIndex) {
   this.dataMax = [];
   this.dataInitial = [];
   this.dataValues = [];
-
-  // define arrays to hold data for plots, color canvas
-  // these arrays will be used by plotter object
-  // these will be filled with initial values in method reset
-  //
-  // this.profileData = []; // for profile plots, plot script requires this name
-  // this.stripData = []; // for strip chart plots, plot script requires this name
-  // this.colorCanvasData = []; // for color canvas, plot script requires this name
 
   // *******************************************
   //         define PRIVATE functions
@@ -86,14 +83,34 @@ function puPendulum(pUnitIndex) {
     // ADD ENTRIES FOR UI PARAMETER INPUTS FIRST, then output vars below
     //
     let v = 0;
-    // this.dataHeaders[v] = 'set point';
-    // this.dataInputs[v] = 'input_field_enterSetpoint';
-    // this.dataUnits[v] = '';
-    // this.dataMin[v] = 0;
-    // this.dataMax[v] = 2;
-    // this.dataInitial[v] = 1;
-    // setPoint = this.dataInitial[v]; // dataInitial used in getInputValue
-    // this.dataValues[v] = setPoint; // current input oalue for reporting
+    this.dataHeaders[v] = 'velocity';
+    this.dataInputs[v] = "input_field_initial_velocity";
+    this.dataUnits[v] = 'm/s';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 10;
+    this.dataInitial[v] = 0;
+    veloc = this.dataInitial[v]; // dataInitial used in getInputValue
+    this.dataValues[v] = veloc; // current input oalue for reporting
+    //
+    v = 1;
+    this.dataHeaders[v] = 'angle';
+    this.dataInputs[v] = "input_field_theta";
+    this.dataUnits[v] = 'radian';
+    this.dataMin[v] = -pi;
+    this.dataMax[v] = pi;
+    this.dataInitial[v] = 1.57; // pi/2 = 1.5708
+    angle = this.dataInitial[v]; // dataInitial used in getInputValue
+    this.dataValues[v] = angle; // current input oalue for reporting
+    //
+    v = 2;
+    this.dataHeaders[v] = 'friction factor';
+    this.dataInputs[v] = "input_field_friction_factor";
+    this.dataUnits[v] = '';
+    this.dataMin[v] = 0;
+    this.dataMax[v] = 1;
+    this.dataInitial[v] = 0;
+    fricFrac = this.dataInitial[v]; // dataInitial used in getInputValue
+    this.dataValues[v] = fricFrac; // current input oalue for reporting
     //
     // END OF INPUT VARS
     // record number of input variables, VarCount
@@ -115,9 +132,6 @@ function puPendulum(pUnitIndex) {
     this.updateUIparams(); // this first, then set other values as needed
 
     // set state variables not set by updateUIparams to initial settings
-
-    angle = pi/2; // (radian), initial angle
-    veloc = 0; // (m/s), initial tangential velocity
 
     // update display
     this.updateDisplay();
@@ -141,10 +155,11 @@ function puPendulum(pUnitIndex) {
     // see variable numbers above in initialize
     // note: this.dataValues.[pVar]
     //   is only used in copyData to report input values
-    //
+
     let unum = unitIndex;
-    //
-    // setPoint = this.dataValues[0] = interfacer.getInputValue(unum, 0);
+    veloc = this.dataValues[0] = interfacer.getInputValue(unum, 0);
+    angle = this.dataValues[1] = interfacer.getInputValue(unum, 1);
+    fricFrac = this.dataValues[2] = interfacer.getInputValue(unum, 2);
 
   } // END of updateUIparams method
 
@@ -162,12 +177,14 @@ function puPendulum(pUnitIndex) {
     unitTimeStep = simParams.simTimeStep / unitStepRepeats;
 
     accel = gravity * Math.sin(-angle);
-    friction = fricFrac * veloc;
     let newVeloc = veloc + accel * unitTimeStep;
     // apply friction
+    let friction = fricFrac * veloc;
     newVeloc = newVeloc - friction * unitTimeStep;
+
     let angularVeloc = veloc * radius; // (radian/s)
     let newAngle = angle + angularVeloc * unitTimeStep;
+
     // correct angle if pendulum goes past top in CCW direction
     if (newAngle > pi) {
       newAngle = -pi + newAngle % pi;  // % is JS modulo operator,
@@ -180,6 +197,11 @@ function puPendulum(pUnitIndex) {
   } // END of updateState method
 
   this.updateDisplay = function() {
+
+    const pixPerMeter = 200; // (px/m)
+    const rpix = radius * pixPerMeter; // (px), pixel length of rod-radius
+    const xc = 300; // (px), x location of center of rotation
+    const yc = 250; // (px), y location of center of rotation
 
     // coordinates for bobANDrod
     let x = xc + rpix * Math.sin(angle);
