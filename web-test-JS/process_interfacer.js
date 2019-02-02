@@ -65,13 +65,17 @@ let interfacer = {
       if (varValue < varMin) {varValue = varMin;}
       if (varValue > varMax) {varValue = varMax;}
       //
-      if (Math.abs(varValue) < 1.0e-3) {
-        varValue = varValue.toExponential(2);
+      if (varValue == 0) {
+        // do nothing, otherwise in else if below, get 0.000e+00
+      } else if (Math.abs(varValue) < 1.0e-3) {
+        varValue = varValue.toExponential(2); // toExponential() returns STRING
       } else if (Math.abs(varValue) >= 9.999e+3) {
-        varValue = varValue.toExponential(2);
+        varValue = varValue.toExponential(2); // toExponential() returns STRING
       }
-      //
+      // OK to put formatted number as STRING returned by toExponential() into field...
       document.getElementById(varInputID).value = varValue;
+      // BUT need to return value as NUMBER to calling unit...
+      varValue = Number(varValue);
     } else {
       // this 'else' is in case there is no input on the web page yet in order to
       // allow for independence and portability of this process unit
