@@ -1,0 +1,266 @@
+sup {
+  font-size: smaller;
+}
+
+sub {
+  font-size: smaller;
+}
+
+input {
+  display: block;
+  position: absolute;
+  text-align: center;
+}
+
+input, button {
+  text-align: center;
+}
+
+/* do NOT write general style for div since interferes
+    with plotting by jquery.flot.js */
+
+p {
+  display: block;
+  text-align: left;
+}
+
+label {
+  display: block;
+  position: absolute;
+}
+
+img {
+  display: block;
+  position: absolute;
+}
+
+select {
+  display: block;
+  position: absolute;
+}
+
+canvas {
+  display: block;
+  position: absolute;
+  text-align: left;
+}
+
+::-ms-tooltip {
+  display: none;
+}
+
+#div_page_header {
+  display: block;
+  position: relative;
+  left: 17px;
+  top: 0px;
+  width: 608px;
+  height: 184px;
+  visibility: visible;
+  border-color: red;
+  border-width: 2px;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#div_simFrame {
+  display: block;
+  position: relative;
+  left: 17px;
+  top: 0px;
+  width: 608px;
+  height: 650px;
+  visibility: visible;
+  border : solid;
+  border-width: 1px;
+  border-color : DodgerBlue;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#svg_pendulum {
+  position: relative;
+  top: 30px;
+  border : none;
+  border-width: 1px;
+  border-color : DodgerBlue;
+  z-index : -1; // need svg below input fields
+}
+
+#button_resetButton {
+  position: absolute;
+  left: 90px;
+  top: 9px;
+  width: 82px;
+  height: 23px;
+  visibility: visible;
+  border-width: 2px;
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#button_runButton {
+  position: absolute;
+  left: 4px;
+  top: 9px;
+  width: 82px;
+  height: 23px;
+  visibility: visible;
+  border-width: 2px;
+  border-style: outset;
+  opacity: 1;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#div_input_group {
+  display: block;
+  position: absolute;
+  border-color: DodgerBlue;
+  left: 411px;
+  top: 4px;
+  width: 194px;
+  height: 103px;
+  visibility: visible;
+  border-width: 2px;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+}
+
+#field_v_label {
+  position: absolute;
+  right: 88px;
+  top: -8px;
+  width: 240px;
+  height: 21px;
+  text-align: right;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#input_field_initial_velocity {
+  position: absolute;
+  left: 110px;
+  top: 4px;
+  width: 72px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_th_label {
+  position: absolute;
+  right: 88px;
+  top: 24px;
+  width: 200px;
+  height: 21px;
+  text-align: right;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#input_field_theta {
+  position: absolute;
+  left: 110px;
+  top: 36px;
+  width: 72px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#field_ff_label {
+  position: absolute;
+  right: 88px;
+  top: 55px;
+  width: 200px;
+  height: 21px;
+  text-align: right;
+  border-width: 1px;
+  visibility: visible;
+  border-style: none;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: false;
+  font-size: 16px;
+}
+
+#input_field_friction_factor {
+  position: absolute;
+  left: 110px;
+  top: 68px;
+  width: 72px;
+  height: 21px;
+border-width: 1px;
+  visibility: visible;
+border-style: solid;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 1);
+  LCvScrollbar: false;
+  LCthreeD: true;
+  LCshowBorder: true;
+}
+
+#checkbox_vec_LABEL {
+  width: 70px;
+  height: 23px;
+  left: 127px;
+  top: 98px;
+}
+
+#checkbox_vec_SPAN {
+  margin-left: 22px;
+  line-height: 18px;
+  font-size: 16px;
+}
+
+/* example @media for responsive design */
+/* requires meta viewport element in HTML head */
+@media(max-width: 640px) {
+  /* change the following when the screen width is <= 640px */
+  /* #div_controller {
+    top: 600px;
+    left: 20px;
+   } */
+}
