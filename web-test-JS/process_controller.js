@@ -68,10 +68,10 @@ let controller = {
 
   updateProcess : function() {
 
-    console.log('enter updateProcess, controller.runningFlag = ' + controller.runningFlag);
+   // console.log('enter updateProcess, controller.runningFlag = ' + controller.runningFlag);
 
     // if (!controller.runningFlag) {
-    //   console.log('runningFlag FALSE in updateProcess');
+    //   // console.log('runningFlag FALSE in updateProcess');
     //   // exit if runningFlag is not true
     //   // runningFlag can become not true by click of RUN-PAUSE, RESET or COPY DATA buttons
     //   return;
@@ -87,9 +87,9 @@ let controller = {
     // DO return at top of updateProcessUnits and updateDisplay which are called below here
     // such that this updateProcess function always completes normally and calls itself again
 
-    // // get time at start of repeating updateProcessUnits
-    // let startDate = new Date(); // need this here
-    // let startMs = startDate.getTime();
+    // get time at start of repeating updateProcessUnits
+    let startDate = new Date(); // need this here
+    let startMs = startDate.getTime();
 
     // repeating updateProcessUnits must finish before
     // latest real time at which updateDisplay must occur in order
@@ -104,28 +104,23 @@ let controller = {
     // to updateDisplay from updateDisplay function return value
     let currentMs = controller.updateDisplay();
 
-    // // Adjust wait until next updateProcess to allow for time taken
-    // // to do updateProcessUnits and updateDisplay.
-    // // In order to respond to user input, do not need updateMs > 0.
-    // // BUT DO NEED updateMs > 0 to keep sync between sim time and real time.
-    // let elapsedMs = currentMs - startMs;
-    // updateMs = simParams.updateDisplayTimingMs - elapsedMs;
-    //
-    // // DISPLAY TIMING DATA DURING DEVELOPMENT
-    // let idleMs = Number(updateMs).toPrecision(2);
-    // console.log("idle time = " + idleMs);
-    // // // NEED TO EDIT INDEX.HTML TO ACTIVATE "field_output_field"
-    // // // first check if field exists
-    // // if (document.getElementById("field_output_field")) {
-    // //   document.getElementById("field_output_field").innerHTML = "idle time = " + idleMs + "&nbsp;ms";
-    // // }
+    // Adjust wait until next updateProcess to allow for time taken
+    // to do updateProcessUnits and updateDisplay.
+    // In order to respond to user input, do not need updateMs > 0.
+    // BUT DO NEED updateMs > 0 to keep sync between sim time and real time.
+    let elapsedMs = currentMs - startMs;
+    updateMs = simParams.updateDisplayTimingMs - elapsedMs;
+    let idleMs = Number(updateMs).toPrecision(2);
 
-    console.log('leave updateProcess, controller.runningFlag = ' + controller.runningFlag);
+    // DISPLAY TIMING DATA DURING DEVELOPMENT
+    // console.log("idle time = " + idleMs);
+
+    // console.log('leave updateProcess, controller.runningFlag = ' + controller.runningFlag);
   }, // END OF method updateProcess
 
   updateProcessUnits : function() {
 
-    console.log('enter updateProcessUnits');
+    // console.log('enter updateProcessUnits');
 
     // DO COMPUTATIONS TO UPDATE STATE OF PROCESS
     // step all units but do not display
@@ -149,24 +144,24 @@ let controller = {
         processUnits[n].updateState();
     }
 
-console.log('leave updateProcessUnits');
+    // console.log('leave updateProcessUnits');
 
   }, // END OF function updateProcessUnits
 
   updateDisplay : function() {
 
-  console.log('enter updateDisplay');
+  // console.log('enter updateDisplay');
 
-    // if (controller.ssFlag) {
-    //   // exit if ssFlag true
-    //   // ONLY IF DO NOT WANT TO UPDATE DISPLAY - SO MUST BE CONSTANT...
-    //   // BUT FIRST MUST DO THIS (also done below at end normal update)
-    //   // RETURN REAL TIME OF THIS DISPLAY UPDATE (milliseconds)
-    //   // or, if do not do here, simTime will race ahead
-    //   let thisDate = new Date();
-    //   let thisMs = thisDate.getTime();
-    //   return thisMs;
-    // }
+    if (controller.ssFlag) {
+      // exit if ssFlag true
+      // ONLY IF DO NOT WANT TO UPDATE DISPLAY - SO MUST BE CONSTANT...
+      // BUT FIRST MUST DO THIS (also done below at end normal update)
+      // RETURN REAL TIME OF THIS DISPLAY UPDATE (milliseconds)
+      // or, if do not do here, simTime will race ahead
+      let thisDate = new Date();
+      let thisMs = thisDate.getTime();
+      return thisMs;
+    }
 
     // DISPLAY ALL UNITS BUT DO NOT STEP
     let numUnits = Object.keys(processUnits).length; // number of units
@@ -204,13 +199,12 @@ console.log('leave updateProcessUnits');
     // so that don't suspend before a final display update of the steady state
     controller.checkForSteadyState();
 
-    // // RETURN REAL TIME OF THIS DISPLAY UPDATE (milliseconds)
-    // let thisDate = new Date();
-    // let thisMs = thisDate.getTime();
-    // return thisMs;
+    // RETURN REAL TIME OF THIS DISPLAY UPDATE (milliseconds)
+    let thisDate = new Date();
+    let thisMs = thisDate.getTime();
+    return thisMs;
 
-console.log('leave updateDisplay');
-    return 0;
+    // console.log('leave updateDisplay');
 
   },  // END OF method updateDisplay
 
@@ -218,12 +212,12 @@ console.log('leave updateDisplay');
   // calling functions toggleRunningFlag and stopRunningFlag
   toggleRunningFlag : function() {
     controller.runningFlag = !controller.runningFlag;
-    console.log('toggleRunningFlag to ' + controller.runningFlag);
+    // console.log('toggleRunningFlag to ' + controller.runningFlag);
   },
 
   stopRunningFlag : function() {
     controller.runningFlag = false;
-    console.log('leave stopRunningFlag, controller.runningFlag ' + controller.runningFlag);
+    // console.log('leave stopRunningFlag, controller.runningFlag ' + controller.runningFlag);
   },
 
   resetSimTime : function() {

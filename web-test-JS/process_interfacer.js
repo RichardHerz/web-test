@@ -24,15 +24,16 @@ let interfacer = {
       controller.ssFlag = false; // unit sets true when sim reaches steady state
       button_runButton.value = 'Pause'; // REQUIRES run button id="button_runButton"
       simParams.updateRunCount();
-      console.log('runThisLab, just before setInterval()');
+      // console.log('runThisLab, just before setInterval()');
+      // repeat calling updateProcess
       this.timerID = setInterval(controller.updateProcess,simParams.updateDisplayTimingMs);
-      console.log('runThisLab, after setInterval, this.timerID = ' + this.timerID);
+      // console.log('runThisLab, after setInterval, this.timerID = ' + this.timerID);
     } else {
       // sim will stop after last updateProcess and its updateDisplay finishes
-      // so change run button label from pause to run
-      console.log('runThisLab, just before clearInterval()');
+      // console.log('runThisLab, just before clearInterval()');
       clearInterval(this.timerID);
-      console.log('runThisLab, after clearInterval, this.timerID = ' + this.timerID);
+      // console.log('runThisLab, after clearInterval, this.timerID = ' + this.timerID);
+      // change run button label from pause to run
       button_runButton.value = 'Run'; // REQUIRES run button id="button_runButton"
     }
   }, // END OF function runThisLab
@@ -42,9 +43,9 @@ let interfacer = {
     // USES OBJECTS simParams, controller
     // REQUIRES BELOW that run button id="button_runButton"
     //
-    console.log('resetThisLab, just before clearInterval()');
+    // console.log('resetThisLab, just before clearInterval()');
     clearInterval(this.timerID);
-    console.log('resetThisLab, this.timerID = ' + this.timerID);
+    // console.log('resetThisLab, this.timerID = ' + this.timerID);
     controller.stopRunningFlag();
     controller.resetSimTime();
     // reset all units
