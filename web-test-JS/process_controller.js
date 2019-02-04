@@ -31,8 +31,6 @@ let controller = {
   //    getPlotData(), plotPlotData(), plotArrays.initialize(),
   //    plotColorCanvasPlot()
 
-  runningFlag : false, // set runningFlag to false initially
-
   // simTime is changed in updateSimTime() and resetSimTime()
   // simTime & oldSimTime are used in checkForSteadyState()
   simTime : 0, // (s)
@@ -68,15 +66,6 @@ let controller = {
 
   updateProcess : function() {
 
-   // console.log('enter updateProcess, controller.runningFlag = ' + controller.runningFlag);
-
-    // if (!controller.runningFlag) {
-    //   // console.log('runningFlag FALSE in updateProcess');
-    //   // exit if runningFlag is not true
-    //   // runningFlag can become not true by click of RUN-PAUSE, RESET or COPY DATA buttons
-    //   return;
-    // }
-
     // update simTime = simulation time elapsed
     // done before simStepRepeats of all units, so
     // simTime update each time is simTimeStep * simStepRepeats
@@ -87,41 +76,35 @@ let controller = {
     // DO return at top of updateProcessUnits and updateDisplay which are called below here
     // such that this updateProcess function always completes normally and calls itself again
 
-    // get time at start of repeating updateProcessUnits
+    // get time at start of updates
+    // for use in development timing check below
     let startDate = new Date(); // need this here
     let startMs = startDate.getTime();
 
     // repeating updateProcessUnits must finish before
     // latest real time at which updateDisplay must occur in order
     // to maintain correspondence between sim time and real time
-    //
 
     for (let i = 0; i < simParams.simStepRepeats; i += 1) {
       controller.updateProcessUnits();
     }
 
-    // get time at end of repeating updateProcessUnits and call
-    // to updateDisplay from updateDisplay function return value
+    // update display
+    // return time for use in development timing check below
     let currentMs = controller.updateDisplay();
 
-    // Adjust wait until next updateProcess to allow for time taken
-    // to do updateProcessUnits and updateDisplay.
-    // In order to respond to user input, do not need updateMs > 0.
-    // BUT DO NEED updateMs > 0 to keep sync between sim time and real time.
-    let elapsedMs = currentMs - startMs;
-    updateMs = simParams.updateDisplayTimingMs - elapsedMs;
-    let idleMs = Number(updateMs).toPrecision(2);
+    // // *** SAVE - FOR DEVELOPMENT TIMING CHECK - SAVE ***
+    // // check timing to make sure updates finish before setInterval
+    // // calls update process again in order to maintain constant
+    // // ratio between simTime and real time
+    // let elapsedMs = currentMs - startMs;
+    // updateMs = simParams.updateDisplayTimingMs - elapsedMs;
+    // let idleMs = Number(updateMs).toPrecision(2);
+    // console.log("idle time = " + idleMs); // <<< SAVE THIS CONSOLE LOG <<<
 
-    // DISPLAY TIMING DATA DURING DEVELOPMENT
-    // console.log("idle time = " + idleMs);
-
-    // console.log('leave updateProcess, controller.runningFlag = ' + controller.runningFlag);
   }, // END OF method updateProcess
 
   updateProcessUnits : function() {
-
-    // console.log('enter updateProcessUnits');
-
     // DO COMPUTATIONS TO UPDATE STATE OF PROCESS
     // step all units but do not display
 
@@ -144,13 +127,9 @@ let controller = {
         processUnits[n].updateState();
     }
 
-    // console.log('leave updateProcessUnits');
-
   }, // END OF function updateProcessUnits
 
   updateDisplay : function() {
-
-  // console.log('enter updateDisplay');
 
     if (controller.ssFlag) {
       // exit if ssFlag true
@@ -204,21 +183,7 @@ let controller = {
     let thisMs = thisDate.getTime();
     return thisMs;
 
-    // console.log('leave updateDisplay');
-
   },  // END OF method updateDisplay
-
-  // runningFlag value can change by click of RUN-PAUSE or RESET buttons
-  // calling functions toggleRunningFlag and stopRunningFlag
-  toggleRunningFlag : function() {
-    controller.runningFlag = !controller.runningFlag;
-    // console.log('toggleRunningFlag to ' + controller.runningFlag);
-  },
-
-  stopRunningFlag : function() {
-    controller.runningFlag = false;
-    // console.log('leave stopRunningFlag, controller.runningFlag ' + controller.runningFlag);
-  },
 
   resetSimTime : function() {
     // called by method interfacer.resetThisLab

@@ -9,44 +9,36 @@ let interfacer = {
   // OBJECT interfacer handles UI controls and input fields in HTML
   // unit objects may write directly to output fields or other elements
 
-  timerID : 99, // used by setInterval & clearInterval in runThisLab & resetThisLab
+  timerID : 0, // used by setInterval & clearInterval in runThisLab & resetThisLab
 
   runThisLab : function() {
-    // CALLED BY UI RUN BUTTON DEFINED IN HTML
+    // TOGGLES between running (button label 'Pause') & paused (button label 'Run')
+    // REQUIRES run button id='button_runButton' & display labels be 'Run' & 'Pause'
     // USES OBJECTS simParams, controller
     //
-    // TOGGLE runningFlag FIRST before doing stuff below
-    controller.toggleRunningFlag(); // toggle runningFlag true-false
-    // TOGGLE runningFlag FIRST before doing stuff below
-    let runningFlag = controller.runningFlag;
-    if (runningFlag) {
-      // start sim running again
+    let el = document.getElementById('button_runButton');
+    if (el.value == 'Run') {
+      // button label is 'Run' & was clicked, so start running
+      // change button label to 'Pause'
+      el.value = 'Pause'; // REQUIRES run button id="button_runButton"
       controller.ssFlag = false; // unit sets true when sim reaches steady state
-      button_runButton.value = 'Pause'; // REQUIRES run button id="button_runButton"
       simParams.updateRunCount();
-      // console.log('runThisLab, just before setInterval()');
-      // repeat calling updateProcess
+      // repeat calling updateProcess to run lab - NO () after .updateProcess
       this.timerID = setInterval(controller.updateProcess,simParams.updateDisplayTimingMs);
-      // console.log('runThisLab, after setInterval, this.timerID = ' + this.timerID);
     } else {
+      // button label is 'Pause' & was clicked, so stop running
       // sim will stop after last updateProcess and its updateDisplay finishes
-      // console.log('runThisLab, just before clearInterval()');
       clearInterval(this.timerID);
-      // console.log('runThisLab, after clearInterval, this.timerID = ' + this.timerID);
-      // change run button label from pause to run
-      button_runButton.value = 'Run'; // REQUIRES run button id="button_runButton"
+      el.value = 'Run'; // REQUIRES run button id="button_runButton"
     }
   }, // END OF function runThisLab
 
   resetThisLab : function() {
+    // REQUIRES run button id='button_runButton' & display labels be 'Run' & 'Pause'
     // CALLED BY UI RESET BUTTON DEFINED IN HTML
     // USES OBJECTS simParams, controller
-    // REQUIRES BELOW that run button id="button_runButton"
     //
-    // console.log('resetThisLab, just before clearInterval()');
     clearInterval(this.timerID);
-    // console.log('resetThisLab, this.timerID = ' + this.timerID);
-    controller.stopRunningFlag();
     controller.resetSimTime();
     // reset all units
     let numUnits = Object.keys(processUnits).length; // number of units
@@ -55,7 +47,8 @@ let interfacer = {
     }
     controller.resetSSflagsFalse();
     controller.updateDisplay();
-    button_runButton.value = 'Run'; // REQUIRES run button id="button_runButton"
+    let el = document.getElementById('button_runButton');
+    el.value = 'Run';
     // do NOT update process nor display again here (will take one step)
   }, // END OF function resetThisLab
 
@@ -101,12 +94,11 @@ let interfacer = {
     // Could be called from onclick or onchange in HTML element, if desired.
     // Alternative: in HTML input tag onchange, send updateUIparams() to
     // specific unit involved in that input.
-
+    //
     let numUnits = Object.keys(processUnits).length; // number of units
     for (let n = 0; n < numUnits; n += 1) {
       processUnits[n].updateUIparams();
     }
-
   },  // END OF function updateUIparams
 
   copyData : function(plotIndex) {
@@ -116,13 +108,15 @@ let interfacer = {
     // USES OBJECTS plotInfo, controller, interfacer, simParams
     // plotIndex is the index in object plotInfo of the desired plot to copy
     // USES internal function formatNum
+    // REQUIRES run button id='button_runButton' & display labels be 'Run' & 'Pause'
 
     // if sim is running, pause the sim
     // copy grabs what is showing on plot when copy button clicked
     // so want user to be able to take screenshot to compare with data copied
     // this will let last updateDisplay of updateProcess finish before sim pauses
-    let runningFlag = controller.runningFlag;
-    if (runningFlag) {
+    let el = document.getElementById('button_runButton');
+    if (el.value == 'Pause') {
+      // button label is 'Pause', lab is running, call runThisLab to toggle to stop running
       interfacer.runThisLab(); // toggles running state
     }
 

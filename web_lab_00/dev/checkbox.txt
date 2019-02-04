@@ -1,8 +1,0 @@
-let el3 = document.querySelector('#' + this.inputCheckBoxFeed); 
-
-      if (el3.checked) {
-        this.Shape = 'constant';
-      } else {
-        this.Shape = 'off';
-} 
-
