@@ -1,0 +1,37 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Load HTML File</title>
+    <script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <script>
+        document.write(`hello from document write in body`);
+    </script>
+
+    <div id="div_content">  </div>
+
+        <script>
+            // $(document).ready(function () {
+            //     $("#div_content").load("content.html");
+            // });
+            $("#div_content").load("content.html");
+        </script>
+
+    <div id="div_result">
+        <script src="result.js"></script> 
+    </div>
+
+
+     
+</body>
+
+</html>

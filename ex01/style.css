@@ -1,0 +1,29 @@
+#div_content {
+    position: absolute;
+    top: 100px;
+    left: 10px;
+    width: 200px;
+    height: 200px;
+    visibility: visible;
+    border-width: 2px;
+    border-style: dashed;
+    border-color: dodgerblue;
+    background-color: white; 
+    opacity: 1;
+    /* z-index: -1; */
+  }
+  
+  #div_result {
+    position: absolute;
+    top: 100px;
+    left: 220px;
+    width: 200px;
+    height: 200px;
+    visibility: visible;
+    border-width: 2px;
+    border-style: dashed;
+    border-color: red;
+    background-color: white; 
+    opacity: 1;
+    /* z-index: -1; */
+  }

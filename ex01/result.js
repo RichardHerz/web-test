@@ -1,0 +1,1 @@
+document.write(`hello from doc write in result js`);
