@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+    <head>
+
+        <style>
+  
+            #div_one {
+                position: absolute;
+                top: 60px;
+                left: 90px;
+                width: 60px;
+                height: 60px;
+                visibility: visible;
+                border-width: 2px;
+                border-style: outset;
+                background-color: yellow;
+                opacity: 1;
+            }
+        </style> 
+
+        <script>
+            function buildHTML(event) {
+                let el = document.getElementById("div_one"); 
+                let bodyText =`
+                    hello 
+                `; // END bodyText
+                el.innerHTML = bodyText;
+            };
+        </script>
+
+    </head>
+    <body>
+
+        <div id="div_one" onclick="buildHTML()" >
+            
+        </div>
+
+    </body>
+
+</html>
